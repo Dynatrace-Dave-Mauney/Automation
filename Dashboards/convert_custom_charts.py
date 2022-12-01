@@ -5,8 +5,8 @@ import os
 
 verbose = False
 
-OLD_DASHBOARD_PATH = 'Custom/CustomCharts'
-NEW_DASHBOARD_PATH = 'Custom/DataExplorer'
+OLD_DASHBOARD_PATH = '../$Test/Dashboards/CustomCharts'
+NEW_DASHBOARD_PATH = '../$Test/Dashboards/DataExplorer'
 
 NEW_TILE_TEMPLATE = '''{
       "name": "$$NAME$$",
@@ -147,7 +147,8 @@ def convert_custom_charts(dashboard):
             height = tile.get('bounds').get('height')
             name = tile.get('filterConfig').get('customName')
 
-            # Fix broken name: Invocations Sum 'default" Event Bus (By Region and RuleName)
+            # Fix broken name: Invocations Sum \'default\" Event Bus (By Region and RuleName)
+            # It has mismatched quote types
             name = name.replace("'default\"", "'default'")
 
             # Multiple series implementation

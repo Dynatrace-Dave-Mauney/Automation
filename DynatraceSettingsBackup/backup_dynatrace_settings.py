@@ -31,7 +31,7 @@ tenant = os.environ.get(environment_details[1])
 token = os.environ.get(environment_details[2])
 env = f'https://{tenant}.live.dynatrace.com'
 
-backup_directory_path = 'Backup_' + env_name
+backup_directory_path = '../$Output/Backup_' + env_name
 
 settings20_yaml_file_name = 'settings20.yaml'
 config_yaml_file_name = 'config.yaml'

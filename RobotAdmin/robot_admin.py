@@ -8,17 +8,16 @@ import json
 import os
 import requests
 import ssl
-# import time
+import time
 from requests import Response
 
-# Environment Details (Short Name, Tenant, Token)
-# environment_details = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-# environment_details = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-environment_details = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
+# env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
+# env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
+# env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
+env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
 
-env_name = environment_details[0]
-tenant = os.environ.get(environment_details[1])
-token = os.environ.get(environment_details[2])
+tenant = os.environ.get(tenant_key)
+token = os.environ.get(token_key)
 env = f'https://{tenant}.live.dynatrace.com'
 
 offline = False
@@ -205,7 +204,11 @@ def process():
 	print('Environment:     ' + env_name)
 	print('Environment URL: ' + env)
 
+	# Run a quick sanity test, if pointed to 'Personal' environment only
+	sanity_test()
+
 	# Safety Exit
+	print('Safety Exit!')
 	exit(1234)
 
 	# Usage Examples
@@ -248,6 +251,33 @@ def process():
 	# delete_all_entities_with_fixed_ids()
 
 	exit(0)
+
+
+def sanity_test():
+	# Safety Check
+	if env_name != 'Personal':
+		print('Error in "sanity_test()" method')
+		print('Not for use in this environment')
+		print('Env: ' + env)
+		print('Exit code shown below is the source code line number of the exit statement invoked')
+		exit(get_line_number())
+
+	print('Entities with fixed ids:')
+	report_fixed_id_entities()
+	confirm('Are you sure you want to delete all the fixed id entities?')
+	delete_all_entities_with_fixed_ids()
+	confirm('Do you want to create all auto tags?')
+	process_all_auto_tags()
+	confirm('Do you want to create all request attributes?')
+	process_all_request_attributes()
+	# wait for eventual consistency...request attributes are referenced by request naming rules
+	print('Sleeping for 10 seconds to allow for eventual consistency...')
+	time.sleep(10)
+	confirm('Do you want to create all request naming rules?')
+	process_all_request_naming_rules()
+	confirm('Do you want to create all conditional naming rules?')
+	process_all_conditional_naming_rules()
+
 
 
 def process_customer_specific_auto_tags():
@@ -380,7 +410,7 @@ def process_auto_tags_basics():
 	# "Special" Best Practice Tags
 	put_auto_tag_host_group()
 	put_auto_tag_cloud_provider()
-	put_auto_tag_os('OS', ["AIX", "Darwin", "HPUX", "Linux", "Solaris", "Windows", "zOS"])
+	put_auto_tag_os('OS', ['AIX', 'Darwin', 'HPUX', 'Linux', 'Solaris', 'Windows', 'zOS'])
 
 	# "Special" Tags: Location-oriented
 	put_auto_tag('Geolocation', 'OPENSTACK_REGION_NAME', 'EXISTS', '{GeolocationSite:Name}', 'PROCESS_GROUP')
@@ -1258,15 +1288,12 @@ def put_auto_tag_os(name, os_list):
 		value = os_type.upper()
 		comparison_info = {'negate': False, 'operator': 'EQUALS', 'type': 'OS_TYPE', 'value': value}
 		conditions = [{'comparisonInfo': comparison_info, 'key': key}]
-		rules.append({'conditions': conditions, 'enabled': True, 'propagationTypes': propagation_types, 'type': 'PROCESS_GROUP', 'valueFormat': os})
+		rules.append({'conditions': conditions, 'enabled': True, 'propagationTypes': propagation_types, 'type': 'PROCESS_GROUP', 'valueFormat': os_type})
 
-	# print(rules)
 	payload = json.dumps({'name': name, 'rules': rules})
 
 	endpoint = '/api/config/v1/autoTags'
 
-	# delete(endpoint, 'a323b1be-ab6a-31b8-b880-2065fc8f51ec')
-	# time.sleep(10)
 	if offline:
 		save('auto-tag', name, payload)
 	else:
@@ -2060,7 +2087,7 @@ def delete_all_entities_with_fixed_ids():
 
 def delete_auto_tags_with_fixed_ids():
 	# Safety Check
-	if env != 'https://dad74988.live.dynatrace.com':
+	if env_name != 'Personal':
 		print('Error in "delete_auto_tags_with_fixed_ids()" method')
 		print('Not for use in this environment')
 		print('Env: ' + env)
@@ -2085,7 +2112,7 @@ def delete_auto_tags_with_fixed_ids():
 
 def delete_request_attributes_with_fixed_ids():
 	# Safety Check
-	if env != 'https://dad74988.live.dynatrace.com':
+	if env_name != 'Personal':
 		print('Error in "delete_request_attributes_with_fixed_ids()" method')
 		print('Not for use in this environment')
 		print('Env: ' + env)
@@ -2106,7 +2133,7 @@ def delete_request_attributes_with_fixed_ids():
 
 def delete_request_naming_rules_with_fixed_ids():
 	# Safety Check
-	if env != 'https://dad74988.live.dynatrace.com':
+	if env_name != 'Personal':
 		print('Error in "delete_request_naming_rules_with_fixed_ids()" method')
 		print('Not for use in this environment')
 		print('Env: ' + env)
@@ -2129,7 +2156,7 @@ def delete_request_naming_rules_with_fixed_ids():
 
 def delete_conditional_naming_rules_with_fixed_ids():
 	# Safety Check
-	if env != 'https://dad74988.live.dynatrace.com':
+	if env_name != 'Personal':
 		print('Error in "delete_conditional_naming_rules_with_fixed_ids()" method')
 		print('Not for use in this environment')
 		print('Env: ' + env)
@@ -2151,7 +2178,7 @@ def delete_conditional_naming_rules_with_fixed_ids():
 
 def delete_auto_tags():
 	# Safety Check
-	if env != 'https://dad74988.live.dynatrace.com':
+	if env_name != 'Personal':
 		print('Error in "delete_auto_tags()" method')
 		print('Not for use in this environment')
 		print('Env: ' + env)
@@ -2172,8 +2199,7 @@ def delete_auto_tags():
 
 def delete_beta_auto_tags():
 	# Safety Check
-	# if env != '':
-	if env != 'https://gja49320.live.dynatrace.com':
+	if env_name != 'Personal':
 		print('Error in "delete_beta_auto_tags()" method')
 		print('Not for use in this environment')
 		print('Env: ' + env)
@@ -2194,8 +2220,7 @@ def delete_beta_auto_tags():
 
 def delete_request_attributes():
 	# Safety Check
-	# if env != '':
-	if env != 'https://ism74021.live.dynatrace.com':
+	if env_name != 'Personal':
 		print('Error in "delete_request_attributes()" method')
 		print('Not for use in this environment')
 		print('Env: ' + env)
@@ -2214,7 +2239,55 @@ def delete_request_attributes():
 			delete(endpoint, object_id)
 
 
+def report_fixed_id_entities():
+	for entity_type, endpoint in [
+		('Auto Tags', '/api/config/v1/autoTags'),
+		('Request Attributes', '/api/config/v1/service/requestAttributes'),
+		('Request Naming Rules', '/api/config/v1/service/requestNaming'),
+		('Host Conditional Naming Rules', '/api/config/v1/conditionalNaming/host'),
+		('Process Group Conditional Naming Rules', '/api/config/v1/conditionalNaming/processGroup'),
+		('Service Conditional Naming Rules', '/api/config/v1/conditionalNaming/service'),
+	]:
+		report_fixed_id_entity(entity_type, endpoint)
+
+
+def report_fixed_id_entity(entity_type, endpoint):
+	print(f'{entity_type}:')
+	print_lines = []
+	r = get_object_list(endpoint)
+	entity_json = json.loads(r.text)
+	entity_list = entity_json.get('values')
+	for entity in entity_list:
+		object_id = entity.get('id')
+		name = entity.get('name')
+		if object_id.startswith('aaaaaaaa-bbbb-cccc-dddd'):
+			print_lines.append(name + ': ' + object_id)
+
+	for print_line in sorted(print_lines):
+		print(print_line)
+
+
+def dump_auto_tags():
+	print('Auto Tags:')
+	print_lines = []
+	endpoint = '/api/config/v1/autoTags'
+	r = get_object_list(endpoint)
+	request_attributes_json = json.loads(r.text)
+	request_attribute_list = request_attributes_json.get('values')
+	for request_attribute in request_attribute_list:
+		object_id = request_attribute.get('id')
+		name = request_attribute.get('name')
+		if object_id.startswith('aaaaaaaa-bbbb-cccc-dddd'):
+		# if name.lower() in str(fixed_request_attribute_ids).lower() and not object_id.startswith('aaaaaaaa-bbbb-cccc-dddd'):
+		# if not object_id.startswith('aaaaaaaa-bbbb-cccc-dddd'):
+			print_lines.append(name + ': ' + object_id)
+
+	for print_line in sorted(print_lines):
+		print(print_line)
+
+
 def dump_request_attributes():
+	print('Request Attributes:')
 	print_lines = []
 	endpoint = '/api/config/v1/service/requestAttributes'
 	r = get_object_list(endpoint)
@@ -2223,9 +2296,9 @@ def dump_request_attributes():
 	for request_attribute in request_attribute_list:
 		object_id = request_attribute.get('id')
 		name = request_attribute.get('name')
-		# if object_id.startswith('aaaaaaaa-bbbb-cccc-dddd'):
+		if object_id.startswith('aaaaaaaa-bbbb-cccc-dddd'):
 		# if name.lower() in str(fixed_request_attribute_ids).lower() and not object_id.startswith('aaaaaaaa-bbbb-cccc-dddd'):
-		if not object_id.startswith('aaaaaaaa-bbbb-cccc-dddd'):
+		# if not object_id.startswith('aaaaaaaa-bbbb-cccc-dddd'):
 			print_lines.append(name + ': ' + object_id)
 
 	for print_line in sorted(print_lines):
@@ -2233,6 +2306,7 @@ def dump_request_attributes():
 
 
 def dump_request_naming_rules_rules():
+	print('Request Naming Rules:')
 	print_lines = []
 	endpoint = '/api/config/v1/service/requestNaming'
 	r = get_object_list(endpoint)
@@ -2241,10 +2315,10 @@ def dump_request_naming_rules_rules():
 	for request_attribute in request_attribute_list:
 		object_id = request_attribute.get('id')
 		name = request_attribute.get('name')
+		if object_id.startswith('aaaaaaaa-bbbb-cccc-dddd'):
 		# if not object_id.startswith('aaaaaaaa-bbbb-cccc-dddd'):
-		# if object_id.startswith('aaaaaaaa-bbbb-cccc-dddd'):
 		# if name.lower() in str(fixed_request_attribute_ids).lower() and not object_id.startswith('aaaaaaaa-bbbb-cccc-dddd'):
-		if True:
+		# if True:
 			print_lines.append(name + ': ' + object_id)
 
 	for print_line in sorted(print_lines):

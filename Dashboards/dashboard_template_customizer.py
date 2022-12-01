@@ -7,7 +7,7 @@ from inspect import currentframe
 
 PREFIX = 'BETA:'
 # OWNER = 'somebody@example.com'
-OWNER = os.environ.get('DASHBOARD_OWNER_EMAIL')
+OWNER = os.environ.get('DASHBOARD_OWNER_EMAIL', 'somebody@example.com')
 SHARED = True
 PRESET = True
 

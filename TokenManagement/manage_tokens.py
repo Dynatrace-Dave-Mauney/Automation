@@ -7,14 +7,13 @@ import ssl
 
 endpoint = '/api/v2/apiTokens'
 
-# Environment Details (Short Name, Tenant, Token)
-environment_details = ('LCA_Prod', 'PROD_TENANT', 'TOKEN_MANAGEMENT_PROD_TOKEN')
-environment_details = ('LCA_Prep', 'PREP_TENANT', 'TOKEN_MANAGEMENT_PREP_TOKEN')
-environment_details = ('LCA_Dev', 'DEV_TENANT', 'TOKEN_MANAGEMENT_DEV_TOKEN')
+# env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'TOKEN_MANAGEMENT_PROD_TOKEN')
+# env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'TOKEN_MANAGEMENT_PREP_TOKEN')
+# env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'TOKEN_MANAGEMENT_DEV_TOKEN')
+env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'TOKEN_MANAGEMENT_PERSONAL_TOKEN')
 
-env_name = environment_details[0]
-tenant = os.environ.get(environment_details[1])
-token = os.environ.get(environment_details[2])
+tenant = os.environ.get(tenant_key)
+token = os.environ.get(token_key)
 env = f'https://{tenant}.live.dynatrace.com'
 
 def post(payload):
@@ -255,10 +254,12 @@ def process():
 	print('Environment:     ' + env_name)
 	print('Environment URL: ' + env)
 
+	exit(1234)
+
 	# Testing
 
 	# # Test token creation
-	# test_token = post_test_token()
+	test_token = post_test_token()
 	# monaco_token = post_monaco()
 	# reporting_token = post_reporting()
 	# terraform_read_token = post_terraform_read()
@@ -278,7 +279,7 @@ def process():
 	# print('lookup_by_secret:', lookup_by_secret(test_token))
 	#
 	# # Test deleting tokens
-	# delete(test_token)
+	delete(test_token)
 	# delete(monaco_token)
 	# delete(reporting_token)
 	# delete(terraform_read_token)

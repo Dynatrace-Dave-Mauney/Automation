@@ -4,8 +4,8 @@ import os
 import shutil
 from inspect import currentframe
 
-DASHBOARD_INPUT_PATH = 'Templates/Overview'
-DASHBOARD_OUTPUT_PATH = 'Custom/Renamed'
+DASHBOARD_INPUT_PATH = '../$Test/Dashboards/Dev'
+DASHBOARD_OUTPUT_PATH = '../$Test/Dashboards/Renamed'
 
 confirmation_required = True
 remove_directory_at_startup = True
