@@ -1,0 +1,57 @@
+{
+  "enabled": true,
+  "namingPattern": "{RestURLMinusTrailingNumbers}",
+  "conditions": [
+    {
+      "attribute": "WEBREQUEST_URL_PATH",
+      "comparisonInfo": {
+        "type": "STRING",
+        "comparison": "REGEX_MATCHES",
+        "value": "\/rest.*?\/[0-9]+?$",
+        "negate": false,
+        "caseSensitive": false
+      }
+	}
+  ],
+  "placeholders": [
+    {
+      "name": "RestURLMinusTrailingNumbers",
+      "attribute": "WEBREQUEST_URL_PATH",
+	  "kind": "REGEX_EXTRACTION",
+	  "delimiterOrRegex": "(.*?)\/[0-9]+?" 
+	}
+  ]
+}
+
+{
+  "enabled": true,
+  "namingPattern": "{RestURLUntilNumbers}{RestURLAfterNumbers}",
+  "conditions": [
+    {
+      "attribute": "WEBREQUEST_URL_PATH",
+      "comparisonInfo": {
+        "type": "STRING",
+        "comparison": "REGEX_MATCHES",
+        "value": "\/rest.*?\/[0-9]+?\/",
+        "negate": false,
+        "caseSensitive": false
+      }
+	}
+  ],
+  "placeholders": [
+    {
+      "name": "RestURLUntilNumbers",
+      "attribute": "WEBREQUEST_URL_PATH",
+	  "kind": "REGEX_EXTRACTION",
+	  "delimiterOrRegex": "(.*?)\/[0-9]+?" 
+	},
+    {
+      "name": "RestURLAfterNumbers",
+      "attribute": "WEBREQUEST_URL_PATH",
+	  "kind": "REGEX_EXTRACTION",
+	  "delimiterOrRegex": "\/[0-9]+?(\/.*?)" 
+	}
+  ]
+}
+
+

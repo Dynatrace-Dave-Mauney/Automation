@@ -1,0 +1,33 @@
+Instance metadata
+=================
+Instance metadata is available at http://169.254.169.254/latest/meta-data/ (the trailing “/” is
+required).
+• Instance user data is available at: http://169.254.169.254/latest/user-data.
+• The IP address 169.254.169.254 is a link-local address and is valid only from the instance.
+• On Linux you can use the curl command to view metadata and userdata, e.g.
+"curl http://169.254.169.254/latest/meta-data/".
+• The Instance Metadata Query tool allows you to query the instance metadata without having
+to type out the full URI or category names.
+wget https://s3.amazonaws.com/ec2metadata/ec2-metadata
+chmod +x ec2-metadata
+./ec2-metadata --help
+./ec2-metadata -> will return all the metadata (as will --all)
+
+User Data
+=========
+Example:
+#!/bin/bash
+yum update -y
+yum install httpd -y
+systemctl start httpd
+systemctl enable httpd
+cd /var/www/html
+echo "This is a test page" > index.html
+
+To view userdata: "curl http://169.254.169.254/latest/user-data/".
+
+Stress Tool for Testing CPU Alerts
+==================================
+sudo amazon-linux-extras install epel -y
+sudo yum install stress -y
+stress -c 8

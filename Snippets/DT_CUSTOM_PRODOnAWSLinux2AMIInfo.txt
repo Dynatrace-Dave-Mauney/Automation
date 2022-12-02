@@ -1,0 +1,30 @@
+#systemd tomcat and http examples for DT_CUSTOM_PROP on AWS Linux 2 AMI 
+
+#install tomcat and examples
+yum install tomcat
+yum install tomcat-webapps
+#find the tomcat systemd unit
+find . -name tomcat.service
+#edit the tomcat systemd unit
+vi ./usr/lib/systemd/system/tomcat.service
+#edit the file it points using the "EnvironmentFile" entry
+vi /etc/sysconfig/tomcat
+#add an entry similar to this line
+DT_CUSTOM_PROP="ProcessFunction=AppServer Env=Play Cloud=AWS Account=Outlook"
+#restart the tomcat service
+service tomcat restart
+
+#install apache httpd
+yum install httpd
+#find the httpd systemd unit
+find . -name httpd.service
+./usr/lib/systemd/system/httpd.service
+#edit the httpd systemd unit
+vi ./usr/lib/systemd/system/httpd.service
+#see notes about following command and then invoke it
+systemctl edit httpd
+#add the following lines (and ctrl-x plus Y to save and exit the file)
+[Service]
+Environment="DT_CUSTOM_PROP=ProcessFunction=WebServer Env=Play Cloud=AWS Account=Outlook"
+#restart the httpd service
+service httpd restart
