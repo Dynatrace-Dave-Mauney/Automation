@@ -16,6 +16,7 @@ tenant = os.environ.get(tenant_key)
 token = os.environ.get(token_key)
 env = f'https://{tenant}.live.dynatrace.com'
 
+
 def post(payload):
 	json_dict = json.loads(payload)
 	json_data = json.dumps(json_dict, indent=4, sort_keys=False)
@@ -75,9 +76,10 @@ def put(token_id, payload):
 
 def get(token_id):
 	token_split = token_id.split('.')
-	token_key = token_split[0] + '.' + token_split[1]
+	shortened_token_key = token_split[0] + '.' + token_split[1]
+
 	try:
-		full_url = env + endpoint + '/' + token_key
+		full_url = env + endpoint + '/' + shortened_token_key
 		resp = requests.get(full_url, headers={'Authorization': 'Api-Token ' + token})
 		if resp.status_code != 200:
 			print('REST API Call Failed!')
@@ -116,7 +118,9 @@ def delete(token_id):
 
 def post_robot_admin():
 	token_name = 'Robot Admin'
-	return post('{"name":"' + token_name + '","scopes":["activeGates.read","activeGateTokenManagement.read","apiTokens.read","auditLogs.read","credentialVault.read","entities.read","events.read","extensionConfigurations.read","extensionEnvironment.read","extensions.read","geographicRegions.read","hub.read","metrics.read","networkZones.read","problems.read","releases.read","settings.read","settings.write","slo.read","syntheticExecutions.read","syntheticLocations.read","CaptureRequestData","DataExport","DataImport","DssFileManagement","DTAQLAccess","ExternalSyntheticIntegration","ReadConfig","ReadSyntheticData","WriteConfig"]}')
+	# return post('{"name":"' + token_name + '","scopes":["activeGates.read","activeGateTokenManagement.read","apiTokens.read","auditLogs.read","credentialVault.read","entities.read","events.read","extensionConfigurations.read","extensionEnvironment.read","extensions.read","geographicRegions.read","hub.read","metrics.read","networkZones.read","problems.read","releases.read","settings.read","settings.write","slo.read","syntheticExecutions.read","syntheticLocations.read","CaptureRequestData","DataExport","DataImport","DssFileManagement","DTAQLAccess","ExternalSyntheticIntegration","ReadConfig","ReadSyntheticData","WriteConfig"]}')
+	# v2: added LogExport
+	return post('{"name":"' + token_name + '","scopes":["activeGates.read","activeGateTokenManagement.read","apiTokens.read","auditLogs.read","credentialVault.read","entities.read","events.read","extensionConfigurations.read","extensionEnvironment.read","extensions.read","geographicRegions.read","hub.read","metrics.read","networkZones.read","problems.read","releases.read","settings.read","settings.write","slo.read","syntheticExecutions.read","syntheticLocations.read","CaptureRequestData","DataExport","DataImport","DssFileManagement","DTAQLAccess","ExternalSyntheticIntegration","LogExport","ReadConfig","ReadSyntheticData","WriteConfig"]}')
 
 
 def post_monaco():
@@ -181,7 +185,7 @@ def rotate_token(token_id):
 	old_token.pop('creationDate')
 	new_token = post(json.dumps(old_token))
 	delete(token_id)
-	print('Rotatated tokens: ' + token_id + ' -> ' + new_token)
+	print('Rotated tokens: ' + token_id + ' -> ' + new_token)
 	return new_token
 
 
@@ -253,6 +257,8 @@ def process():
 
 	print('Environment:     ' + env_name)
 	print('Environment URL: ' + env)
+
+	post_robot_admin()
 
 	exit(1234)
 
