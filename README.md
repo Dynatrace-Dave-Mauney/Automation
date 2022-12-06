@@ -105,7 +105,7 @@ This subproject contains some scripts for reference:
 
 ## Snippets
 
-This subproject contains various code snippets and notes for quick reference:
+This subproject contains various code snippets and notes for quick reference.
 
 ## TokenManagement
 
@@ -141,4 +141,14 @@ By default, the process method should run the following methods to simply create
 test_token = post_test_token()
 delete(test_token)
 ```
+
+## TokenManagement
+
+This subproject facilitates running various simple tools.
+
+Currently, there are tools for 
+
+- Entities
+- Metrics
+- Settings 2.0
 
