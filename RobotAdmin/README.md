@@ -27,4 +27,4 @@ For example, to create all supported automatic tags:
   exit(123)
 ```
 
-See "README.txt" for more details.
+See [README.txt](README.txt) for more details.
