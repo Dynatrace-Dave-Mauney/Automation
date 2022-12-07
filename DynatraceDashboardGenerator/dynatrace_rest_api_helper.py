@@ -70,7 +70,7 @@ def process(arguments):
     test_entity_types(url, token)
 
     print('url: ' + url)
-    print('token: ' + token[0:4] + '******************' + ' (masked for security)')
+    print('token: ' + token[0:31] + '.*' + ' (masked for security)')
 
 
 def main(arguments):

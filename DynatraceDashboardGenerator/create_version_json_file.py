@@ -29,7 +29,7 @@ def process(arguments):
     token = arguments[2]
 
     print('url: ' + url)
-    print('token: ' + token[0:4] + '******************' + ' (masked for security)')
+    print('token: ' + token[0:31] + '.*' + ' (masked for security)')
 
     write_version_file(url, token)
 
