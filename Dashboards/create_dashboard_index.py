@@ -8,7 +8,8 @@ import pathlib
 
 
 def index_dashboards():
-    file = pathlib.Path('../$Test/Dashboards/Index/dashboard_index.txt')
+    # file = pathlib.Path('../$Test/Dashboards/Index/dashboard_index.txt')
+    file = pathlib.Path('Custom/Overview/dashboard_index.txt')
     outfile = codecs.open(str(file), 'w', encoding='utf-8')
 
     # path = './????????-????-????-????-????????????.json'

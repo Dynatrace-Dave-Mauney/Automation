@@ -44,6 +44,8 @@ remove_directory_at_startup = True
 
 
 def customize_dashboards():
+    print(f'new owner: {OWNER}')
+
     confirm('Customize dashboards from ' + DASHBOARD_TEMPLATE_PATH + ' to ' + DASHBOARD_CUSTOM_PATH)
     initialize()
 
