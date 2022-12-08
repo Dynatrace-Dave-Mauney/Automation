@@ -6,4 +6,6 @@ Backups can be taken in two formats:  individual JSON files in subdirectories or
 
 If the YAML file is created, it can later be used for restores or updates either in mass or for individual entities.
 
-The restore process has not been fully tested, so caution is advised when using it.
+The restore process is intrinsically dangerous, so I am not committing it to the public repo.
+
+If you have an urgent need for a restore process, please contact me at Dynatrace (dave.mauney at dynatrace dot com).

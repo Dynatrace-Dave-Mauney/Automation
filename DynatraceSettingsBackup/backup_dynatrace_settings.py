@@ -21,14 +21,14 @@ import shutil
 import ssl
 import yaml
 
-# Environment Details (Short Name, Tenant, Token)
-# environment_details = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-# environment_details = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-environment_details = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
+# env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
+# env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
+# env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
+# env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
+env_name, tenant_key, token_key = ('FreeTrial1', 'FREETRIAL1_TENANT', 'ROBOT_ADMIN_FREETRIAL1_TOKEN')
 
-env_name = environment_details[0]
-tenant = os.environ.get(environment_details[1])
-token = os.environ.get(environment_details[2])
+tenant = os.environ.get(tenant_key)
+token = os.environ.get(token_key)
 env = f'https://{tenant}.live.dynatrace.com'
 
 backup_directory_path = '../$Output/Backup_' + env_name
@@ -59,7 +59,7 @@ def initialize():
 
 
 def remove_directory(path):
-    print('remove_directory(' + path + ')')
+    # print('remove_directory(' + path + ')')
 
     try:
         shutil.rmtree(path, ignore_errors=False)
@@ -67,23 +67,12 @@ def remove_directory(path):
     except OSError:
         print('Directory %s does not exist' % path)
     else:
-        print('Removed the directory %s ' % path)
+        pass
+        # print('Removed the directory %s ' % path)
 
 
-# def makedir(path):
-#     print('makedir(' + path + ')')
-#
-#     try:
-#         os.mkdir(path)
-#     except OSError:
-#         print('Creation of the directory %s failed' % path)
-#         exit()
-#     else:
-#         print('Successfully created the directory %s ' % path)
-#
-#
 def save_entity(entity_type):
-    print('save_entity(' + entity_type + ')')
+    # print('save_entity(' + entity_type + ')')
 
     if '/binary' in entity_type:
         print('Skipping binary entity!')
@@ -94,7 +83,7 @@ def save_entity(entity_type):
         if resp.status_code != 200:
             print('REST API Call Failed!')
             print(f'GET {full_url} {resp.status_code} - {resp.reason}')
-            print(resp.text)
+            # print(resp.text)
         else:
             save(entity_type, resp.json())
     except ssl.SSLError:
@@ -103,7 +92,7 @@ def save_entity(entity_type):
 
 
 def save_list(list_type):
-    print('save_list(' + list_type + ')')
+    # print('save_list(' + list_type + ')')
     try:
         full_url = env + '/api/config/v1' + list_type
         resp = requests.get(full_url, headers={'Authorization': 'Api-Token ' + token})
@@ -111,7 +100,7 @@ def save_list(list_type):
         if resp.status_code != 200:
             print('REST API Call Failed!')
             print(f'GET {full_url} {resp.status_code} - {resp.reason}')
-            print(resp.text)
+            # print(resp.text)
         else:
             resp_json = resp.json()
             inner_key = 'values'
@@ -144,7 +133,7 @@ def save_list(list_type):
                         if resp.status_code != 200:
                             print('REST API Call Failed!')
                             print(f'GET {full_url} {resp.status_code} - {resp.reason}')
-                            print(resp.text)
+                            # print(resp.text)
                         else:
                             save(list_type, resp.json())
     except ssl.SSLError:
@@ -153,13 +142,13 @@ def save_list(list_type):
 
 
 def get_rest_api_json(endpoint, params):
-    print('get_rest_api_json(' + env + ', ' + token + ', ' + endpoint + ', ' + params + ')')
+    # print('get_rest_api_json(' + env + ', ' + token + ', ' + endpoint + ', ' + params + ')')
     full_url = env + endpoint
     resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
     if resp.status_code != 200 and resp.status_code != 404:
         print('REST API Call Failed!')
         print(f'GET {full_url} {params} {resp.status_code} - {resp.reason}')
-        print(resp.text)
+        # print(resp.text)
         exit(get_linenumber())
 
     json_data = resp.json()
@@ -181,7 +170,7 @@ def get_rest_api_json(endpoint, params):
         if resp.status_code != 200:
             print('Paginated REST API Call Failed!')
             print(f'GET {full_url} {resp.status_code} - {resp.reason}')
-            print(resp.text)
+            # print(resp.text)
             exit(get_linenumber())
 
         json_data = resp.json()
@@ -193,7 +182,7 @@ def get_rest_api_json(endpoint, params):
 
 
 def save_configuration_api_settings():
-    print('save_configuration_api_settings()')
+    # print('save_configuration_api_settings()')
 
     global extensions_technology_list
 
@@ -311,7 +300,7 @@ def save_configuration_api_settings():
 
 
 def load_child_endpoints(endpoint, endpoint_methods, paths):
-    print('load_child_endpoints(' + endpoint + ', ' + str(endpoint_methods) + ', ' + str(paths) + ')')
+    # print('load_child_endpoints(' + endpoint + ', ' + str(endpoint_methods) + ', ' + str(paths) + ')')
     global child_endpoints_covered_by_lists
     global child_endpoints_not_covered_by_lists
 
@@ -358,7 +347,7 @@ def load_child_endpoints(endpoint, endpoint_methods, paths):
 
 
 def process_endpoint(endpoint):
-    print('process_endpoint(' + endpoint + ')')
+    # print('process_endpoint(' + endpoint + ')')
     # /calculatedMetrics/log is obsolete if new logging is used (400 - Bad Request)
     # /service/ibmMQTracing/imsEntryQueue is obsolete (410 - Gone)
     # /service/ibmMQTracing/queueManager is obsolete (410 - Gone)
@@ -414,7 +403,7 @@ def process_endpoint(endpoint):
 
 
 def save(entity_type, yaml_dict):
-    print('save(' + entity_type + ',' + str(yaml_dict))
+    # print('save(' + entity_type + ',' + str(yaml_dict))
     # Some entity types (like '/aws/credentials') may contain an empty string
     if isinstance(yaml_dict, dict):
         yaml_dict['endpoint'] = entity_type
@@ -429,7 +418,8 @@ def save(entity_type, yaml_dict):
     configs.append(yaml_dict)
 
     # The 'endpoint' field is needed for single-file YAML, but not for JSON files
-    yaml_dict.pop('endpoint')
+    # This code is for YAML so it needs to be left here...
+    # yaml_dict.pop('endpoint')
     write_configuration_api_json(entity_type, yaml_dict)
 
     if has_children(entity_type):
@@ -439,7 +429,7 @@ def save(entity_type, yaml_dict):
 
 
 def has_children(entity_type):
-    print('has_children(' + entity_type + ')')
+    # print('has_children(' + entity_type + ')')
     for endpoint in child_endpoints_not_covered_by_lists:
         if endpoint.startswith(entity_type):
             return True
@@ -447,7 +437,7 @@ def has_children(entity_type):
 
 
 def get_child_endpoints(entity_type):
-    print('get_child_endpoints(' + entity_type + ')')
+    # print('get_child_endpoints(' + entity_type + ')')
     endpoints = []
     for endpoint in child_endpoints_not_covered_by_lists:
         if endpoint.startswith(entity_type):
@@ -456,7 +446,7 @@ def get_child_endpoints(entity_type):
 
 
 def save_child_endpoints(parent_entity_type, parent_yaml_dict):
-    print('save_child_endpoints(' + parent_entity_type + ', ' + str(parent_yaml_dict) + ')')
+    # print('save_child_endpoints(' + parent_entity_type + ', ' + str(parent_yaml_dict) + ')')
     endpoint = ''
     for child_endpoint in get_child_endpoints(parent_entity_type):
         # performance_skip_list = ['/extensions/{technology}/availableHosts', '/extensions/{id}/instances/{configurationId}']
@@ -476,7 +466,7 @@ def save_child_endpoints(parent_entity_type, parent_yaml_dict):
             if not parent_id:
                 print('id not found for parent_entity_type: ' + parent_entity_type)
                 print('id_key: ' + id_key)
-                print('parent_yaml_dict: ' + str(parent_yaml_dict))
+                # print('parent_yaml_dict: ' + str(parent_yaml_dict))
                 exit(get_linenumber())
             if child_endpoint == '/extensions/{technology}/availableHosts':
                 for extensions_technology in extensions_technology_list:
@@ -490,7 +480,7 @@ def save_child_endpoints(parent_entity_type, parent_yaml_dict):
 
 
 def write_yaml(filename):
-    print('write_yaml(' + filename + ')')
+    # print('write_yaml(' + filename + ')')
     global configs
     main_template = {'tenant': env_name, 'action': 'validate', 'configs': []}
     yaml_dict = copy.deepcopy(main_template)
@@ -501,7 +491,7 @@ def write_yaml(filename):
 
 
 def write_configuration_api_json(entity_type, json_dict):
-    print('write_configuration_api_json(' + entity_type + ',' + str(json_dict) + ')')
+    # print('write_configuration_api_json(' + entity_type + ',' + str(json_dict) + ')')
     directory_path = backup_directory_path + '/api/config/v1' + entity_type + '/'
 
     if entity_type.startswith('/applications/web/') or entity_type.startswith('/applications/mobile/'):
@@ -530,7 +520,7 @@ def write_configuration_api_json(entity_type, json_dict):
 
 
 def save_settings20_objects():
-    print('save_settings20_objects()')
+    # print('save_settings20_objects()')
     filename = backup_directory_path + '/' + settings20_yaml_file_name
     main_template = {'tenant': env_name, 'action': 'validate', 'configs': []}
 
@@ -569,7 +559,7 @@ def save_settings20_objects():
             setting_object = get_rest_api_json(endpoint, params)[0]
             items = setting_object.get('items')
             for item in items:
-                print(item)
+                # print(item)
                 if schema_id == 'builtin:logmonitoring.log-dpp-rules' and '[Built-in]' in item.get('value').get('ruleName', ''):
                     print('Skipping ' + schema_id + ' rule ' + item.get('value').get('ruleName', ''))
                 else:
@@ -587,7 +577,7 @@ def save_settings20_objects():
 
 
 def write_settings20_json(schema_id, json_dict):
-    print('write_settings20_json(' + schema_id + ',' + str(json_dict) + ')')
+    # print('write_settings20_json(' + schema_id + ',' + str(json_dict) + ')')
     dir_name = schema_id.replace(':', '.')
     save_path = backup_directory_path + '/api/v2/settings/objects/' + dir_name
 
@@ -599,7 +589,7 @@ def write_settings20_json(schema_id, json_dict):
 
 
 def write_json(directory_path, filename, json_dict):
-    print('write_json(' + directory_path + ',' + filename + ',' + str(json_dict) + ')')
+    # print('write_json(' + directory_path + ',' + filename + ',' + str(json_dict) + ')')
     # print(directory_path)
     # print(filename)
     # print(json_dict)
@@ -615,18 +605,19 @@ def write_json(directory_path, filename, json_dict):
 
 
 def make_directory(path):
-    print('make_directory(' + path + ')')
+    # print('make_directory(' + path + ')')
     try:
         os.makedirs(path)
     except OSError:
         print('Creation of the directory %s failed' % path)
         exit()
     else:
-        print('Successfully created the directory %s ' % path)
+        pass
+        # print('Successfully created the directory %s ' % path)
 
 
 def confirm(message):
-    print('confirm(' + message + ')')
+    # print('confirm(' + message + ')')
     if confirmation_required:
         proceed = input('%s (Y/n) ' % message).upper() == 'Y'
         if not proceed:
@@ -634,7 +625,7 @@ def confirm(message):
 
 
 def get_linenumber():
-    print('get_linenumber()')
+    # print('get_linenumber()')
     cf = currentframe()
     return cf.f_back.f_lineno
 
