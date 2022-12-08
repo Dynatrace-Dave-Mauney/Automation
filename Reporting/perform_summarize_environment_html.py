@@ -43,10 +43,12 @@ import report_synthetic_details
 import report_synthetic_http_check_details
 import report_synthetic_location_details
 
-env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
+# env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
 # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
 # env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
 # env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
+env_name, tenant_key, token_key = ('FreeTrial1', 'FREETRIAL1_TENANT', 'ROBOT_ADMIN_FREETRIAL1_TOKEN')
+
 
 tenant = os.environ.get(tenant_key)
 token = os.environ.get(token_key)
@@ -340,14 +342,14 @@ def process():
 		write_findings(heading)
 
 		heading = 'Dashboards Summary'
-		write_h3_heading(heading)
-		write_line('Skipped because it takes a long time to run and sometimes times out.  Needs optimization.')
-		write_blank_line()
-		write_findings(heading)
 		# write_h3_heading(heading)
-		# write_summary(report_dashboard_details.summarize)
+		# write_line('Skipped because it takes a long time to run and sometimes times out.  Needs optimization.')
 		# write_blank_line()
 		# write_findings(heading)
+		write_h3_heading(heading)
+		write_summary(report_dashboard_details.summarize)
+		write_blank_line()
+		write_findings(heading)
 
 		heading = 'Service Settings Summary'
 		write_h3_heading(heading)

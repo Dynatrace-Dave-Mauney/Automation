@@ -54,9 +54,11 @@ def process(env, token, print_mode):
         print('Service Type Counts:             ' + counts_service_type_str)
         print('Service Technology Types Counts: ' + counts_service_technology_types_str)
 
-    summary.append('There are ' + str(count_total) + ' services currently being monitored.  ' +
-                   'The Service Type breakdown is ' + counts_service_type_str + '.  ' +
-                   'The Service Technology Type breakdown is ' + counts_service_technology_types_str + '.')
+    summary.append('There are ' + str(count_total) + ' services currently being monitored.  ')
+    if count_total > 0:
+        summary.append('The Service Type breakdown is ' + counts_service_type_str + '.  ')
+        if count_total > 0:
+            summary.append('The Service Technology Type breakdown is ' + counts_service_technology_types_str + '.')
 
     if print_mode:
         print_list(summary)

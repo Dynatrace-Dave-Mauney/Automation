@@ -99,13 +99,14 @@ def process(env, token, print_mode):
         print('Network Zone Counts:    ' + counts_network_zone_str)
         print('State Counts:           ' + counts_state_str)
 
-    summary.append('There are ' + str(count_total) + ' hosts currently being monitored.  ' +
-                   str(count_full_stack) + ' hosts are being monitored in full stack mode and ' +
-                   str(count_infra_only) + ' hosts are being monitored in infrastructure only mode. ' +
-                   'The operating systems breakdown is ' + counts_os_str + '.  ' +
-                   'The Hypervisor breakdown is ' + counts_hypervisor_type_str + '.  ' +
-                   'The Network Zone breakdown is ' + counts_network_zone_str + '.  ' +
-                   'The Agent State breakdown is ' + counts_state_str + '.  ')
+    summary.append('There are ' + str(count_total) + ' hosts currently being monitored.  ')
+    if count_total > 0:
+        summary.append(str(count_full_stack) + ' hosts are being monitored in full stack mode and ' +
+        str(count_infra_only) + ' hosts are being monitored in infrastructure only mode. ' +
+        'The operating systems breakdown is ' + counts_os_str + '.  ' +
+        'The Hypervisor breakdown is ' + counts_hypervisor_type_str + '.  ' +
+        'The Network Zone breakdown is ' + counts_network_zone_str + '.  ' +
+        'The Agent State breakdown is ' + counts_state_str + '.  ')
 
     if print_mode:
         print_list(summary)

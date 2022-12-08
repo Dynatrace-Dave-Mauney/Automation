@@ -70,8 +70,9 @@ def process(env, token, print_mode):
         print('Total Process Groups: ' + str(count_total))
         print('Primary Icon Type Counts: ' + counts_primary_icon_type_str)
 
-    summary.append('There are ' + str(count_total) + ' process groups being monitored.  ' +
-                   'The primary technology breakdown is ' + counts_primary_icon_type_str + '.')
+    summary.append('There are ' + str(count_total) + ' process groups being monitored.  ')
+    if count_total > 0:
+        summary.append('The primary technology breakdown is ' + counts_primary_icon_type_str + '.')
 
     if print_mode:
         print_list(summary)

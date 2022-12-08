@@ -46,14 +46,15 @@ def process(env, token, print_mode):
 
     summary.append('There are ' + str(count_total) + ' kubernetes clusters currently configured.')
 
-    if len(events_not_enabled) > 0:
-        events_not_enabled_string = str(events_not_enabled)
-        events_not_enabled_string = events_not_enabled_string.replace('[', '')
-        events_not_enabled_string = events_not_enabled_string.replace(']', '')
-        events_not_enabled_string = events_not_enabled_string.replace("'", "")
-        summary.append('The following ' + str(len(events_not_enabled)) + ' clusters do not have events integration enabled: ' + events_not_enabled_string)
-    else:
-        summary.append('All kubernetes clusters have events integration enabled as per expectations.')
+    if count_total > 0:
+        if len(events_not_enabled) > 0:
+            events_not_enabled_string = str(events_not_enabled)
+            events_not_enabled_string = events_not_enabled_string.replace('[', '')
+            events_not_enabled_string = events_not_enabled_string.replace(']', '')
+            events_not_enabled_string = events_not_enabled_string.replace("'", "")
+            summary.append('The following ' + str(len(events_not_enabled)) + ' clusters do not have events integration enabled: ' + events_not_enabled_string)
+        else:
+            summary.append('All kubernetes clusters have events integration enabled as per expectations.')
 
     if print_mode:
         print_list(summary)

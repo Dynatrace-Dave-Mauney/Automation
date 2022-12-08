@@ -68,7 +68,8 @@ def process(env, token, print_mode):
     counts_event_type_str = sort_and_stringify_dictionary_items(counts_event_type)
 
     summary.append('There are ' + str(count_total) + ' audit log entries ' + timeframe_string + '.')
-    summary.append('The entity type breakdown is ' + counts_event_type_str)
+    if count_total > 0:
+        summary.append('The entity type breakdown is ' + counts_event_type_str)
 
     summary.append('')
     summary.append('Unique category and entity ID combinations for CREATE and UPDATE event types: ')

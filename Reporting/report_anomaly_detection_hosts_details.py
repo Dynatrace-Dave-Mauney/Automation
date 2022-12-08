@@ -22,11 +22,11 @@ def process(env, token, print_mode):
     default_out_of_threads_detection = True
     default_network_dropped_packets_detection = True
     default_network_errors_detection = True
-    default_high_network_detection = True
-    default_network_tcp_problems_detection = True
-    default_network_high_retransmission_detection = True
+    default_high_network_detection = False
+    default_network_tcp_problems_detection = False
+    default_network_high_retransmission_detection = False
     default_disk_low_space_detection = True
-    default_disk_slow_writes_and_reads_detection = True
+    default_disk_slow_writes_and_reads_detection = False
     default_disk_low_inodes_detection = True
 
     connection_lost_detection = anomaly_json.get('connectionLostDetection').get('enabled')

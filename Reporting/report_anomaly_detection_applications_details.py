@@ -34,7 +34,9 @@ def process(env, token, print_mode):
     default_traffic_spike_percent = None
 
     default_failure_rate_increase_detection_mode = 'DETECT_AUTOMATICALLY'
-    default_failing_service_call_percentage_increase_absolute = 5
+    # Old default: 5 Currently: 0
+    # default_failing_service_call_percentage_increase_absolute = 5
+    default_failing_service_call_percentage_increase_absolute = 0
     default_failing_service_call_percentage_increase_relative = 50
 
     response_time_degradation = anomaly_json.get('responseTimeDegradation')

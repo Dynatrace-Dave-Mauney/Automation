@@ -50,8 +50,9 @@ def process(env, token, print_mode):
         print('Enabled Maintenance Windows:  ' + str(count_enabled))
         print('Disabled Maintenance Windows: ' + str(count_disabled))
 
-    summary.append('There are ' + str(count_total) + ' maintenance windows currently defined.  ' + str(count_enabled) +
-                   ' are currently enabled and ' + str(count_disabled) + ' are currently disabled.')
+    summary.append('There are ' + str(count_total) + ' maintenance windows currently defined.')
+    if count_total > 0:
+        summary.append(str(count_enabled) + ' are currently enabled and ' + str(count_disabled) + ' are currently disabled.')
 
     if print_mode:
         print_list(summary)
@@ -73,6 +74,7 @@ def main():
     # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
     # env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
     # env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
+    env_name, tenant_key, token_key = ('FreeTrial1', 'FREETRIAL1_TENANT', 'ROBOT_ADMIN_FREETRIAL1_TOKEN')
 
     tenant = os.environ.get(tenant_key)
     token = os.environ.get(token_key)

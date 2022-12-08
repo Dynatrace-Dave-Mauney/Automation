@@ -43,8 +43,9 @@ def process(env, token, print_mode):
         print('Total Host Groups:          ' + str(count_total))
         print('Total Hosts in Host Groups: ' + str(count_total_hosts_in_groups))
 
-    summary.append('There are ' + str(count_total) + ' hosts groups currently defined.  ' +
-                   str(count_total_hosts_in_groups) + ' hosts currently belong to a host group.')
+    summary.append('There are ' + str(count_total) + ' hosts groups currently defined.  ')
+    if count_total > 0:
+        summary.append(str(count_total_hosts_in_groups) + ' hosts currently belong to a host group.')
 
     if print_mode:
         print_list(summary)

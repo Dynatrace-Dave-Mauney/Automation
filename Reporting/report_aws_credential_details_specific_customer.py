@@ -63,10 +63,12 @@ def process(env, token, print_mode):
         print('Supporting Service Metric Counts: ' + counts_supporting_service_metric_details_str)
 
     summary.append('There are ' + str(count_total) + ' AWS accounts currently configured.')
-    summary.append('Accounts with Supporting Service monitoring: ' + str(count_with_supporting_services) + '.')
-    summary.append('Accounts without Supporting Service monitoring: ' + str(count_without_supporting_services) + '.')
-    summary.append('The Supporting Service breakdown is ' + counts_supporting_service_str + '.')
-    summary.append('The Supporting Service metric breakdown is ' + counts_supporting_service_metric_details_str + '.')
+    if count_total > 0:
+        summary.append('Accounts with Supporting Service monitoring: ' + str(count_with_supporting_services) + '.')
+        summary.append('Accounts without Supporting Service monitoring: ' + str(count_without_supporting_services) + '.')
+    if count_with_supporting_services > 0:
+        summary.append('The Supporting Service breakdown is ' + counts_supporting_service_str + '.')
+        summary.append('The Supporting Service metric breakdown is ' + counts_supporting_service_metric_details_str + '.')
 
     if print_mode:
         print_list(summary)
