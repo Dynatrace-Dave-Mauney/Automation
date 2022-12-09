@@ -1,3 +1,4 @@
+import math
 import os
 import requests
 import sys
@@ -10,7 +11,7 @@ def get_hosts(env, token):
     # print(f'get_entity_types({env}, {token})')
     endpoint = '/api/v2/entities'
     entity_selector = 'type(HOST)'
-    fields = '+properties.monitoringMode, +properties.state,+toRelationships'
+    fields = '+properties.monitoringMode,+properties.state,+properties.physicalMemory,+toRelationships'
     params = '?pageSize=500&entitySelector=' + urllib.parse.quote(entity_selector) + '&fields=' + urllib.parse.quote(fields)
     hosts = get_rest_api_json(env, token, endpoint, params)
     return hosts
@@ -20,8 +21,8 @@ def write_infra_only_candidate_hosts_file(env_name, env, token):
     print(f'Candidates for infrastructure-only monitoring for {env_name}')
     output_lines = []
     tenant_id = env.replace("https://", '').replace(".live.dynatrace.com", "")
-    file_name = PATH + '/' + tenant_id + '_list_infra_only_candidate_hosts.html'
-    with open(file_name, 'w') as file:
+    file_name = PATH + '/' + env_name + '_list_infra_only_candidate_hosts.html'
+    with open(file_name, 'w', encoding='UTF-8') as file:
         file.write('<html>\n')
         hosts = get_hosts(env, token)
         for entities in hosts:
@@ -41,12 +42,27 @@ def write_infra_only_candidate_hosts_file(env_name, env, token):
                         if service_count == 0:
                             entity_id = host_json["entityId"]
                             display_name = host_json["displayName"]
-                            print_output = display_name + " (" + entity_id + " " + monitoring_mode + " " + state + ")"
-                            print(print_output)
+                            physical_memory = host_json.get("properties").get("physicalMemory", "0")
+                            physical_memory_gb = int(physical_memory) / 1000000000
+                            # Host Unit Calculation:
+                            # https://www.dynatrace.com/support/help/shortlink/application-and-infrastructure-host-units#host-units
+                            if physical_memory_gb <= 1.6:
+                                estimated_host_units = .10
+                            else:
+                                if physical_memory_gb <= 4:
+                                    estimated_host_units = .25
+                                else:
+                                    if physical_memory_gb <= 8:
+                                        estimated_host_units = .5
+                                    else:
+                                        estimated_host_units = math.ceil(physical_memory_gb / 16)
+                            estimated_host_units_details = f'{physical_memory} bytes => {physical_memory_gb} GB => {estimated_host_units} estimated host units'
+                            print(f'{display_name} ({entity_id} {monitoring_mode} {state} {estimated_host_units_details})')
                             # html_output = '<a href="' + env + '/#newhosts/hostdetails;id=' + entity_id + '"> ' + entity_id + '</a> ' + display_name + " " + monitoring_mode + " " + state + '<br>\n'
                             # html_output = '<a href="' + env + '/#newhosts/hostdetails;id=' + display_name + '"> ' + display_name + '</a> ' + entity_id + " (" + monitoring_mode + ", " + state + ')<br>\n'
                             # html_output = display_name + '~' + '<a href="' + env + '/#newhosts/hostdetails;id=' + entity_id + '"> ' + display_name + '</a> ' + entity_id + " (" + monitoring_mode + ", " + state + ')<br>\n'
-                            html_output = display_name + '~' + '<a href="' + env + '/#newhosts/hostdetails;id=' + entity_id + '"> ' + display_name + '</a><br>\n'
+                            # html_output = display_name + '~' + '<a href="' + env + '/#newhosts/hostdetails;id=' + entity_id + '"> ' + display_name + '</a><br>\n'
+                            html_output = f'{display_name}~<a href="{env}/#newhosts/hostdetails;id={entity_id}"> {display_name}</a>&nbsp({estimated_host_units_details})<br>\n'
 
                             # file.write(html_output)
                             output_lines.append(html_output)
