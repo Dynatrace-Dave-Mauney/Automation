@@ -11,6 +11,7 @@ endpoint = '/api/v2/apiTokens'
 # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'TOKEN_MANAGEMENT_PREP_TOKEN')
 # env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'TOKEN_MANAGEMENT_DEV_TOKEN')
 env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'TOKEN_MANAGEMENT_PERSONAL_TOKEN')
+# env_name, tenant_key, token_key = ('FreeTrial1', 'FREETRIAL1_TENANT', 'TOKEN_MANAGEMENT_FREETRIAL1_TOKEN')
 
 tenant = os.environ.get(tenant_key)
 token = os.environ.get(token_key)
@@ -179,6 +180,12 @@ def post_read_metrics():
 	return post('{"name":"' + token_name + '","scopes":["metrics.read"]}')
 
 
+def post_problem_analysis():
+	token_name = 'Problem Analysis'
+	return post('{"name":"' + token_name + '","scopes":["metrics.read","problems.read","settings.read"]}')
+
+
+
 def rotate_token(token_id):
 	old_token = get(token_id)
 	old_token.pop('id')
@@ -258,7 +265,7 @@ def process():
 	print('Environment:     ' + env_name)
 	print('Environment URL: ' + env)
 
-	post_robot_admin()
+	post_problem_analysis()
 
 	exit(1234)
 
