@@ -38,14 +38,25 @@ def save(path, file, content):
         text_file.write("%s" % content)
 
 
+def change_environment(new_env):
+    supported_environments = {
+        'Prod': ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN'),
+        'Prep': ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN'),
+        'Dev': ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN'),
+        'Personal': ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN'),
+    }
+
+    return supported_environments.get(new_env)
+
+
 def run():
     global entity_id
     global entity_content
 
     # env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
     # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-    # env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-    env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
+    env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
+    # env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
 
     tenant = os.environ.get(tenant_key)
     token = os.environ.get(token_key)
@@ -58,7 +69,7 @@ def run():
     print(f'Token:            {masked_token}')
 
     print('')
-    print(f'Enter an Entity ID, "q" to quit, or "s" to save the entity just viewed')
+    print(f'Enter an Entity ID, "ce Prod|Perf|Dev|Personal" to change environments, "q" to quit, or "s" to save the entity just viewed')
     print('')
 
     while True:
@@ -74,8 +85,23 @@ def run():
             print(f'Saved {PATH}/{entity_id}.json')
             continue
 
+        if input_string.upper().startswith('CE'):
+            env_name, tenant_key, token_key = change_environment(input_string.split(' ')[1])
+            tenant = os.environ.get(tenant_key)
+            token = os.environ.get(token_key)
+            env = f'https://{tenant}.live.dynatrace.com'
+
+            masked_token = token.split('.')[0] + '.' + token.split('.')[1] + '.* (Masked)'
+
+            print(f'Environment Name: {env_name}')
+            print(f'Environment:      {env}')
+            print(f'Token:            {masked_token}')
+
+            continue
+
         entity_id = input_string
 
+        print(env)
         view_entity(entity_id, env, token)
 
 
