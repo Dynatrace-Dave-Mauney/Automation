@@ -3,10 +3,10 @@ import requests
 import ssl
 import json
 
-PATH = '../../$Output/Tools/Entities/Saved'
+PATH = '../../$Output/Tools/Settings20/Saved'
 
-save_entity_id = ''
-save_entity_content = ''
+save_object_id = ''
+save_object_content = ''
 
 supported_environments = {
     'Prod': ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN'),
@@ -16,26 +16,28 @@ supported_environments = {
 }
 
 
-def view_entity(entity_id, env, token):
+def view_object(object_id, env, token):
     headers = {'Authorization': 'Api-Token ' + token}
     try:
-        r = requests.get(env + '/api/v2/entities/' + entity_id, headers=headers)
-        entity_content = json.dumps(r.json(), indent=4)
+        r = requests.get(env + '/api/v2/settings/objects/' + object_id, headers=headers)
+        object_content = json.dumps(r.json(), indent=4)
         if r.status_code == 200:
-            global save_entity_id
-            global save_entity_content
-            save_entity_id = entity_id
-            save_entity_content = entity_content
+            global save_object_id
+            global save_object_content
+            save_object_id = object_id
+            save_object_content = object_content
             print(json.dumps(r.json(), indent=4))
         else:
-            if r.status_code == 400:
-                if "The requested entityId is invalid" in r.text:
-                    print('Entity ID not found on this tenant')
+            if r.status_code == 400 and "Could not decode" in r.text:
+                print('Could not decode the Object ID')
             else:
-                print('Status Code: %d' % r.status_code)
-                print('Reason: %s' % r.reason)
-                if len(r.text) > 0:
-                    print(r.text)
+                if r.status_code == 404 and "not found" in r.text:
+                    print('Object ID not found on this tenant')
+                else:
+                    print('Status Code: %d' % r.status_code)
+                    print('Reason: %s' % r.reason)
+                    if len(r.text) > 0:
+                        print(r.text)
     except ssl.SSLError:
         print("SSL Error")
 
@@ -56,8 +58,8 @@ def change_environment(new_env):
 
 
 def run():
-    global save_entity_id
-    global save_entity_content
+    global save_object_id
+    global save_object_content
 
     # env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
     # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
@@ -75,7 +77,7 @@ def run():
     print(f'Token:            {masked_token}')
 
     print('')
-    print(f'Enter an Entity ID, "ce Prod|Perf|Dev|Personal" to change environments, "q" to quit, or "s" to save the entity just viewed')
+    print(f'Enter an Object ID, "ce Prod|Perf|Dev|Personal" to change environments, "q" to quit, or "s" to save the object just viewed')
     print('')
 
     while True:
@@ -88,8 +90,8 @@ def run():
 
         if input_string.upper() == 'S':
             save_path = PATH + '/' + env_name
-            save(save_path, save_entity_id + '.json', save_entity_content)
-            print(f'Saved {save_path}/{save_entity_id}.json')
+            save(save_path, save_object_id + '.json', save_object_content)
+            print(f'Saved {save_path}/{save_object_id}.json')
             continue
 
         if input_string.upper().startswith('CE '):
@@ -113,13 +115,10 @@ def run():
             continue
 
         if ' ' in input_string.rstrip().lstrip():
-            print('Invalid command or entity id. (Embedded space detected).')
+            print('Invalid command or object id. (Embedded space detected).')
             continue
 
-        entity_id = input_string
-
-        # print(env)
-        view_entity(entity_id, env, token)
+        view_object(input_string, env, token)
 
 
 if __name__ == '__main__':
