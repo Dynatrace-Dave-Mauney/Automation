@@ -13,17 +13,17 @@ import codecs
 
 def run():
     """ For running directly from an IDE (or from a command line without using command line arguments) """
-    env_name, env, tenant, token = get_environment('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-    path = '../$Test/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json'
-    put_dashboards(env, token, path, env_name, get_owner())
-
-    env_name, env, tenant, token = get_environment('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-    path = '../$Test/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json'
-    put_dashboards(env, token, path, env_name, get_owner())
-
-    env_name, env, tenant, token = get_environment('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-    path = '../$Test/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json'
-    put_dashboards(env, token, path, env_name, get_owner())
+    # env_name, env, tenant, token = get_environment('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
+    # path = '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json'
+    # put_dashboards(env, token, path, env_name, get_owner())
+    #
+    # env_name, env, tenant, token = get_environment('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
+    # path = '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json'
+    # put_dashboards(env, token, path, env_name, get_owner())
+    #
+    # env_name, env, tenant, token = get_environment('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
+    # path = '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json'
+    # put_dashboards(env, token, path, env_name, get_owner())
 
 
 def get_environment(env_name, tenant_key, token_key):
