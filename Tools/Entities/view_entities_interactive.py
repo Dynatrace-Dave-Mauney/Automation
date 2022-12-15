@@ -74,7 +74,7 @@ def run():
 
     while True:
         message = '> '
-        input_string = input('%s' % message)
+        input_string = input('%s' % message).rstrip().lstrip()
 
         if input_string.upper() == 'Q':
             print('Exiting per user request')
