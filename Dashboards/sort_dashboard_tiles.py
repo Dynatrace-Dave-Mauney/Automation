@@ -5,8 +5,8 @@ import os
 import shutil
 from inspect import currentframe
 
-DASHBOARD_INPUT_PATH = '../$Test/Dashboards/Examples'
-DASHBOARD_OUTPUT_PATH = '../$Test/Dashboards/Sorted'
+DASHBOARD_INPUT_PATH = '../$Input/Dashboards/Examples'
+DASHBOARD_OUTPUT_PATH = '../$Output/Dashboards/Sorted'
 
 confirmation_required = True
 remove_directory_at_startup = True

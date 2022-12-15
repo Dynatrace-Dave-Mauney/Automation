@@ -22,7 +22,7 @@ tenant = os.environ.get(environment_details[1])
 token = os.environ.get(environment_details[2])
 env = f'https://{tenant}.live.dynatrace.com'
 
-save_directory_path = '../../$Output/Tools/Settings20/Saves/' + env_name
+save_directory_path = '../../$Output/Tools/Settings20/Downloads/' + env_name
 
 confirmation_required = True
 long_file_suffix = 0

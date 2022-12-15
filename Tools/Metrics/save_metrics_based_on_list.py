@@ -5,8 +5,8 @@ import sys
 import json
 # from pathlib import Path
 
-selector_file_name = '../../$Test/Tools/Metrics/metrics.txt'
-PATH = PATH = '../../$Test/Tools/Metrics/saved'
+selector_file_name = '../../$Input/Tools/Metrics/metrics.txt'
+PATH = PATH = '../../$Output/Tools/Metrics/Saved'
 
 
 def save(path, file, content):

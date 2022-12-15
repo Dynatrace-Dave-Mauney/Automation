@@ -5,8 +5,11 @@ import os
 
 verbose = False
 
-OLD_DASHBOARD_PATH = '../$Test/Dashboards/CustomCharts'
-NEW_DASHBOARD_PATH = '../$Test/Dashboards/DataExplorer'
+# OLD_DASHBOARD_PATH = '../$Input/Dashboards/CustomCharts'
+# NEW_DASHBOARD_PATH = '../$Output/Dashboards/DataExplorer'
+
+OLD_DASHBOARD_PATH = '../$Input/Dashboards/AWSSupportingServices'
+NEW_DASHBOARD_PATH = '../$Output/Dashboards/AWSSupportingServices/DataExplorer'
 
 NEW_TILE_TEMPLATE = '''{
       "name": "$$NAME$$",

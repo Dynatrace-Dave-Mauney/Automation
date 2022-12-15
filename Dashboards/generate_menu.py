@@ -10,9 +10,15 @@ import glob
 # GENERATED_NAME = 'AWS Metrics via CloudWatch Metric Stream'
 # GENERATED_ID = 'aaaaaaaa-bbbb-cccc-abcd-000000000000'
 
-GENERATED_PATH = '../$Test/Dashboards/AWSSupportingServices'
+GENERATED_PATH = '../$Output/Dashboards/AWSSupportingServices'
 GENERATED_ID = 'aaaaaaaa-bbbb-cccc-eeee-f00000000000'
 GENERATED_NAME = 'AWS Supporting Services (Improved)'
+
+# path='./????????-????-????-????-????????????.json'
+# path='./????????-????-????-????-????????????'
+# path = '../$Output/DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-0000-0000000000??.json'
+# path = '../$Output/DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-abcd-0000000000??.json'
+path = '../$Output/Dashboards/AWSSupportingServices/*.json'
 
 dashboard_template_top = '''{
   "metadata": {
@@ -253,12 +259,6 @@ check_emoji = '✅'
 warn_emoji = '⚠️'
 x_emoji = "❌"
 
-# path='./????????-????-????-????-????????????.json'
-# path='./????????-????-????-????-????????????'
-# path = '/Dynatrace/Projects/Python/DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-0000-0000000000??.json'
-# path = '/Dynatrace/Projects/Python/DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-abcd-0000000000??.json'
-# path = '/Users/Dave.Mauney/PycharmProjects/Automation/Dashboards/AWS-WORK-CONVERTED/*.json'
-path = '../$Test/Dashboards/AWSSupportingServices/*.json'
 links = ''
 
 top = dashboard_template_top.replace('$$GENERATED_ID$$', GENERATED_ID).replace('$$GENERATED_NAME$$', GENERATED_NAME)

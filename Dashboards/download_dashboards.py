@@ -63,7 +63,7 @@ def main(arguments):
 	token = os.environ.get(token_key)
 	env = f'https://{tenant}.live.dynatrace.com'
 
-	path = '../$Test/Dashboards/Downloads'
+	path = '../$Output/Dashboards/Downloads'
 
 	if len(arguments) == 1:
 		save_dashboards(env, token, path)

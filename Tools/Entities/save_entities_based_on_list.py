@@ -5,10 +5,10 @@ import sys
 import json
 # from pathlib import Path
 
-selector_file_name = '../../$Test/Tools/Entities/entities.txt'
+selector_file_name = '../../$Input/Tools/Entities/entities.txt'
 # output_path = 'entities'
 # PATH = os.getcwd() + output_path
-PATH = '../../$Test/Tools/Entities/saved'
+PATH = '../../$Output/Tools/Entities/Saved'
 
 
 def save(path, file, content):

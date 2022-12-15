@@ -12,8 +12,8 @@ import os
 
 OWNER = os.environ.get('DASHBOARD_OWNER_EMAIL', 'nobody@example.com')
 
-DASHBOARD_INPUT_PATH = '../$Test/Dashboards/DataExplorer/AWSSupportingServices'
-DASHBOARD_OUTPUT_PATH = '../$Test/Dashboards/AWSSupportingServices'
+DASHBOARD_INPUT_PATH = '../$Output/Dashboards/AWSSupportingServices/DataExplorer'
+DASHBOARD_OUTPUT_PATH = '../$Output/Dashboards/AWSSupportingServices/Final'
 
 dashboard_name_to_id = {
     'Amazon ActiveMQ': 'aaaaaaaa-bbbb-cccc-eeee-f00000000001',
@@ -99,6 +99,7 @@ def customize_dashboard(dashboard):
     dashboard_id = dashboard_name_to_id.get(name)
     if not dashboard_id:
         print('No id found for', name)
+
         exit(1)
 
     new_dashboard_json['id'] = dashboard_id
