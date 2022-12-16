@@ -20,6 +20,7 @@ import requests
 import shutil
 import ssl
 import yaml
+import urllib.parse
 
 # env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
 # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
@@ -554,8 +555,9 @@ def save_settings20_objects():
             # display_name = inner_settings_json.get('displayName')
             # print(schema_id + ': ' + display_name)
             endpoint = '/api/v2/settings/objects'
-            # params = 'schemaIds=' + schema_id.replace(':', '%3A') + '&scopes=environment&fields=objectId%2Cvalue&pageSize=500'
-            params = 'schemaIds=' + schema_id.replace(':', '%3A') + '&fields=objectId%2Cvalue%2Cscope&pageSize=500'
+            # raw_params = f'schemaIds={schema_id}&scopes=environment&fields=objectId,value&pageSize=500'
+            raw_params = f'schemaIds={schema_id}&fields=objectId,value,scope&pageSize=500'
+            params = urllib.parse.quote(raw_params, safe='/,&=')
             setting_object = get_rest_api_json(endpoint, params)[0]
             items = setting_object.get('items')
             for item in items:

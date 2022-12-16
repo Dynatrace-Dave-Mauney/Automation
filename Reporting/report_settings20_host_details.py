@@ -1,5 +1,6 @@
 import dynatrace_rest_api_helper
 import os
+import urllib.parse
 
 
 def summarize(env, token):
@@ -25,12 +26,13 @@ def process_host(entity_id, name, env, token, print_mode):
 	findings = []
 
 	endpoint = '/api/v2/settings/objects'
-	# schemaIds = ['builtin:rum.web.request-errors', 'builtin:rum.web.enablement', 'builtin:preferences.privacy',
-	# 			 'builtin:anomaly-detection.rum-web']
-	# schema_id_param = 'schemaIds=' + str(schemaIds).replace("'", "").replace('[', '').replace(']','').replace(' ', '').replace(':', '%3A')
-	# DEBUG: to show all schemas...
-	schema_id_param = ''
-	params = schema_id_param + '&scopes=' + entity_id + '&fields=schemaId%2Cvalue&pageSize=500'
+	# To filter schemas...
+	# schema_ids = 'builtin:anomaly-detection.infrastructure-hosts,builtin:rum.web.request-errors,builtin:rum.web.enablement,builtin:preferences.privacy,builtin:anomaly-detection.rum-web'
+	# schema_ids_param = f'schemaIds={schema_ids}'
+	# To show all schemas...
+	schema_ids_param = ''
+	raw_params = f'{schema_ids_param}&scopes={entity_id}&fields=schemaId,value&pageSize=500'
+	params = urllib.parse.quote(raw_params, safe='/,&=')
 	settings_object = dynatrace_rest_api_helper.get_rest_api_json(env, token, endpoint, params)[0]
 	items = settings_object.get('items', [])
 
@@ -120,10 +122,10 @@ def print_list(any_list):
 
 
 def main():
-    env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
+    # env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
     # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
     # env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-    # env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
+    env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
 
     tenant = os.environ.get(tenant_key)
     token = os.environ.get(token_key)

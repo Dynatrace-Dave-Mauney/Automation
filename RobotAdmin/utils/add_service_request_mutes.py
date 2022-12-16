@@ -3,6 +3,7 @@ import json
 import os
 import requests
 import ssl
+import urllib.parse
 
 
 def post(env, endpoint, token, payload):
@@ -66,7 +67,6 @@ def get_rest_api_json(url, token, endpoint, params):
     next_page_key = json_data.get('nextPageKey')
 
     while next_page_key is not None:
-        # next_page_key = next_page_key.replace('=', '%3D') # Ths does NOT help.  Also, equals are apparently fine in params.
         # print(f'next_page_key: {next_page_key}')
         params = {'nextPageKey': next_page_key}
         full_url = url + endpoint
@@ -106,7 +106,8 @@ def process():
 
     item_list = []
     endpoint = '/api/v2/settings/objects'
-    params = 'schemaIds=builtin%3Asettings.mutedrequests&fields=objectId%2Cvalue%2Cscope&pageSize=500'
+    raw_params = 'schemaIds=builtin:settings.mutedrequests&fields=objectId,value,scope&pageSize=500'
+    params = urllib.parse.quote(raw_params, safe='/,&=')
     json_response_list = get_rest_api_json(env, token, endpoint, params)
     for json_response in json_response_list:
         item_list.extend(json_response.get('items'))

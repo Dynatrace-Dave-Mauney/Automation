@@ -1,5 +1,6 @@
 import dynatrace_rest_api_helper
 import os
+import urllib.parse
 
 
 expected_rum_host_headers = ['Host', 'X-Forwarded-Host', 'X-Host']
@@ -51,7 +52,8 @@ def process_environment_scope(env, token, print_mode):
 	# summary.append('Interesting Settings 2.0 schemas with objects defined:')
 
 	endpoint = '/api/v2/settings/objects'
-	params = 'scopes=environment&fields=schemaId%2Cvalue&pageSize=500'
+	raw_params = 'scopes=environment&fields=schemaId,value&pageSize=500'
+	params = urllib.parse.quote(raw_params, safe='/,&=')
 	settings_object = dynatrace_rest_api_helper.get_rest_api_json(env, token, endpoint, params)[0]
 	items = settings_object.get('items')
 	for item in items:
@@ -160,10 +162,10 @@ def print_list(any_list):
 
 
 def main():
-    env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
+    # env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
     # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
     # env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-    # env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
+    env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
 
     tenant = os.environ.get(tenant_key)
     token = os.environ.get(token_key)

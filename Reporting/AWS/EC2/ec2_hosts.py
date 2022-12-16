@@ -3,10 +3,11 @@ import json
 import os
 import requests
 import ssl
+import urllib.parse
 
-env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
+# env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
 # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-# env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
+env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
 # env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
 
 tenant = os.environ.get(tenant_key)
@@ -60,7 +61,8 @@ def process():
 	pass
 
 	formatted_line_list = []
-	endpoint = '/api/v2/entities?pageSize=4000&entitySelector=type%28EC2_INSTANCE%29&fields=fromRelationships.isAccessibleBy'
+	raw_endpoint = '/api/v2/entities?pageSize=4000&entitySelector=type(EC2_INSTANCE)&fields=fromRelationships.isAccessibleBy'
+	endpoint = urllib.parse.quote(raw_endpoint, safe='/,&=?')
 	r = get_object_list(endpoint)
 	ec2_instance_json = json.loads(r.text)
 	ec2_instance_list = ec2_instance_json.get('entities')

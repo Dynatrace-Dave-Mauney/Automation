@@ -1,5 +1,6 @@
 import dynatrace_rest_api_helper
 import os
+import urllib.parse
 
 
 def summarize(env, token):
@@ -12,7 +13,8 @@ def process(env, token, print_mode):
     count_total = 0
 
     endpoint = '/api/v2/entities'
-    params = 'pageSize=4000&entitySelector=type%28%22mobile_application%22%29&fields=%2Bproperties&to=-5m'
+    raw_params = 'pageSize=4000&entitySelector=type(MOBILE_APPLICATION)&fields=+properties&to=-5m'
+    params = urllib.parse.quote(raw_params, safe='/,&=')
     entities_json_list = dynatrace_rest_api_helper.get_rest_api_json(env, token, endpoint, params)
     if print_mode:
         print('entityId' + '|' + 'displayName' + '|' + 'detectedName' + '|' + 'mobileOsFamily' + '|' + 'customizedName')
@@ -52,10 +54,10 @@ def print_list(any_list):
         
 
 def main():
-    env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
+    # env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
     # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
     # env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-    # env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
+    env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
 
     tenant = os.environ.get(tenant_key)
     token = os.environ.get(token_key)

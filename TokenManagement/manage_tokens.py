@@ -9,8 +9,8 @@ endpoint = '/api/v2/apiTokens'
 
 # env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'TOKEN_MANAGEMENT_PROD_TOKEN')
 # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'TOKEN_MANAGEMENT_PREP_TOKEN')
-# env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'TOKEN_MANAGEMENT_DEV_TOKEN')
-env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'TOKEN_MANAGEMENT_PERSONAL_TOKEN')
+env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'TOKEN_MANAGEMENT_DEV_TOKEN')
+# env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'TOKEN_MANAGEMENT_PERSONAL_TOKEN')
 # env_name, tenant_key, token_key = ('FreeTrial1', 'FREETRIAL1_TENANT', 'TOKEN_MANAGEMENT_FREETRIAL1_TOKEN')
 
 tenant = os.environ.get(tenant_key)
@@ -121,7 +121,15 @@ def post_robot_admin():
 	token_name = 'Robot Admin'
 	# return post('{"name":"' + token_name + '","scopes":["activeGates.read","activeGateTokenManagement.read","apiTokens.read","auditLogs.read","credentialVault.read","entities.read","events.read","extensionConfigurations.read","extensionEnvironment.read","extensions.read","geographicRegions.read","hub.read","metrics.read","networkZones.read","problems.read","releases.read","settings.read","settings.write","slo.read","syntheticExecutions.read","syntheticLocations.read","CaptureRequestData","DataExport","DataImport","DssFileManagement","DTAQLAccess","ExternalSyntheticIntegration","ReadConfig","ReadSyntheticData","WriteConfig"]}')
 	# v2: added LogExport
-	return post('{"name":"' + token_name + '","scopes":["activeGates.read","activeGateTokenManagement.read","apiTokens.read","auditLogs.read","credentialVault.read","entities.read","events.read","extensionConfigurations.read","extensionEnvironment.read","extensions.read","geographicRegions.read","hub.read","metrics.read","networkZones.read","problems.read","releases.read","settings.read","settings.write","slo.read","syntheticExecutions.read","syntheticLocations.read","CaptureRequestData","DataExport","DataImport","DssFileManagement","DTAQLAccess","ExternalSyntheticIntegration","LogExport","ReadConfig","ReadSyntheticData","WriteConfig"]}')
+	# return post('{"name":"' + token_name + '","scopes":["activeGates.read","activeGateTokenManagement.read","apiTokens.read","auditLogs.read","credentialVault.read","entities.read","events.read","extensionConfigurations.read","extensionEnvironment.read","extensions.read","geographicRegions.read","hub.read","metrics.read","networkZones.read","problems.read","releases.read","settings.read","settings.write","slo.read","syntheticExecutions.read","syntheticLocations.read","CaptureRequestData","DataExport","DataImport","DssFileManagement","DTAQLAccess","ExternalSyntheticIntegration","LogExport","ReadConfig","ReadSyntheticData","WriteConfig"]}')
+	# v3: added entities.write
+	return post('{"name":"' + token_name + '","scopes":["activeGates.read","activeGateTokenManagement.read","apiTokens.read","auditLogs.read","credentialVault.read","entities.read","entities.write","events.read","extensionConfigurations.read","extensionEnvironment.read","extensions.read","geographicRegions.read","hub.read","metrics.read","networkZones.read","problems.read","releases.read","settings.read","settings.write","slo.read","syntheticExecutions.read","syntheticLocations.read","CaptureRequestData","DataExport","DataImport","DssFileManagement","DTAQLAccess","ExternalSyntheticIntegration","LogExport","ReadConfig","ReadSyntheticData","WriteConfig"]}')
+
+
+def post_robot_admin_dev():
+	token_name = 'Robot Admin'
+	# v3_dev: added entities.write and removed LogExport...due to lack of permission of my user...
+	return post('{"name":"' + token_name + '","scopes":["activeGates.read","activeGateTokenManagement.read","apiTokens.read","auditLogs.read","credentialVault.read","entities.read","entities.write","events.read","extensionConfigurations.read","extensionEnvironment.read","extensions.read","geographicRegions.read","hub.read","metrics.read","networkZones.read","problems.read","releases.read","settings.read","settings.write","slo.read","syntheticExecutions.read","syntheticLocations.read","CaptureRequestData","DataExport","DataImport","DssFileManagement","DTAQLAccess","ExternalSyntheticIntegration","ReadConfig","ReadSyntheticData","WriteConfig"]}')
 
 
 def post_monaco():
@@ -265,7 +273,7 @@ def process():
 	print('Environment:     ' + env_name)
 	print('Environment URL: ' + env)
 
-	post_problem_analysis()
+	post_robot_admin_dev()
 
 	exit(1234)
 
@@ -284,6 +292,7 @@ def process():
 	# logs_ingest_token = post_logs_ingest()
 	# robot_admin_token = post_robot_admin()
 	# read_metrics_token = post_read_metrics()
+	problem_analysis_token = post_problem_analysis()
 	#
 	# # Test getting a token
 	# print('get:', get(test_token))
@@ -304,6 +313,7 @@ def process():
 	# delete(logs_ingest_token)
 	# delete(robot_admin_token)
 	# delete(read_metrics_token)
+	# delete(problem_analysis_token)
 	#
 	# # Test token rotation
 	# test_token = post_test_token()

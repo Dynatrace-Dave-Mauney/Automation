@@ -8,6 +8,7 @@
 
 import requests
 import sys
+import urllib.parse
 
 
 def get_rest_api_json(url, token, endpoint, params):
@@ -34,7 +35,6 @@ def get_rest_api_json(url, token, endpoint, params):
     next_page_key = json.get('nextPageKey')
 
     while next_page_key is not None:
-        # next_page_key = next_page_key.replace('=', '%3D') # Ths does NOT help.  Also, equals are apparently fine in params.
         # print(f'next_page_key: {next_page_key}')
         params = {'nextPageKey': next_page_key}
         full_url = url + endpoint
@@ -57,22 +57,24 @@ def get_rest_api_json(url, token, endpoint, params):
 
 def test_metrics(url, token):
     endpoint = '/api/v2/metrics'
-    params = '?pageSize=1000&fields=+displayName,+description,+unit,+aggregationTypes,' \
-             '+defaultAggregation,+dimensionDefinitions,+transformations,+entityType'
+    raw_params = 'pageSize=1000&fields=+displayName,+description,+unit,+aggregationTypes,+defaultAggregation,+dimensionDefinitions,+transformations,+entityType'
+    params = urllib.parse.quote(raw_params, safe='/,&=')
     metrics = get_rest_api_json(url, token, endpoint, params)
     print(metrics)
 
 
 def test_entity_types(url, token):
     endpoint = '/api/v2/entityTypes'
-    params = '?pageSize=500'
+    raw_params = 'pageSize=500'
+    params = urllib.parse.quote(raw_params, safe='/,&=')
     entity_types = get_rest_api_json(url, token, endpoint, params)
     print(entity_types)
 
 
 def test_entity_type_host(url, token):
     endpoint = '/api/v2/entities'
-    params = '?pageSize=500&entitySelector=%20type%28%22HOST%22%29&fields=%2Bproperties.monitoringMode%2C%20%2Bproperties.state%2C%2BtoRelationships'
+    raw_params = 'pageSize=500&entitySelector= type(HOST)&fields=+properties.monitoringMode,+properties.state,+toRelationships'
+    params = urllib.parse.quote(raw_params, safe='/,&=')
     hosts = get_rest_api_json(url, token, endpoint, params)
     print(hosts)
     for entities in hosts:

@@ -1,6 +1,6 @@
 import dynatrace_rest_api_helper
 import os
-
+import urllib.parse
 
 def summarize(env, token):
 	return process(env, token, False)
@@ -25,12 +25,13 @@ def process_service(entity_id, name, env, token, print_mode):
 	findings = []
 
 	endpoint = '/api/v2/settings/objects'
-	# schemaIds = ['builtin:rum.web.request-errors', 'builtin:rum.web.enablement', 'builtin:preferences.privacy',
-	# 			 'builtin:anomaly-detection.rum-web']
-	# schema_id_param = 'schemaIds=' + str(schemaIds).replace("'", "").replace('[', '').replace(']','').replace(' ', '').replace(':', '%3A')
-	# DEBUG: to show all schemas...
+	# To filter by schema ids...
+	# schema_ids = 'builtin:rum.web.request-errors,builtin:rum.web.enablement,builtin:preferences.privacy,builtin:anomaly-detection.rum-web'
+	# schema_id_param = f'schemaIds={str(schema_ids)}'
+	# To show all schemas...
 	schema_id_param = ''
-	params = schema_id_param + '&scopes=' + entity_id + '&fields=schemaId%2Cvalue&pageSize=500'
+	raw_params = f'{schema_id_param}&scopes={entity_id}&fields=schemaId,value&pageSize=500'
+	params = urllib.parse.quote(raw_params, '/,&=')
 	settings_object = dynatrace_rest_api_helper.get_rest_api_json(env, token, endpoint, params)[0]
 	items = settings_object.get('items', [])
 

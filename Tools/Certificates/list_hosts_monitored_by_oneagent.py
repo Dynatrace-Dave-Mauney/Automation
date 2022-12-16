@@ -1,8 +1,7 @@
 import os
 import requests
 import time
-import urllib
-from urllib.parse import urlparse
+import urllib.parse
 
 
 def process(env, token, print_mode):
@@ -34,9 +33,8 @@ def process(env, token, print_mode):
 def get_hosts(env, token):
     # print(f'get_entity_types({env}, {token})')
     endpoint = '/api/v2/entities'
-    entity_selector = 'type(HOST)'
-    fields = '+properties.detectedName'
-    params = '?pageSize=500&entitySelector=' + urllib.parse.quote(entity_selector) + '&fields=' + urllib.parse.quote(fields)
+    raw_params = 'pageSize=500&entitySelector=type(HOST)&fields=+properties.detectedName'
+    params = urllib.parse.quote(raw_params, safe='/,&=')
     hosts = get_rest_api_json(env, token, endpoint, params)
     return hosts
 
@@ -77,7 +75,6 @@ def get_rest_api_json(url, token, endpoint, params):
     next_page_key = json_data.get('nextPageKey')
 
     while next_page_key is not None:
-        # next_page_key = next_page_key.replace('=', '%3D') # Ths does NOT help.  Also, equals are apparently fine in params.
         # print(f'next_page_key: {next_page_key}')
         params = {'nextPageKey': next_page_key}
         full_url = url + endpoint

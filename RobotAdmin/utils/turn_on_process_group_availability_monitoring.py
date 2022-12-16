@@ -225,7 +225,6 @@ def get_rest_api_json(url, endpoint, params):
     next_page_key = response_json.get('nextPageKey')
 
     while next_page_key is not None:
-        # next_page_key = next_page_key.replace('=', '%3D') # Ths does NOT help.  Also, equals are apparently fine in params.
         # print(f'next_page_key: {next_page_key}')
         params = {'nextPageKey': next_page_key}
         full_url = url + endpoint
