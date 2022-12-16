@@ -44,10 +44,8 @@ def dump_endpoint_methods():
 
 
 def dump_get_by_id_endpoints():
-    # The endpoint methods
-    print('Get By ID Endpoint Methods:')
+    print('Get By ID Endpoints:')
     paths = data.get('paths')
-    endpoint_methods = {}
     endpoints = list(paths.keys())
 
     for endpoint in endpoints:
@@ -56,6 +54,34 @@ def dump_get_by_id_endpoints():
         if 'get' in methods and str(endpoint).endswith('{id}'):
             print(endpoint[1:])
 
+
+def dump_deprecated_endpoints():
+    print('Deprecated Endpoints:')
+    paths = data.get('paths')
+    endpoints = list(paths.keys())
+
+    for endpoint in endpoints:
+        endpoint_dict = paths.get(endpoint)
+        methods = list(endpoint_dict.keys())
+        for method in methods:
+            method_dict = endpoint_dict.get(method)
+            if method_dict.get('deprecated'):
+                print(f'{endpoint} {method}')
+
+def dump_maturity_of_endpoints():
+    print('Maturity of Endpoints:')
+    print('Endpoints with no maturity set are skipped...')
+    paths = data.get('paths')
+    endpoints = list(paths.keys())
+
+    for endpoint in endpoints:
+        endpoint_dict = paths.get(endpoint)
+        methods = list(endpoint_dict.keys())
+        for method in methods:
+            method_dict = endpoint_dict.get(method)
+            maturity = method_dict.get('x-maturity')
+            if maturity:
+                print(f'{endpoint} {maturity}')
 
 def dump_schema_properties_key_key_enum_list(schema, key1, key2):
     print(schema + ':')
@@ -77,7 +103,9 @@ data = json.load(f)
 print_header()
 
 # dump_endpoint_methods()
-dump_get_by_id_endpoints()
+# dump_get_by_id_endpoints()
+# dump_deprecated_endpoints()
+dump_maturity_of_endpoints()
 
 exit(1234)
 
