@@ -1,12 +1,13 @@
 import os
 import requests
 import sys
-
+import urllib
 
 def process(env, token):
     endpoint = '/api/v2/metrics'
-    params = '?pageSize=500&fields=%2Bcreated'
-    # params = '?pageSize=500'
+    raw_params = 'pageSize=500&fields=+created'
+    # raw_params = 'pageSize=500'
+    params = urllib.parse.quote(raw_params, safe='/,&=')
     metrics_json_list = get_rest_api_json(env, token, endpoint, params)
     print('metric_id' + '|' + 'displayName' + '|' + 'created')
     # print('metric_id' + '|' + 'displayName')
@@ -52,7 +53,6 @@ def get_rest_api_json(url, token, endpoint, params):
     next_page_key = json_data.get('nextPageKey')
 
     while next_page_key is not None:
-        # next_page_key = next_page_key.replace('=', '%3D') # Ths does NOT help.  Also, equals are apparently fine in params.
         # print(f'next_page_key: {next_page_key}')
         params = {'nextPageKey': next_page_key}
         full_url = url + endpoint

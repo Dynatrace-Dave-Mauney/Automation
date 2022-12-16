@@ -1,5 +1,6 @@
 import dynatrace_rest_api_helper
 import os
+import urllib.parse
 
 
 def summarize(env, token):
@@ -11,9 +12,10 @@ def process_oneagent_features(env, token, print_mode):
 	# findings = []
 
 	endpoint = '/api/v2/settings/objects'
-	schema_id = ['builtin:oneagent.features']
-	schema_id_param = 'schemaIds=' + str(schema_id).replace("'", "").replace('[', '').replace(']', '').replace(' ', '').replace(':', '%3A')
-	params = schema_id_param + '&scopes=environment&fields=schemaId%2Cvalue%2CdisplayName&pageSize=500'
+	schema_ids = 'builtin:oneagent.features'
+	schema_ids_param = f'schemaIds={schema_ids}'
+	raw_params = schema_ids_param + '&scopes=environment&fields=schemaId,value,displayName&pageSize=500'
+	params = urllib.parse.quote(raw_params, safe='/,&=')
 	settings_object = dynatrace_rest_api_helper.get_rest_api_json(env, token, endpoint, params)[0]
 	items = settings_object.get('items', [])
 
@@ -74,10 +76,10 @@ def print_list(any_list):
 
 
 def main():
-    env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
+    # env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
     # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
     # env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-    # env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
+    env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
 
     tenant = os.environ.get(tenant_key)
     token = os.environ.get(token_key)

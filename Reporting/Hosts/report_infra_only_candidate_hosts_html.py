@@ -10,9 +10,8 @@ PATH = '../../$Output/Reporting/Hosts'
 def get_hosts(env, token):
     # print(f'get_entity_types({env}, {token})')
     endpoint = '/api/v2/entities'
-    entity_selector = 'type(HOST)'
-    fields = '+properties.monitoringMode,+properties.state,+properties.physicalMemory,+toRelationships'
-    params = '?pageSize=500&entitySelector=' + urllib.parse.quote(entity_selector) + '&fields=' + urllib.parse.quote(fields)
+    raw_params = f'pageSize=500&entitySelector=type(HOST)&fields=+properties.monitoringMode,+properties.state,+properties.physicalMemory,+toRelationships'
+    params = urllib.parse.quote(raw_params, safe='/,&=')
     hosts = get_rest_api_json(env, token, endpoint, params)
     return hosts
 
@@ -102,7 +101,6 @@ def get_rest_api_json(url, token, endpoint, params):
     next_page_key = json_data.get('nextPageKey')
 
     while next_page_key is not None:
-        # next_page_key = next_page_key.replace('=', '%3D') # Ths does NOT help.  Also, equals are apparently fine in params.
         # print(f'next_page_key: {next_page_key}')
         params = {'nextPageKey': next_page_key}
         full_url = url + endpoint
@@ -140,8 +138,8 @@ def process(env_name, env, token):
 def run():
     # env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
     # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-    # env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-    env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
+    env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
+    # env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
 
     tenant = os.environ.get(tenant_key)
     token = os.environ.get(token_key)

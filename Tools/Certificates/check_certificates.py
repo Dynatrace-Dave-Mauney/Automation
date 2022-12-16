@@ -8,6 +8,7 @@ from urllib.parse import urlparse
 import yaml
 import list_urls_referenced_by_synthetics
 import list_hosts_monitored_by_oneagent
+import urllib.parse
 
 # To set a default domain name and/or a list of hosts to bypass:
 # configuration_yaml_file = 'check_certificates.yaml'
@@ -101,7 +102,8 @@ def process_entity_type(env, token, entity_type):
     endpoint = '/api/v2/entities'
     entity_selector = f'type({entity_type})'
     fields = '+properties,+tags'
-    params = '?pageSize=4000&entitySelector=' + urllib.parse.quote(entity_selector) + '&fields=' + urllib.parse.quote(fields) + '&to=-5m'
+    raw_params = f'pageSize=4000&entitySelector=type({entity_type}&fields=+properties,+tags&to=-5m'
+    params = urllib.parse.quote(raw_params, safe='/,&=')
     entities_json_list = get_rest_api_json(env, token, endpoint, params)
     for entities_json in entities_json_list:
         inner_entities_json_list = entities_json.get('entities')
@@ -171,7 +173,6 @@ def get_rest_api_json(url, token, endpoint, params):
     next_page_key = json_data.get('nextPageKey')
 
     while next_page_key is not None:
-        # next_page_key = next_page_key.replace('=', '%3D') # Ths does NOT help.  Also, equals are apparently fine in params.
         # print(f'next_page_key: {next_page_key}')
         params = {'nextPageKey': next_page_key}
         full_url = url + endpoint

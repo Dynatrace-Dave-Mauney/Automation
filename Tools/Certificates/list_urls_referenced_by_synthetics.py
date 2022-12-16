@@ -2,6 +2,7 @@ import ipaddress
 import os
 import requests
 import time
+import urllib.parse
 from urllib.parse import urlparse
 
 
@@ -19,7 +20,8 @@ def process(env, token, print_mode):
 def process_entity_type(env, token):
     host_name_list = []
     endpoint = '/api/v1/synthetic/monitors'
-    params = '?enabled=true'
+    raw_params = 'enabled=true'
+    params = urllib.parse.quote(raw_params, safe='/,&=')
     synthetics_json_list = get_rest_api_json(env, token, endpoint, params)
     for synthetics_json in synthetics_json_list:
         inner_synthetics_json_list = synthetics_json.get('monitors')
@@ -97,7 +99,6 @@ def get_rest_api_json(url, token, endpoint, params):
     next_page_key = json_data.get('nextPageKey')
 
     while next_page_key is not None:
-        # next_page_key = next_page_key.replace('=', '%3D') # Ths does NOT help.  Also, equals are apparently fine in params.
         # print(f'next_page_key: {next_page_key}')
         params = {'nextPageKey': next_page_key}
         full_url = url + endpoint
@@ -121,8 +122,8 @@ def get_rest_api_json(url, token, endpoint, params):
 def main():
     # env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
     # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-    # env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-    env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
+    env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
+    # env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
 
     tenant = os.environ.get(tenant_key)
     token = os.environ.get(token_key)

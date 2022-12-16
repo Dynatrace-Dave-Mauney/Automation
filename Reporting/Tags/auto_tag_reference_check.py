@@ -1,13 +1,14 @@
 import os
 import requests
+import urllib.parse
 
 from inspect import currentframe
 from json.decoder import JSONDecodeError
 
-env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
+# env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
 # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
 # env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-# env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
+env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
 
 tenant = os.environ.get(tenant_key)
 token = os.environ.get(token_key)
@@ -41,7 +42,6 @@ def get_rest_api_json(url, endpoint, params):
         next_page_key = json.get('nextPageKey')
 
         while next_page_key is not None:
-            # next_page_key = next_page_key.replace('=', '%3D') # Ths does NOT help.  Also, equals are apparently fine in params.
             # print(f'next_page_key: {next_page_key}')
             params = {'nextPageKey': next_page_key}
             full_url = url + endpoint
@@ -239,7 +239,8 @@ def process():
                                 print('Obsolete tag ' + tag_filter_key + ' referenced in custom metric event ' + name)
 
     endpoint = '/api/v2/settings/objects'
-    params = 'schemaIds=builtin%3Aalerting.maintenance-window&fields=objectId%2Cvalue'
+    raw_params = 'schemaIds=builtin:alerting.maintenance-window&fields=objectId,value'
+    params = urllib.parse.quote(raw_params, safe='/,&=')
     settings_json_list = get_rest_api_json(env, endpoint, params)
     # print(settings_json_list)
 

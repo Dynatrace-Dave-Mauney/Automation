@@ -1,6 +1,6 @@
 import dynatrace_rest_api_helper
 import os
-
+import urllib.parse
 
 def summarize(env, token):
     return process(env, token, False)
@@ -12,7 +12,8 @@ def process(env, token, print_mode):
     count_total = 0
 
     endpoint = '/api/v2/entities'
-    params = 'pageSize=4000&entitySelector=type%28%22http_check%22%29&fields=%2Bproperties%2C%2BtoRelationships&to=-5m'
+    raw_params = 'pageSize=4000&entitySelector=type(HTTP_CHECK)&fields=+properties,+toRelationships&to=-5m'
+    params = urllib.parse.quote(raw_params, safe='/,&=')
     entities_json_list = dynatrace_rest_api_helper.get_rest_api_json(env, token, endpoint, params)
     if print_mode:
         print('entityId' + '|' + 'displayName' + '|' + 'detectedName' + '|' + 'Number of Steps')

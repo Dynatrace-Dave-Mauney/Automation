@@ -1,5 +1,6 @@
 import os
 import requests
+import urllib.parse
 import xlsxwriter
 
 
@@ -7,12 +8,17 @@ def process(env, token, mz_name, tag, write_csv, xlsx_data):
     # process_pg(env, token, 'PROCESS_GROUP-689386BDA7C736FD')
 
     endpoint = '/api/v2/entities'
-    params = 'entitySelector=type%28%22PROCESS_GROUP%22%29'
-    if mz_name is not None:
-        params = params + '%2CmzName%28%22' + mz_name + '%22%29'
-    if tag is not None:
-        tag = tag.replace(':', '%3A')
-        params = params + '%2Ctag%28%22' + tag + '%22%29'
+    entity_selector_param = 'entitySelector=type("PROCESS_GROUP")'
+    mz_name_param = f',mzName("{mz_name}")'
+    tag_param = f',tag("{tag}")'
+
+    raw_params = entity_selector_param
+    if mz_name:
+        raw_params += mz_name_param
+    if tag:
+        raw_params += tag_param
+
+    params = urllib.parse.quote(raw_params, safe='/,=')
     process_group_json_list = get_rest_api_json(env, token, endpoint, params)
 
     for process_group_json in process_group_json_list:
@@ -94,7 +100,6 @@ def get_rest_api_json(url, token, endpoint, params):
     next_page_key = json_data.get('nextPageKey')
 
     while next_page_key is not None:
-        # next_page_key = next_page_key.replace('=', '%3D') # Ths does NOT help.  Also, equals are apparently fine in params.
         # print(f'next_page_key: {next_page_key}')
         params = {'nextPageKey': next_page_key}
         full_url = url + endpoint

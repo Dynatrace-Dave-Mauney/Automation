@@ -1,5 +1,6 @@
 import dynatrace_rest_api_helper
 import os
+import urllib.parse
 
 
 schema_defaults = {
@@ -219,8 +220,8 @@ def process(env, token, print_mode):
                 print(schema_id + '|' + display_name + '|' + latest_schema_version)
 
             endpoint = '/api/v2/settings/objects'
-            params = 'schemaIds=' + schema_id.replace(':',
-                                                      '%3A') + '&scopes=environment&fields=objectId%2Cvalue&pageSize=500'
+            raw_params = f'schemaIds={schema_id}&scopes=environment&fields=objectId,value&pageSize=500'
+            params = urllib.parse.quote(raw_params, safe='/,&=')
             object = dynatrace_rest_api_helper.get_rest_api_json(env, token, endpoint, params)[0]
             items = object.get('items')
             count_objects = 0
@@ -294,10 +295,10 @@ def values_differ_from_defaults(schema_id, items, defaults, print_mode):
 
 
 def main():
-    env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
+    # env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
     # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
     # env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-    # env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
+    env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
 
     tenant = os.environ.get(tenant_key)
     token = os.environ.get(token_key)
