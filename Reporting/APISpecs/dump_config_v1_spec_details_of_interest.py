@@ -43,6 +43,20 @@ def dump_endpoint_methods():
         endpoint_methods[endpoint] = methods
 
 
+def dump_get_by_id_endpoints():
+    # The endpoint methods
+    print('Get By ID Endpoint Methods:')
+    paths = data.get('paths')
+    endpoint_methods = {}
+    endpoints = list(paths.keys())
+
+    for endpoint in endpoints:
+        endpoint_dict = paths.get(endpoint)
+        methods = list(endpoint_dict.keys())
+        if 'get' in methods and str(endpoint).endswith('{id}'):
+            print(endpoint[1:])
+
+
 def dump_schema_properties_key_key_enum_list(schema, key1, key2):
     print(schema + ':')
     entry_list = data.get('components').get('schemas').get(schema).get('properties').get(key1).get(key2).get('enum')
@@ -63,6 +77,9 @@ data = json.load(f)
 print_header()
 
 # dump_endpoint_methods()
+dump_get_by_id_endpoints()
+
+exit(1234)
 
 # This is where we get all the possible placeholders to use in conditions for process group tag rules
 # dump_auto_tag_placeholder_list()
