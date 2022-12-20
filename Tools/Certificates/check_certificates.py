@@ -3,16 +3,14 @@ import os
 import requests
 import socket
 import ssl_expiry
-import urllib.parse
-from urllib.parse import urlparse
 import yaml
 import list_urls_referenced_by_synthetics
 import list_hosts_monitored_by_oneagent
-import urllib.parse
+
 
 # To set a default domain name and/or a list of hosts to bypass:
 # configuration_yaml_file = 'check_certificates.yaml'
-configuration_yaml_file = '../../$Input/Tools/Certificates/check_certificatesBAD.yaml'
+configuration_yaml_file = '../../$Input/Tools/Certificates/check_certificates.yaml'
 
 
 def process(env, token):
@@ -97,35 +95,6 @@ def process(env, token):
     print(f'Failure Rate for Connections:  {failure_rate_connect}')
 
 
-def process_entity_type(env, token, entity_type):
-    host_name_list = []
-    endpoint = '/api/v2/entities'
-    entity_selector = f'type({entity_type})'
-    fields = '+properties,+tags'
-    raw_params = f'pageSize=4000&entitySelector=type({entity_type}&fields=+properties,+tags&to=-5m'
-    params = urllib.parse.quote(raw_params, safe='/,&=')
-    entities_json_list = get_rest_api_json(env, token, endpoint, params)
-    for entities_json in entities_json_list:
-        inner_entities_json_list = entities_json.get('entities')
-        for inner_entities_json in inner_entities_json_list:
-            # print(inner_entities_json)
-            # entity_id = inner_entities_json.get('entityId')
-            # display_name = inner_entities_json.get('displayName')
-            # properties = inner_entities_json.get('properties')
-            # detected_name = properties.get('detectedName', '')
-            tags = inner_entities_json.get('tags', [])
-            url = get_tag_value('URL', tags, None)
-            if url:
-                if 'https' not in url.lower():
-                    print(f'NON-HTTPS URL: {url}')
-                host_name = urlparse(url).netloc.split(':')[0]
-                if not valid_ip_address(host_name):
-                    # print(host_name)
-                    host_name_list.append(host_name)
-
-    return remove_duplicates(sorted(host_name_list))
-
-
 def valid_ip_address(host_name):
     try:
         ipaddress.ip_address(host_name)
@@ -205,8 +174,8 @@ def get_config():
 def main():
     # env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
     # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-    # env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-    env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
+    env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
+    # env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
 
     tenant = os.environ.get(tenant_key)
     token = os.environ.get(token_key)
