@@ -83,6 +83,22 @@ def dump_maturity_of_endpoints():
             if maturity:
                 print(f'{endpoint} {maturity}')
 
+def dump_management_zone_entities():
+    print('Management Zone Entities:')
+
+    management_zone_entity_list = data.get('components').get('schemas').get('MzRule').get('properties').get('type').get('enum')
+
+    for management_zone_entity in management_zone_entity_list:
+        print(management_zone_entity)
+
+def dump_monitored_entity_filters():
+    print('Monitored Entity Filters:')
+
+    monitored_entity_filter_list = data.get('components').get('schemas').get('MonitoredEntityFilter').get('properties').get('type').get('enum')
+
+    for monitored_entity_filter in monitored_entity_filter_list:
+        print(monitored_entity_filter)
+
 def dump_schema_properties_key_key_enum_list(schema, key1, key2):
     print(schema + ':')
     entry_list = data.get('components').get('schemas').get(schema).get('properties').get(key1).get(key2).get('enum')
@@ -105,7 +121,9 @@ print_header()
 # dump_endpoint_methods()
 # dump_get_by_id_endpoints()
 # dump_deprecated_endpoints()
-dump_maturity_of_endpoints()
+# dump_maturity_of_endpoints()
+# dump_management_zone_entities()
+dump_monitored_entity_filters()
 
 exit(1234)
 
