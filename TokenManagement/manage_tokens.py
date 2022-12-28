@@ -118,18 +118,22 @@ def delete(token_id):
 
 
 def post_robot_admin():
-	token_name = 'Robot Admin'
+	token_name = 'Robot Admin V4'
 	# return post('{"name":"' + token_name + '","scopes":["activeGates.read","activeGateTokenManagement.read","apiTokens.read","auditLogs.read","credentialVault.read","entities.read","events.read","extensionConfigurations.read","extensionEnvironment.read","extensions.read","geographicRegions.read","hub.read","metrics.read","networkZones.read","problems.read","releases.read","settings.read","settings.write","slo.read","syntheticExecutions.read","syntheticLocations.read","CaptureRequestData","DataExport","DataImport","DssFileManagement","DTAQLAccess","ExternalSyntheticIntegration","ReadConfig","ReadSyntheticData","WriteConfig"]}')
 	# v2: added LogExport
 	# return post('{"name":"' + token_name + '","scopes":["activeGates.read","activeGateTokenManagement.read","apiTokens.read","auditLogs.read","credentialVault.read","entities.read","events.read","extensionConfigurations.read","extensionEnvironment.read","extensions.read","geographicRegions.read","hub.read","metrics.read","networkZones.read","problems.read","releases.read","settings.read","settings.write","slo.read","syntheticExecutions.read","syntheticLocations.read","CaptureRequestData","DataExport","DataImport","DssFileManagement","DTAQLAccess","ExternalSyntheticIntegration","LogExport","ReadConfig","ReadSyntheticData","WriteConfig"]}')
 	# v3: added entities.write
-	return post('{"name":"' + token_name + '","scopes":["activeGates.read","activeGateTokenManagement.read","apiTokens.read","auditLogs.read","credentialVault.read","entities.read","entities.write","events.read","extensionConfigurations.read","extensionEnvironment.read","extensions.read","geographicRegions.read","hub.read","metrics.read","networkZones.read","problems.read","releases.read","settings.read","settings.write","slo.read","syntheticExecutions.read","syntheticLocations.read","CaptureRequestData","DataExport","DataImport","DssFileManagement","DTAQLAccess","ExternalSyntheticIntegration","LogExport","ReadConfig","ReadSyntheticData","WriteConfig"]}')
+	# return post('{"name":"' + token_name + '","scopes":["activeGates.read","activeGateTokenManagement.read","apiTokens.read","auditLogs.read","credentialVault.read","entities.read","entities.write","events.read","extensionConfigurations.read","extensionEnvironment.read","extensions.read","geographicRegions.read","hub.read","metrics.read","networkZones.read","problems.read","releases.read","settings.read","settings.write","slo.read","syntheticExecutions.read","syntheticLocations.read","CaptureRequestData","DataExport","DataImport","DssFileManagement","DTAQLAccess","ExternalSyntheticIntegration","LogExport","ReadConfig","ReadSyntheticData","WriteConfig"]}')
+	# v4: added events.ingest
+	return post('{"name":"' + token_name + '","scopes":["activeGates.read","activeGateTokenManagement.read","apiTokens.read","auditLogs.read","credentialVault.read","entities.read","entities.write","events.ingest","events.read","extensionConfigurations.read","extensionEnvironment.read","extensions.read","geographicRegions.read","hub.read","metrics.read","networkZones.read","problems.read","releases.read","settings.read","settings.write","slo.read","syntheticExecutions.read","syntheticLocations.read","CaptureRequestData","DataExport","DataImport","DssFileManagement","DTAQLAccess","ExternalSyntheticIntegration","LogExport","ReadConfig","ReadSyntheticData","WriteConfig"]}')
 
 
 def post_robot_admin_dev():
-	token_name = 'Robot Admin'
+	token_name = 'Robot Admin Dev V4'
 	# v3_dev: added entities.write and removed LogExport...due to lack of permission of my user...
-	return post('{"name":"' + token_name + '","scopes":["activeGates.read","activeGateTokenManagement.read","apiTokens.read","auditLogs.read","credentialVault.read","entities.read","entities.write","events.read","extensionConfigurations.read","extensionEnvironment.read","extensions.read","geographicRegions.read","hub.read","metrics.read","networkZones.read","problems.read","releases.read","settings.read","settings.write","slo.read","syntheticExecutions.read","syntheticLocations.read","CaptureRequestData","DataExport","DataImport","DssFileManagement","DTAQLAccess","ExternalSyntheticIntegration","ReadConfig","ReadSyntheticData","WriteConfig"]}')
+	# return post('{"name":"' + token_name + '","scopes":["activeGates.read","activeGateTokenManagement.read","apiTokens.read","auditLogs.read","credentialVault.read","entities.read","entities.write","events.read","extensionConfigurations.read","extensionEnvironment.read","extensions.read","geographicRegions.read","hub.read","metrics.read","networkZones.read","problems.read","releases.read","settings.read","settings.write","slo.read","syntheticExecutions.read","syntheticLocations.read","CaptureRequestData","DataExport","DataImport","DssFileManagement","DTAQLAccess","ExternalSyntheticIntegration","ReadConfig","ReadSyntheticData","WriteConfig"]}')
+	# v4_dev: added events.ingest
+	return post('{"name":"' + token_name + '","scopes":["activeGates.read","activeGateTokenManagement.read","apiTokens.read","auditLogs.read","credentialVault.read","entities.read","entities.write","events.ingest","events.read","extensionConfigurations.read","extensionEnvironment.read","extensions.read","geographicRegions.read","hub.read","metrics.read","networkZones.read","problems.read","releases.read","settings.read","settings.write","slo.read","syntheticExecutions.read","syntheticLocations.read","CaptureRequestData","DataExport","DataImport","DssFileManagement","DTAQLAccess","ExternalSyntheticIntegration","ReadConfig","ReadSyntheticData","WriteConfig"]}')
 
 
 def post_monaco():
@@ -273,6 +277,7 @@ def process():
 	print('Environment:     ' + env_name)
 	print('Environment URL: ' + env)
 
+	# post_robot_admin()
 	post_robot_admin_dev()
 
 	exit(1234)
