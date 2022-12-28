@@ -8,22 +8,28 @@ def process(env, token):
     endpoint = '/api/v2/metrics/query'
     metric_schema_id = 'builtin:host.availability'
     metric_query_options = ':names:fold:default(0):sort(dimension("dt.entity.host.name",ascending))'
-    from_time = 'now-72h'
-    entity_selector = 'type("HOST")'
+    # metric_schema_id = 'ext:tech.IBMMQ_OneAgent.Queue.OldestMessageAge'
+    # metric_query_options = ':names:fold:default(0)'
+    # metric_query_options = ''
+    # from_time = 'now-72h'
+    from_time = 'now-30m'
+    entity_selector = 'type(HOST)'
+    # entity_selector = 'type(PROCESS_GROUP_INSTANCE)'
     params = 'metricSelector=' + urllib.parse.quote(metric_schema_id) + metric_query_options + '&from=' + from_time + '&entitySelector=' + urllib.parse.quote(entity_selector)
     metrics_json_list = get_rest_api_json(env, token, endpoint, params)
-    print(metrics_json_list)
+    # print(metrics_json_list)
     for metrics_json in metrics_json_list:
         result_list = metrics_json.get('result')
         for result in result_list:
             # metric_id = result.get('metricId')
             data = result.get('data')
             for datapoint in data:
-                display_name = datapoint.get('dimensionMap').get('dt.entity.host.name').strip()
+                # print(datapoint)
                 values = datapoint.get('values')[0]
                 # if values <= 75:
+                display_name = datapoint.get('dimensionMap').get('dt.entity.host.name').strip()
+                # display_name = datapoint.get('dimensionMap').get('dt.entity.process_group_instance_name').strip()
                 print(display_name + '|' + str(values))
-    print('Done!')
 
 
 def get_rest_api_json(url, token, endpoint, params):
@@ -73,8 +79,8 @@ def get_rest_api_json(url, token, endpoint, params):
 def run():
     # env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
     # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-    # env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-    env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
+    env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
+    # env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
 
     tenant = os.environ.get(tenant_key)
     token = os.environ.get(token_key)
