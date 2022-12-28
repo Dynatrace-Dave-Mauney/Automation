@@ -35,7 +35,20 @@ Replace any "env" or "token" values needed in these Python modules as needed
 
 Install the dependencies for the Python modules:
 
+    The easiest way to handle dependencies is to run the module and see "what it complains about".
+
+    Then add the missing library:
+
+    Example:
+
+    pip install requests
+
+    You might also try this command to add all the dependencies:
+
     pip install json requests ssl xlsxwriter yaml
+
+    If you get a "Could not find a version that satisfies the requirement" for any particular library, it likely does not
+    need to be installed and can be removed from the command above.
 
 To Run Manually:
 

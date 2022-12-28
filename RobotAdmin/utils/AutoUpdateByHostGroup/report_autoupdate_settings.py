@@ -103,6 +103,8 @@ def process(env, token):
                     host_group = tag.get('value', 'None')
                 if "HostGroup" in str(tag):
                     host_group = tag.get('value', 'None')
+                if "Group" in str(tag):
+                    host_group = tag.get('value', 'None')
             if host_group == 'NoHostGroup':
                 host_group = 'None'
 
