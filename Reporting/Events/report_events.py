@@ -13,18 +13,21 @@ def process(env, token, print_mode):
     count_total = 0
 
     endpoint = '/api/v2/events'
-    params = 'pageSize=1000'
+    page_size = 1000
+    from_time = 'now-24h'
+    params = f'pageSize={page_size}&from={from_time}'
     events_json_list = get_rest_api_json(env, token, endpoint, params)
     # print(events_json_list)
 
     if print_mode:
         print('Events')
-        print('id' + '|' + 'name')
+        print('eventId|eventType|title|startTime|endTime|duration (D:HH:MM:SS.MMM')
 
     for events_json in events_json_list:
         inner_events_json_list = events_json.get('events')
         for inner_events_json in inner_events_json_list:
             # print(inner_events_json)
+            event_id = inner_events_json.get('eventId')
             event_type = inner_events_json.get('eventType')
             event_title = inner_events_json.get('title')
             start_time = inner_events_json.get('startTime')
@@ -35,7 +38,7 @@ def process(env, token, print_mode):
             formatted_duration = format_time_duration(start_time, end_time)
 
             if print_mode:
-                print(f'{event_type}|{event_title}|{start_date_time}|{end_date_time}|{formatted_duration}')
+                print(f'{event_id}|{event_type}|{event_title}|{start_date_time}|{end_date_time}|{formatted_duration}')
 
             count_total += 1
 
