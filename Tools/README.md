@@ -7,9 +7,10 @@ The "MultiTool" interactive module allows for easy interaction with the Dynatrac
 - Configuration V1
 - Entities (V1 and V2)
 - Events
+- Metrics
 - Settings 2.0
 
-Switch between environments easily by friendly name with no token copy/pasting needed!
+Switch between environments easily using a friendly name with no token copy/pasting needed!
 
 List items, view JSON for a specific item and save the JSON all from an easy command line interface!
 

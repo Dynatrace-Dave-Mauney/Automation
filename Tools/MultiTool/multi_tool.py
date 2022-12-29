@@ -20,7 +20,7 @@ supported_environments = {
     'Personal': ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN'),
 }
 
-supported_modes = ['configs', 'entities', 'entities_v1', 'events', 'settings20']
+supported_modes = ['configs', 'entities', 'entities_v1', 'events', 'metrics', 'settings20']
 
 
 def list_config_endpoints():
@@ -287,6 +287,82 @@ def list_objects_of_schema(env, token, schema_id):
         print(f'scope: {scope}, {value}')
 
 
+def list_metrics(env, token):
+    endpoint = '/api/v2/metrics'
+    # raw_params = 'pageSize=500&fields=+created'
+    raw_params = 'pageSize=500'
+    params = urllib.parse.quote(raw_params, safe='/,&=')
+    metrics_json_list = get_rest_api_json(env, token, endpoint, params)
+    # print('metric_id' + '|' + 'displayName' + '|' + 'created')
+    print('metric_id' + '|' + 'displayName')
+
+    lines = []
+
+    for metrics_json in metrics_json_list:
+        inner_metrics_json_list = metrics_json.get('metrics')
+        for inner_metrics_json in inner_metrics_json_list:
+            metric_id = inner_metrics_json.get('metricId')
+            display_name = inner_metrics_json.get('displayName')
+            # created = inner_metrics_json.get('created')
+            # print(metric_id + '|' + display_name + '|' + str(created))
+            line = f'{metric_id}|{display_name}'
+            lines.append(line)
+
+    for line in sorted(lines):
+        print(line)
+
+
+def view_metric(metric_id, env, token):
+    headers = {'Authorization': 'Api-Token ' + token}
+    try:
+        r = requests.get(env + '/api/v2/metrics/' + metric_id, headers=headers)
+        metric_content = json.dumps(r.json(), indent=4)
+        if r.status_code == 200:
+            global save_id
+            global save_content
+            save_id = metric_id
+            save_content = metric_content
+            print(json.dumps(r.json(), indent=4))
+        else:
+            if r.status_code == 400:
+                if "The requested metricId is invalid" in r.text:
+                    print('Entity ID not found on this tenant')
+            else:
+                print('Status Code: %d' % r.status_code)
+                print('Reason: %s' % r.reason)
+                if len(r.text) > 0:
+                    print(r.text)
+    except ssl.SSLError:
+        print("SSL Error")
+
+
+def view_metric_query(metric_selector, env, token):
+    endpoint = '/api/v2/metrics/query'
+    try:
+        full_url = env + endpoint
+        raw_params = f'metricSelector={metric_selector}'
+        params = urllib.parse.quote(raw_params, safe='/,&=')
+        r = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
+        metric_content = json.dumps(r.json(), indent=4)
+        if r.status_code == 200:
+            global save_id
+            global save_content
+            save_id = metric_selector
+            save_content = metric_content
+            print(json.dumps(r.json(), indent=4))
+        else:
+            if r.status_code == 400:
+                if "The requested metricId is invalid" in r.text:
+                    print('Entity ID not found on this tenant')
+            else:
+                print('Status Code: %d' % r.status_code)
+                print('Reason: %s' % r.reason)
+                if len(r.text) > 0:
+                    print(r.text)
+    except ssl.SSLError:
+        print("SSL Error")
+
+
 def view_event(event_id, env, token):
     headers = {'Authorization': 'Api-Token ' + token}
     try:
@@ -475,7 +551,7 @@ def run():
                 list_config_endpoints()
                 continue
             else:
-                print('list apis ony applies to "configs" mode.')
+                print('list apis only applies to "configs" mode.')
                 continue
 
         if input_string.upper() == 'LS':
@@ -483,7 +559,7 @@ def run():
                 list_schemas(env, token)
                 continue
             else:
-                print('list schemas ony applies to "settings20" mode.')
+                print('list schemas only applies to "settings20" mode.')
                 continue
 
         if input_string.upper() == 'L':
@@ -499,32 +575,39 @@ def run():
                     list_events(env, token)
                     continue
                 else:
-                    if mode == 'settings20':
-                        list_objects_at_environment_scope(env, token)
+                    if mode == 'metrics':
+                        list_metrics(env, token)
                         continue
                     else:
-                        if mode == 'entities':
-                            list_entity_types(env, token)
+                        if mode == 'settings20':
+                            list_objects_at_environment_scope(env, token)
                             continue
                         else:
-                            print('Only supported for "configs", "entities" and "events" modes.')
-                            continue
+                            if mode == 'entities':
+                                list_entity_types(env, token)
+                                continue
+                            else:
+                                print('Only supported for "configs", "entities" and "events" modes.')
+                                continue
 
         if input_string.upper().startswith('L '):
             argument = input_string.split(' ')[1]
-            if mode == 'settings20':
-                list_objects_of_schema(env, token, argument)
+            if mode == 'entities':
+                list_entities_of_type(env, token, argument)
                 continue
             else:
-                if mode == 'entities':
-                    list_entities_of_type(env, token, argument)
+                if mode == 'settings20':
+                    list_objects_of_schema(env, token, argument)
                     continue
                 else:
                     print('Only supported for "entities" and "settings20" modes.')
                     continue
 
         if input_string.upper() == 'A':
-            print(f'API is currently set to {api}')
+            if api == '':
+                print(f'API is currently not set')
+            else:
+                print(f'API is currently set to {api}')
             continue
 
         if input_string.upper().startswith('A '):
@@ -543,7 +626,16 @@ def run():
                 print(f'Mode is now {mode}')
                 continue
             else:
-                print('Invalid mode.  Enter one of "configs|entities|entities_v1|events|settings20"')
+                print('Invalid mode.  Enter one of "configs|entities|entities_v1|events|metrics|settings20"')
+                continue
+
+        if input_string.upper().startswith('MQ '):
+            if mode == 'metrics':
+                metric_query = input_string.split(' ')[1]
+                view_metric_query(metric_query, env, token)
+                continue
+            else:
+                print('metric query only applies to "metrics" mode.')
                 continue
 
         if input_string.upper() == 'E':
@@ -591,21 +683,30 @@ def run():
                 if mode == 'entities_v1':
                     view_entity_v1(input_string, env, token)
                 else:
-                    if mode == 'settings20':
-                        view_object(input_string, env, token)
+                    if mode == 'events':
+                        view_event(input_string, env, token)
                     else:
-                        if mode == 'events':
-                            view_event(input_string, env, token)
+                        if mode == 'metrics':
+                            view_metric(input_string, env, token)
                         else:
-                            print('Mode not yet supported!')
+                            if mode == 'settings20':
+                                view_object(input_string, env, token)
+                            else:
+                                print('Mode not yet supported!')
 
 
 def print_help():
     print('')
-    print(f'Enter an ID or "e Prod|Perf|Dev|Personal" to set/change the environment, "m configs|entities|entities_v1|events|settings20" to set/change the mode, ')
-    print(f'"la" to list apis, "l to list entities",  "a <api>" to set/change an api, "s" to save the JSON just viewed or "q" to quit')
-    print(f'Single letter commands a|e|m show current values')
-    print(f'"h" to view this help message')
+    print(f'Enter "e Prod|Perf|Dev|Personal" to change the environment. "e" without a parameter shows the current environment.')
+    print(f'Enter "m configs|entities|entities_v1|events|metrics|settings20" to change the mode. "m" without a parameter shows the current mode.')
+    print(f'Enter "a <api>" to set/change an api (in configs mode). "a" without a parameter shows the current api.')
+    print(f'Enter "l to list items')
+    print(f'Enter "la" to list apis (in configs mode)')
+    print(f'Enter "mq" to query a metric selector (in metrics mode)')
+    print(f'Enter just an ID to get the JSON')
+    print(f'Enter "s" to save JSON just viewed')
+    print(f'Enter "q" to quit')
+    print(f'Enter "h" to view this help message')
     print('')
 
 
