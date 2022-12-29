@@ -353,7 +353,7 @@ def view_metric_query(metric_selector, env, token):
         else:
             if r.status_code == 400:
                 if "The requested metricId is invalid" in r.text:
-                    print('Entity ID not found on this tenant')
+                    print('Metric ID not found on this tenant')
             else:
                 print('Status Code: %d' % r.status_code)
                 print('Reason: %s' % r.reason)
@@ -377,7 +377,7 @@ def view_event(event_id, env, token):
         else:
             if r.status_code == 400:
                 if "The requested eventId is invalid" in r.text:
-                    print('Entity ID not found on this tenant')
+                    print('Event ID not found on this tenant')
             else:
                 print('Status Code: %d' % r.status_code)
                 print('Reason: %s' % r.reason)
