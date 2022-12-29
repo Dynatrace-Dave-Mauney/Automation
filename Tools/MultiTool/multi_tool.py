@@ -48,7 +48,7 @@ def view_config(config_id, env, token):
     headers = {'Authorization': 'Api-Token ' + token}
     try:
         url = f'{env}/api/config/v1/{api}/{config_id}'
-        print(url)
+        # print(url)
         r = requests.get(url, headers=headers)
         config_content = json.dumps(r.json(), indent=4)
         if r.status_code == 200:
@@ -58,9 +58,8 @@ def view_config(config_id, env, token):
             save_content = config_content
             print(json.dumps(r.json(), indent=4))
         else:
-            if r.status_code == 400:
-                if "The requested configId is invalid" in r.text:
-                    print('Config ID not found on this tenant')
+            if r.status_code == 404:
+                print('Config ID not found on this tenant')
             else:
                 print('Status Code: %d' % r.status_code)
                 print('Reason: %s' % r.reason)
@@ -113,9 +112,8 @@ def view_entity(entity_id, env, token):
             save_content = entity_content
             print(json.dumps(r.json(), indent=4))
         else:
-            if r.status_code == 400:
-                if "The requested entityId is invalid" in r.text:
-                    print('Entity ID not found on this tenant')
+            if r.status_code == 400 and "The requested entityId is invalid" in r.text:
+                print('Entity ID not found on this tenant')
             else:
                 print('Status Code: %d' % r.status_code)
                 print('Reason: %s' % r.reason)
@@ -150,7 +148,7 @@ def view_entity_v1(entity_id, env, token):
 
     try:
         url = f'{env}/api/v1/{entity_endpoint}/{entity_id}'
-        print(url)
+        # print(url)
         r = requests.get(url, headers=headers)
         entity_content = json.dumps(r.json(), indent=4)
         if r.status_code == 200:
@@ -160,9 +158,8 @@ def view_entity_v1(entity_id, env, token):
             save_content = entity_content
             print(json.dumps(r.json(), indent=4))
         else:
-            if r.status_code == 400:
-                if "The requested entityId is invalid" in r.text:
-                    print('Entity ID not found on this tenant')
+            if r.status_code == 404 and "The given entity id is not assigned to an entity" in r.text:
+                print('Entity ID not found on this tenant')
             else:
                 print('Status Code: %d' % r.status_code)
                 print('Reason: %s' % r.reason)
@@ -324,14 +321,16 @@ def view_metric(metric_id, env, token):
             save_content = metric_content
             print(json.dumps(r.json(), indent=4))
         else:
-            if r.status_code == 400:
-                if "The requested metricId is invalid" in r.text:
-                    print('Entity ID not found on this tenant')
+            if r.status_code == 400 and "The requested metricId is invalid" in r.text:
+               print('Metric ID invalid')
             else:
-                print('Status Code: %d' % r.status_code)
-                print('Reason: %s' % r.reason)
-                if len(r.text) > 0:
-                    print(r.text)
+                if r.status_code == 404 and "No metric found using the Metric Id" in r.text:
+                    print('Metric ID not found on this tenant')
+                else:
+                    print('Status Code: %d' % r.status_code)
+                    print('Reason: %s' % r.reason)
+                    if len(r.text) > 0:
+                        print(r.text)
     except ssl.SSLError:
         print("SSL Error")
 
@@ -351,14 +350,16 @@ def view_metric_query(metric_selector, env, token):
             save_content = metric_content
             print(json.dumps(r.json(), indent=4))
         else:
-            if r.status_code == 400:
-                if "The requested metricId is invalid" in r.text:
-                    print('Metric ID not found on this tenant')
+            if r.status_code == 400 and "The requested metricId is invalid" in r.text:
+               print('Metric ID invalid')
             else:
-                print('Status Code: %d' % r.status_code)
-                print('Reason: %s' % r.reason)
-                if len(r.text) > 0:
-                    print(r.text)
+                if r.status_code == 404 and "No metric found using the Metric Id" in r.text:
+                    print('Metric ID not found on this tenant')
+                else:
+                    print('Status Code: %d' % r.status_code)
+                    print('Reason: %s' % r.reason)
+                    if len(r.text) > 0:
+                        print(r.text)
     except ssl.SSLError:
         print("SSL Error")
 
@@ -375,9 +376,8 @@ def view_event(event_id, env, token):
             save_content = event_content
             print(json.dumps(r.json(), indent=4))
         else:
-            if r.status_code == 400:
-                if "The requested eventId is invalid" in r.text:
-                    print('Event ID not found on this tenant')
+            if r.status_code == 400 and "Unable to find event with id" in r.text:
+                print('Event ID not found on this tenant')
             else:
                 print('Status Code: %d' % r.status_code)
                 print('Reason: %s' % r.reason)
