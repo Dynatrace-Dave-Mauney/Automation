@@ -56,6 +56,10 @@ The restore process has not been fully tested, so caution is advised when using 
 
 This subproject contains a few go modules that might be useful if Python is not an option.
 
+## Internal
+
+Automation unlikely to benefit those outside of Dynatrace.
+
 ## Reporting
 
 This subproject facilitates summary and detail reporting, as well as providing a framework for "auditing" a tenant for adherernce to standards.
