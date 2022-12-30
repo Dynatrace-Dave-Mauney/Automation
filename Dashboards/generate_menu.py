@@ -10,7 +10,7 @@ import glob
 # GENERATED_NAME = 'AWS Metrics via CloudWatch Metric Stream'
 # GENERATED_ID = 'aaaaaaaa-bbbb-cccc-abcd-000000000000'
 
-GENERATED_PATH = '../$Output/Dashboards/AWSSupportingServices'
+GENERATED_PATH = '../$Output/Dashboards/AWSSupportingServices/Final'
 GENERATED_ID = 'aaaaaaaa-bbbb-cccc-eeee-f00000000000'
 GENERATED_NAME = 'AWS Supporting Services (Improved)'
 
@@ -18,7 +18,7 @@ GENERATED_NAME = 'AWS Supporting Services (Improved)'
 # path='./????????-????-????-????-????????????'
 # path = '../$Output/DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-0000-0000000000??.json'
 # path = '../$Output/DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-abcd-0000000000??.json'
-path = '../$Output/Dashboards/AWSSupportingServices/*.json'
+path = '../$Output/Dashboards/AWSSupportingServices/Final/*.json'
 
 dashboard_template_top = '''{
   "metadata": {
@@ -35,7 +35,7 @@ dashboard_template_top = '''{
         "linkShared": true,
         "published": true
     },
-    "owner": "nobody@example.com.com"
+    "owner": "nobody@example.com"
   },
   "tiles": [
     {
