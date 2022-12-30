@@ -1,5 +1,6 @@
 import datetime
 import os
+import re
 import requests
 import ssl
 import json
@@ -269,19 +270,20 @@ def list_objects_at_environment_scope(env, token):
 def list_objects_of_schema(env, token, schema_id):
     # print(f'list_objects_of_schema: {schema_id}')
     endpoint = f'/api/v2/settings/objects'
-    raw_params = f'schemaIds={schema_id}&fields=scope,value&pageSize=500'
+    raw_params = f'schemaIds={schema_id}&fields=scope,objectId,value&pageSize=500'
     params = urllib.parse.quote(raw_params, safe='/,&=')
     settings_object = get_rest_api_json(env, token, endpoint, params)[0]
-    # print(settings_object)
+    print(settings_object)
 
     items = settings_object.get('items')
     for item in items:
         scope = item.get('scope')
+        object_id = item.get('objectId')
         value = str(item.get('value'))
         value = value.replace('{', '')
         value = value.replace('}', '')
         value = value.replace("'", "")
-        print(f'scope: {scope}, {value}')
+        print(f'{object_id}, scope: {scope}, {value}')
 
 
 def list_metrics(env, token):
@@ -483,10 +485,12 @@ def convert_epoch_in_milliseconds_to_local(epoch):
 
 
 def save(path, file, content):
+    clean_filename = re.sub(r"[/\\?%*:|\"<>\x7F\x00-\x1F]", "-", file)
     if not os.path.isdir(path):
         os.makedirs(path)
-    with open(path + "/" + file, "w", encoding='utf8') as text_file:
+    with open(path + "/" + clean_filename, "w", encoding='utf8') as text_file:
         text_file.write("%s" % content)
+        print(f'Saved {path}/{clean_filename}')
 
 
 def change_environment(new_env):
@@ -543,7 +547,6 @@ def run():
                 else:
                     save_path = f'{PATH}/{mode.capitalize()}/{env_name}'
                 save(save_path, save_id + '.json', save_content)
-                print(f'Saved {save_path}/{save_id}.json')
                 continue
 
         if input_string.upper() == 'LA':
