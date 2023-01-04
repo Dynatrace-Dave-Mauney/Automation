@@ -1,6 +1,8 @@
 # Automation
 The goal of this project is to facilitate Dynatrace automation with various subprojects that deal with specific automation tasks.
 
+For complete instructions on getting started from scratch, see [Getting Started](GettingStarted.md)
+
 ## Dashboards
 This subproject contains many dashboard utilities and two sets of dashboard templates.
 
