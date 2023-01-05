@@ -1,7 +1,16 @@
 # Getting Started
 
+By far, the easiest way to get started is to continue to "PyCharm Configuration (with git integration)".
+
+If you plan to work primarily in the PyCharm IDE, continue by following the steps under "PyCharm Configuration (without git integration)" or "PyCharm Configuration (with git integration)".
+
+If you plan to work primarily in the command line/terminal, continue by following the steps under "Command Line Configuration".
+
+## Common Configuration
+
 - Install Python 
   - Download Python [here](https://www.python.org/downloads/)
+  - It is recommended to add the python folder to the path for Windows
   - Open a command prompt or terminal and execute the "py" command
   - Verify the version mentioned is the one you installed
   - Verify there is a ">>>" prompt indicating you are interacting with the Python terminal 
@@ -10,9 +19,11 @@
   - Enter "quit()" to exit the Python terminal
   
 - Download the "Automation" repository
-  - This can be done using "git clone" if you are familiar with git
+  - This can be done using "git clone", if you are familiar with git
   - Otherwise, simply download a zip of the repository and expand it in a directory of your choice
-  - Either way, you will need to click the green "Code" button on [this page](https://github.com/Dynatrace-Dave-Mauney/Automation)
+  - Either way, you will need to click the green "Code" button on [this page](https://github.com/Dynatrace-Dave-Mauney/Automation) to start the process
+
+## Command Line Configuration
 
 - Configure a virtual environment
   - Open a command prompt/terminal
@@ -34,6 +45,34 @@
   - Your Python Virtual Environment will need various dependencies installed
   - Change directory to the root Automation directory, where the "requirements.txt" file resides
   - Run the "pip install -r requirements.txt" from the OS command prompt (not Python terminal)
+
+Unless you also plan to use PyCharm, continue to the "Configure Automation Project" section.
+
+## PyCharm Configuration (with git integration)
+
+  - If you need to, [download](https://www.jetbrains.com/pycharm/download) and install PyCharm.  Be sure to select the "Community" edition, unless you need Professional.
+  - Start PyCharm
+  - Click the "Get from VCS" button
+  - If Git is not installed, click "Download and Install"
+  - Enter "https://github.com/Dynatrace-Dave-Mauney/Automation.git" in the URL dropdown
+  - Click the "Clone" button
+  - Open Tools\MultiTool\multi_tool.py
+  - At the top right, click "Create a virtual environment using requirements.txt"
+  - Run "multi_tool.py" using Ctrl-Shift-F10 (or the run button)
+  - When prompted, select the Python executable under the "venv" folder
+
+## PyCharm Configuration (without git integration)
+
+  - Delete the ".idea\vcs.xml" file
+  - If you need to, [download](https://www.jetbrains.com/pycharm/download) and install PyCharm.  Be sure to select the "Community" edition, unless you need Professional.
+  - Start PyCharm
+  - Open the project by selecting the root Automation directory
+  - Open Tools\MultiTool\multi_tool.py
+  - At the top right, click "Create a virtual environment using requirements.txt"
+  - Run "multi_tool.py" using Ctrl-Shift-F10 (or the run button)
+  - When prompted, select the Python executable under the "venv" folder
+
+## Configure Automation Project
 
 - Set Required Environment Variables
   - There are two key environment variables needed for almost all modules: Tenant and Token
