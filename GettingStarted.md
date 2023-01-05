@@ -58,6 +58,7 @@ Unless you also plan to use PyCharm, continue to the "Configure Automation Proje
   - At the top right, click "Create a virtual environment using requirements.txt"
   - Run "multi_tool.py" using Ctrl-Shift-F10 (or the run button)
   - When prompted, select the Python executable under the "venv" folder
+  - You will not be able to actually run "multi_tool.py" until you complete the "Configure Automation Project" section below.
 
 ## PyCharm Configuration (without git integration)
 
@@ -69,21 +70,27 @@ Unless you also plan to use PyCharm, continue to the "Configure Automation Proje
   - At the top right, click "Create a virtual environment using requirements.txt"
   - Run "multi_tool.py" using Ctrl-Shift-F10 (or the run button)
   - When prompted, select the Python executable under the "venv" folder
+  - You will not be able to actually run "multi_tool.py" until you complete the "Configure Automation Project" section below.
 
 ## Configure Automation Project
 
 - Set Required Environment Variables
-  - There are two key environment variables needed for almost all modules: Tenant and Token
-  - These can be seen in the example Python code below:
-  - env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
+  - There are two key environment variables needed for almost all modules: Tenant and Token, as shown the example Python code below:
+
+  ```
+  env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
+  ```
   - Here the friendly environment name of "Prod" is associated with two environment variables ("PROD_TENANT" and "ROBOT_ADMIN_PROD_TOKEN").
-  - This naming standard is only a suggestion, but it does simplify things to include the environment (PROD), function (ROBOT_ADMIN) and variable type (TENANT or TOKEN).
+  - This naming standard is only a suggestion, but it does simplify things to include the environment (PROD), function (ROBOT_ADMIN) and variable type (TENANT or TOKEN) in the names.
   - You will need to set up your own environment variables and name them to suit your needs.
   - You will need to modify each module to reference the appropriate set of values.
-  - Use [TokenManagement](https://github.com/Dynatrace-Dave-Mauney/Automation/tree/main/TokenManagement) to create your Token or do it manually
-  - If you do it manually, see "Robot Admin Token Permissions" below for permissions needed 
+  - Use [TokenManagement](https://github.com/Dynatrace-Dave-Mauney/Automation/tree/main/TokenManagement) to create your Token, or do it manually using the "Access tokens" menu item in the Dynatrace UI.
+  - If you do it manually, see the "Robot Admin Token Permissions" section below for permissions needed 
   - For managed installs, you will need to modify the code to pass the "environment" required rather than "tenant" (out of scope for this document).
-  - See "Windows setEnv.bat Example" below for an example script for Windows.
+  - See "Windows setEnv.bat Example" below for an example script for setting environment variables on Windows.
+  - After setting the environment variables using  [TokenManagement](https://github.com/Dynatrace-Dave-Mauney/Automation/tree/main/TokenManagement) or manually, be sure to restart your terminal or PyCharm in order to pick up the newly added environment variables.
+  - If you get SSL certificate issues see the "Troubleshooting" section
+
 
 - Windows setEnv.bat Example
 
@@ -143,3 +150,21 @@ settings.write
 slo.read
 syntheticExecutions.read
 syntheticLocations.read```
+
+## Troubleshooting
+
+- "Unable to get local issuer certificate" errors
+
+This issue may occur on some Windows installs of Python when using "requests" (which is used for all API calls).
+
+This [fix](https://stackoverflow.com/questions/51925384/unable-to-get-local-issuer-certificate-when-using-requests-in-python) should solve it: 
+
+In the PyCharm terminal, run these commands:
+
+pip install --upgrade certifi
+pip install python-certifi-win32
+
+Then try rerunning the module that failed.
+
+
+
