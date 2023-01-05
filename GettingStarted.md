@@ -2,7 +2,7 @@
 
 By far, the easiest way to get started is to continue to "PyCharm Configuration (with git integration)".
 
-If you plan to work primarily in the PyCharm IDE, continue by following the steps under "PyCharm Configuration (without git integration)" or "PyCharm Configuration (with git integration)".
+If you plan to work primarily in the PyCharm IDE, continue by following the steps under "PyCharm Configuration (with git integration)" or "PyCharm Configuration (without git integration)".
 
 If you plan to work primarily in the command line/terminal, continue by following the steps under "Command Line Configuration".
 
@@ -22,8 +22,6 @@ If you plan to work primarily in the command line/terminal, continue by followin
   - This can be done using "git clone", if you are familiar with git
   - Otherwise, simply download a zip of the repository and expand it in a directory of your choice
   - Either way, you will need to click the green "Code" button on [this page](https://github.com/Dynatrace-Dave-Mauney/Automation) to start the process
-
-## Command Line Configuration
 
 - Configure a virtual environment
   - Open a command prompt/terminal
