@@ -7,9 +7,9 @@ import ssl
 
 endpoint = '/api/v2/apiTokens'
 
-# env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'TOKEN_MANAGEMENT_PROD_TOKEN')
+env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'TOKEN_MANAGEMENT_PROD_TOKEN')
 # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'TOKEN_MANAGEMENT_PREP_TOKEN')
-env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'TOKEN_MANAGEMENT_DEV_TOKEN')
+# env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'TOKEN_MANAGEMENT_DEV_TOKEN')
 # env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'TOKEN_MANAGEMENT_PERSONAL_TOKEN')
 # env_name, tenant_key, token_key = ('FreeTrial1', 'FREETRIAL1_TENANT', 'TOKEN_MANAGEMENT_FREETRIAL1_TOKEN')
 
@@ -277,8 +277,8 @@ def process():
 	print('Environment:     ' + env_name)
 	print('Environment URL: ' + env)
 
-	# post_robot_admin()
-	post_robot_admin_dev()
+	post_robot_admin()
+	# post_robot_admin_dev()
 
 	exit(1234)
 

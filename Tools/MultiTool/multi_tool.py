@@ -15,10 +15,11 @@ save_content = ''
 
 
 supported_environments = {
-    'Prod': ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN'),
-    'Prep': ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN'),
-    'Dev': ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN'),
-    'Personal': ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN'),
+    'Prod': ('PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN'),
+    'Prep': ('PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN'),
+    'Dev': ('DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN'),
+    'Personal': ('PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN'),
+    'FreeTrial1': ('FREETRIAL1_TENANT', 'ROBOT_ADMIN_FREETRIAL1_TOKEN'),
 }
 
 supported_modes = ['configs', 'entities', 'entities_v1', 'events', 'metrics', 'settings20']
@@ -506,7 +507,7 @@ def get_environment(env_name):
         print(f'Invalid environment name: {env_name}')
         return env_name, None, None
 
-    env_name, tenant_key, token_key = supported_environments.get(env_name)
+    tenant_key, token_key = supported_environments.get(env_name)
 
     if env_name and tenant_key and token_key:
         tenant = os.environ.get(tenant_key)
