@@ -4,6 +4,8 @@ import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
 from datetime import date
 
+html_path = '../../docs'
+
 html_top_blogs = '''<html>
 <body>
 <table>
@@ -191,7 +193,7 @@ def process_blogs(blog_url_list):
     blog_page_data_list.sort(key=lambda y: y[3], reverse=True)
 
     write_yaml('known_blog_pages.yaml', blog_page_data_list)
-    write_html('News', 'dynatrace_news_history.html', format_html('News', blog_page_data_list))
+    write_html('News', f'{html_path}/dynatrace_news_history.html', format_html('News', blog_page_data_list))
 
 
 def process_saas_release_notes(saas_release_notes_url_list):
@@ -215,7 +217,7 @@ def process_saas_release_notes(saas_release_notes_url_list):
     saas_release_notes_page_data_list.sort(key=lambda y: y[1], reverse=True)
 
     write_yaml('known_saas_release_notes_pages.yaml', saas_release_notes_page_data_list)
-    write_html('SaaS Release Notes', 'dynatrace_saas_release_notes_history.html', format_html('Release Notes', saas_release_notes_page_data_list))
+    write_html('SaaS Release Notes', f'{html_path}/dynatrace_saas_release_notes_history.html', format_html('Release Notes', saas_release_notes_page_data_list))
 
 
 def process_managed_release_notes(managed_release_notes_url_list):
@@ -239,7 +241,7 @@ def process_managed_release_notes(managed_release_notes_url_list):
     managed_release_notes_page_data_list.sort(key=lambda y: y[1], reverse=True)
 
     write_yaml('known_managed_release_notes_pages.yaml', managed_release_notes_page_data_list)
-    write_html('Managed Release Notes', 'dynatrace_managed_release_notes_history.html', format_html('Release Notes', managed_release_notes_page_data_list))
+    write_html('Managed Release Notes', f'{html_path}/dynatrace_managed_release_notes_history.html', format_html('Release Notes', managed_release_notes_page_data_list))
 
 
 def process_one_agent_release_notes(one_agent_release_notes_url_list):
@@ -263,7 +265,7 @@ def process_one_agent_release_notes(one_agent_release_notes_url_list):
     one_agent_release_notes_page_data_list.sort(key=lambda y: y[1], reverse=True)
 
     write_yaml('known_one_agent_release_notes_pages.yaml', one_agent_release_notes_page_data_list)
-    write_html('One Agent Release Notes', 'dynatrace_one_agent_release_notes_history.html', format_html('Release Notes', one_agent_release_notes_page_data_list))
+    write_html('One Agent Release Notes', f'{html_path}/dynatrace_one_agent_release_notes_history.html', format_html('Release Notes', one_agent_release_notes_page_data_list))
 
 
 def process_active_gate_release_notes(active_gate_release_notes_url_list):
@@ -287,7 +289,7 @@ def process_active_gate_release_notes(active_gate_release_notes_url_list):
     active_gate_release_notes_page_data_list.sort(key=lambda y: y[1], reverse=True)
 
     write_yaml('known_active_gate_release_notes_pages.yaml', active_gate_release_notes_page_data_list)
-    write_html('Active Gate Release Notes', 'dynatrace_active_gate_release_notes_history.html', format_html('Release Notes', active_gate_release_notes_page_data_list))
+    write_html('Active Gate Release Notes', f'{html_path}/dynatrace_active_gate_release_notes_history.html', format_html('Release Notes', active_gate_release_notes_page_data_list))
 
 
 def process():
