@@ -20,6 +20,7 @@ def dump_auto_tag_placeholder_list():
     description = data.get('components').get('schemas').get('AutoTagRule').get('properties').get('valueFormat').get('description').replace("* `", "").replace("` ", "")
     print('Auto Tag Placeholders:')
     print(description)
+    print('')
 
 
 def dump_schema_properties_key_enum_list(schema, key):
@@ -27,38 +28,87 @@ def dump_schema_properties_key_enum_list(schema, key):
     entry_list = data.get('components').get('schemas').get(schema).get('properties').get(key).get('enum')
     for entry in entry_list:
         print(entry)
+    print('')
 
 
 def dump_endpoint_methods():
-    # The endpoint methods
     print('Endpoint Methods:')
     paths = data.get('paths')
-    endpoint_methods = {}
-    endpoints = list(paths.keys())
+    endpoints = sorted(list(paths.keys()))
 
     for endpoint in endpoints:
         endpoint_dict = paths.get(endpoint)
         methods = list(endpoint_dict.keys())
         print(endpoint + ': ' + str(methods))
-        endpoint_methods[endpoint] = methods
+
+    print('')
+
+
+def dump_endpoint_get_methods():
+    print('Endpoint Get Methods:')
+    paths = data.get('paths')
+    endpoints = sorted(list(paths.keys()))
+
+    for endpoint in endpoints:
+        endpoint_dict = paths.get(endpoint)
+        methods = list(endpoint_dict.keys())
+        if 'get' in methods:
+            # print(endpoint + ': ' + str(methods))
+            print(endpoint)
+
+    print('')
+
+
+def dump_endpoint_get_methods_with_at_least_one_variable():
+    print('Endpoint Get Methods With At Least One Variable:')
+    paths = data.get('paths')
+    endpoints = sorted(list(paths.keys()))
+
+    for endpoint in endpoints:
+        if str(endpoint).count('{') > 0:
+            endpoint_dict = paths.get(endpoint)
+            methods = list(endpoint_dict.keys())
+            if 'get' in methods:
+                # print(endpoint + ': ' + str(methods))
+                print(endpoint)
+
+    print('')
+
+
+def dump_endpoint_get_methods_with_multiple_variables():
+    print('Endpoint Get Methods With Multiple Variables:')
+    paths = data.get('paths')
+    endpoints = sorted(list(paths.keys()))
+
+    for endpoint in endpoints:
+        if str(endpoint).count('{') > 1:
+            endpoint_dict = paths.get(endpoint)
+            methods = list(endpoint_dict.keys())
+            if 'get' in methods:
+                # print(endpoint + ': ' + str(methods))
+                print(endpoint)
+
+    print('')
 
 
 def dump_get_by_id_endpoints():
     print('Get By ID Endpoints:')
     paths = data.get('paths')
-    endpoints = list(paths.keys())
+    endpoints = sorted(list(paths.keys()))
 
     for endpoint in endpoints:
         endpoint_dict = paths.get(endpoint)
         methods = list(endpoint_dict.keys())
-        if 'get' in methods and str(endpoint).endswith('{id}'):
+        if 'get' in methods and str(endpoint).endswith('}'):
             print(endpoint[1:])
+
+    print('')
 
 
 def dump_deprecated_endpoints():
     print('Deprecated Endpoints:')
     paths = data.get('paths')
-    endpoints = list(paths.keys())
+    endpoints = sorted(list(paths.keys()))
 
     for endpoint in endpoints:
         endpoint_dict = paths.get(endpoint)
@@ -68,11 +118,14 @@ def dump_deprecated_endpoints():
             if method_dict.get('deprecated'):
                 print(f'{endpoint} {method}')
 
+    print('')
+
+
 def dump_maturity_of_endpoints():
     print('Maturity of Endpoints:')
     print('Endpoints with no maturity set are skipped...')
     paths = data.get('paths')
-    endpoints = list(paths.keys())
+    endpoints = sorted(list(paths.keys()))
 
     for endpoint in endpoints:
         endpoint_dict = paths.get(endpoint)
@@ -83,21 +136,26 @@ def dump_maturity_of_endpoints():
             if maturity:
                 print(f'{endpoint} {maturity}')
 
+    print('')
+
+
 def dump_management_zone_entities():
     print('Management Zone Entities:')
-
     management_zone_entity_list = data.get('components').get('schemas').get('MzRule').get('properties').get('type').get('enum')
-
     for management_zone_entity in management_zone_entity_list:
         print(management_zone_entity)
 
+    print('')
+
+
 def dump_monitored_entity_filters():
     print('Monitored Entity Filters:')
-
     monitored_entity_filter_list = data.get('components').get('schemas').get('MonitoredEntityFilter').get('properties').get('type').get('enum')
-
     for monitored_entity_filter in monitored_entity_filter_list:
         print(monitored_entity_filter)
+
+    print('')
+
 
 def dump_schema_properties_key_key_enum_list(schema, key1, key2):
     print(schema + ':')
@@ -112,17 +170,23 @@ def dump_schema_all_of_1_properties_key_enum_list(schema, key):
     for entry in entry_list:
         print(entry)
 
+    print('')
+
 
 # Main Processing...
 f = open('config_v1_spec3.json',)
 data = json.load(f)
 print_header()
 
-# dump_endpoint_methods()
-# dump_get_by_id_endpoints()
-# dump_deprecated_endpoints()
-# dump_maturity_of_endpoints()
-# dump_management_zone_entities()
+dump_auto_tag_placeholder_list()
+dump_endpoint_methods()
+dump_endpoint_get_methods()
+dump_endpoint_get_methods_with_at_least_one_variable()
+dump_endpoint_get_methods_with_multiple_variables()
+dump_get_by_id_endpoints()
+dump_deprecated_endpoints()
+dump_maturity_of_endpoints()
+dump_management_zone_entities()
 dump_monitored_entity_filters()
 
 exit(1234)

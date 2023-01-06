@@ -11,6 +11,14 @@ Token Permissions Required:
 "credentialVault.read (Read credential vault entries)" - if you want to save credentials
 "DssFileManagement (Mobile symbolication file management)" - if you want to save symbol files
 
+Endpoints with multiple variables are not yet supported:
+/applications/mobile/{applicationId}/userActionAndSessionProperties/{key}
+/conditionalNaming/{type}/{id}
+/extensions/{id}/instances/{configurationId}
+/plugins/{id}/endpoints/{endpointId}
+/service/customServices/{technology}/{id}
+/symfiles/{applicationId}/{packageName}/{os}/{versionCode}/{versionName}
+
 """
 import copy
 from inspect import currentframe
@@ -19,14 +27,15 @@ import os
 import requests
 import shutil
 import ssl
+import traceback
 import yaml
 import urllib.parse
 
-# env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
+env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
 # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
 # env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
 # env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
-env_name, tenant_key, token_key = ('FreeTrial1', 'FREETRIAL1_TENANT', 'ROBOT_ADMIN_FREETRIAL1_TOKEN')
+# env_name, tenant_key, token_key = ('FreeTrial1', 'FREETRIAL1_TENANT', 'ROBOT_ADMIN_FREETRIAL1_TOKEN')
 
 tenant = os.environ.get(tenant_key)
 token = os.environ.get(token_key)
@@ -76,17 +85,23 @@ def save_entity(entity_type):
     # print('save_entity(' + entity_type + ')')
 
     if '/binary' in entity_type:
-        print('Skipping binary entity!')
+        # print('Skipping binary entity!')
         return
     try:
         full_url = env + '/api/config/v1' + entity_type
         resp = requests.get(full_url, headers={'Authorization': 'Api-Token ' + token})
-        if resp.status_code != 200:
+        if resp.status_code == 200:
+            save(entity_type, resp.json())
+        else:
             print('REST API Call Failed!')
             print(f'GET {full_url} {resp.status_code} - {resp.reason}')
             # print(resp.text)
-        else:
-            save(entity_type, resp.json())
+            # Dynatrace Preset Dashboards give "403 - Forbidden"
+            # Some extensions return 400 for "/global" endpoint
+            if resp.status_code == 404:
+                traceback.print_tb()
+            if resp.status_code != 400 and resp.status_code != 403:
+                exit(get_linenumber())
     except ssl.SSLError:
         print('SSL Error')
         exit(get_linenumber())
@@ -102,6 +117,7 @@ def save_list(list_type):
             print('REST API Call Failed!')
             print(f'GET {full_url} {resp.status_code} - {resp.reason}')
             # print(resp.text)
+            exit(get_linenumber())
         else:
             resp_json = resp.json()
             inner_key = 'values'
@@ -135,6 +151,7 @@ def save_list(list_type):
                             print('REST API Call Failed!')
                             print(f'GET {full_url} {resp.status_code} - {resp.reason}')
                             # print(resp.text)
+                            exit(get_linenumber())
                         else:
                             save(list_type, resp.json())
     except ssl.SSLError:
@@ -205,16 +222,20 @@ def save_configuration_api_settings():
         endpoint_methods[endpoint] = methods
 
     for endpoint in endpoints:
-        load_child_endpoints(endpoint, endpoint_methods, paths)
+        # print(f'save_configuration_api_settings: {endpoint}')
+        # if an endpoint does not allow get, or has multiple variables, skip it!
+        if 'get' in endpoint_methods[endpoint] and str(endpoint).count('{') <= 1:
+            load_child_endpoints(endpoint, endpoint_methods, paths)
 
-    # print(child_endpoints_covered_by_lists)
-    # print(child_endpoints_not_covered_by_lists)
+    # print(f'child_endpoints_covered_by_lists: {child_endpoints_covered_by_lists}')
+    # print(f'child_endpoints_not_covered_by_lists: {child_endpoints_not_covered_by_lists}')
     # exit(get_linenumber())
 
     for endpoint in endpoints:
         if process_endpoint(endpoint):
             supported_methods = endpoint_methods.get(endpoint)
             if 'get' in supported_methods:
+                # print(f'save_configuration_api_settings: {endpoint} has get')
                 endpoint_dict = paths.get(endpoint)
                 get_dict = endpoint_dict.get('get')
                 summary = get_dict.get('summary')
@@ -222,8 +243,10 @@ def save_configuration_api_settings():
                 response_200_dict = responses_dict.get('200')
                 response_200_content = response_200_dict.get('content')
                 if summary.startswith('Lists') and ('List' in str(response_200_content) or 'EntityShortRepresentation' in str(response_200_content)):
+                    # print(f'save_configuration_api_settings: {endpoint} save list')
                     save_list(endpoint)
                 else:
+                    # print(f'save_configuration_api_settings: {endpoint} save entity')
                     save_entity(endpoint)
 
     # If you want to select some entities you can comment out the logic above and uncomment the ones you want below.
@@ -308,25 +331,30 @@ def load_child_endpoints(endpoint, endpoint_methods, paths):
     # if process_endpoint(endpoint):
     supported_methods = endpoint_methods.get(endpoint)
     debug = False
+    # if "custom.remote.python.datapowerxml" in endpoint:
+    #     debug = True
     # if '/calculatedMetrics/' in endpoint:
     # if endpoint in ['/alertingProfiles']:
     # 	debug = True
     if debug:
         print('DEBUG')
-        print(endpoint)
-        print(supported_methods)
+        print(f'endpoint: {endpoint}')
+        print(f'supported_methods: {supported_methods}')
     if 'get' in supported_methods:
         endpoint_dict = paths.get(endpoint)
         get_dict = endpoint_dict.get('get')
         summary = get_dict.get('summary')
         if debug:
-            print(summary)
+            print(f'summary: {summary}')
         responses_dict = get_dict.get('responses')
         response_200_dict = responses_dict.get('200')
         response_200_content = response_200_dict.get('content')
         if debug:
-            print(response_200_content)
-        if summary.startswith('List') and ('List' in str(response_200_content) or 'EntityShortRepresentation' in str(response_200_content)):
+            print(f'response_200_content: {response_200_content}')
+        # if summary.startswith('List') and ('List' in str(response_200_content) or 'EntityShortRepresentation' in str(response_200_content)):
+        if 'list' in summary.lower() and ('List' in str(response_200_content) or 'EntityShortRepresentation' in str(response_200_content)):
+            if debug:
+                print('RESULT: added to child_endpoints_covered_by_lists')
             if endpoint.startswith('/calculatedMetrics/'):
                 child_endpoints_covered_by_lists.append(endpoint + '/{metricKey}')
             else:
@@ -343,7 +371,7 @@ def load_child_endpoints(endpoint, endpoint_methods, paths):
     if endpoint.startswith('/aws/privateLink'):
         return
 
-    # print('Child Endpoint Loaded to the "Child Enpoints Not Covered by Lists" list: ' + endpoint)
+    # print('Child Endpoint Loaded to the "Child Endpoints Not Covered by Lists" list: ' + endpoint)
     child_endpoints_not_covered_by_lists.append(endpoint)
 
 
@@ -358,8 +386,15 @@ def process_endpoint(endpoint):
         '/service/ibmMQTracing/queueManager'
     ]
 
+    slow_endpoints = ['/dashboards', '/extensions', '/anomalyDetection/metricEvents', '/calculatedMetrics/service', '/service/requestAttributes']
+    problematic_endpoints.extend(slow_endpoints)
+
     # To focus only on specific endpoints when testing...
     # test_endpoints = ['/aws/credentials', '/anomalyDetection/aws']
+    # test_endpoints = [
+    #     '/service/ibmMQTracing/imsEntryQueue',
+    #     '/service/ibmMQTracing/queueManager'
+    # ]
     # if endpoint in test_endpoints:
     # 	return True
     # else:
@@ -376,28 +411,29 @@ def process_endpoint(endpoint):
     # problematic_endpoints.extend(no_permissions_yet)
 
     # To skip these for testing
-    skip_for_speed_when_testing = ['/dashboards', '/extensions', '/anomalyDetection/metricEvents', '/calculatedMetrics/service', '/service/requestAttributes']
-    problematic_endpoints.extend(skip_for_speed_when_testing)
+    # skip_for_speed_when_testing = ['/dashboards', '/extensions', '/anomalyDetection/metricEvents', '/calculatedMetrics/service', '/service/requestAttributes']
+    # problematic_endpoints.extend(skip_for_speed_when_testing)
 
-    # Do this only when you want to "fast-forward" past a problematic one!
-    # if endpoint <= '/service/ibmMQTracing/queueManager/{name}':
-    # 	print('Skipping ' + endpoint + ' to fast-forward past the prior problematic endpoint')
-    # 	return False
-    # if endpoint < '/aws/privateLink/allowlistedAccounts':
-    #     print('Skipping ' + endpoint + ' to fast-forward to a specific endpoint')
+    # Testing: skip to a specific endpoint!
+    # specific_endpoint_start = '/plugins'
+    # if endpoint < specific_endpoint_start:
+    #     # print(f'Skipping {endpoint} to head directly to {specific_endpoint_start}')
     #     return False
-    # if endpoint > '/applications/web/z':
-    # 	print('Skipping ' + endpoint + ' to fast-forward past a specific endpoint')
-    # 	return False
+
+    # Testing: skip endpoints after a specific endpoint!
+    # specific_endpoint_end = '/plugint'
+    # if endpoint >= specific_endpoint_end:
+    #     # print(f'Skipping {endpoint} after {specific_endpoint_end}')
+    #     return False
 
     if '/validator' in endpoint:
-        # print('Skipping ' + endpoint + ' because it is a validator')
+        # print('Skipping {endpoint} because it is a validator')
         return False
     if '{' in endpoint:
-        # print('Skipping ' + endpoint + ' because it contains a brace character ("{")')
+        # print(f'Skipping {endpoint} because it contains a brace character')
         return False
     if endpoint in problematic_endpoints:
-        # print('Skipping ' + endpoint + ' because it is in the problematic endpoint list')
+        print(f'Skipping {endpoint} in the problematic endpoint list')
         return False
 
     return True
@@ -419,7 +455,7 @@ def save(entity_type, yaml_dict):
     configs.append(yaml_dict)
 
     # The 'endpoint' field is needed for single-file YAML, but not for JSON files
-    # This code is for YAML so it needs to be left here...
+    # This code is for YAML, so it needs to be left here...
     # yaml_dict.pop('endpoint')
     write_configuration_api_json(entity_type, yaml_dict)
 
@@ -434,6 +470,8 @@ def has_children(entity_type):
     for endpoint in child_endpoints_not_covered_by_lists:
         if endpoint.startswith(entity_type):
             return True
+    # print(child_endpoints_not_covered_by_lists)
+    # print(f'no children for {entity_type}')
     return False
 
 
@@ -443,6 +481,7 @@ def get_child_endpoints(entity_type):
     for endpoint in child_endpoints_not_covered_by_lists:
         if endpoint.startswith(entity_type):
             endpoints.append(endpoint)
+
     return endpoints
 
 
@@ -450,32 +489,45 @@ def save_child_endpoints(parent_entity_type, parent_yaml_dict):
     # print('save_child_endpoints(' + parent_entity_type + ', ' + str(parent_yaml_dict) + ')')
     endpoint = ''
     for child_endpoint in get_child_endpoints(parent_entity_type):
+        # print(f'child_endpoint: {child_endpoint}')
         # performance_skip_list = ['/extensions/{technology}/availableHosts', '/extensions/{id}/instances/{configurationId}']
         # if child_endpoint in performance_skip_list:
-        if child_endpoint.startswith('/extensions'):
-            print('Skipping ' + child_endpoint + ' for performance reasons')
+        # if child_endpoint.startswith('/extensions'):
+        #     pass
+        #     # print('Skipping ' + child_endpoint + ' for performance reasons')
+        # else:
+        # print('Child endpoint (incoming): ' + child_endpoint)
+        if child_endpoint.startswith('/applications/web/') or child_endpoint.startswith('/applications/mobile/'):
+            id_key = 'identifier'
         else:
-            # print('Child endpoint (incoming): ' + child_endpoint)
-            if child_endpoint.startswith('/applications/web/') or child_endpoint.startswith('/applications/mobile/'):
-                id_key = 'identifier'
+            if child_endpoint.startswith('/aws/privateLink/allowlistedAccounts/'):
+                id_key = 'endpoint'
             else:
-                if child_endpoint.startswith('/aws/privateLink/allowlistedAccounts/'):
-                    id_key = 'endpoint'
-                else:
-                    id_key = 'id'
-            parent_id = parent_yaml_dict.get(id_key)
-            if not parent_id:
-                print('id not found for parent_entity_type: ' + parent_entity_type)
-                print('id_key: ' + id_key)
-                # print('parent_yaml_dict: ' + str(parent_yaml_dict))
-                exit(get_linenumber())
-            if child_endpoint == '/extensions/{technology}/availableHosts':
-                for extensions_technology in extensions_technology_list:
-                    endpoint = child_endpoint.replace('{technology}', extensions_technology)
-                    # print('Child endpoint (outgoing): ' + endpoint)
-            else:
-                endpoint = child_endpoint.replace('{id}', parent_id)
+                id_key = 'id'
+        parent_id = parent_yaml_dict.get(id_key)
+        # print(f'parent_id: {parent_id}')
+        if not parent_id:
+            print('id not found for parent_entity_type: ' + parent_entity_type)
+            print('id_key: ' + id_key)
+            # print('parent_yaml_dict: ' + str(parent_yaml_dict))
+            exit(get_linenumber())
+        if child_endpoint == '/extensions/{technology}/availableHosts':
+            for extensions_technology in extensions_technology_list:
+                endpoint = child_endpoint.replace('{technology}', extensions_technology)
                 # print('Child endpoint (outgoing): ' + endpoint)
+        else:
+            if '{applicationId}' in child_endpoint:
+                endpoint = child_endpoint.replace('{applicationId}', parent_id)
+            else:
+                if '{endpointId}' in child_endpoint:
+                    endpoint = child_endpoint.replace('{endpointId}', parent_id)
+                else:
+
+                    # if child_endpoint.startswith('/applications/web') and '{keyUserActionId}' in child_endpoint:
+                    #     endpoint = child_endpoint.replace('{keyUserActionId}', child_endpoint.get('id'))
+                    # else:
+                    endpoint = child_endpoint.replace('{id}', parent_id)
+                    # print('Child endpoint (outgoing): ' + endpoint)
 
         save_entity(endpoint)
 
@@ -510,14 +562,11 @@ def write_configuration_api_json(entity_type, json_dict):
 
     # Fix id's based on entity_type and certain dynatrace created id's that contain "." characters
     if '/' in config_id or '.' in config_id:
-        config_id = config_id[1:].replace('/', '_')
+        config_id = config_id.replace('/', '_')
         config_id = config_id.replace('.', '_')
+        config_id = config_id.replace(':', '_')
 
-    # if entity_type.startswith('/extensions'):
-    #     print('Skipping ' + entity_type + ' for performance reasons')
-    #     return
-
-    write_json(directory_path, config_id, json_dict)
+    write_json(directory_path, f'{config_id}.json', json_dict)
 
 
 def save_settings20_objects():
@@ -563,7 +612,8 @@ def save_settings20_objects():
             for item in items:
                 # print(item)
                 if schema_id == 'builtin:logmonitoring.log-dpp-rules' and '[Built-in]' in item.get('value').get('ruleName', ''):
-                    print('Skipping ' + schema_id + ' rule ' + item.get('value').get('ruleName', ''))
+                    pass
+                    # print('Skipping ' + schema_id + ' rule ' + item.get('value').get('ruleName', ''))
                 else:
                     # item['scope'] = 'environment'
                     item['schemaId'] = schema_id
