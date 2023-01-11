@@ -75,7 +75,6 @@ def get_by_object_id(env, token, endpoint, object_id):
 
 
 def post(env, token, endpoint: str, payload: str) -> Response:
-    # In general, avoid post in favor of put so "fixed ids" can be used
     json_data = json.loads(payload)
     formatted_payload = json.dumps(json_data, indent=4, sort_keys=False)
     url = env + endpoint
@@ -86,6 +85,10 @@ def post(env, token, endpoint: str, payload: str) -> Response:
         # if len(r.text) > 0:
         #     print(r.text)
         if r.status_code not in [200, 201, 204]:
+            print('Status Code: %d' % r.status_code)
+            print('Reason: %s' % r.reason)
+            if len(r.text) > 0:
+                print(r.text)
             error_filename = '$post_error_payload.json'
             with open(error_filename, 'w') as file:
                 file.write(formatted_payload)
@@ -93,45 +96,6 @@ def post(env, token, endpoint: str, payload: str) -> Response:
                 if name:
                     print('Name: ' + name)
                 print('Error in "post(endpoint, payload)" method')
-                print('Exit code shown below is the source code line number of the exit statement invoked')
-                print('See ' + error_filename + ' for more details')
-            exit(get_line_number())
-        return r
-    except ssl.SSLError:
-        print('SSL Error')
-        exit(get_line_number())
-
-
-def put(env, token, endpoint, object_id, payload):
-    # In general, favor put over post so "fixed ids" can be used
-    # print(endpoint, object_id, payload)
-    if endpoint == '/api/config/v1/service/requestNaming':
-        name = json.loads(payload).get('namingPattern')
-    else:
-        if endpoint.startswith('/api/config/v1/conditionalNaming/'):
-            name = json.loads(payload).get('displayName')
-        else:
-            name = json.loads(payload).get('name')
-
-    json_data = json.dumps(json.loads(payload), indent=4, sort_keys=False)
-    url = env + endpoint + '/' + object_id
-    try:
-        r: Response = requests.put(url, json_data.encode('utf-8'), headers={'Authorization': 'Api-Token ' + token, 'Content-Type': 'application/json; charset=utf-8'})
-        if r.status_code == 201:
-            print('Added ' + name + ': ' + object_id + ' (' + endpoint + ')')
-        else:
-            if r.status_code == 204:
-                print('Updated ' + name + ': ' + object_id + ' (' + endpoint + ')')
-            else:
-                print('Status Code: %d' % r.status_code)
-                print('Reason: %s' % r.reason)
-                if len(r.text) > 0:
-                    print(r.text)
-        if r.status_code not in [200, 201, 204]:
-            error_filename = '$put_error_payload.json'
-            with open(error_filename, 'w') as file:
-                file.write(json_data)
-                print('Error in "put(endpoint, object_id, payload)" method')
                 print('Exit code shown below is the source code line number of the exit statement invoked')
                 print('See ' + error_filename + ' for more details')
             exit(get_line_number())
@@ -155,8 +119,8 @@ def process(source_env, source_token, target_env, target_token):
         for inner_monitors_json in inner_monitors_json_list:
             entity_id = inner_monitors_json.get('entityId')
             monitor_name = inner_monitors_json.get('name')
-            # if entity_id == 'HTTP_CHECK-59CB6082C98678C5':  # No Locations
-            if entity_id == 'SYNTHETIC_TEST-6ED223C2D0114F83':  # Has locations, is enabled, and and works fine
+            # if entity_id == 'HTTP_CHECK-59CB6082C98678C5':  # No Locations, for testing the location default
+            if entity_id == 'SYNTHETIC_TEST-6ED223C2D0114F83':  # Has locations, is enabled, and works fine
                 monitor = get_by_object_id(source_env, source_token, endpoint, entity_id)
                 locations = monitor.get('locations')
                 # Disable monitor to avoid runs until ready
@@ -183,6 +147,4 @@ def main():
 
 
 if __name__ == '__main__':
-    # print('Not to be run standalone.  Use one of the "perform_*.py" modules to run this module.')
-    # exit(1)
     main()
