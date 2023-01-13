@@ -5,6 +5,8 @@ import requests
 import ssl
 import json
 import urllib.parse
+from inspect import currentframe
+from requests import Response
 
 PATH = '../../$Output/Tools/Saved'
 
@@ -478,6 +480,39 @@ def get_rest_api_json(url, token, endpoint, params):
     return json_list
 
 
+def post(env, token, endpoint: str, payload: str) -> Response:
+    # In general, avoid post in favor of put so "fixed ids" can be used
+    json_data = json.loads(payload)
+    formatted_payload = json.dumps(json_data, indent=4, sort_keys=False)
+    url = env + endpoint
+    try:
+        r: Response = requests.post(url, payload.encode('utf-8'), headers={'Authorization': 'Api-Token ' + token, 'Content-Type': 'application/json; charset=utf-8'})
+        print('Status Code: %d' % r.status_code)
+        print('Reason: %s' % r.reason)
+        if len(r.text) > 0:
+            print(r.text)
+        if r.status_code not in [200, 201, 204]:
+            error_filename = '$post_error_payload.json'
+            with open(error_filename, 'w') as file:
+                file.write(formatted_payload)
+                name = json_data.get('name')
+                if name:
+                    print('Name: ' + name)
+                print('Error in "post(endpoint, payload)" method')
+                print('Exit code shown below is the source code line number of the exit statement invoked')
+                print('See ' + error_filename + ' for more details')
+            exit(get_line_number())
+        return r
+    except ssl.SSLError:
+        print('SSL Error')
+        exit(get_line_number())
+
+
+def get_line_number():
+    cf = currentframe()
+    return cf.f_back.f_lineno
+
+
 def convert_epoch_in_milliseconds_to_local(epoch):
     if epoch == -1:
         return None
@@ -675,6 +710,22 @@ def run():
             print('Hint: use the "la" command to list APIs and copy one from the list')
             continue
 
+        if input_string.upper().startswith('POST '):
+            if mode != 'configs' or api == '':
+                print('Must be in configs mode with an API set in order to perform a post!')
+                print(f'Current mode:  {mode}')
+                print(f'Current API:  {api}')
+            else:
+                post_file_name = input_string[5:]
+                if os.path.isfile(post_file_name):
+                    endpoint = f'/api/config/v1/{api}'
+                    with open(post_file_name, 'r', encoding='utf-8') as file:
+                        payload = file.read()
+                        post(env, token, endpoint, payload)
+                else:
+                    print(f'Invalid file path: {post_file_name}')
+            continue
+
         if ' ' in input_string.rstrip().lstrip():
             print('Invalid command or config id. (Embedded space detected).')
             continue
@@ -708,6 +759,7 @@ def print_help():
     print(f'Enter "l to list items')
     print(f'Enter "la" to list apis (in configs mode)')
     print(f'Enter "mq" to query a metric selector (in metrics mode)')
+    print(f'Enter "post" to post JSON from a file path specified to a config endpoint (in configs mode)')
     print(f'Enter just an ID to get the JSON')
     print(f'Enter "s" to save JSON just viewed')
     print(f'Enter "q" to quit')
