@@ -73,7 +73,7 @@ def view_config(config_id, env, token):
         print("SSL Error")
 
 
-def list_configs(env, token):
+def list_configs(env, token, filter):
     global api
     headers = {'Authorization': 'Api-Token ' + token}
     try:
@@ -87,7 +87,8 @@ def list_configs(env, token):
             lines = []
             for value in values:
                 line = f'{value.get("name")}|{value.get("id")}'
-                lines.append(line)
+                if not filter or filter in line:
+                    lines.append(line)
             for line in sorted(lines):
                 print(line)
             # print(json.dumps(r.json(), indent=4))
@@ -173,7 +174,7 @@ def view_entity_v1(entity_id, env, token):
         print("SSL Error")
 
 
-def list_entity_types(env, token):
+def list_entity_types(env, token, filter):
     endpoint = '/api/v2/entityTypes'
     params = ''
     entities_json_list = get_rest_api_json(env, token, endpoint, params)
@@ -186,10 +187,12 @@ def list_entity_types(env, token):
             # print(inner_entities_json)
             entity_type = inner_entities_json.get('type')
             display_name = inner_entities_json.get('displayName')
-            print(entity_type + '|' + display_name)
+            line = f'{entity_type}|{display_name}'
+            if not filter or filter in line:
+                print(line)
 
 
-def list_entities_of_type(env, token, entity_type):
+def list_entities_of_type(env, token, entity_type, filter):
     endpoint = '/api/v2/entities'
     entity_selector = 'type(' + entity_type + ')'
     params = '&entitySelector=' + urllib.parse.quote(entity_selector)
@@ -203,7 +206,8 @@ def list_entities_of_type(env, token, entity_type):
             entity_id = inner_entities_json.get('entityId')
             display_name = inner_entities_json.get('displayName')
             line = f'{display_name}|{entity_id}'
-            lines.append(line)
+            if not filter or filter in line:
+                lines.append(line)
 
     for line in sorted(lines):
         print(line)
@@ -235,7 +239,7 @@ def view_object(object_id, env, token):
         print("SSL Error")
 
 
-def list_schemas(env, token):
+def list_schemas(env, token, filter):
     endpoint = '/api/v2/settings/schemas'
     params = ''
     settings_json_list = get_rest_api_json(env, token, endpoint, params)
@@ -247,15 +251,16 @@ def list_schemas(env, token):
         inner_settings_json_list = settings_json.get('items')
         for inner_settings_json in inner_settings_json_list:
             schema_id = inner_settings_json.get('schemaId')
-            schema_ids.append(schema_id)
-            latest_schema_version = inner_settings_json.get('latestSchemaVersion')
-            schema_dict[schema_id] = latest_schema_version
+            if not filter or filter in schema_id:
+                schema_ids.append(schema_id)
+                latest_schema_version = inner_settings_json.get('latestSchemaVersion')
+                schema_dict[schema_id] = latest_schema_version
 
     for schema_id in sorted(schema_ids):
         print(schema_id)
 
 
-def list_objects_at_environment_scope(env, token):
+def list_objects_at_environment_scope(env, token, filter):
     endpoint = '/api/v2/settings/objects'
     raw_params = 'scopes=environment&fields=schemaId,value&pageSize=500'
     params = urllib.parse.quote(raw_params, safe='/,&=')
@@ -267,10 +272,11 @@ def list_objects_at_environment_scope(env, token):
         value = value.replace('{', '')
         value = value.replace('}', '')
         value = value.replace("'", "")
-        print(schema_id + ': ' + value)
+        line = f'{schema_id}:{value}'
+        if not filter or filter in line:
+            print(line)
 
-
-def list_objects_of_schema(env, token, schema_id):
+def list_objects_of_schema(env, token, schema_id, filter):
     # print(f'list_objects_of_schema: {schema_id}')
     endpoint = f'/api/v2/settings/objects'
     raw_params = f'schemaIds={schema_id}&fields=scope,objectId,value&pageSize=500'
@@ -286,10 +292,12 @@ def list_objects_of_schema(env, token, schema_id):
         value = value.replace('{', '')
         value = value.replace('}', '')
         value = value.replace("'", "")
-        print(f'{object_id}, scope: {scope}, {value}')
+        line = f'{object_id}, scope: {scope}, {value}'
+        if not filter or filter in line:
+            print(line)
 
 
-def list_metrics(env, token):
+def list_metrics(env, token, filter):
     endpoint = '/api/v2/metrics'
     # raw_params = 'pageSize=500&fields=+created'
     raw_params = 'pageSize=500'
@@ -308,7 +316,8 @@ def list_metrics(env, token):
             # created = inner_metrics_json.get('created')
             # print(metric_id + '|' + display_name + '|' + str(created))
             line = f'{metric_id}|{display_name}'
-            lines.append(line)
+            if not filter or filter in schema_id:
+                lines.append(line)
 
     for line in sorted(lines):
         print(line)
@@ -392,7 +401,7 @@ def view_event(event_id, env, token):
         print("SSL Error")
 
 
-def list_events(env, token):
+def list_events(env, token, filter):
     endpoint = '/api/v2/events'
     page_size = 1000
     from_time = 'now-24h'
@@ -413,7 +422,9 @@ def list_events(env, token):
             start_date_time = convert_epoch_in_milliseconds_to_local(start_time)
             end_date_time = convert_epoch_in_milliseconds_to_local(end_time)
             formatted_duration = format_time_duration(start_time, end_time)
-            print(f'{event_id}|{event_type}|{event_title}|{start_date_time}|{end_date_time}|{formatted_duration}')
+            line = f'{event_id}|{event_type}|{event_title}|{start_date_time}|{end_date_time}|{formatted_duration}'
+            if not filter or filter in line:
+                print(line)
 
 
 def format_time_duration(start_time, end_time):
@@ -616,29 +627,32 @@ def run():
                 print('list schemas only applies to "settings20" mode.')
                 continue
 
-        if input_string.upper() == 'L':
+        if input_string.upper() == 'L' or input_string.upper().startswith('LF '):
+            filter = None
+            if input_string.upper().startswith('LF'):
+                filter = input_string.split(' ')[1]
             if mode == 'configs':
                 if api == '':
                     print('No API set yet.  Use the "a" command to set an API. Use the "la" command to list APIs for copy/paste convenience.')
                     continue
                 else:
-                    list_configs(env, token)
+                    list_configs(env, token, filter)
                     continue
             else:
                 if mode == 'events':
-                    list_events(env, token)
+                    list_events(env, token, filter)
                     continue
                 else:
                     if mode == 'metrics':
-                        list_metrics(env, token)
+                        list_metrics(env, token, filter)
                         continue
                     else:
                         if mode == 'settings20':
-                            list_objects_at_environment_scope(env, token)
+                            list_objects_at_environment_scope(env, token, filter)
                             continue
                         else:
                             if mode == 'entities':
-                                list_entity_types(env, token)
+                                list_entity_types(env, token, filter)
                                 continue
                             else:
                                 print('Only supported for "configs", "entities" and "events" modes.')
@@ -758,6 +772,7 @@ def print_help():
     print(f'Enter "a <api>" to set/change an api (in configs mode). "a" without a parameter shows the current api.')
     print(f'Enter "l to list items')
     print(f'Enter "la" to list apis (in configs mode)')
+    print(f'Enter "lf <filter string>" to list items and filter for content (supports a single string with no spaces as the filter)')
     print(f'Enter "mq" to query a metric selector (in metrics mode)')
     print(f'Enter "post" to post JSON from a file path specified to a config endpoint (in configs mode)')
     print(f'Enter just an ID to get the JSON')
