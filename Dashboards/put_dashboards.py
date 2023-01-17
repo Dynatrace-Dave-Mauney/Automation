@@ -13,9 +13,15 @@ import codecs
 
 def run():
     """ For running directly from an IDE (or from a command line without using command line arguments) """
-    # env_name, env, tenant, token = get_environment('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
+    env_name, env, tenant, token = get_environment('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
     # path = '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json'
-    # put_dashboards(env, token, path, env_name, get_owner())
+    # path = '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000117.json'
+    # path = '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000109.json'
+    # path = '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000112.json'
+    # path = '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000074.json'
+    # path = '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000???.json'
+    path = '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-100000000000.json'
+    put_dashboards(env, token, path, env_name, get_owner())
     #
     # env_name, env, tenant, token = get_environment('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
     # path = '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json'
@@ -72,6 +78,11 @@ def put_dashboards(env, token, path, prefix, owner):
             print(filename + ': ' + dashboard_id + ': ' + dashboard_name)
             dashboard_json['dashboardMetadata']['name'] = dashboard_name
             dashboard_json['dashboardMetadata']['owner'] = dashboard_owner
+
+            # TODO: Comment out temp code
+            # Use these lines to modify id's to avoid overwrites
+            dashboard_id = dashboard_id.replace('aaaaaaaa-bbbb-cccc-dddd-0', 'aaaaaaaa-bbbb-cccc-dddd-1')
+            dashboard_json['id'] = dashboard_id
 
             tenant = env.split('.')[0].split('/')[2]
 
