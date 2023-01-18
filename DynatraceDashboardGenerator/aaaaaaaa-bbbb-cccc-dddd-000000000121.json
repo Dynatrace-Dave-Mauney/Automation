@@ -3,11 +3,11 @@
         "configurationVersions": [
             3
         ],
-        "clusterVersion": "1.251.142.20220929-111511"
+        "clusterVersion": "1.257.164.20221230-102519"
     },
     "id": "aaaaaaaa-bbbb-cccc-dddd-000000000121",
     "dashboardMetadata": {
-        "name": "AWS Trusted Advisor",
+        "name": "AWS Kinesis Data Streams",
         "shared": true,
         "owner": "dave.mauney@dynatrace.com",
         "sharingDetails": {
@@ -24,7 +24,7 @@
     },
     "tiles": [
         {
-            "name": "RedChecks Sum (by Region and Category)",
+            "name": "GetRecords.IteratorAgeMilliseconds",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -34,15 +34,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "RedChecks Sum (by Region and Category)",
+            "customName": "GetRecords.IteratorAgeMilliseconds",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.trustedadvisor.redChecksSumByRegionCategory",
+                    "metric": "ext:cloud.aws.kinesisDataStreams.getRecordsIteratorAgeMilliseconds",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device_group"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -95,7 +95,7 @@
             }
         },
         {
-            "name": "RedResources Sum (by Region and CheckName)",
+            "name": "GetRecords.Success Average",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -105,15 +105,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "RedResources Sum (by Region and CheckName)",
+            "customName": "GetRecords.Success Average",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.trustedadvisor.redResourcesSumByRegionCheckName",
+                    "metric": "ext:cloud.aws.kinesisDataStreams.getRecordsSuccessAverage",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device_group"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -166,7 +166,7 @@
             }
         },
         {
-            "name": "ServiceLimitUsage (by Region and ServiceLimit and ServiceName)",
+            "name": "IncomingBytes",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -176,15 +176,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "ServiceLimitUsage (by Region and ServiceLimit and ServiceName)",
+            "customName": "IncomingBytes",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.trustedadvisor.serviceLimitUsageByRegionServiceLimitServiceName",
+                    "metric": "ext:cloud.aws.kinesisDataStreams.incomingBytes",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device_group"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -237,7 +237,7 @@
             }
         },
         {
-            "name": "YellowChecks Sum (by Region and Category)",
+            "name": "IncomingBytes (by ShardId)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -247,15 +247,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "YellowChecks Sum (by Region and Category)",
+            "customName": "IncomingBytes (by ShardId)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.trustedadvisor.yellowChecksSumByRegionCategory",
+                    "metric": "ext:cloud.aws.kinesisDataStreams.incomingBytesByShardId",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device_group"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -308,7 +308,7 @@
             }
         },
         {
-            "name": "YellowResources Sum (by Region and CheckName)",
+            "name": "IncomingBytes Sample Count",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -318,15 +318,441 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "YellowResources Sum (by Region and CheckName)",
+            "customName": "IncomingBytes Sample Count",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.trustedadvisor.yellowResourcesSumByRegionCheckName",
+                    "metric": "ext:cloud.aws.kinesisDataStreams.incomingBytesCount",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device_group"
+                        "dt.entity.custom_device"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "IncomingBytes Sample Count (by ShardId)",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "IncomingBytes Sample Count (by ShardId)",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.aws.kinesisDataStreams.incomingBytesCountByShardId",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "IncomingBytes Sum",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "IncomingBytes Sum",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.aws.kinesisDataStreams.incomingBytesSum",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "IncomingBytes Sum (by ShardId)",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 304,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "IncomingBytes Sum (by ShardId)",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.aws.kinesisDataStreams.incomingBytesSumByShardId",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "PutRecord.Success Average",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 608,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "PutRecord.Success Average",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.aws.kinesisDataStreams.putRecordSuccessAverage",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "ReadProvisionedThroughputExceeded",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 912,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "ReadProvisionedThroughputExceeded",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.aws.kinesisDataStreams.readProvisionedThroughputExceeded",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "WriteProvisionedThroughputExceeded",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "WriteProvisionedThroughputExceeded",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.aws.kinesisDataStreams.writeProvisionedThroughputExceeded",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",

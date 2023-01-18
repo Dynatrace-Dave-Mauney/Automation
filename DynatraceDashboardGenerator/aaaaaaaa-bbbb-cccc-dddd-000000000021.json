@@ -3,11 +3,11 @@
         "configurationVersions": [
             3
         ],
-        "clusterVersion": "1.251.142.20220929-111511"
+        "clusterVersion": "1.257.164.20221230-102519"
     },
     "id": "aaaaaaaa-bbbb-cccc-dddd-000000000021",
     "dashboardMetadata": {
-        "name": "WebServer",
+        "name": "Liberty",
         "shared": true,
         "owner": "dave.mauney@dynatrace.com",
         "sharingDetails": {
@@ -24,7 +24,7 @@
     },
     "tiles": [
         {
-            "name": "Dropped connections",
+            "name": "In use connections",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -34,11 +34,11 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Dropped connections",
+            "customName": "In use connections",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.webserver.connections.dropped",
+                    "metric": "builtin:tech.liberty.connectionPool.ConnectionHandleCount",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
@@ -95,7 +95,7 @@
             }
         },
         {
-            "name": "Handled connections",
+            "name": "Free connections",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -105,11 +105,11 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Handled connections",
+            "customName": "Free connections",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.webserver.connections.handled",
+                    "metric": "builtin:tech.liberty.connectionPool.FreeConnectionCount",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
@@ -166,7 +166,7 @@
             }
         },
         {
-            "name": "Reading connections",
+            "name": "In use time",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -176,11 +176,11 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Reading connections",
+            "customName": "In use time",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.webserver.connections.reading",
+                    "metric": "builtin:tech.liberty.connectionPool.InUseTime",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
@@ -237,7 +237,7 @@
             }
         },
         {
-            "name": "Socket backlog waiting time",
+            "name": "Managed connections",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -247,11 +247,11 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Socket backlog waiting time",
+            "customName": "Managed connections",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.webserver.connections.socketWaitingTime",
+                    "metric": "builtin:tech.liberty.connectionPool.ManagedConnectionCount",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
@@ -308,7 +308,7 @@
             }
         },
         {
-            "name": "Waiting connections",
+            "name": "Wait time",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -318,11 +318,11 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Waiting connections",
+            "customName": "Wait time",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.webserver.connections.waiting",
+                    "metric": "builtin:tech.liberty.connectionPool.WaitTime",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
@@ -379,7 +379,7 @@
             }
         },
         {
-            "name": "Writing connections",
+            "name": "Active threads",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -389,11 +389,11 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Writing connections",
+            "customName": "Active threads",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.webserver.connections.writing",
+                    "metric": "builtin:tech.liberty.ActiveThreads",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
@@ -450,7 +450,7 @@
             }
         },
         {
-            "name": "Active worker threads",
+            "name": "Pool size",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -460,11 +460,11 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Active worker threads",
+            "customName": "Pool size",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.webserver.threads.active",
+                    "metric": "builtin:tech.liberty.PoolSize",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
@@ -521,7 +521,7 @@
             }
         },
         {
-            "name": "Idle worker threads",
+            "name": "Request count",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -531,224 +531,11 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Idle worker threads",
+            "customName": "Request count",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.webserver.threads.idle",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.process_group_instance"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Maximum worker threads",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 304,
-                "left": 608,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Maximum worker threads",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "builtin:tech.webserver.threads.max",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.process_group_instance"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Requests",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 304,
-                "left": 912,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Requests",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "builtin:tech.webserver.requests",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.process_group_instance"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Traffic",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 304,
-                "left": 1216,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Traffic",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "builtin:tech.webserver.traffic",
+                    "metric": "builtin:tech.liberty.RequestCount",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [

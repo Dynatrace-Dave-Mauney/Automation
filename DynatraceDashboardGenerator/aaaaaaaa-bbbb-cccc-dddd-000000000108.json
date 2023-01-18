@@ -3,11 +3,11 @@
         "configurationVersions": [
             3
         ],
-        "clusterVersion": "1.251.142.20220929-111511"
+        "clusterVersion": "1.257.164.20221230-102519"
     },
     "id": "aaaaaaaa-bbbb-cccc-dddd-000000000108",
     "dashboardMetadata": {
-        "name": "AWS Kinesis Data Analytics",
+        "name": "AWS EC2 API",
         "shared": true,
         "owner": "dave.mauney@dynatrace.com",
         "sharingDetails": {
@@ -24,7 +24,7 @@
     },
     "tiles": [
         {
-            "name": "Bytes Sum (by Flow and Id)",
+            "name": "ClientErrors Sum (by Region)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -34,15 +34,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Bytes Sum (by Flow and Id)",
+            "customName": "ClientErrors Sum (by Region)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.kinesisDataAnalytics.bytesSumByFlowId",
+                    "metric": "ext:cloud.aws.ec2api.clientErrorsSumByRegion",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.custom_device_group"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -95,7 +95,7 @@
             }
         },
         {
-            "name": "KPUs Sum",
+            "name": "ClientErrors Sum (by Region and Action)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -105,15 +105,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "KPUs Sum",
+            "customName": "ClientErrors Sum (by Region and Action)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.kinesisDataAnalytics.kpUsSum",
+                    "metric": "ext:cloud.aws.ec2api.clientErrorsSumByRegionAction",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.custom_device_group"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -166,7 +166,7 @@
             }
         },
         {
-            "name": "Records Sum (by Flow and Id)",
+            "name": "RequestLimitExceeded Sum (by Region)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -176,15 +176,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Records Sum (by Flow and Id)",
+            "customName": "RequestLimitExceeded Sum (by Region)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.kinesisDataAnalytics.recordsSumByFlowId",
+                    "metric": "ext:cloud.aws.ec2api.requestLimitExceededSumByRegion",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.custom_device_group"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -237,7 +237,7 @@
             }
         },
         {
-            "name": "Success Average (by Flow and Id)",
+            "name": "RequestLimitExceeded Sum (by Region and Action)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -247,15 +247,299 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Success Average (by Flow and Id)",
+            "customName": "RequestLimitExceeded Sum (by Region and Action)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.kinesisDataAnalytics.successAverageByFlowId",
+                    "metric": "ext:cloud.aws.ec2api.requestLimitExceededSumByRegionAction",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.custom_device_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "ServerErrors Sum (by Region)",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "ServerErrors Sum (by Region)",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.aws.ec2api.serverErrorsSumByRegion",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "ServerErrors Sum (by Region and Action)",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "ServerErrors Sum (by Region and Action)",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.aws.ec2api.serverErrorsSumByRegionAction",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "SuccessfulCalls Sum (by Region)",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "SuccessfulCalls Sum (by Region)",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.aws.ec2api.successfulCallsSumByRegion",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "SuccessfulCalls Sum (by Region and Action)",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 304,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "SuccessfulCalls Sum (by Region and Action)",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.aws.ec2api.successfulCallsSumByRegionAction",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device_group"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",

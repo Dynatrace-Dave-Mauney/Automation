@@ -3,11 +3,11 @@
         "configurationVersions": [
             3
         ],
-        "clusterVersion": "1.251.142.20220929-111511"
+        "clusterVersion": "1.257.164.20221230-102519"
     },
     "id": "aaaaaaaa-bbbb-cccc-dddd-000000000097",
     "dashboardMetadata": {
-        "name": "AWS ECS",
+        "name": "AWS Cloud Search",
         "shared": true,
         "owner": "dave.mauney@dynatrace.com",
         "sharingDetails": {
@@ -24,7 +24,7 @@
     },
     "tiles": [
         {
-            "name": "CPUReservation",
+            "name": "IndexUtilization (by ClientId)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -34,11 +34,11 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "CPUReservation",
+            "customName": "IndexUtilization (by ClientId)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.ecs.cpuReservation",
+                    "metric": "ext:cloud.aws.cloudsearch.indexUtilization",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
@@ -95,7 +95,7 @@
             }
         },
         {
-            "name": "CPUUtilization (by ServiceName)",
+            "name": "Partitions (by ClientId)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -105,11 +105,11 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "CPUUtilization (by ServiceName)",
+            "customName": "Partitions (by ClientId)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.ecs.cpuUtilizationByServiceName",
+                    "metric": "ext:cloud.aws.cloudsearch.partitions",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
@@ -166,7 +166,7 @@
             }
         },
         {
-            "name": "MemoryReservation",
+            "name": "SearchableDocuments Maximum (by ClientId)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -176,11 +176,11 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "MemoryReservation",
+            "customName": "SearchableDocuments Maximum (by ClientId)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.ecs.memoryReservation",
+                    "metric": "ext:cloud.aws.cloudsearch.searchableDocuments",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
@@ -237,7 +237,7 @@
             }
         },
         {
-            "name": "MemoryUtilization (by ServiceName)",
+            "name": "SuccessfulRequests Maximum (by ClientId)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -247,11 +247,82 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "MemoryUtilization (by ServiceName)",
+            "customName": "SuccessfulRequests Maximum (by ClientId)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.ecs.memoryUtilizationByServiceName",
+                    "metric": "ext:cloud.aws.cloudsearch.successfulRequestsMax",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "SuccessfulRequests Sum (by ClientId)",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "SuccessfulRequests Sum (by ClientId)",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.aws.cloudsearch.successfulRequestsSum",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [

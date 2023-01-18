@@ -3,11 +3,11 @@
         "configurationVersions": [
             3
         ],
-        "clusterVersion": "1.251.142.20220929-111511"
+        "clusterVersion": "1.257.164.20221230-102519"
     },
     "id": "aaaaaaaa-bbbb-cccc-dddd-000000000123",
     "dashboardMetadata": {
-        "name": "AWS VPN",
+        "name": "AWS Logs",
         "shared": true,
         "owner": "dave.mauney@dynatrace.com",
         "sharingDetails": {
@@ -24,7 +24,7 @@
     },
     "tiles": [
         {
-            "name": "TunnelDataIn Sum",
+            "name": "DeliveryErrors Sum (by DestinationType and FilterName)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -34,11 +34,11 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "TunnelDataIn Sum",
+            "customName": "DeliveryErrors Sum (by DestinationType and FilterName)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.vpn.tunnelDataInSum",
+                    "metric": "ext:cloud.aws.logs.deliveryErrorsSumByDestinationTypeFilterName",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
@@ -95,7 +95,7 @@
             }
         },
         {
-            "name": "TunnelDataIn Sum (by Region)",
+            "name": "DeliveryThrottling Sum (by DestinationType and FilterName)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -105,15 +105,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "TunnelDataIn Sum (by Region)",
+            "customName": "DeliveryThrottling Sum (by DestinationType and FilterName)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.vpn.tunnelDataInSumByRegion",
+                    "metric": "ext:cloud.aws.logs.deliveryThrottlingSumByDestinationTypeFilterName",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device_group"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -166,7 +166,7 @@
             }
         },
         {
-            "name": "TunnelDataOut Sum",
+            "name": "ForwardedBytes Sum (by DestinationType and FilterName)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -176,11 +176,11 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "TunnelDataOut Sum",
+            "customName": "ForwardedBytes Sum (by DestinationType and FilterName)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.vpn.tunnelDataOutSum",
+                    "metric": "ext:cloud.aws.logs.forwardedBytesSumByDestinationTypeFilterName",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
@@ -237,7 +237,7 @@
             }
         },
         {
-            "name": "TunnelDataOut Sum (by Region)",
+            "name": "ForwardedLogEvents Sum (by DestinationType and FilterName)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -247,11 +247,153 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "TunnelDataOut Sum (by Region)",
+            "customName": "ForwardedLogEvents Sum (by DestinationType and FilterName)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.vpn.tunnelDataOutSumByRegion",
+                    "metric": "ext:cloud.aws.logs.forwardedLogEventsSumByDestinationTypeFilterName",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "IncomingBytes Sum",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "IncomingBytes Sum",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.aws.logs.incomingBytesSum",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "IncomingBytes Sum (by Region)",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "IncomingBytes Sum (by Region)",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.aws.logs.incomingBytesSumByRegion",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
@@ -308,21 +450,21 @@
             }
         },
         {
-            "name": "TunnelState",
+            "name": "IncomingLogEvents Sum",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 0,
-                "left": 1216,
+                "top": 304,
+                "left": 0,
                 "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "TunnelState",
+            "customName": "IncomingLogEvents Sum",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.vpn.tunnelState",
+                    "metric": "ext:cloud.aws.logs.incomingLogEventsSum",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
@@ -379,21 +521,21 @@
             }
         },
         {
-            "name": "TunnelState (by Region)",
+            "name": "IncomingLogEvents Sum (by Region)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 0,
-                "left": 1520,
+                "top": 304,
+                "left": 304,
                 "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "TunnelState (by Region)",
+            "customName": "IncomingLogEvents Sum (by Region)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.vpn.tunnelStateByRegion",
+                    "metric": "ext:cloud.aws.logs.incomingLogEventsSumByRegion",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [

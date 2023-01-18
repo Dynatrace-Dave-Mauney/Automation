@@ -1,0 +1,927 @@
+{
+  "metadata": {
+    "configurationVersions": [
+      6
+    ],
+    "clusterVersion": "1.257.164.20221230-102519"
+  },
+  "id": "454c38df-035c-cd04-e954-e3022673f6fe",
+  "dashboardMetadata": {
+    "name": "Kubernetes persistent volume claims",
+    "shared": true,
+    "owner": "Dynatrace",
+    "tags": [
+      "PVC",
+      "Kubernetes"
+    ],
+    "preset": true,
+    "popularity": 1,
+    "dynamicFilters": {
+      "filters": [
+        "CUSTOM_DIMENSION:persistentvolumeclaim",
+        "KUBERNETES_CLUSTER",
+        "CUSTOM_DIMENSION:namespace"
+      ]
+    },
+    "hasConsistentColors": false
+  },
+  "tiles": [
+    {
+      "name": "Least available bytes",
+      "tileType": "DATA_EXPLORER",
+      "configured": true,
+      "bounds": {
+        "top": 38,
+        "left": 0,
+        "width": 532,
+        "height": 304
+      },
+      "tileFilter": {
+        "timeframe": "-5m"
+      },
+      "customName": "Top list",
+      "queries": [
+        {
+          "id": "A",
+          "timeAggregation": "DEFAULT",
+          "splitBy": [
+            "persistentvolumeclaim",
+            "namespace",
+            "dt.entity.kubernetes_cluster"
+          ],
+          "metricSelector": "kubelet_volume_stats_available_bytes:splitBy(persistentvolumeclaim, namespace, dt.entity.kubernetes_cluster):last:sort(value(min,ascending)):limit(10)",
+          "enabled": true
+        }
+      ],
+      "visualConfig": {
+        "type": "TOP_LIST",
+        "global": {
+          "hideLegend": false
+        },
+        "rules": [
+          {
+            "matcher": "A:",
+            "unitTransform": "auto",
+            "valueFormat": "auto",
+            "properties": {
+              "color": "DEFAULT",
+              "seriesType": "LINE",
+              "alias": "Available Bytes"
+            },
+            "seriesOverrides": []
+          }
+        ],
+        "axes": {
+          "xAxis": {
+            "displayName": "",
+            "visible": true
+          },
+          "yAxes": []
+        },
+        "heatmapSettings": {
+          "yAxis": "VALUE"
+        },
+        "thresholds": [
+          {
+            "axisTarget": "LEFT",
+            "columnId": "Volume available bytes",
+            "rules": [
+              {
+                "color": "#dc172a"
+              },
+              {
+                "color": "#f5d30f"
+              },
+              {
+                "color": "#7dc540"
+              }
+            ],
+            "queryId": "A",
+            "visible": true
+          }
+        ],
+        "tableSettings": {
+          "isThresholdBackgroundAppliedToCell": false
+        },
+        "graphChartSettings": {
+          "connectNulls": false
+        },
+        "honeycombSettings": {
+          "showHive": true,
+          "showLegend": true,
+          "showLabels": false
+        }
+      },
+      "queriesSettings": {
+        "resolution": "",
+        "foldTransformation": "TOTAL"
+      },
+      "metricExpressions": [
+        "resolution=Inf&"
+      ]
+    },
+    {
+      "name": "Most available bytes",
+      "tileType": "DATA_EXPLORER",
+      "configured": true,
+      "bounds": {
+        "top": 342,
+        "left": 0,
+        "width": 532,
+        "height": 304
+      },
+      "tileFilter": {
+        "timeframe": "-5m"
+      },
+      "customName": "Top list",
+      "queries": [
+        {
+          "id": "A",
+          "timeAggregation": "DEFAULT",
+          "splitBy": [
+            "persistentvolumeclaim",
+            "namespace",
+            "dt.entity.kubernetes_cluster"
+          ],
+          "metricSelector": "kubelet_volume_stats_available_bytes:splitBy(persistentvolumeclaim, namespace, dt.entity.kubernetes_cluster):last:sort(value(min,descending)):limit(10)",
+          "enabled": true
+        }
+      ],
+      "visualConfig": {
+        "type": "TOP_LIST",
+        "global": {
+          "hideLegend": false
+        },
+        "rules": [
+          {
+            "matcher": "A:",
+            "unitTransform": "auto",
+            "valueFormat": "auto",
+            "properties": {
+              "color": "DEFAULT",
+              "seriesType": "LINE",
+              "alias": "Available Bytes"
+            },
+            "seriesOverrides": []
+          }
+        ],
+        "axes": {
+          "xAxis": {
+            "visible": true
+          },
+          "yAxes": []
+        },
+        "heatmapSettings": {
+          "yAxis": "VALUE"
+        },
+        "thresholds": [
+          {
+            "axisTarget": "LEFT",
+            "columnId": "Volume available bytes",
+            "rules": [
+              {
+                "color": "#dc172a"
+              },
+              {
+                "color": "#f5d30f"
+              },
+              {
+                "color": "#7dc540"
+              }
+            ],
+            "queryId": "A",
+            "visible": true
+          }
+        ],
+        "tableSettings": {
+          "isThresholdBackgroundAppliedToCell": false
+        },
+        "graphChartSettings": {
+          "connectNulls": false
+        },
+        "honeycombSettings": {
+          "showHive": true,
+          "showLegend": true,
+          "showLabels": false
+        }
+      },
+      "queriesSettings": {
+        "resolution": "",
+        "foldTransformation": "TOTAL"
+      },
+      "metricExpressions": [
+        "resolution=Inf&"
+      ]
+    },
+    {
+      "name": "Used bytes percent",
+      "tileType": "DATA_EXPLORER",
+      "configured": true,
+      "bounds": {
+        "top": 38,
+        "left": 532,
+        "width": 760,
+        "height": 304
+      },
+      "tileFilter": {},
+      "customName": "Table",
+      "queries": [
+        {
+          "id": "A",
+          "timeAggregation": "DEFAULT",
+          "splitBy": [
+            "persistentvolumeclaim",
+            "namespace",
+            "dt.entity.kubernetes_cluster"
+          ],
+          "metricSelector": "((kubelet_volume_stats_used_bytes)\n/\n(kubelet_volume_stats_capacity_bytes)\n*\n(100))\n:splitBy(persistentvolumeclaim, namespace, dt.entity.kubernetes_cluster)\n:sort(value(min,ascending)):limit(10):setUnit(PERCENT)",
+          "enabled": true
+        }
+      ],
+      "visualConfig": {
+        "type": "GRAPH_CHART",
+        "global": {
+          "hideLegend": false
+        },
+        "rules": [
+          {
+            "matcher": "A:",
+            "unitTransform": "Percent",
+            "valueFormat": "0",
+            "properties": {
+              "color": "DEFAULT",
+              "seriesType": "LINE",
+              "alias": "Available Percent"
+            },
+            "seriesOverrides": []
+          }
+        ],
+        "axes": {
+          "xAxis": {
+            "displayName": "",
+            "visible": true
+          },
+          "yAxes": [
+            {
+              "displayName": "",
+              "visible": true,
+              "min": "0",
+              "max": "100",
+              "position": "LEFT",
+              "queryIds": [
+                "A"
+              ],
+              "defaultAxis": true
+            }
+          ]
+        },
+        "heatmapSettings": {
+          "yAxis": "VALUE"
+        },
+        "thresholds": [
+          {
+            "axisTarget": "LEFT",
+            "columnId": "((kubelet_volume_stats_available_bytes:splitBy(\"dt.entity.kubernetes_cluster\",namespace,persistentvolumeclaim))/(kubelet_volume_stats_capacity_bytes:splitBy(\"dt.entity.kubernetes_cluster\",namespace,persistentvolumeclaim))*(100)):last:sort(value(min,ascending)):limit(5)",
+            "rules": [
+              {
+                "color": "#7dc540"
+              },
+              {
+                "value": 85,
+                "color": "#f5d30f"
+              },
+              {
+                "value": 95,
+                "color": "#dc172a"
+              }
+            ],
+            "queryId": "A",
+            "visible": true
+          }
+        ],
+        "tableSettings": {
+          "isThresholdBackgroundAppliedToCell": false
+        },
+        "graphChartSettings": {
+          "connectNulls": false
+        },
+        "honeycombSettings": {
+          "showHive": true,
+          "showLegend": true,
+          "showLabels": false
+        }
+      },
+      "queriesSettings": {
+        "resolution": "",
+        "foldTransformation": "TOTAL"
+      },
+      "metricExpressions": [
+        "resolution=null&"
+      ]
+    },
+    {
+      "name": "Growth rate bytes",
+      "tileType": "DATA_EXPLORER",
+      "configured": true,
+      "bounds": {
+        "top": 646,
+        "left": 0,
+        "width": 532,
+        "height": 304
+      },
+      "tileFilter": {
+        "timeframe": "-5m"
+      },
+      "customName": "Table",
+      "queries": [
+        {
+          "id": "A",
+          "timeAggregation": "DEFAULT",
+          "splitBy": [
+            "persistentvolumeclaim",
+            "namespace",
+            "dt.entity.kubernetes_cluster"
+          ],
+          "metricSelector": "kubelet_volume_stats_used_bytes:splitBy(persistentvolumeclaim, namespace, dt.entity.kubernetes_cluster):avg:delta:last:sort(value(avg,descending)):limit(10):setUnit(BitPerMinute)",
+          "enabled": true
+        }
+      ],
+      "visualConfig": {
+        "type": "TOP_LIST",
+        "global": {
+          "hideLegend": false
+        },
+        "rules": [
+          {
+            "matcher": "A:",
+            "unitTransform": "auto",
+            "valueFormat": "auto",
+            "properties": {
+              "color": "DEFAULT",
+              "seriesType": "LINE",
+              "alias": "Growth Bytes"
+            },
+            "seriesOverrides": []
+          }
+        ],
+        "axes": {
+          "xAxis": {
+            "visible": true
+          },
+          "yAxes": []
+        },
+        "heatmapSettings": {
+          "yAxis": "VALUE"
+        },
+        "thresholds": [
+          {
+            "axisTarget": "LEFT",
+            "columnId": "Volume used bytes",
+            "rules": [
+              {
+                "color": "#7dc540"
+              },
+              {
+                "color": "#f5d30f"
+              },
+              {
+                "color": "#dc172a"
+              }
+            ],
+            "queryId": "A",
+            "visible": true
+          }
+        ],
+        "tableSettings": {
+          "isThresholdBackgroundAppliedToCell": false
+        },
+        "graphChartSettings": {
+          "connectNulls": false
+        },
+        "honeycombSettings": {
+          "showHive": true,
+          "showLegend": true,
+          "showLabels": false
+        }
+      },
+      "queriesSettings": {
+        "resolution": ""
+      },
+      "metricExpressions": [
+        "resolution=Inf&"
+      ]
+    },
+    {
+      "name": "Available bytes percent",
+      "tileType": "DATA_EXPLORER",
+      "configured": true,
+      "bounds": {
+        "top": 342,
+        "left": 532,
+        "width": 760,
+        "height": 304
+      },
+      "tileFilter": {},
+      "customName": "Top list",
+      "queries": [
+        {
+          "id": "A",
+          "timeAggregation": "DEFAULT",
+          "splitBy": [
+            "persistentvolumeclaim",
+            "namespace",
+            "dt.entity.kubernetes_cluster"
+          ],
+          "metricSelector": "(kubelet_volume_stats_available_bytes / kubelet_volume_stats_capacity_bytes * 100):splitBy(persistentvolumeclaim, namespace, dt.entity.kubernetes_cluster):sort(value(min,descending)):limit(10):setUnit(PERCENT)",
+          "enabled": true
+        }
+      ],
+      "visualConfig": {
+        "type": "GRAPH_CHART",
+        "global": {
+          "hideLegend": false
+        },
+        "rules": [
+          {
+            "matcher": "A:",
+            "unitTransform": "Percent",
+            "valueFormat": "0",
+            "properties": {
+              "color": "DEFAULT",
+              "seriesType": "LINE",
+              "alias": "Available Bytes"
+            },
+            "seriesOverrides": []
+          }
+        ],
+        "axes": {
+          "xAxis": {
+            "displayName": "",
+            "visible": true
+          },
+          "yAxes": [
+            {
+              "displayName": "",
+              "visible": true,
+              "min": "0",
+              "max": "100",
+              "position": "LEFT",
+              "queryIds": [
+                "A"
+              ],
+              "defaultAxis": true
+            }
+          ]
+        },
+        "heatmapSettings": {
+          "yAxis": "VALUE"
+        },
+        "thresholds": [
+          {
+            "axisTarget": "LEFT",
+            "columnId": "Volume available bytes",
+            "rules": [
+              {
+                "color": "#dc172a"
+              },
+              {
+                "color": "#f5d30f"
+              },
+              {
+                "color": "#7dc540"
+              }
+            ],
+            "queryId": "A",
+            "visible": true
+          }
+        ],
+        "tableSettings": {
+          "isThresholdBackgroundAppliedToCell": false
+        },
+        "graphChartSettings": {
+          "connectNulls": false
+        },
+        "honeycombSettings": {
+          "showHive": true,
+          "showLegend": true,
+          "showLabels": false
+        }
+      },
+      "queriesSettings": {
+        "resolution": "",
+        "foldTransformation": "TOTAL"
+      },
+      "metricExpressions": [
+        "resolution=null&"
+      ]
+    },
+    {
+      "name": "Markdown",
+      "tileType": "MARKDOWN",
+      "configured": true,
+      "bounds": {
+        "top": 0,
+        "left": 912,
+        "width": 380,
+        "height": 38
+      },
+      "tileFilter": {},
+      "markdown": "For set up guidance and help, go to the [documentation](https://dt-url.net/k8spvcm)."
+    },
+    {
+      "name": "Growth rate",
+      "tileType": "DATA_EXPLORER",
+      "configured": true,
+      "bounds": {
+        "top": 646,
+        "left": 532,
+        "width": 760,
+        "height": 304
+      },
+      "tileFilter": {},
+      "customName": "Used Percent Growth",
+      "queries": [
+        {
+          "id": "A",
+          "timeAggregation": "DEFAULT",
+          "splitBy": [
+            "persistentvolumeclaim",
+            "namespace",
+            "dt.entity.kubernetes_cluster"
+          ],
+          "metricSelector": "kubelet_volume_stats_used_bytes:splitBy(persistentvolumeclaim, namespace, dt.entity.kubernetes_cluster):max:delta:sort(value(avg,descending)):limit(10)",
+          "enabled": true
+        }
+      ],
+      "visualConfig": {
+        "type": "GRAPH_CHART",
+        "global": {
+          "hideLegend": false
+        },
+        "rules": [
+          {
+            "matcher": "A:",
+            "unitTransform": "auto",
+            "valueFormat": "auto",
+            "properties": {
+              "color": "DEFAULT",
+              "seriesType": "LINE",
+              "alias": "Growth Percent"
+            },
+            "seriesOverrides": []
+          }
+        ],
+        "axes": {
+          "xAxis": {
+            "displayName": "",
+            "visible": true
+          },
+          "yAxes": [
+            {
+              "displayName": "",
+              "visible": true,
+              "min": "0",
+              "max": "AUTO",
+              "position": "LEFT",
+              "queryIds": [
+                "A"
+              ],
+              "defaultAxis": true
+            }
+          ]
+        },
+        "heatmapSettings": {
+          "yAxis": "VALUE"
+        },
+        "thresholds": [
+          {
+            "axisTarget": "LEFT",
+            "columnId": "((kubelet_volume_stats_used_bytes)/(kubelet_volume_stats_capacity_bytes)*100):splitBy(persistentvolumeclaim,namespace,\"dt.entity.kubernetes_cluster\"):delta:last:sort(value(avg,descending)):limit(10)",
+            "rules": [
+              {
+                "color": "#7dc540"
+              },
+              {
+                "color": "#f5d30f"
+              },
+              {
+                "color": "#dc172a"
+              }
+            ],
+            "queryId": "A",
+            "visible": true
+          }
+        ],
+        "tableSettings": {
+          "isThresholdBackgroundAppliedToCell": false
+        },
+        "graphChartSettings": {
+          "connectNulls": false
+        },
+        "honeycombSettings": {
+          "showHive": true,
+          "showLegend": true,
+          "showLabels": false
+        }
+      },
+      "queriesSettings": {
+        "resolution": ""
+      },
+      "metricExpressions": [
+        "resolution=null&"
+      ]
+    },
+    {
+      "name": "Capacity by namespace",
+      "tileType": "DATA_EXPLORER",
+      "configured": true,
+      "bounds": {
+        "top": 38,
+        "left": 1330,
+        "width": 342,
+        "height": 304
+      },
+      "tileFilter": {
+        "timeframe": "-5m"
+      },
+      "customName": "Pie",
+      "queries": [
+        {
+          "id": "A",
+          "timeAggregation": "DEFAULT",
+          "splitBy": [
+            "namespace",
+            "dt.entity.kubernetes_cluster"
+          ],
+          "metricSelector": "kubelet_volume_stats_capacity_bytes:avg:splitBy(namespace,dt.entity.kubernetes_cluster):sum:last",
+          "enabled": true
+        }
+      ],
+      "visualConfig": {
+        "type": "PIE_CHART",
+        "global": {
+          "hideLegend": false
+        },
+        "rules": [
+          {
+            "matcher": "A:",
+            "properties": {
+              "color": "DEFAULT"
+            },
+            "seriesOverrides": []
+          }
+        ],
+        "axes": {
+          "xAxis": {
+            "visible": true
+          },
+          "yAxes": []
+        },
+        "heatmapSettings": {
+          "yAxis": "VALUE"
+        },
+        "thresholds": [
+          {
+            "axisTarget": "LEFT",
+            "columnId": "Volume capacity bytes",
+            "rules": [
+              {
+                "color": "#7dc540"
+              },
+              {
+                "color": "#f5d30f"
+              },
+              {
+                "color": "#dc172a"
+              }
+            ],
+            "queryId": "A",
+            "visible": true
+          }
+        ],
+        "tableSettings": {
+          "isThresholdBackgroundAppliedToCell": false
+        },
+        "graphChartSettings": {
+          "connectNulls": false
+        },
+        "honeycombSettings": {
+          "showHive": true,
+          "showLegend": true,
+          "showLabels": false
+        }
+      },
+      "queriesSettings": {
+        "resolution": ""
+      },
+      "metricExpressions": [
+        "resolution=Inf&"
+      ]
+    },
+    {
+      "name": "Usage by namespace",
+      "tileType": "DATA_EXPLORER",
+      "configured": true,
+      "bounds": {
+        "top": 342,
+        "left": 1330,
+        "width": 342,
+        "height": 304
+      },
+      "tileFilter": {
+        "timeframe": "-5m"
+      },
+      "customName": "Table",
+      "queries": [
+        {
+          "id": "A",
+          "timeAggregation": "DEFAULT",
+          "splitBy": [
+            "namespace",
+            "dt.entity.kubernetes_cluster"
+          ],
+          "metricSelector": "kubelet_volume_stats_used_bytes:avg:splitBy(namespace,dt.entity.kubernetes_cluster):sum",
+          "enabled": true
+        }
+      ],
+      "visualConfig": {
+        "type": "PIE_CHART",
+        "global": {
+          "hideLegend": false
+        },
+        "rules": [
+          {
+            "matcher": "A:",
+            "unitTransform": "auto",
+            "valueFormat": "auto",
+            "properties": {
+              "color": "DEFAULT",
+              "seriesType": "LINE",
+              "alias": "Used Bytes"
+            },
+            "seriesOverrides": []
+          }
+        ],
+        "axes": {
+          "xAxis": {
+            "visible": true
+          },
+          "yAxes": []
+        },
+        "heatmapSettings": {
+          "yAxis": "VALUE"
+        },
+        "thresholds": [
+          {
+            "axisTarget": "LEFT",
+            "columnId": "Volume used bytes",
+            "rules": [
+              {
+                "color": "#7dc540"
+              },
+              {
+                "color": "#f5d30f"
+              },
+              {
+                "color": "#dc172a"
+              }
+            ],
+            "queryId": "A",
+            "visible": true
+          }
+        ],
+        "tableSettings": {
+          "isThresholdBackgroundAppliedToCell": false
+        },
+        "graphChartSettings": {
+          "connectNulls": false
+        },
+        "honeycombSettings": {
+          "showHive": true,
+          "showLegend": true,
+          "showLabels": false
+        }
+      },
+      "queriesSettings": {
+        "resolution": "",
+        "foldTransformation": "TOTAL"
+      },
+      "metricExpressions": [
+        "resolution=Inf&"
+      ]
+    },
+    {
+      "name": "PVC count by namespace",
+      "tileType": "DATA_EXPLORER",
+      "configured": true,
+      "bounds": {
+        "top": 646,
+        "left": 1330,
+        "width": 342,
+        "height": 304
+      },
+      "tileFilter": {
+        "timeframe": "-5m"
+      },
+      "customName": "Pie",
+      "queries": [
+        {
+          "id": "A",
+          "timeAggregation": "DEFAULT",
+          "splitBy": [
+            "namespace",
+            "dt.entity.kubernetes_cluster"
+          ],
+          "metricSelector": "kubelet_volume_stats_capacity_bytes:max:splitBy(namespace,dt.entity.kubernetes_cluster):last:count",
+          "enabled": true
+        }
+      ],
+      "visualConfig": {
+        "type": "PIE_CHART",
+        "global": {
+          "hideLegend": false
+        },
+        "rules": [
+          {
+            "matcher": "A:",
+            "properties": {
+              "color": "DEFAULT"
+            },
+            "seriesOverrides": []
+          }
+        ],
+        "axes": {
+          "xAxis": {
+            "visible": true
+          },
+          "yAxes": []
+        },
+        "heatmapSettings": {
+          "yAxis": "VALUE"
+        },
+        "thresholds": [
+          {
+            "axisTarget": "LEFT",
+            "columnId": "Volume capacity bytes",
+            "rules": [
+              {
+                "color": "#7dc540"
+              },
+              {
+                "color": "#f5d30f"
+              },
+              {
+                "color": "#dc172a"
+              }
+            ],
+            "queryId": "A",
+            "visible": true
+          }
+        ],
+        "tableSettings": {
+          "isThresholdBackgroundAppliedToCell": false
+        },
+        "graphChartSettings": {
+          "connectNulls": false
+        },
+        "honeycombSettings": {
+          "showHive": true,
+          "showLegend": true,
+          "showLabels": false
+        }
+      },
+      "queriesSettings": {
+        "resolution": ""
+      },
+      "metricExpressions": [
+        "resolution=Inf&"
+      ]
+    },
+    {
+      "name": "Markdown",
+      "tileType": "MARKDOWN",
+      "configured": true,
+      "bounds": {
+        "top": 0,
+        "left": 0,
+        "width": 228,
+        "height": 38
+      },
+      "tileFilter": {},
+      "markdown": "## Utilization"
+    },
+    {
+      "name": "Markdown",
+      "tileType": "MARKDOWN",
+      "configured": true,
+      "bounds": {
+        "top": 0,
+        "left": 1406,
+        "width": 266,
+        "height": 38
+      },
+      "tileFilter": {},
+      "markdown": "## [We'd love your feedback!](https://dt-url.net/k8spvcd)"
+    }
+  ]
+}

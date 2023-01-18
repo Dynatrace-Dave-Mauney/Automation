@@ -1,0 +1,1059 @@
+{
+  "metadata": {
+    "configurationVersions": [
+      6
+    ],
+    "clusterVersion": "1.257.164.20221230-102519"
+  },
+  "id": "6b38732e-609c-44e2-b34d-0286717ecdab",
+  "dashboardMetadata": {
+    "name": "Kubernetes namespace resource quotas",
+    "shared": true,
+    "owner": "Dynatrace",
+    "tags": [
+      "Kubernetes"
+    ],
+    "preset": true,
+    "popularity": 1,
+    "dynamicFilters": {
+      "filters": [
+        "KUBERNETES_CLUSTER",
+        "RELATED_NAMESPACE"
+      ]
+    },
+    "hasConsistentColors": true
+  },
+  "tiles": [
+    {
+      "name": "Markdown",
+      "tileType": "MARKDOWN",
+      "configured": true,
+      "bounds": {
+        "top": 380,
+        "left": 0,
+        "width": 836,
+        "height": 38
+      },
+      "tileFilter": {},
+      "markdown": "## Memory requests quotas"
+    },
+    {
+      "name": "Markdown",
+      "tileType": "MARKDOWN",
+      "configured": true,
+      "bounds": {
+        "top": 38,
+        "left": 0,
+        "width": 836,
+        "height": 38
+      },
+      "tileFilter": {},
+      "markdown": "## CPU requests quotas"
+    },
+    {
+      "name": "Markdown",
+      "tileType": "MARKDOWN",
+      "configured": true,
+      "bounds": {
+        "top": 380,
+        "left": 836,
+        "width": 836,
+        "height": 38
+      },
+      "tileFilter": {},
+      "markdown": "## Memory limits quotas"
+    },
+    {
+      "name": "Markdown",
+      "tileType": "MARKDOWN",
+      "configured": true,
+      "bounds": {
+        "top": 38,
+        "left": 836,
+        "width": 836,
+        "height": 38
+      },
+      "tileFilter": {},
+      "markdown": "## CPU limits quotas"
+    },
+    {
+      "name": "Markdown",
+      "tileType": "MARKDOWN",
+      "configured": true,
+      "bounds": {
+        "top": 0,
+        "left": 0,
+        "width": 950,
+        "height": 38
+      },
+      "tileFilter": {},
+      "markdown": "This dashboard provides an overview of your [resource quotas](https://kubernetes.io/docs/concepts/policy/resource-quotas/) by namespace. If the dashboard is empty, you might not have any resource quotas set."
+    },
+    {
+      "name": "Markdown",
+      "tileType": "MARKDOWN",
+      "configured": true,
+      "bounds": {
+        "top": 722,
+        "left": 0,
+        "width": 836,
+        "height": 38
+      },
+      "tileFilter": {},
+      "markdown": "## Pod count quotas"
+    },
+    {
+      "name": "Markdown",
+      "tileType": "MARKDOWN",
+      "configured": true,
+      "bounds": {
+        "top": 38,
+        "left": 1368,
+        "width": 304,
+        "height": 38
+      },
+      "tileFilter": {},
+      "markdown": "## [📝We'd love your feedback!](https://dt-url.net/k8snrqd)"
+    },
+    {
+      "name": "Quota used",
+      "nameSize": "",
+      "tileType": "DATA_EXPLORER",
+      "configured": true,
+      "bounds": {
+        "top": 76,
+        "left": 0,
+        "width": 304,
+        "height": 304
+      },
+      "tileFilter": {
+        "timeframe": "-5m"
+      },
+      "customName": "CPU requests quota used",
+      "queries": [
+        {
+          "id": "B",
+          "timeAggregation": "DEFAULT",
+          "splitBy": [
+            "dt.entity.cloud_application_namespace",
+            "k8s.resourcequota.name"
+          ],
+          "metricSelector": "builtin:kubernetes.resourcequota.requests_cpu_used:last:splitBy(\"dt.entity.cloud_application_namespace\",\"k8s.resourcequota.name\"):sum:sort(value(sum,descending))",
+          "enabled": true
+        }
+      ],
+      "visualConfig": {
+        "type": "TOP_LIST",
+        "global": {
+          "hideLegend": false
+        },
+        "rules": [
+          {
+            "matcher": "B:",
+            "properties": {
+              "color": "DEFAULT"
+            },
+            "seriesOverrides": []
+          }
+        ],
+        "axes": {
+          "xAxis": {
+            "visible": true
+          },
+          "yAxes": []
+        },
+        "heatmapSettings": {
+          "yAxis": "VALUE"
+        },
+        "thresholds": [
+          {
+            "axisTarget": "LEFT",
+            "rules": [
+              {
+                "color": "#7dc540"
+              },
+              {
+                "color": "#f5d30f"
+              },
+              {
+                "color": "#dc172a"
+              }
+            ],
+            "queryId": "",
+            "visible": true
+          }
+        ],
+        "tableSettings": {
+          "isThresholdBackgroundAppliedToCell": false
+        },
+        "graphChartSettings": {
+          "connectNulls": false
+        },
+        "honeycombSettings": {
+          "showHive": true,
+          "showLegend": true,
+          "showLabels": false
+        }
+      },
+      "queriesSettings": {
+        "resolution": ""
+      },
+      "metricExpressions": [
+        "resolution=null&(builtin:kubernetes.resourcequota.requests_cpu_used:last:splitBy(\"dt.entity.cloud_application_namespace\",\"k8s.resourcequota.name\"):sum:sort(value(sum,descending))):limit(100):names:fold(auto)"
+      ]
+    },
+    {
+      "name": "Top 10 quota used in %",
+      "tileType": "DATA_EXPLORER",
+      "configured": true,
+      "bounds": {
+        "top": 76,
+        "left": 304,
+        "width": 532,
+        "height": 304
+      },
+      "tileFilter": {},
+      "customName": "CPU requests quota used",
+      "queries": [
+        {
+          "id": "C",
+          "timeAggregation": "DEFAULT",
+          "splitBy": [
+            "dt.entity.cloud_application_namespace",
+            "k8s.resourcequota.name"
+          ],
+          "metricSelector": "(builtin:kubernetes.resourcequota.requests_cpu_used / builtin:kubernetes.resourcequota.requests_cpu * 100):splitBy(\"dt.entity.cloud_application_namespace\",\"k8s.resourcequota.name\"):sort(value(avg,descending)):setUnit(Percent):limit(10)",
+          "enabled": true
+        }
+      ],
+      "visualConfig": {
+        "type": "GRAPH_CHART",
+        "global": {
+          "hideLegend": false
+        },
+        "rules": [
+          {
+            "matcher": "C:",
+            "unitTransform": "Percent",
+            "valueFormat": "none",
+            "properties": {
+              "color": "DEFAULT",
+              "seriesType": "LINE"
+            },
+            "seriesOverrides": []
+          }
+        ],
+        "axes": {
+          "xAxis": {
+            "displayName": "",
+            "visible": true
+          },
+          "yAxes": [
+            {
+              "displayName": "",
+              "visible": true,
+              "min": "0",
+              "max": "100",
+              "position": "LEFT",
+              "queryIds": [
+                "C"
+              ],
+              "defaultAxis": true
+            }
+          ]
+        },
+        "heatmapSettings": {
+          "yAxis": "VALUE"
+        },
+        "thresholds": [
+          {
+            "axisTarget": "LEFT",
+            "rules": [
+              {
+                "color": "#7dc540"
+              },
+              {
+                "color": "#f5d30f"
+              },
+              {
+                "value": 90,
+                "color": "#f5d30f"
+              }
+            ],
+            "queryId": "",
+            "visible": true
+          }
+        ],
+        "tableSettings": {
+          "isThresholdBackgroundAppliedToCell": false
+        },
+        "graphChartSettings": {
+          "connectNulls": false
+        },
+        "honeycombSettings": {
+          "showHive": true,
+          "showLegend": true,
+          "showLabels": false
+        }
+      },
+      "queriesSettings": {
+        "resolution": ""
+      },
+      "metricExpressions": [
+        "resolution=null&((builtin:kubernetes.resourcequota.requests_cpu_used/builtin:kubernetes.resourcequota.requests_cpu*100):splitBy(\"dt.entity.cloud_application_namespace\",\"k8s.resourcequota.name\"):sort(value(avg,descending)):setUnit(Percent):limit(10)):limit(100):names"
+      ]
+    },
+    {
+      "name": "Quota used",
+      "nameSize": "",
+      "tileType": "DATA_EXPLORER",
+      "configured": true,
+      "bounds": {
+        "top": 76,
+        "left": 836,
+        "width": 304,
+        "height": 304
+      },
+      "tileFilter": {
+        "timeframe": "-5m"
+      },
+      "customName": "CPU limits quota used",
+      "queries": [
+        {
+          "id": "B",
+          "timeAggregation": "DEFAULT",
+          "splitBy": [
+            "dt.entity.cloud_application_namespace",
+            "k8s.resourcequota.name"
+          ],
+          "metricSelector": "builtin:kubernetes.resourcequota.limits_cpu_used:last:splitBy(\"dt.entity.cloud_application_namespace\",\"k8s.resourcequota.name\"):sum:sort(value(sum,descending))",
+          "enabled": true
+        }
+      ],
+      "visualConfig": {
+        "type": "TOP_LIST",
+        "global": {
+          "hideLegend": false
+        },
+        "rules": [
+          {
+            "matcher": "B:",
+            "properties": {
+              "color": "DEFAULT"
+            },
+            "seriesOverrides": []
+          }
+        ],
+        "axes": {
+          "xAxis": {
+            "visible": true
+          },
+          "yAxes": []
+        },
+        "heatmapSettings": {
+          "yAxis": "VALUE"
+        },
+        "thresholds": [
+          {
+            "axisTarget": "LEFT",
+            "rules": [
+              {
+                "color": "#7dc540"
+              },
+              {
+                "color": "#f5d30f"
+              },
+              {
+                "color": "#dc172a"
+              }
+            ],
+            "queryId": "",
+            "visible": true
+          }
+        ],
+        "tableSettings": {
+          "isThresholdBackgroundAppliedToCell": false
+        },
+        "graphChartSettings": {
+          "connectNulls": false
+        },
+        "honeycombSettings": {
+          "showHive": true,
+          "showLegend": true,
+          "showLabels": false
+        }
+      },
+      "queriesSettings": {
+        "resolution": ""
+      },
+      "metricExpressions": [
+        "resolution=null&(builtin:kubernetes.resourcequota.limits_cpu_used:last:splitBy(\"dt.entity.cloud_application_namespace\",\"k8s.resourcequota.name\"):sum:sort(value(sum,descending))):limit(100):names:fold(auto)"
+      ]
+    },
+    {
+      "name": "Top 10 quota used in %",
+      "tileType": "DATA_EXPLORER",
+      "configured": true,
+      "bounds": {
+        "top": 76,
+        "left": 1140,
+        "width": 532,
+        "height": 304
+      },
+      "tileFilter": {},
+      "customName": "CPU limits quota used",
+      "queries": [
+        {
+          "id": "C",
+          "timeAggregation": "DEFAULT",
+          "splitBy": [
+            "dt.entity.cloud_application_namespace",
+            "k8s.resourcequota.name"
+          ],
+          "metricSelector": "(builtin:kubernetes.resourcequota.limits_cpu_used / builtin:kubernetes.resourcequota.limits_cpu * 100):splitBy(\"dt.entity.cloud_application_namespace\",\"k8s.resourcequota.name\"):sort(value(avg,descending)):setUnit(Percent):limit(10)",
+          "enabled": true
+        }
+      ],
+      "visualConfig": {
+        "type": "GRAPH_CHART",
+        "global": {
+          "hideLegend": false
+        },
+        "rules": [
+          {
+            "matcher": "C:",
+            "unitTransform": "Percent",
+            "valueFormat": "auto",
+            "properties": {
+              "color": "DEFAULT",
+              "seriesType": "LINE"
+            },
+            "seriesOverrides": []
+          }
+        ],
+        "axes": {
+          "xAxis": {
+            "displayName": "",
+            "visible": true
+          },
+          "yAxes": [
+            {
+              "displayName": "",
+              "visible": true,
+              "min": "0",
+              "max": "100",
+              "position": "LEFT",
+              "queryIds": [
+                "C"
+              ],
+              "defaultAxis": true
+            }
+          ]
+        },
+        "heatmapSettings": {
+          "yAxis": "VALUE"
+        },
+        "thresholds": [
+          {
+            "axisTarget": "LEFT",
+            "rules": [
+              {
+                "color": "#7dc540"
+              },
+              {
+                "color": "#f5d30f"
+              },
+              {
+                "value": 90,
+                "color": "#f5d30f"
+              }
+            ],
+            "queryId": "",
+            "visible": true
+          }
+        ],
+        "tableSettings": {
+          "isThresholdBackgroundAppliedToCell": false
+        },
+        "graphChartSettings": {
+          "connectNulls": false
+        },
+        "honeycombSettings": {
+          "showHive": true,
+          "showLegend": true,
+          "showLabels": false
+        }
+      },
+      "queriesSettings": {
+        "resolution": ""
+      },
+      "metricExpressions": [
+        "resolution=null&((builtin:kubernetes.resourcequota.limits_cpu_used/builtin:kubernetes.resourcequota.limits_cpu*100):splitBy(\"dt.entity.cloud_application_namespace\",\"k8s.resourcequota.name\"):sort(value(avg,descending)):setUnit(Percent):limit(10)):limit(100):names"
+      ]
+    },
+    {
+      "name": "Quota used",
+      "nameSize": "",
+      "tileType": "DATA_EXPLORER",
+      "configured": true,
+      "bounds": {
+        "top": 418,
+        "left": 0,
+        "width": 304,
+        "height": 304
+      },
+      "tileFilter": {
+        "timeframe": "-5m"
+      },
+      "customName": "Memory requests quota used",
+      "queries": [
+        {
+          "id": "B",
+          "timeAggregation": "DEFAULT",
+          "splitBy": [
+            "dt.entity.cloud_application_namespace",
+            "k8s.resourcequota.name"
+          ],
+          "metricSelector": "builtin:kubernetes.resourcequota.requests_memory_used:last:splitBy(\"dt.entity.cloud_application_namespace\",\"k8s.resourcequota.name\"):sum:sort(value(sum,descending))",
+          "enabled": true
+        }
+      ],
+      "visualConfig": {
+        "type": "TOP_LIST",
+        "global": {
+          "hideLegend": false
+        },
+        "rules": [
+          {
+            "matcher": "B:",
+            "properties": {
+              "color": "DEFAULT"
+            },
+            "seriesOverrides": []
+          }
+        ],
+        "axes": {
+          "xAxis": {
+            "visible": true
+          },
+          "yAxes": []
+        },
+        "heatmapSettings": {
+          "yAxis": "VALUE"
+        },
+        "thresholds": [
+          {
+            "axisTarget": "LEFT",
+            "rules": [
+              {
+                "color": "#7dc540"
+              },
+              {
+                "color": "#f5d30f"
+              },
+              {
+                "color": "#dc172a"
+              }
+            ],
+            "queryId": "",
+            "visible": true
+          }
+        ],
+        "tableSettings": {
+          "isThresholdBackgroundAppliedToCell": false
+        },
+        "graphChartSettings": {
+          "connectNulls": false
+        },
+        "honeycombSettings": {
+          "showHive": true,
+          "showLegend": true,
+          "showLabels": false
+        }
+      },
+      "queriesSettings": {
+        "resolution": ""
+      },
+      "metricExpressions": [
+        "resolution=null&(builtin:kubernetes.resourcequota.requests_memory_used:last:splitBy(\"dt.entity.cloud_application_namespace\",\"k8s.resourcequota.name\"):sum:sort(value(sum,descending))):limit(100):names:fold(auto)"
+      ]
+    },
+    {
+      "name": "Top 10 quota used in %",
+      "tileType": "DATA_EXPLORER",
+      "configured": true,
+      "bounds": {
+        "top": 418,
+        "left": 304,
+        "width": 532,
+        "height": 304
+      },
+      "tileFilter": {},
+      "customName": "Memory requests quota used",
+      "queries": [
+        {
+          "id": "B",
+          "timeAggregation": "DEFAULT",
+          "splitBy": [
+            "dt.entity.cloud_application_namespace",
+            "k8s.resourcequota.name"
+          ],
+          "metricSelector": "(builtin:kubernetes.resourcequota.requests_memory_used / builtin:kubernetes.resourcequota.requests_memory * 100):splitBy(\"dt.entity.cloud_application_namespace\",\"k8s.resourcequota.name\"):sort(value(avg,descending)):setUnit(Percent):limit(10)",
+          "enabled": true
+        }
+      ],
+      "visualConfig": {
+        "type": "GRAPH_CHART",
+        "global": {
+          "hideLegend": false
+        },
+        "rules": [
+          {
+            "matcher": "B:",
+            "unitTransform": "Percent",
+            "valueFormat": "auto",
+            "properties": {
+              "color": "DEFAULT",
+              "seriesType": "LINE"
+            },
+            "seriesOverrides": []
+          }
+        ],
+        "axes": {
+          "xAxis": {
+            "displayName": "",
+            "visible": true
+          },
+          "yAxes": [
+            {
+              "displayName": "",
+              "visible": true,
+              "min": "0",
+              "max": "100",
+              "position": "LEFT",
+              "queryIds": [
+                "B"
+              ],
+              "defaultAxis": true
+            }
+          ]
+        },
+        "heatmapSettings": {
+          "yAxis": "VALUE"
+        },
+        "thresholds": [
+          {
+            "axisTarget": "LEFT",
+            "rules": [
+              {
+                "color": "#7dc540"
+              },
+              {
+                "color": "#f5d30f"
+              },
+              {
+                "value": 90,
+                "color": "#f5d30f"
+              }
+            ],
+            "queryId": "",
+            "visible": true
+          }
+        ],
+        "tableSettings": {
+          "isThresholdBackgroundAppliedToCell": false
+        },
+        "graphChartSettings": {
+          "connectNulls": false
+        },
+        "honeycombSettings": {
+          "showHive": true,
+          "showLegend": true,
+          "showLabels": false
+        }
+      },
+      "queriesSettings": {
+        "resolution": ""
+      },
+      "metricExpressions": [
+        "resolution=null&((builtin:kubernetes.resourcequota.requests_memory_used/builtin:kubernetes.resourcequota.requests_memory*100):splitBy(\"dt.entity.cloud_application_namespace\",\"k8s.resourcequota.name\"):sort(value(avg,descending)):setUnit(Percent):limit(10)):limit(100):names"
+      ]
+    },
+    {
+      "name": "Quota used",
+      "nameSize": "",
+      "tileType": "DATA_EXPLORER",
+      "configured": true,
+      "bounds": {
+        "top": 418,
+        "left": 836,
+        "width": 304,
+        "height": 304
+      },
+      "tileFilter": {
+        "timeframe": "-5m"
+      },
+      "customName": "Memory limits quota used",
+      "queries": [
+        {
+          "id": "B",
+          "timeAggregation": "DEFAULT",
+          "splitBy": [
+            "dt.entity.cloud_application_namespace",
+            "k8s.resourcequota.name"
+          ],
+          "metricSelector": "builtin:kubernetes.resourcequota.limits_memory_used:last:splitBy(\"dt.entity.cloud_application_namespace\",\"k8s.resourcequota.name\"):sum:sort(value(sum,descending))",
+          "enabled": true
+        }
+      ],
+      "visualConfig": {
+        "type": "TOP_LIST",
+        "global": {
+          "hideLegend": false
+        },
+        "rules": [
+          {
+            "matcher": "B:",
+            "properties": {
+              "color": "DEFAULT"
+            },
+            "seriesOverrides": []
+          }
+        ],
+        "axes": {
+          "xAxis": {
+            "visible": true
+          },
+          "yAxes": []
+        },
+        "heatmapSettings": {
+          "yAxis": "VALUE"
+        },
+        "thresholds": [
+          {
+            "axisTarget": "LEFT",
+            "rules": [
+              {
+                "color": "#7dc540"
+              },
+              {
+                "color": "#f5d30f"
+              },
+              {
+                "color": "#dc172a"
+              }
+            ],
+            "queryId": "",
+            "visible": true
+          }
+        ],
+        "tableSettings": {
+          "isThresholdBackgroundAppliedToCell": false
+        },
+        "graphChartSettings": {
+          "connectNulls": false
+        },
+        "honeycombSettings": {
+          "showHive": true,
+          "showLegend": true,
+          "showLabels": false
+        }
+      },
+      "queriesSettings": {
+        "resolution": ""
+      },
+      "metricExpressions": [
+        "resolution=null&(builtin:kubernetes.resourcequota.limits_memory_used:last:splitBy(\"dt.entity.cloud_application_namespace\",\"k8s.resourcequota.name\"):sum:sort(value(sum,descending))):limit(100):names:fold(auto)"
+      ]
+    },
+    {
+      "name": "Top 10 quota used in %",
+      "tileType": "DATA_EXPLORER",
+      "configured": true,
+      "bounds": {
+        "top": 418,
+        "left": 1140,
+        "width": 532,
+        "height": 304
+      },
+      "tileFilter": {},
+      "customName": "Memory limits quota used",
+      "queries": [
+        {
+          "id": "B",
+          "timeAggregation": "DEFAULT",
+          "splitBy": [
+            "dt.entity.cloud_application_namespace",
+            "k8s.resourcequota.name"
+          ],
+          "metricSelector": "(builtin:kubernetes.resourcequota.limits_memory_used / builtin:kubernetes.resourcequota.limits_memory * 100):splitBy(\"dt.entity.cloud_application_namespace\",\"k8s.resourcequota.name\"):sort(value(avg,descending)):setUnit(Percent):limit(10)",
+          "enabled": true
+        }
+      ],
+      "visualConfig": {
+        "type": "GRAPH_CHART",
+        "global": {
+          "hideLegend": false
+        },
+        "rules": [
+          {
+            "matcher": "B:",
+            "unitTransform": "Percent",
+            "valueFormat": "auto",
+            "properties": {
+              "color": "DEFAULT",
+              "seriesType": "LINE"
+            },
+            "seriesOverrides": []
+          }
+        ],
+        "axes": {
+          "xAxis": {
+            "displayName": "",
+            "visible": true
+          },
+          "yAxes": [
+            {
+              "displayName": "",
+              "visible": true,
+              "min": "0",
+              "max": "100",
+              "position": "LEFT",
+              "queryIds": [
+                "B"
+              ],
+              "defaultAxis": true
+            }
+          ]
+        },
+        "heatmapSettings": {
+          "yAxis": "VALUE"
+        },
+        "thresholds": [
+          {
+            "axisTarget": "LEFT",
+            "rules": [
+              {
+                "color": "#7dc540"
+              },
+              {
+                "color": "#f5d30f"
+              },
+              {
+                "value": 90,
+                "color": "#f5d30f"
+              }
+            ],
+            "queryId": "",
+            "visible": true
+          }
+        ],
+        "tableSettings": {
+          "isThresholdBackgroundAppliedToCell": false
+        },
+        "graphChartSettings": {
+          "connectNulls": false
+        },
+        "honeycombSettings": {
+          "showHive": true,
+          "showLegend": true,
+          "showLabels": false
+        }
+      },
+      "queriesSettings": {
+        "resolution": ""
+      },
+      "metricExpressions": [
+        "resolution=null&((builtin:kubernetes.resourcequota.limits_memory_used/builtin:kubernetes.resourcequota.limits_memory*100):splitBy(\"dt.entity.cloud_application_namespace\",\"k8s.resourcequota.name\"):sort(value(avg,descending)):setUnit(Percent):limit(10)):limit(100):names"
+      ]
+    },
+    {
+      "name": "Quota used",
+      "nameSize": "",
+      "tileType": "DATA_EXPLORER",
+      "configured": true,
+      "bounds": {
+        "top": 760,
+        "left": 0,
+        "width": 304,
+        "height": 304
+      },
+      "tileFilter": {
+        "timeframe": "-5m"
+      },
+      "customName": "CPU requests quota used",
+      "queries": [
+        {
+          "id": "B",
+          "timeAggregation": "DEFAULT",
+          "splitBy": [
+            "dt.entity.cloud_application_namespace",
+            "k8s.resourcequota.name"
+          ],
+          "metricSelector": "builtin:kubernetes.resourcequota.pods_used:last:splitBy(\"dt.entity.cloud_application_namespace\",\"k8s.resourcequota.name\"):sum:sort(value(sum,descending))",
+          "enabled": true
+        }
+      ],
+      "visualConfig": {
+        "type": "TOP_LIST",
+        "global": {
+          "hideLegend": false
+        },
+        "rules": [
+          {
+            "matcher": "B:",
+            "properties": {
+              "color": "DEFAULT"
+            },
+            "seriesOverrides": []
+          }
+        ],
+        "axes": {
+          "xAxis": {
+            "visible": true
+          },
+          "yAxes": []
+        },
+        "heatmapSettings": {
+          "yAxis": "VALUE"
+        },
+        "thresholds": [
+          {
+            "axisTarget": "LEFT",
+            "rules": [
+              {
+                "color": "#7dc540"
+              },
+              {
+                "color": "#f5d30f"
+              },
+              {
+                "color": "#dc172a"
+              }
+            ],
+            "queryId": "",
+            "visible": true
+          }
+        ],
+        "tableSettings": {
+          "isThresholdBackgroundAppliedToCell": false
+        },
+        "graphChartSettings": {
+          "connectNulls": false
+        },
+        "honeycombSettings": {
+          "showHive": true,
+          "showLegend": true,
+          "showLabels": false
+        }
+      },
+      "queriesSettings": {
+        "resolution": ""
+      },
+      "metricExpressions": [
+        "resolution=null&(builtin:kubernetes.resourcequota.pods_used:last:splitBy(\"dt.entity.cloud_application_namespace\",\"k8s.resourcequota.name\"):sum:sort(value(sum,descending))):limit(100):names:fold(auto)"
+      ]
+    },
+    {
+      "name": "Top 10 quota used in %",
+      "tileType": "DATA_EXPLORER",
+      "configured": true,
+      "bounds": {
+        "top": 760,
+        "left": 304,
+        "width": 532,
+        "height": 304
+      },
+      "tileFilter": {},
+      "customName": "CPU requests quota used",
+      "queries": [
+        {
+          "id": "C",
+          "timeAggregation": "DEFAULT",
+          "splitBy": [
+            "dt.entity.cloud_application_namespace",
+            "k8s.resourcequota.name"
+          ],
+          "metricSelector": "(builtin:kubernetes.resourcequota.pods_used / builtin:kubernetes.resourcequota.pods * 100):splitBy(\"dt.entity.cloud_application_namespace\",\"k8s.resourcequota.name\"):sort(value(avg,descending)):setUnit(Percent):limit(10)",
+          "enabled": true
+        }
+      ],
+      "visualConfig": {
+        "type": "GRAPH_CHART",
+        "global": {
+          "hideLegend": false
+        },
+        "rules": [
+          {
+            "matcher": "C:",
+            "unitTransform": "Percent",
+            "valueFormat": "none",
+            "properties": {
+              "color": "DEFAULT",
+              "seriesType": "LINE"
+            },
+            "seriesOverrides": []
+          }
+        ],
+        "axes": {
+          "xAxis": {
+            "displayName": "",
+            "visible": true
+          },
+          "yAxes": [
+            {
+              "displayName": "",
+              "visible": true,
+              "min": "0",
+              "max": "100",
+              "position": "LEFT",
+              "queryIds": [
+                "C"
+              ],
+              "defaultAxis": true
+            }
+          ]
+        },
+        "heatmapSettings": {
+          "yAxis": "VALUE"
+        },
+        "thresholds": [
+          {
+            "axisTarget": "LEFT",
+            "rules": [
+              {
+                "color": "#7dc540"
+              },
+              {
+                "color": "#f5d30f"
+              },
+              {
+                "value": 90,
+                "color": "#f5d30f"
+              }
+            ],
+            "queryId": "",
+            "visible": true
+          }
+        ],
+        "tableSettings": {
+          "isThresholdBackgroundAppliedToCell": false
+        },
+        "graphChartSettings": {
+          "connectNulls": false
+        },
+        "honeycombSettings": {
+          "showHive": true,
+          "showLegend": true,
+          "showLabels": false
+        }
+      },
+      "queriesSettings": {
+        "resolution": ""
+      },
+      "metricExpressions": [
+        "resolution=null&((builtin:kubernetes.resourcequota.pods_used/builtin:kubernetes.resourcequota.pods*100):splitBy(\"dt.entity.cloud_application_namespace\",\"k8s.resourcequota.name\"):sort(value(avg,descending)):setUnit(Percent):limit(10)):limit(100):names"
+      ]
+    }
+  ]
+}

@@ -3,11 +3,11 @@
         "configurationVersions": [
             3
         ],
-        "clusterVersion": "1.251.142.20220929-111511"
+        "clusterVersion": "1.257.164.20221230-102519"
     },
     "id": "aaaaaaaa-bbbb-cccc-dddd-000000000012",
     "dashboardMetadata": {
-        "name": ".NET",
+        "name": "Processes",
         "shared": true,
         "owner": "dave.mauney@dynatrace.com",
         "sharingDetails": {
@@ -24,7 +24,7 @@
     },
     "tiles": [
         {
-            "name": ".NET garbage collection (# Gen 0)",
+            "name": "Process group total CPU time during GC suspensions",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -34,21 +34,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": ".NET garbage collection (# Gen 0)",
+            "customName": "Process group total CPU time during GC suspensions",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.dotnet.gc.gen0Collections",
-                    "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.process_group"
                     ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
+                    "metricSelector": "builtin:tech.generic.cpu.groupSuspensionTime:splitBy(\"dt.entity.process_group\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
                     "enabled": true
                 }
             ],
@@ -95,7 +89,7 @@
             }
         },
         {
-            "name": ".NET garbage collection (# Gen 1)",
+            "name": "Process group total CPU time",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -105,21 +99,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": ".NET garbage collection (# Gen 1)",
+            "customName": "Process group total CPU time",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.dotnet.gc.gen1Collections",
-                    "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.process_group"
                     ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
+                    "metricSelector": "builtin:tech.generic.cpu.groupTotalTime:splitBy(\"dt.entity.process_group\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
                     "enabled": true
                 }
             ],
@@ -166,7 +154,7 @@
             }
         },
         {
-            "name": ".NET garbage collection (# Gen 2)",
+            "name": "Process total cpu time during GC suspensions",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -176,21 +164,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": ".NET garbage collection (# Gen 2)",
+            "customName": "Process total cpu time during GC suspensions",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.dotnet.gc.gen2Collections",
-                    "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.process_group"
                     ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
+                    "metricSelector": "builtin:tech.generic.cpu.suspensionTime:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
                     "enabled": true
                 }
             ],
@@ -237,7 +219,7 @@
             }
         },
         {
-            "name": ".NET % time in GC",
+            "name": "Process total CPU time",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -247,21 +229,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": ".NET % time in GC",
+            "customName": "Process total CPU time",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.dotnet.gc.timePercentage",
-                    "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.process_group"
                     ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
+                    "metricSelector": "builtin:tech.generic.cpu.totalTime:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
                     "enabled": true
                 }
             ],
@@ -308,7 +284,7 @@
             }
         },
         {
-            "name": ".NET % time in JIT",
+            "name": "Process CPU usage",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -318,21 +294,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": ".NET % time in JIT",
+            "customName": "Process CPU usage",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.dotnet.jit.timePercentage",
-                    "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.process_group"
                     ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
+                    "metricSelector": "builtin:tech.generic.cpu.usage:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
                     "enabled": true
                 }
             ],
@@ -379,7 +349,7 @@
             }
         },
         {
-            "name": ".NET average number of active threads",
+            "name": "z/OS General CPU time",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -389,21 +359,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": ".NET average number of active threads",
+            "customName": "z/OS General CPU time",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.dotnet.managedThreads.avgNumOfActiveThreads",
-                    "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.process_group"
                     ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
+                    "metricSelector": "builtin:tech.generic.gcpu.time:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
                     "enabled": true
                 }
             ],
@@ -450,7 +414,7 @@
             }
         },
         {
-            "name": ".NET memory consumption (Large Object Heap)",
+            "name": "z/OS General CPU usage",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -460,21 +424,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": ".NET memory consumption (Large Object Heap)",
+            "customName": "z/OS General CPU usage",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.dotnet.memory.LOHConsumption",
-                    "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.process_group"
                     ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
+                    "metricSelector": "builtin:tech.generic.gcpu.usage:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
                     "enabled": true
                 }
             ],
@@ -521,7 +479,7 @@
             }
         },
         {
-            "name": ".NET memory consumption (heap size Gen 0)",
+            "name": "Process file descriptors max",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -531,21 +489,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": ".NET memory consumption (heap size Gen 0)",
+            "customName": "Process file descriptors max",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.dotnet.memory.gen0Consumption",
-                    "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.process_group"
                     ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
+                    "metricSelector": "builtin:tech.generic.handles.fileDescriptorsMax:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
                     "enabled": true
                 }
             ],
@@ -592,7 +544,7 @@
             }
         },
         {
-            "name": ".NET memory consumption (heap size Gen 1)",
+            "name": "Process file descriptors used per pid",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -602,21 +554,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": ".NET memory consumption (heap size Gen 1)",
+            "customName": "Process file descriptors used per pid",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.dotnet.memory.gen1Consumption",
-                    "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.process_group"
                     ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
+                    "metricSelector": "builtin:tech.generic.handles.fileDescriptorsPercentUsed:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
                     "enabled": true
                 }
             ],
@@ -663,7 +609,7 @@
             }
         },
         {
-            "name": ".NET memory consumption (heap size Gen 2)",
+            "name": "Process file descriptors used",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -673,21 +619,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": ".NET memory consumption (heap size Gen 2)",
+            "customName": "Process file descriptors used",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.dotnet.memory.gen2Consumption",
-                    "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.process_group"
                     ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
+                    "metricSelector": "builtin:tech.generic.handles.fileDescriptorsUsed:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
                     "enabled": true
                 }
             ],
@@ -734,7 +674,7 @@
             }
         },
         {
-            "name": "Bytes in all heaps",
+            "name": "Process I/O read bytes",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -744,21 +684,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Bytes in all heaps",
+            "customName": "Process I/O read bytes",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.dotnet.perfmon.\"#BytesInAllHeaps\"",
-                    "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.process_group"
                     ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
+                    "metricSelector": "builtin:tech.generic.io.bytesRead:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
                     "enabled": true
                 }
             ],
@@ -805,7 +739,7 @@
             }
         },
         {
-            "name": "Gen 0 Collections",
+            "name": "Process I/O bytes total",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -815,21 +749,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Gen 0 Collections",
+            "customName": "Process I/O bytes total",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.dotnet.perfmon.\"#Gen0Collections\"",
-                    "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.process_group"
                     ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
+                    "metricSelector": "builtin:tech.generic.io.bytesTotal:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
                     "enabled": true
                 }
             ],
@@ -876,7 +804,7 @@
             }
         },
         {
-            "name": "Gen 1 Collections",
+            "name": "Process I/O write bytes",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -886,21 +814,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Gen 1 Collections",
+            "customName": "Process I/O write bytes",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.dotnet.perfmon.\"#Gen1Collections\"",
-                    "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.process_group"
                     ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
+                    "metricSelector": "builtin:tech.generic.io.bytesWritten:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
                     "enabled": true
                 }
             ],
@@ -947,7 +869,7 @@
             }
         },
         {
-            "name": "Gen 2 Collections",
+            "name": "Process I/O requested read bytes",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -957,21 +879,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Gen 2 Collections",
+            "customName": "Process I/O requested read bytes",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.dotnet.perfmon.\"#Gen2Collections\"",
-                    "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.process_group"
                     ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
+                    "metricSelector": "builtin:tech.generic.io.reqBytesRead:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
                     "enabled": true
                 }
             ],
@@ -1018,7 +934,7 @@
             }
         },
         {
-            "name": "Logical threads",
+            "name": "Process I/O requested write bytes",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1028,21 +944,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Logical threads",
+            "customName": "Process I/O requested write bytes",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.dotnet.perfmon.\"#OfCurrentLogicalThreads\"",
-                    "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.process_group"
                     ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
+                    "metricSelector": "builtin:tech.generic.io.reqBytesWrite:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
                     "enabled": true
                 }
             ],
@@ -1089,7 +999,7 @@
             }
         },
         {
-            "name": "Physical threads",
+            "name": "Process resource exhausted memory counter",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1099,21 +1009,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Physical threads",
+            "customName": "Process resource exhausted memory counter",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.dotnet.perfmon.\"#OfCurrentPhysicalThreads\"",
-                    "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.process_group"
                     ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
+                    "metricSelector": "builtin:tech.generic.mem.exhaustedMem:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
                     "enabled": true
                 }
             ],
@@ -1160,7 +1064,7 @@
             }
         },
         {
-            "name": "Committed bytes",
+            "name": "Process page faults counter",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1170,21 +1074,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Committed bytes",
+            "customName": "Process page faults counter",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.dotnet.perfmon.\"#TotalCommittedBytes\"",
-                    "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.process_group"
                     ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
+                    "metricSelector": "builtin:tech.generic.mem.pageFaults:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
                     "enabled": true
                 }
             ],
@@ -1231,7 +1129,7 @@
             }
         },
         {
-            "name": "Reserved bytes",
+            "name": "Process memory usage",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1241,21 +1139,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Reserved bytes",
+            "customName": "Process memory usage",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.dotnet.perfmon.\"#TotalReservedBytes\"",
-                    "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.process_group"
                     ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
+                    "metricSelector": "builtin:tech.generic.mem.usage:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
                     "enabled": true
                 }
             ],
@@ -1302,7 +1194,7 @@
             }
         },
         {
-            "name": "Time in GC",
+            "name": "Process memory",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1312,21 +1204,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Time in GC",
+            "customName": "Process memory",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.dotnet.perfmon.\"%TimeInGC\"",
-                    "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.process_group"
                     ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
+                    "metricSelector": "builtin:tech.generic.mem.workingSetSize:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
                     "enabled": true
                 }
             ],
@@ -1373,7 +1259,7 @@
             }
         },
         {
-            "name": "Contention rate",
+            "name": "Retransmission base received per second on host",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1383,21 +1269,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Contention rate",
+            "customName": "Retransmission base received per second on host",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.dotnet.perfmon.ContentionRate",
-                    "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.process_group"
                     ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
+                    "metricSelector": "builtin:tech.generic.network.packets.baseReRx:splitBy(\"dt.entity.host\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
                     "enabled": true
                 }
             ],
@@ -1444,7 +1324,7 @@
             }
         },
         {
-            "name": "Queue length",
+            "name": "Retransmission base received",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1454,21 +1334,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Queue length",
+            "customName": "Retransmission base received",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.dotnet.perfmon.CurrentQueueLength",
-                    "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.process_group"
                     ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
+                    "metricSelector": "builtin:tech.generic.network.packets.baseReRxAggr:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
                     "enabled": true
                 }
             ],
@@ -1515,7 +1389,7 @@
             }
         },
         {
-            "name": "Gen 0 Heap size",
+            "name": "Retransmission base sent per second on host",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1525,21 +1399,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Gen 0 Heap size",
+            "customName": "Retransmission base sent per second on host",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.dotnet.perfmon.Gen0HeapSize",
-                    "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.process_group"
                     ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
+                    "metricSelector": "builtin:tech.generic.network.packets.baseReTx:splitBy(\"dt.entity.host\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
                     "enabled": true
                 }
             ],
@@ -1586,7 +1454,7 @@
             }
         },
         {
-            "name": "Gen 1 Heap size",
+            "name": "Retransmission base sent",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1596,21 +1464,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Gen 1 Heap size",
+            "customName": "Retransmission base sent",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.dotnet.perfmon.Gen1HeapSize",
-                    "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.process_group"
                     ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
+                    "metricSelector": "builtin:tech.generic.network.packets.baseReTxAggr:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
                     "enabled": true
                 }
             ],
@@ -1657,7 +1519,7 @@
             }
         },
         {
-            "name": "Gen 2 Heap size",
+            "name": "Retransmitted packets received per second on host",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1667,21 +1529,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Gen 2 Heap size",
+            "customName": "Retransmitted packets received per second on host",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.dotnet.perfmon.Gen2HeapSize",
-                    "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.process_group"
                     ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
+                    "metricSelector": "builtin:tech.generic.network.packets.reRx:splitBy(\"dt.entity.host\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
                     "enabled": true
                 }
             ],
@@ -1728,7 +1584,7 @@
             }
         },
         {
-            "name": ".NET managed thread pool available io completion threads",
+            "name": "Retransmitted packets received",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1738,21 +1594,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": ".NET managed thread pool available io completion threads",
+            "customName": "Retransmitted packets received",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.dotnet.threadpool.ioCompletionThreads",
-                    "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.process_group"
                     ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
+                    "metricSelector": "builtin:tech.generic.network.packets.reRxAggr:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
                     "enabled": true
                 }
             ],
@@ -1799,7 +1649,7 @@
             }
         },
         {
-            "name": ".NET managed thread pool queued work items",
+            "name": "Retransmitted packets sent per second on host",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1809,21 +1659,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": ".NET managed thread pool queued work items",
+            "customName": "Retransmitted packets sent per second on host",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.dotnet.threadpool.queuedWorkItems",
-                    "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.process_group"
                     ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
+                    "metricSelector": "builtin:tech.generic.network.packets.reTx:splitBy(\"dt.entity.host\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
                     "enabled": true
                 }
             ],
@@ -1870,7 +1714,7 @@
             }
         },
         {
-            "name": ".NET managed thread pool available worker threads",
+            "name": "Retransmitted packets",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1880,21 +1724,1965 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": ".NET managed thread pool available worker threads",
+            "customName": "Retransmitted packets",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.dotnet.threadpool.workerThreads",
-                    "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.process_group"
                     ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
+                    "metricSelector": "builtin:tech.generic.network.packets.reTxAggr:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
                     },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Packet retransmissions",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1216,
+                "left": 912,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Packet retransmissions",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "metricSelector": "builtin:tech.generic.network.packets.retransmission:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Incoming packet retransmissions",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1216,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Incoming packet retransmissions",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "metricSelector": "builtin:tech.generic.network.packets.retransmissionIn:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Outgoing packet retransmissions",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1216,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Outgoing packet retransmissions",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "metricSelector": "builtin:tech.generic.network.packets.retransmissionOut:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Packets received",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1520,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Packets received",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "metricSelector": "builtin:tech.generic.network.packets.rx:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Packets sent",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1520,
+                "left": 304,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Packets sent",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "metricSelector": "builtin:tech.generic.network.packets.tx:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "TCP connectivity",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1520,
+                "left": 608,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "TCP connectivity",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "metricSelector": "builtin:tech.generic.network.sessions.connectivity:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "New session received per second on host",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1520,
+                "left": 912,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "New session received per second on host",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "metricSelector": "builtin:tech.generic.network.sessions.new:splitBy(\"dt.entity.host\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "New session received",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1520,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "New session received",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "metricSelector": "builtin:tech.generic.network.sessions.newAggr:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "New session received",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1520,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "New session received",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "metricSelector": "builtin:tech.generic.network.sessions.newLocal:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Session reset received per second on host",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1824,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Session reset received per second on host",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "metricSelector": "builtin:tech.generic.network.sessions.reset:splitBy(\"dt.entity.host\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Session reset received",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1824,
+                "left": 304,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Session reset received",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "metricSelector": "builtin:tech.generic.network.sessions.resetAggr:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Session reset received",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1824,
+                "left": 608,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Session reset received",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "metricSelector": "builtin:tech.generic.network.sessions.resetLocal:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Session timeout received per second on host",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1824,
+                "left": 912,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Session timeout received per second on host",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "metricSelector": "builtin:tech.generic.network.sessions.timeout:splitBy(\"dt.entity.host\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Session timeout received",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1824,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Session timeout received",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "metricSelector": "builtin:tech.generic.network.sessions.timeoutAggr:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Session timeout received",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1824,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Session timeout received",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "metricSelector": "builtin:tech.generic.network.sessions.timeoutLocal:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Traffic",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2128,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Traffic",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "metricSelector": "builtin:tech.generic.network.traffic.traffic:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Traffic in",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2128,
+                "left": 304,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Traffic in",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "metricSelector": "builtin:tech.generic.network.traffic.trafficIn:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Traffic out",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2128,
+                "left": 608,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Traffic out",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "metricSelector": "builtin:tech.generic.network.traffic.trafficOut:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Bytes received",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2128,
+                "left": 912,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Bytes received",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "metricSelector": "builtin:tech.generic.network.bytesRx:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Bytes sent",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2128,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Bytes sent",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "metricSelector": "builtin:tech.generic.network.bytesTx:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Ack-round-trip time",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2128,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Ack-round-trip time",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "metricSelector": "builtin:tech.generic.network.latency:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Requests",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2432,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Requests",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "metricSelector": "builtin:tech.generic.network.load:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Server responsiveness",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2432,
+                "left": 304,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Server responsiveness",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "metricSelector": "builtin:tech.generic.network.responsiveness:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Round-trip time",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2432,
+                "left": 608,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Round-trip time",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "metricSelector": "builtin:tech.generic.network.roundTrip:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Throughput",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2432,
+                "left": 912,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Throughput",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "metricSelector": "builtin:tech.generic.network.throughput:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Process count per process group",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2432,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Process count per process group",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "metricSelector": "builtin:tech.generic.count:splitBy(\"dt.entity.process_group\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Worker processes",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2432,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Worker processes",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "metricSelector": "builtin:tech.generic.processCount:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Process resource exhausted threads counter",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2736,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Process resource exhausted threads counter",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "metricSelector": "builtin:tech.generic.threadsExhausted:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "z/OS zIIP time",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2736,
+                "left": 304,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "z/OS zIIP time",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "metricSelector": "builtin:tech.generic.ziip:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "z/OS zIIP eligible time",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2736,
+                "left": 608,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "z/OS zIIP eligible time",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "metricSelector": "builtin:tech.generic.ziipEligible:splitBy(\"dt.entity.process_group_instance\"):avg:auto:parents:sort(value(avg,descending)):limit(100)",
                     "enabled": true
                 }
             ],
