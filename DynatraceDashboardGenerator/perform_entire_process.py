@@ -14,8 +14,8 @@ import put_all_dashboards_util
 
 
 def main(arguments):
-    # env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-    env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
+    env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
+    # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
     # env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
     # env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
 
@@ -30,14 +30,13 @@ def main(arguments):
 
     # Create "version.json" file used to generate dashboards
     print('creating version.json file')
-    # TODO: Wny is this API call no longer possible for SaaS?
-    # TODO: Use the UI to copy the version manually for SaaS...
-    # create_version_json_file.main(arguments)
+    create_version_json_file.main(arguments)
 
     # Create "metrics.json" file used to generate metrics dashboards
     print('creating metrics.json file')
     create_metrics_json_file.main(arguments)
 
+    # TODO: Entities are not used in the process currently for various reasons...
     # Create "entities.json" file used to generate entities dashboards
     # print('creating entities.json file')
     # create_entities_json_file.main(arguments)
@@ -52,6 +51,7 @@ def main(arguments):
         create_metrics_table.create_metrics_table(conn)
         create_metrics_table.load_metrics_table(conn)
 
+    # TODO: Entities are not used in the process currently for various reasons...
     # Create and load "entities" table used to generate metrics dashboards
     # print('loading entities table')
     # create_entities_table.main()  #  This will query to test it...not needed here

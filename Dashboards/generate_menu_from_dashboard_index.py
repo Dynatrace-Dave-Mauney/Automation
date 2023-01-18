@@ -74,7 +74,15 @@ else:
 for line_tuple in line_tuples_final:
     dashboard_id = line_tuple[0]
     dashboard_name = line_tuple[1]
-    links = links + '[' + dashboard_name + '](#dashboard;id=' + dashboard_id + ')  \\n'
+    if dashboard_id != GENERATED_ID:
+        # TODO: Support more than 10k characters. Until then, skip dashboards that are not relevant.
+        if 'Azure' not in dashboard_name and \
+            'Google' not in dashboard_name:
+            links = links + '[' + dashboard_name + '](#dashboard;id=' + dashboard_id + ')  \\n'
+            if len(links) > 10000:
+                print(f'Limit Reached at {dashboard_id}:{dashboard_name}!')
+                print(f'Filter out some dashboards to make the markdown tile links shorter')
+                exit()
 
 top = dashboard_template_top.replace('$$GENERATED_ID$$', GENERATED_ID).replace('$$GENERATED_NAME$$', GENERATED_NAME)
 with open(OUTPUT_FILE, 'w', encoding='utf-8') as file:

@@ -19,8 +19,8 @@ def run():
     # path = '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000109.json'
     # path = '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000112.json'
     # path = '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000074.json'
-    # path = '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000???.json'
     path = '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-100000000000.json'
+    # path = '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000???.json'
     put_dashboards(env, token, path, env_name, get_owner())
     #
     # env_name, env, tenant, token = get_environment('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
