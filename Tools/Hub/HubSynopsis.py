@@ -741,19 +741,9 @@ def list_selected_links(filtering):
     page = requests.get('https://www.dynatrace.com/hub/')
     soup = BeautifulSoup(page.text, 'html.parser')
 
-    # TODO: Remove debug code...
-    # print(soup.prettify())
-    # children = list(soup.children)
-    # print(children)
-    # exit()
-    # for child in children:
-    #     print(child)
-    # exit()
-
     lines = []
 
     for link in soup.find_all('a'):
-        # print(list(link.children))
         title = link.get('title')
         href = link.get('href')
         description = link.find('p', class_='store-logowall__description-body')
@@ -765,28 +755,8 @@ def list_selected_links(filtering):
             if filtering and (title.startswith('Azure') or title.startswith('Google') or title in exclude_list):
                 pass
             else:
-                # TODO: Decide direction here...
-                # Maybe later, for now do it with get_comment(title) directly...
-                # how_to = how_to_monitor.get(title)
-                # if how_to:
-                #     how_to_comment = how_to.get('comment', '')
-                #     how_to_link = how_to.get('link', '')
-                #     print(f'{line} |{how_to_comment}|{how_to_link}')
-                # else:
-                #     print(f'{title}|{description}|{href}')
-
                 comment = get_comment(title)
                 line = f'{title}|{description}|{comment}|{href}'
-
-                # TODO: Decide which way to go on this...
-                # if comment != '':
-                #     line = f'{title}|{description}|{comment}|{href}'
-                # else:
-                #     line = f'{title}|{description}|{href}'
-
-                # Uncomment to look for gaps...
-                # if comment == '':
-                #     lines.append(line)
                 lines.append(line)
 
     for line in sorted(lines, key=str.lower):
@@ -1415,7 +1385,7 @@ def write_xlsx(lines):
     workbook = xlsxwriter.Workbook('../../docs/HubSynopsis.xlsx')
     header_format = workbook.add_format({'bold': True, 'bg_color': '#B7C9E2'})
 
-    worksheet = workbook.add_worksheet('Hub Blueprint')
+    worksheet = workbook.add_worksheet('Hub Synopsis')
 
     row_index = 0
     # column_index = 0
@@ -1481,7 +1451,7 @@ def write_html(lines):
         write_line(file, html_top)
 
         # Write the tag summary header
-        write_h1_heading(file, f'Dynatrace Hub Blueprint')
+        write_h1_heading(file, f'Dynatrace Hub Synopsis')
 
         # Write Table Header
         write_line(file, table_header)
