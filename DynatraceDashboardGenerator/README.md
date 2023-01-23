@@ -21,4 +21,4 @@ Always use PUT rather than POST for uploading the dashboards as the IDs are desi
 Alternatively, you can run [put_all_dashboards_util.py](https://github.com/Dynatrace-Dave-Mauney/Automation/blob/main/DynatraceDashboardGenerator/put_all_dashboards_util.py) from within [perform_entire_process.py](https://github.com/Dynatrace-Dave-Mauney/Automation/blob/main/DynatraceDashboardGenerator/perform_entire_process.py) (where it is normally commented out to allow for manual post-processing).
 
 The [dashboard_blueprint.yaml](https://github.com/Dynatrace-Dave-Mauney/Automation/blob/main/DynatraceDashboardGenerator/dashboard_blueprint.yaml) is used to control which metrics are placed on each dashboard.
-Use the [analyze_metric_coverage.py](https://github.com/Dynatrace-Dave-Mauney/Automation/blob/main/DynatraceDashboardGenerator/analyze_metric_coverage.py) to find gaps in the coverage.
+Use the [analyze_metric_coverage.py](https://github.com/Dynatrace-Dave-Mauney/Automation/blob/main/DynatraceDashboardGenerator/analyze_metric_coverage.py) module to find gaps in the coverage.

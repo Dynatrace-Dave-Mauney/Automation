@@ -1,3 +1,7 @@
+#
+# NOTE: All dashboards owned by a "dynatrace.com" email will show up as deleted due to API filtering in place currently
+# I am inquiring about a workaround other than changing dashboard ownership.
+#
 import os
 import requests
 import urllib.parse
@@ -98,7 +102,6 @@ def load_dashboard_details():
     endpoint = '/api/config/v1/dashboards'
     params = ''
     dashboards_json_list = get_rest_api_json(env, token, endpoint, params)
-    # print(dashboards_json_list)
 
     for dashboards_json in dashboards_json_list:
         inner_dashboards_json_list = dashboards_json.get('dashboards')
