@@ -579,10 +579,11 @@ def run():
     global save_content
 
     # Set Environment
-    env_name, env, token = get_environment('Prod')
+    # env_name, env, token = get_environment('Prod')
     # env_name, env, token = get_environment('Prep')
     # env_name, env, token = get_environment('Dev')
     # env_name, env, token = get_environment('Personal')
+    env_name, env, token = get_environment('FreeTrial1')
 
     print_help()
 
@@ -766,8 +767,9 @@ def run():
 
 
 def print_help():
+    supported_environment_options = str(supported_environments.keys()).replace("dict_keys(['", '').replace("', '", '|').replace("'])", '')
     print('')
-    print(f'Enter "e Prod|Perf|Dev|Personal" to change the environment. "e" without a parameter shows the current environment.')
+    print(f'Enter "e {supported_environment_options}" to change the environment. "e" without a parameter shows the current environment.')
     print(f'Enter "m configs|entities|entities_v1|events|metrics|settings20" to change the mode. "m" without a parameter shows the current mode.')
     print(f'Enter "a <api>" to set/change an api (in configs mode). "a" without a parameter shows the current api.')
     print(f'Enter "l to list items')
