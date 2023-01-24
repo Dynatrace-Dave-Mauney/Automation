@@ -1,4 +1,6 @@
 ## DynatraceDashboardGenerator
+
+### Overview
 The intent of this subproject is to allow creation of Dynatrace Dashboards based on a YAML file that can be generated initially and then modified, if desired, to produce a variety of simple dashboards based on the full set of metrics available in the environment.
 
 The focus is on generating a dashboard for each "category" of metrics, such as all Host metrics, or all AWS metrics, for example.
@@ -8,6 +10,20 @@ Data Explorer line charts are used for all metrics, by default.
 One dimension is used for each chart.
 
 The idea is to generate dashboards that allow visualization of the data and allow curation into more organized and permanent versions as desired.
+
+### The easy way to get started
+
+The easiest way to get started is to simply leverage the dashboards already generated.  
+
+Just open [dashboard_index.txt](https://github.com/Dynatrace-Dave-Mauney/Automation/blob/main/DynatraceDashboardGenerator/dashboard_index.txt) to find dashboards you want to try.
+
+Then use [put_dashboards.py](https://github.com/Dynatrace-Dave-Mauney/Automation/blob/main/Dashboards/put_dashboards.py) or other means (import, copy/paste, the API "swagger" page, etc.) to put them in your environment.
+
+I recommend using [put_dashboards.py](https://github.com/Dynatrace-Dave-Mauney/Automation/blob/main/Dashboards/put_dashboards.py) because the "fixed id" for each dashboard will be retained.  Using "put" on the API "swagger" page will also retain the "fixed id". 
+
+If you have metrics in your environment not covered by an already generated dashboard, read on about how to run the process to generate dashboards.
+
+### Running the process
 
 To get started, simply modify the tenant and token information in [perform_entire_process.py](https://github.com/Dynatrace-Dave-Mauney/Automation/blob/main/DynatraceDashboardGenerator/perform_entire_process.py) module and run it from your IDE (I like PyCharm, personally) or from a command line.
 
