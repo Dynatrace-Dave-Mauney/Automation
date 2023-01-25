@@ -17,6 +17,9 @@ These pages were generated using the HubSynopsis.py module:
 [Hub Synopsis (HTML)](https://dynatrace-dave-mauney.github.io/Automation/HubSynopsis.html)  
 [Hub Synopsis (Excel)](https://dynatrace-dave-mauney.github.io/Automation/HubSynopsis.xlsx)  
 
-The [index page](https://dynatrace-dave-mauney.github.io/Automation/index.html) was manually created.
+[Filtered Hub Synopsis (HTML)](https://dynatrace-dave-mauney.github.io/Automation/HubSynopsisFiltered.html)  
+[Filtered Hub Synopsis (Excel)](https://dynatrace-dave-mauney.github.io/Automation/HubSynopsisFiltered.xlsx)  
+
+The [index page](https://dynatrace-dave-mauney.github.io/Automation/index.html) was created manually.
 
 
