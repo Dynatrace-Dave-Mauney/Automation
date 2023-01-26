@@ -1,7 +1,11 @@
-cd C:\Users\Dave.Mauney\PycharmProjects\Automation\Internal\SiteMapper
-py site_mapper.py > log.txt
-cd C:\Users\Dave.Mauney\PycharmProjects\Automation\docs >> log.txt
-copy *.html C:\Users\Dave.Mauney\PycharmProjects\Automation\Internal\SiteMapper >> log.txt
-git status >> log.txt
-git commit -a -m "SiteMapper Scheduled Run" >> log.txt
-git push origin HEAD:main >> log.txt
+cd C:\src\github\Automation\Internal\SiteMapper
+py site_mapper.py > C:\src\github\Automation\Internal\SiteMapper\log.txt
+cd C:\src\github\Automation\docs >> C:\src\github\Automation\Internal\SiteMapper\log.txt
+copy *.html C:\src\github\Automation\Internal\SiteMapper >> C:\src\github\Automation\Internal\SiteMapper\log.txt
+pause
+git status >> C:\src\github\Automation\Internal\SiteMapper\log.txt
+pause
+git commit -a -m "SiteMapper Scheduled Run" >> C:\src\github\Automation\Internal\SiteMapper\log.txt
+pause
+git push origin HEAD:main >> C:\src\github\Automation\Internal\SiteMapper\log.txt
+pause
