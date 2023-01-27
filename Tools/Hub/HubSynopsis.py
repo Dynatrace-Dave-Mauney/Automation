@@ -209,6 +209,32 @@ def list_selected_links(filtering):
     write_html(sorted(lines, key=str.lower))
 
 
+def check_hub_for_new_items():
+    page = requests.get('https://www.dynatrace.com/hub/')
+    soup = BeautifulSoup(page.text, 'html.parser')
+
+    lines = []
+
+    for link in soup.find_all('a'):
+        title = link.get('title')
+        href = link.get('href')
+        description = link.find('p', class_='store-logowall__description-body')
+        if description:
+            description = description.text
+        if href.startswith('/'):
+            href = f'https://dynatrace.com{href}'
+        if title:
+            comment = get_comment(title)
+            if comment == '':
+                line = f'{title}|{description}|{href}'
+                lines.append(line)
+
+    print('New to the Hub:')
+    for line in sorted(lines, key=str.lower):
+        print(line)
+
+
+
 # def build_how_to_monitor_dict():
 #     how_to_monitor_dict = {}
 #     page = requests.get('https://www.dynatrace.com/hub/')
@@ -643,6 +669,7 @@ def get_comment(title):
         'Apache Spark',
         'Custom Data ingest via API',
         'Fluentd',
+        'Fluent Bit',
         'Garden-RunC',
         'Hadoop HDFS',
         'Hadoop YARN',
@@ -916,6 +943,9 @@ def write_line(outfile, content):
 
 if __name__ == '__main__':
     filter_output = False
+
+    # check_hub_for_new_items()
+
     list_selected_links(filter_output)
 
     # how_to_monitor_dict = build_how_to_monitor_dict()

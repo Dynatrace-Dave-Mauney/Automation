@@ -1,0 +1,2 @@
+import HubSynopsis
+HubSynopsis.check_hub_for_new_items()
