@@ -13,11 +13,11 @@ def index_dashboards():
 
     path = 'Templates/Overview/????????-????-????-????-????????????'
     for filename in glob.glob(path):
-        # with open(filename, 'r') as f:
         with codecs.open(filename, encoding='utf-8') as f:
             dashboard = json.loads(f.read())
             dashboard_id = dashboard['id']
-            print(dashboard_id + ':' + dashboard['dashboardMetadata']['name'], file=outfile)
+            dashboard_name = dashboard.get('dashboardMetadata').get('name')
+            print(f'{dashboard_id}:{dashboard_name}', file=outfile)
 
 
 def main():

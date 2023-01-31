@@ -13,22 +13,28 @@ import codecs
 
 def run():
     """ For running directly from an IDE (or from a command line without using command line arguments) """
-    env_name, env, tenant, token = get_environment('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
+    # env_name, env, tenant, token = get_environment('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
     # path = '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json'
     # path = '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000117.json'
     # path = '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000109.json'
     # path = '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000112.json'
     # path = '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000074.json'
-    path = '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-100000000000.json'
+    # path = '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-100000000000.json'
     # path = '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000???.json'
-    put_dashboards(env, token, path, env_name, get_owner())
+    # put_dashboards(env, token, path, env_name, get_owner())
     #
     # env_name, env, tenant, token = get_environment('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
     # path = '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json'
     # put_dashboards(env, token, path, env_name, get_owner())
     #
-    # env_name, env, tenant, token = get_environment('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
+    env_name, env, tenant, token = get_environment('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
     # path = '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json'
+    path = 'Custom/Overview/00000000-dddd-bbbb-ffff-00000000????'
+    path = 'Custom/Overview/00000000-dddd-bbbb-ffff-000000000019'
+    put_dashboards(env, token, path, env_name, get_owner())
+    #
+    # env_name, env, tenant, token = get_environment('FreeTrial1', 'FREETRIAL1_TENANT', 'ROBOT_ADMIN_FREETRIAL1_TOKEN')
+    # path = 'Custom/Overview/00000000-dddd-bbbb-ffff-00000000????'
     # put_dashboards(env, token, path, env_name, get_owner())
 
 
@@ -72,6 +78,7 @@ def put_dashboards(env, token, path, prefix, owner):
             dashboard_id = dashboard_json.get('id')
             dashboard_name = dashboard_json.get('dashboardMetadata').get('name')
             dashboard_name = dashboard_name.replace('TEMPLATE:', prefix + ':')
+            dashboard_name = dashboard_name.replace('BETA:', prefix + ':')
             dashboard_owner = dashboard_json.get('dashboardMetadata').get('owner')
             dashboard_owner = dashboard_owner.replace('nobody@example.com', owner)
             dashboard_owner = dashboard_owner.replace('Dynatrace', owner)

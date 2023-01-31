@@ -8,7 +8,7 @@ import urllib.parse
 from inspect import currentframe
 from requests import Response
 
-PATH = '../../$Output/Tools/Saved'
+PATH = '../../$Output/Tools/MultiTool/Saved'
 
 api = ''
 mode = 'configs'
@@ -64,6 +64,28 @@ def view_config(config_id, env, token):
         else:
             if r.status_code == 404:
                 print('Config ID not found on this tenant')
+            else:
+                print('Status Code: %d' % r.status_code)
+                print('Reason: %s' % r.reason)
+                if len(r.text) > 0:
+                    print(r.text)
+    except ssl.SSLError:
+        print("SSL Error")
+
+
+def get_config(config_id, env, token):
+    global api
+    headers = {'Authorization': 'Api-Token ' + token}
+    try:
+        url = f'{env}/api/config/v1/{api}/{config_id}'
+        # print(url)
+        r = requests.get(url, headers=headers)
+        config_content = json.dumps(r.json(), indent=4)
+        if r.status_code == 200:
+            return(r.json())
+        else:
+            if r.status_code == 404:
+                return None
             else:
                 print('Status Code: %d' % r.status_code)
                 print('Reason: %s' % r.reason)
@@ -513,25 +535,83 @@ def get_rest_api_json(url, token, endpoint, params):
 def post(env, token, endpoint: str, payload: str) -> Response:
     # In general, avoid post in favor of put so "fixed ids" can be used
     json_data = json.loads(payload)
+    # Remove id proactively
+    json_data.pop('id')
     formatted_payload = json.dumps(json_data, indent=4, sort_keys=False)
     url = env + endpoint
     try:
-        r: Response = requests.post(url, payload.encode('utf-8'), headers={'Authorization': 'Api-Token ' + token, 'Content-Type': 'application/json; charset=utf-8'})
-        print('Status Code: %d' % r.status_code)
-        print('Reason: %s' % r.reason)
-        if len(r.text) > 0:
-            print(r.text)
-        if r.status_code not in [200, 201, 204]:
+        r: Response = requests.post(url, formatted_payload.encode('utf-8'), headers={'Authorization': 'Api-Token ' + token, 'Content-Type': 'application/json; charset=utf-8'})
+        if r.status_code == 201:
+            config_id = r.json().get('id')
+            config_name = r.json().get('name')
+            print(f'Created new configuration: "{config_name}" ({config_id}) at endpoint "{endpoint}"')
+        else:
             error_filename = '$post_error_payload.json'
             with open(error_filename, 'w') as file:
                 file.write(formatted_payload)
                 name = json_data.get('name')
                 if name:
                     print('Name: ' + name)
-                print('Error in "post(endpoint, payload)" method')
-                print('Exit code shown below is the source code line number of the exit statement invoked')
+                print('Error in "post(env, token, endpoint, payload)" method')
                 print('See ' + error_filename + ' for more details')
-            exit(get_line_number())
+                print('Status Code: %d' % r.status_code)
+                print('Reason: %s' % r.reason)
+                if len(r.text) > 0:
+                    print(r.text)
+        return r
+    except ssl.SSLError:
+        print('SSL Error')
+        exit(get_line_number())
+
+
+def put(env, token, endpoint: str, config_id, payload: str) -> Response:
+    json_data = json.loads(payload)
+    formatted_payload = json.dumps(json_data, indent=4, sort_keys=False)
+
+    url = env + endpoint + '/' + config_id
+    try:
+        r: Response = requests.put(url, formatted_payload.encode('utf-8'), headers={'Authorization': 'Api-Token ' + token, 'Content-Type': 'application/json; charset=utf-8'})
+        if r.status_code == 201:
+            config_name = json_data.get('name')
+            print(f'Created new configuration: "{config_name}" ({config_id}) at endpoint "{endpoint}"')
+        else:
+            if r.status_code == 204:
+                print(f'Updated configuration: "{config_id}" at endpoint "{endpoint}"')
+            else:
+                error_filename = '$put_error_payload.json'
+                with open(error_filename, 'w') as file:
+                    file.write(formatted_payload)
+                    name = json_data.get('name')
+                    if name:
+                        print('Name: ' + name)
+                    print('Error in "put(env, token, endpoint, config_id, payload)" method')
+                    print('See ' + error_filename + ' for more details')
+                    print('Status Code: %d' % r.status_code)
+                    print('Reason: %s' % r.reason)
+                    if len(r.text) > 0:
+                        print(r.text)
+        return r
+    except ssl.SSLError:
+        print('SSL Error')
+        exit(get_line_number())
+
+
+def delete(env, token, endpoint: str, config_id) -> Response:
+    url = env + endpoint + '/' + config_id
+    try:
+        r: Response = requests.delete(url, headers={'Authorization': 'Api-Token ' + token, 'Content-Type': 'application/json; charset=utf-8'})
+        if r.status_code == 204:
+            print('Config object was deleted')
+        else:
+            if r.status_code == 404:
+                print('Config object with specified Id does not exist.')
+            else:
+                if r.status_code not in [200, 201, 204]:
+                    print('Error in "delete(env, token, endpoint, config_id)" method')
+                    print('Status Code: %d' % r.status_code)
+                    print('Reason: %s' % r.reason)
+                    if len(r.text) > 0:
+                        print(r.text)
         return r
     except ssl.SSLError:
         print('SSL Error')
@@ -625,9 +705,9 @@ def run():
                 continue
             else:
                 if mode == 'configs':
-                    save_path = f'{PATH}/Config/{api}/{env_name}'
+                    save_path = f'{PATH}/{env_name}/Config/{api}'
                 else:
-                    save_path = f'{PATH}/{mode.capitalize()}/{env_name}'
+                    save_path = f'{PATH}/{env_name}/{mode.capitalize()}'
                 save(save_path, save_id + '.json', save_content)
                 continue
 
@@ -760,6 +840,46 @@ def run():
                     print(f'Invalid file path: {post_file_name}')
             continue
 
+        if input_string.upper().startswith('PUT '):
+            if mode != 'configs' or api == '':
+                print('Must be in configs mode with an API set in order to perform a put!')
+                print(f'Current mode:  {mode}')
+                print(f'Current API:  {api}')
+            else:
+                put_file_name = input_string[4:]
+                if os.path.isfile(put_file_name):
+                    endpoint = f'/api/config/v1/{api}'
+                    with open(put_file_name, 'r', encoding='utf-8') as file:
+                        payload = file.read()
+                        json_data = json.loads(payload)
+                        config_id = json_data.get('id')
+                        if not config_id:
+                            print('Unable to extract id from payload:')
+                            print(json_data)
+                        config_object = get_config(config_id, env, token)
+                        if config_object:
+                            save_path = f'{PATH}/{env_name}/PUT/Backup/Config/{api}'
+                            save(save_path, config_id + '.json', save_content)
+                            print(f'Existing configuration saved to {save_path}/{config_id}.json')
+                        put(env, token, endpoint, config_id, payload)
+                else:
+                    print(f'Invalid file path: {put_file_name}')
+            continue
+
+        if input_string.upper().startswith('DELETE '):
+            if mode != 'configs' or api == '':
+                print('Must be in configs mode with an API set in order to perform a delete!')
+                print(f'Current mode:  {mode}')
+                print(f'Current API:  {api}')
+            else:
+                save_path = f'{PATH}/{env_name}/DELETE/Backup/Config/{api}'
+                save(save_path, config_id + '.json', save_content)
+                print(f'Existing configuration saved to {save_path}/{config_id}.json')
+                endpoint = f'/api/config/v1/{api}'
+                config_id = input_string[7:]
+                delete(env, token, endpoint, config_id)
+            continue
+
         if ' ' in input_string.rstrip().lstrip():
             print('Invalid command or config id. (Embedded space detected).')
             continue
@@ -796,6 +916,8 @@ def print_help():
     print(f'Enter "lf <filtering string>" to list items and filtering for content (supports a single string with no spaces as the filtering)')
     print(f'Enter "mq" to query a metric selector (in metrics mode)')
     print(f'Enter "post" to post JSON from a file path specified to a config endpoint (in configs mode)')
+    print(f'Enter "put" to put JSON from a file path specified to a config endpoint (in configs mode)')
+    print(f'Enter "delete <id>" to delete the specified id from a config endpoint (in configs mode)')
     print(f'Enter just an ID to get the JSON')
     print(f'Enter "s" to save JSON just viewed')
     print(f'Enter "q" to quit')

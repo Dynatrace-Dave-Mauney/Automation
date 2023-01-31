@@ -49,7 +49,8 @@ def customize_dashboards():
     confirm('Customize dashboards from ' + DASHBOARD_TEMPLATE_PATH + ' to ' + DASHBOARD_CUSTOM_PATH)
     initialize()
 
-    for filename in glob.glob(DASHBOARD_TEMPLATE_PATH + '/*'):
+    for filename in glob.glob(DASHBOARD_TEMPLATE_PATH + '/00000000-*'):
+        print(filename)
         with open(filename, 'r', encoding='utf-8') as f:
             dashboard = f.read()
             new_dashboard = customize_dashboard(dashboard)
@@ -62,7 +63,6 @@ def customize_dashboards():
 
 
 def customize_dashboard(dashboard):
-    # print(dashboard)
     dashboard_json = json.loads(dashboard)
     new_dashboard_json = copy.deepcopy(dashboard_json)
     name = dashboard_json.get('dashboardMetadata').get('name')
