@@ -5,8 +5,8 @@ import os
 import requests
 import ssl
 
-env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-# env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
+# env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
+env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
 # env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
 # env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
 
@@ -19,7 +19,9 @@ management_zone_host_group_of_same_name_updates = []
 
 # For case of MZ with more than one HG (or with one HG with a different name)
 management_zone_with_multiple_host_groups_updates = [
-    ('LCA_PROD_AWS_CallCenter', ['LCA_PROD_AWS_CallCenter-LPK', 'LCA_PROD_AWS_CallCenter-REST', 'LCA_PROD_AWS_CallCenter-UI'])
+    # ('LCA_PROD_AWS_CallCenter', ['LCA_PROD_AWS_CallCenter-LPK', 'LCA_PROD_AWS_CallCenter-REST', 'LCA_PROD_AWS_CallCenter-UI'])
+    # ('LCA_STAGE_AWS_CallCenter', ['LCA_STAGE_AWS_CallCenter-LPK', 'LCA_STAGE_AWS_CallCenter-REST', 'LCA_STAGE_AWS_CallCenter-UI'])
+    ('ZZ Contact Center AWS Account', ['LCA_STAGE_AWS_CallCenter-LPK', 'LCA_STAGE_AWS_CallCenter-REST', 'LCA_STAGE_AWS_CallCenter-UI'])
 ]
 
 object_cache = {}

@@ -39,6 +39,7 @@ def write_markdown_menu(dashboard_lookup):
         'Application Overview (HTTP Monitors and Services)',
         'Application Overview (Services)',
         'Synthetics: Browser Monitor Events',
+        'F5',
         'IBM DataPower by Host',
         'IBM MQ Metrics by Queue Manager',
         'IBM MQ Metrics by Best Split',
@@ -89,8 +90,8 @@ def write_markdown_menu(dashboard_lookup):
         markdown_menu += f'[{menu_item}](#dashboard;id={markdown_item_id})  \\n'
     markdown_menu += '"'
 
-    filename = 'Templates/Overview/markdown_basic_menu.json'
     # filename = 'Templates/Overview/markdown_aws_basic_menu.json'
+    filename = 'Templates/Overview/markdown_menu.json'
     with open(filename, 'w') as file:
         file.write(markdown_menu)
 

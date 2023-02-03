@@ -156,7 +156,7 @@ def process(source_env, source_token, target_env, target_token):
         for inner_dashboard_json in inner_dashboard_json_list:
             dashboard_id = inner_dashboard_json.get('id')
             dashboard_name = inner_dashboard_json.get('name')
-            if dashboard_id == 'aaaaaaaa-bbbb-cccc-aaaa-000000000003':
+            if dashboard_id == 'de71298c-84a2-4ee9-bfd1-b4bd7b5ed4ef':
                 dashboard = get_by_object_id(source_env, source_token, endpoint, dashboard_id)
                 # To change the owner
                 # owner = dashboard.get('dashboardMetadata').get('owner')
@@ -173,12 +173,12 @@ def process(source_env, source_token, target_env, target_token):
 
 
 def main():
-    env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
+    env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
     source_tenant = os.environ.get(tenant_key)
     source_token = os.environ.get(token_key)
     source_env = f'https://{source_tenant}.live.dynatrace.com'
 
-    env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
+    env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
     target_tenant = os.environ.get(tenant_key)
     target_token = os.environ.get(token_key)
     target_env = f'https://{target_tenant}.live.dynatrace.com'

@@ -3,11 +3,11 @@
         "configurationVersions": [
             6
         ],
-        "clusterVersion": "1.252.168.20221017-141140"
+        "clusterVersion": "1.258.87.20230120-140924"
     },
-    "id": "00000000-dddd-bbbb-ffff-000000000022",
+    "id": "00000000-dddd-bbbb-ffff-000000001008",
     "dashboardMetadata": {
-        "name": "TEMPLATE: WebSphere Metrics by Process",
+        "name": "TEMPLATE: AWS API Gateway",
         "shared": true,
         "owner": "nobody@example.com",
         "dashboardFilter": null,
@@ -16,33 +16,33 @@
         "hasConsistentColors": true
     },
     "tiles": [
-        "## [\u21e6 Return to Overview](#dashboard;id=00000000-dddd-bbbb-ffff-000000000001)\n![BackButton]()",
         {
-            "name": "Free connection pool size",
+            "name": "4XXError Sum",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 304,
-                "left": 456,
-                "width": 456,
+                "top": 0,
+                "left": 0,
+                "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Free pool size",
+            "customName": "4XXError Sum",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.websphere.connectionPool.connectionPoolModule.FreePoolSize",
+                    "metric": "ext:cloud.aws.apiGateway.\"4xxErrorSum\"",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
                         "criteria": []
                     },
+                    "rate": "NONE",
                     "enabled": true
                 }
             ],
@@ -108,35 +108,226 @@
                 }
             },
             "metricExpressions": [
-                "resolution=null&(builtin:tech.websphere.connectionPool.connectionPoolModule.FreePoolSize:splitBy(\"dt.entity.process_group_instance\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+                "resolution=null&"
             ]
         },
         {
-            "name": "Connection pool percent used",
+            "name": "5XXError Sum",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 304,
+                "top": 0,
+                "left": 304,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "5XXError Sum",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.aws.apiGateway.\"5xxErrorSum\"",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {},
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&"
+            ]
+        },
+        {
+            "name": "CacheHitCount Sum (by Stage and Resource and Method)",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 608,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "CacheHitCount Sum (by Stage and Resource and Method)",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.aws.apiGateway.cacheHitCountSumByStageResourceMethod",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {},
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&(ext:cloud.aws.apiGateway.cacheHitCountSumByStageResourceMethod:splitBy(\"dt.entity.custom_device\"):avg:auto:sort(value(avg,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "CacheMissCount Sum (by Stage and Resource and Method)",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
                 "left": 912,
-                "width": 456,
+                "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Percent used",
+            "customName": "CacheMissCount Sum (by Stage and Resource and Method)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.websphere.connectionPool.connectionPoolModule.PercentUsed",
+                    "metric": "ext:cloud.aws.apiGateway.cacheMissCountSumByStageResourceMethod",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
                         "criteria": []
                     },
+                    "rate": "NONE",
                     "enabled": true
                 }
             ],
@@ -202,223 +393,36 @@
                 }
             },
             "metricExpressions": [
-                "resolution=null&(builtin:tech.websphere.connectionPool.connectionPoolModule.PercentUsed:splitBy(\"dt.entity.process_group_instance\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+                "resolution=null&(ext:cloud.aws.apiGateway.cacheMissCountSumByStageResourceMethod:splitBy(\"dt.entity.custom_device\"):avg:auto:sort(value(avg,descending)):limit(20)):limit(100):names"
             ]
         },
         {
-            "name": "Connection pool in use time",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 608,
-                "left": 0,
-                "width": 342,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "In use time",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "builtin:tech.websphere.connectionPool.connectionPoolModule.UseTime",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.process_group_instance"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {},
-                "rules": [
-                    {
-                        "matcher": "A:",
-                        "properties": {
-                            "color": "DEFAULT"
-                        },
-                        "seriesOverrides": []
-                    }
-                ],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                },
-                "heatmapSettings": {
-                    "yAxis": "VALUE"
-                },
-                "thresholds": [
-                    {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ],
-                        "visible": true
-                    }
-                ],
-                "tableSettings": {},
-                "graphChartSettings": {
-                    "connectNulls": false
-                },
-                "honeycombSettings": {
-                    "showHive": true,
-                    "showLegend": true,
-                    "showLabels": false
-                }
-            },
-            "metricExpressions": [
-                "resolution=null&(builtin:tech.websphere.connectionPool.connectionPoolModule.UseTime:splitBy(\"dt.entity.process_group_instance\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
-            ]
-        },
-        {
-            "name": "Connection pool wait time",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 608,
-                "left": 342,
-                "width": 342,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Wait time",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "builtin:tech.websphere.connectionPool.connectionPoolModule.WaitTime",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.process_group_instance"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {},
-                "rules": [
-                    {
-                        "matcher": "A:",
-                        "properties": {
-                            "color": "DEFAULT"
-                        },
-                        "seriesOverrides": []
-                    }
-                ],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                },
-                "heatmapSettings": {
-                    "yAxis": "VALUE"
-                },
-                "thresholds": [
-                    {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ],
-                        "visible": true
-                    }
-                ],
-                "tableSettings": {},
-                "graphChartSettings": {
-                    "connectNulls": false
-                },
-                "honeycombSettings": {
-                    "showHive": true,
-                    "showLegend": true,
-                    "showLabels": false
-                }
-            },
-            "metricExpressions": [
-                "resolution=null&(builtin:tech.websphere.connectionPool.connectionPoolModule.WaitTime:splitBy(\"dt.entity.process_group_instance\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
-            ]
-        },
-        {
-            "name": "Number of waiting threads",
+            "name": "Count Sum",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
                 "top": 0,
-                "left": 684,
-                "width": 342,
+                "left": 1216,
+                "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Number of waiting threads",
+            "customName": "Count Sum",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.websphere.connectionPool.connectionPoolModule.WaitingThreadCount",
+                    "metric": "ext:cloud.aws.apiGateway.countSum",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
                         "criteria": []
                     },
+                    "rate": "NONE",
                     "enabled": true
                 }
             ],
@@ -484,129 +488,36 @@
                 }
             },
             "metricExpressions": [
-                "resolution=null&(builtin:tech.websphere.connectionPool.connectionPoolModule.WaitingThreadCount:splitBy(\"dt.entity.process_group_instance\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+                "resolution=null&(ext:cloud.aws.apiGateway.countSum:splitBy(\"dt.entity.custom_device\"):avg:auto:sort(value(avg,descending)):limit(20)):limit(100):names"
             ]
         },
         {
-            "name": "Live sessions",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 608,
-                "left": 1026,
-                "width": 342,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Live sessions",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "builtin:tech.websphere.servletSessionsModule.LiveCount",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.process_group_instance"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {},
-                "rules": [
-                    {
-                        "matcher": "A:",
-                        "properties": {
-                            "color": "DEFAULT"
-                        },
-                        "seriesOverrides": []
-                    }
-                ],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                },
-                "heatmapSettings": {
-                    "yAxis": "VALUE"
-                },
-                "thresholds": [
-                    {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ],
-                        "visible": true
-                    }
-                ],
-                "tableSettings": {},
-                "graphChartSettings": {
-                    "connectNulls": false
-                },
-                "honeycombSettings": {
-                    "showHive": true,
-                    "showLegend": true,
-                    "showLabels": false
-                }
-            },
-            "metricExpressions": [
-                "resolution=null&(builtin:tech.websphere.servletSessionsModule.LiveCount:splitBy(\"dt.entity.process_group_instance\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
-            ]
-        },
-        {
-            "name": "Active threads",
+            "name": "IntegrationLatency",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
                 "top": 0,
-                "left": 342,
-                "width": 342,
+                "left": 1520,
+                "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Active threads",
+            "customName": "IntegrationLatency",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.websphere.threadPoolModule.ActiveCount",
+                    "metric": "ext:cloud.aws.apiGateway.integrationLatency",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
                         "criteria": []
                     },
+                    "rate": "NONE",
                     "enabled": true
                 }
             ],
@@ -672,231 +583,42 @@
                 }
             },
             "metricExpressions": [
-                "resolution=null&(builtin:tech.websphere.threadPoolModule.ActiveCount:splitBy(\"dt.entity.process_group_instance\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+                "resolution=null&(ext:cloud.aws.apiGateway.integrationLatency:splitBy(\"dt.entity.custom_device\"):avg:auto:sort(value(avg,descending)):limit(20)):limit(100):names"
             ]
         },
         {
-            "name": "Thread Pool size",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 0,
-                "left": 0,
-                "width": 342,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Pool size",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "builtin:tech.websphere.threadPoolModule.PoolSize",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.process_group_instance"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {},
-                "rules": [
-                    {
-                        "matcher": "A:",
-                        "properties": {
-                            "color": "DEFAULT"
-                        },
-                        "seriesOverrides": []
-                    }
-                ],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                },
-                "heatmapSettings": {
-                    "yAxis": "VALUE"
-                },
-                "thresholds": [
-                    {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ],
-                        "visible": true
-                    }
-                ],
-                "tableSettings": {},
-                "graphChartSettings": {
-                    "connectNulls": false
-                },
-                "honeycombSettings": {
-                    "showHive": true,
-                    "showLegend": true,
-                    "showLabels": false
-                }
-            },
-            "metricExpressions": [
-                "resolution=null&(builtin:tech.websphere.threadPoolModule.PoolSize:splitBy(\"dt.entity.process_group_instance\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
-            ]
-        },
-        {
-            "name": "Number of requests",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 608,
-                "left": 684,
-                "width": 342,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Number of requests",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "builtin:tech.websphere.webAppModule.RequestCountV2",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.process_group_instance"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {},
-                "rules": [
-                    {
-                        "matcher": "A:",
-                        "properties": {
-                            "color": "DEFAULT"
-                        },
-                        "seriesOverrides": []
-                    }
-                ],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                },
-                "heatmapSettings": {
-                    "yAxis": "VALUE"
-                },
-                "thresholds": [
-                    {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ],
-                        "visible": true
-                    }
-                ],
-                "tableSettings": {},
-                "graphChartSettings": {
-                    "connectNulls": false
-                },
-                "honeycombSettings": {
-                    "showHive": true,
-                    "showLegend": true,
-                    "showLabels": false
-                }
-            },
-            "metricExpressions": [
-                "resolution=null&(builtin:tech.websphere.webAppModule.RequestCountV2:splitBy(\"dt.entity.process_group_instance\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
-            ]
-        },
-        {
-            "name": "Connection Pool size",
+            "name": "Latency",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
                 "top": 304,
                 "left": 0,
-                "width": 456,
+                "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Pool size",
+            "customName": "Latency",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.websphere.connectionPool.connectionPoolModule.PoolSize",
+                    "metric": "ext:cloud.aws.apiGateway.latency",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
                         "criteria": []
                     },
+                    "rate": "NONE",
                     "enabled": true
                 }
             ],
             "visualConfig": {
                 "type": "GRAPH_CHART",
-                "global": {
-                    "hideLegend": false
-                },
+                "global": {},
                 "rules": [
                     {
                         "matcher": "A:",
@@ -942,13 +664,10 @@
                                 "color": "#dc172a"
                             }
                         ],
-                        "queryId": "",
                         "visible": true
                     }
                 ],
-                "tableSettings": {
-                    "isThresholdBackgroundAppliedToCell": false
-                },
+                "tableSettings": {},
                 "graphChartSettings": {
                     "connectNulls": false
                 },
@@ -958,108 +677,8 @@
                     "showLabels": false
                 }
             },
-            "queriesSettings": {
-                "resolution": ""
-            },
             "metricExpressions": [
-                "resolution=null&(builtin:tech.websphere.connectionPool.connectionPoolModule.PoolSize:splitBy(\"dt.entity.process_group_instance\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
-            ]
-        },
-        {
-            "name": "Declared Hung Thread Count by Process (Custom)",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 0,
-                "left": 1026,
-                "width": 342,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Data explorer results",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "ext:custom.pmi.CreatedPlugin_WebSphere_Hung_Threads1551273541634.metric_com_compuware_apm_webui_model_configuration_api_extensioncreator_pmi_PmiStatisticDataContainerAutoBean_2_29cc_1551273518725",
-                    "spaceAggregation": "SUM",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.process_group_instance"
-                    ],
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "hideLegend": false
-                },
-                "rules": [
-                    {
-                        "matcher": "A:",
-                        "properties": {
-                            "color": "DEFAULT"
-                        },
-                        "seriesOverrides": []
-                    }
-                ],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                },
-                "heatmapSettings": {
-                    "yAxis": "VALUE"
-                },
-                "thresholds": [
-                    {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ],
-                        "queryId": "",
-                        "visible": true
-                    }
-                ],
-                "tableSettings": {
-                    "isThresholdBackgroundAppliedToCell": false
-                },
-                "graphChartSettings": {
-                    "connectNulls": false
-                },
-                "honeycombSettings": {
-                    "showHive": true,
-                    "showLegend": true,
-                    "showLabels": false
-                }
-            },
-            "queriesSettings": {
-                "resolution": ""
-            },
-            "metricExpressions": [
-                "resolution=null&(ext:custom.pmi.CreatedPlugin_WebSphere_Hung_Threads1551273541634.metric_com_compuware_apm_webui_model_configuration_api_extensioncreator_pmi_PmiStatisticDataContainerAutoBean_2_29cc_1551273518725:splitBy(\"dt.entity.process_group_instance\"):sum:auto:sort(value(sum,descending)):limit(10)):limit(100):names"
+                "resolution=null&(ext:cloud.aws.apiGateway.latency:splitBy(\"dt.entity.custom_device\"):avg:auto:sort(value(avg,descending)):limit(20)):limit(100):names"
             ]
         },
         {
@@ -1067,13 +686,13 @@
             "tileType": "MARKDOWN",
             "configured": true,
             "bounds": {
-                "top": 38,
-                "left": 1368,
+                "top": 0,
+                "left": 1824,
                 "width": 152,
-                "height": 266
+                "height": 38
             },
             "tileFilter": {},
-            "markdown": "WebSphere Metrics By\n\n[Pool](#dashboard;id=00000000-dddd-bbbb-ffff-000000000023) \n\n[Process and Pool](#dashboard;id=00000000-dddd-bbbb-ffff-000000000024) "
+            "markdown": "## [\u21e6 Return to Overview](#dashboard;id=00000000-dddd-bbbb-ffff-000000000001)\n![BackButton]()"
         }
     ]
 }

@@ -3,11 +3,11 @@
         "configurationVersions": [
             6
         ],
-        "clusterVersion": "1.252.155.20221012-164912"
+        "clusterVersion": "1.252.168.20221017-141140"
     },
-    "id": "00000000-dddd-bbbb-ffff-000000000013",
+    "id": "00000000-dddd-bbbb-ffff-000000001001",
     "dashboardMetadata": {
-        "name": "TEMPLATE: Service Errors",
+        "name": "TEMPLATE: AWS - CLB",
         "shared": true,
         "owner": "nobody@example.com",
         "dashboardFilter": null,
@@ -16,74 +16,40 @@
         "hasConsistentColors": true
     },
     "tiles": [
+        "## [\u21e6 Return to Overview](#dashboard;id=00000000-dddd-bbbb-ffff-000000000001)\n![BackButton]()",
         {
-            "name": "Failures Overall",
-            "tileType": "HEADER",
+            "name": "Markdown",
+            "tileType": "MARKDOWN",
+            "configured": true,
+            "bounds": {
+                "top": 38,
+                "left": 1368,
+                "width": 152,
+                "height": 266
+            },
+            "tileFilter": {},
+            "markdown": "[ALB](#dashboard;id=00000000-dddd-bbbb-ffff-000000001000)  \n[CLB](#dashboard;id=00000000-dddd-bbbb-ffff-000000001001)  \n[DynamoDB](#dashboard;id=00000000-dddd-bbbb-ffff-000000001002)  \n[EBS](#dashboard;id=00000000-dddd-bbbb-ffff-000000001003)  \n[EC2](#dashboard;id=00000000-dddd-bbbb-ffff-000000001004)  \n[Lambda Functions](#dashboard;id=00000000-dddd-bbbb-ffff-000000001005)  \n[NLB](#dashboard;id=00000000-dddd-bbbb-ffff-000000001006)  \n[RDS](#dashboard;id=00000000-dddd-bbbb-ffff-000000001007)  \n"
+        },
+        {
+            "name": "Completed requests",
+            "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
                 "top": 0,
                 "left": 0,
-                "width": 1368,
-                "height": 38
-            },
-            "tileFilter": {}
-        },
-        {
-            "name": "Failures - Server Side",
-            "tileType": "HEADER",
-            "configured": true,
-            "bounds": {
-                "top": 646,
-                "left": 0,
-                "width": 1368,
-                "height": 38
-            },
-            "tileFilter": {}
-        },
-        {
-            "name": "Failures - Client Side",
-            "tileType": "HEADER",
-            "configured": true,
-            "bounds": {
-                "top": 1292,
-                "left": 0,
-                "width": 1368,
-                "height": 38
-            },
-            "tileFilter": {}
-        },
-        {
-            "name": "Failures By Request Type",
-            "tileType": "HEADER",
-            "configured": true,
-            "bounds": {
-                "top": 1938,
-                "left": 0,
-                "width": 684,
-                "height": 38
-            },
-            "tileFilter": {}
-        },
-        {
-            "name": "Failure rate (any errors)",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 38,
-                "left": 0,
-                "width": 684,
+                "width": 342,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Failure rate (any errors)",
+            "customName": "CLB number of completed requests",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:service.errors.total.rate",
+                    "metric": "builtin:cloud.aws.elb.reqCompl",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.service"
+                        "dt.entity.elastic_load_balancer"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -94,7 +60,7 @@
                 }
             ],
             "visualConfig": {
-                "type": "TOP_LIST",
+                "type": "GRAPH_CHART",
                 "global": {
                     "hideLegend": false
                 },
@@ -102,8 +68,7 @@
                     {
                         "matcher": "A:",
                         "properties": {
-                            "color": "DEFAULT",
-                            "seriesType": "LINE"
+                            "color": "DEFAULT"
                         },
                         "seriesOverrides": []
                     }
@@ -160,30 +125,33 @@
                     "showLabels": false
                 }
             },
+            "queriesSettings": {
+                "resolution": ""
+            },
             "metricExpressions": [
-                "resolution=Inf&(builtin:service.errors.total.rate:splitBy(\"dt.entity.service\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+                "resolution=null&(builtin:cloud.aws.elb.reqCompl:splitBy(\"dt.entity.elastic_load_balancer\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
             ]
         },
         {
-            "name": "Number of any errors",
+            "name": "Latency",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 38,
-                "left": 684,
-                "width": 684,
+                "top": 0,
+                "left": 342,
+                "width": 342,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Number of any errors",
+            "customName": "CLB latency",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:service.errors.total.count",
+                    "metric": "builtin:cloud.aws.elb.latency",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.service"
+                        "dt.entity.elastic_load_balancer"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -194,7 +162,7 @@
                 }
             ],
             "visualConfig": {
-                "type": "TOP_LIST",
+                "type": "GRAPH_CHART",
                 "global": {
                     "hideLegend": false
                 },
@@ -202,8 +170,7 @@
                     {
                         "matcher": "A:",
                         "properties": {
-                            "color": "DEFAULT",
-                            "seriesType": "LINE"
+                            "color": "DEFAULT"
                         },
                         "seriesOverrides": []
                     }
@@ -260,30 +227,33 @@
                     "showLabels": false
                 }
             },
+            "queriesSettings": {
+                "resolution": ""
+            },
             "metricExpressions": [
-                "resolution=Inf&(builtin:service.errors.total.count:splitBy(\"dt.entity.service\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+                "resolution=null&(builtin:cloud.aws.elb.latency:splitBy(\"dt.entity.elastic_load_balancer\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
             ]
         },
         {
-            "name": "Failure rate (server side errors)",
+            "name": "5XX errors",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 684,
-                "left": 0,
-                "width": 684,
+                "top": 0,
+                "left": 684,
+                "width": 342,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Failure rate (server side errors)",
+            "customName": "CLB number of 5XX errors",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:service.errors.server.rate",
+                    "metric": "builtin:cloud.aws.elb.errors.elb.http5xx",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.service"
+                        "dt.entity.elastic_load_balancer"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -294,7 +264,7 @@
                 }
             ],
             "visualConfig": {
-                "type": "TOP_LIST",
+                "type": "GRAPH_CHART",
                 "global": {
                     "hideLegend": false
                 },
@@ -302,8 +272,7 @@
                     {
                         "matcher": "A:",
                         "properties": {
-                            "color": "DEFAULT",
-                            "seriesType": "LINE"
+                            "color": "DEFAULT"
                         },
                         "seriesOverrides": []
                     }
@@ -360,30 +329,33 @@
                     "showLabels": false
                 }
             },
+            "queriesSettings": {
+                "resolution": ""
+            },
             "metricExpressions": [
-                "resolution=Inf&(builtin:service.errors.server.rate:splitBy(\"dt.entity.service\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+                "resolution=null&(builtin:cloud.aws.elb.errors.elb.http5xx:splitBy(\"dt.entity.elastic_load_balancer\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
             ]
         },
         {
-            "name": "Number of server side errors",
+            "name": "4XX errors",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 684,
-                "left": 684,
-                "width": 684,
+                "top": 0,
+                "left": 1026,
+                "width": 342,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Number of server side errors",
+            "customName": "CLB number of 4XX errors",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:service.errors.server.count",
+                    "metric": "builtin:cloud.aws.elb.errors.elb.http4xx",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.service"
+                        "dt.entity.elastic_load_balancer"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -394,7 +366,7 @@
                 }
             ],
             "visualConfig": {
-                "type": "TOP_LIST",
+                "type": "GRAPH_CHART",
                 "global": {
                     "hideLegend": false
                 },
@@ -402,8 +374,7 @@
                     {
                         "matcher": "A:",
                         "properties": {
-                            "color": "DEFAULT",
-                            "seriesType": "LINE"
+                            "color": "DEFAULT"
                         },
                         "seriesOverrides": []
                     }
@@ -460,30 +431,33 @@
                     "showLabels": false
                 }
             },
+            "queriesSettings": {
+                "resolution": ""
+            },
             "metricExpressions": [
-                "resolution=Inf&(builtin:service.errors.server.count:splitBy(\"dt.entity.service\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+                "resolution=null&(builtin:cloud.aws.elb.errors.elb.http4xx:splitBy(\"dt.entity.elastic_load_balancer\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
             ]
         },
         {
-            "name": "Failure rate (client side errors)",
+            "name": "Healthy hosts",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 1330,
+                "top": 304,
                 "left": 0,
-                "width": 684,
+                "width": 342,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Failure rate (client side errors)",
+            "customName": "CLB number of healthy hosts",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:service.errors.client.rate",
+                    "metric": "builtin:cloud.aws.elb.hosts.healthy",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.service"
+                        "dt.entity.elastic_load_balancer"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -494,7 +468,7 @@
                 }
             ],
             "visualConfig": {
-                "type": "TOP_LIST",
+                "type": "GRAPH_CHART",
                 "global": {
                     "hideLegend": false
                 },
@@ -502,8 +476,7 @@
                     {
                         "matcher": "A:",
                         "properties": {
-                            "color": "DEFAULT",
-                            "seriesType": "LINE"
+                            "color": "DEFAULT"
                         },
                         "seriesOverrides": []
                     }
@@ -560,30 +533,33 @@
                     "showLabels": false
                 }
             },
+            "queriesSettings": {
+                "resolution": ""
+            },
             "metricExpressions": [
-                "resolution=Inf&(builtin:service.errors.client.rate:splitBy(\"dt.entity.service\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+                "resolution=null&(builtin:cloud.aws.elb.hosts.healthy:splitBy(\"dt.entity.elastic_load_balancer\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
             ]
         },
         {
-            "name": "Number of client side errors",
+            "name": "Unhealthy hosts",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 1330,
-                "left": 684,
-                "width": 684,
+                "top": 304,
+                "left": 342,
+                "width": 342,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Number of client side errors",
+            "customName": "CLB number of unhealthy hosts",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:service.errors.client.count",
+                    "metric": "builtin:cloud.aws.elb.hosts.unhealthy",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.service"
+                        "dt.entity.elastic_load_balancer"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -594,7 +570,7 @@
                 }
             ],
             "visualConfig": {
-                "type": "TOP_LIST",
+                "type": "GRAPH_CHART",
                 "global": {
                     "hideLegend": false
                 },
@@ -602,8 +578,7 @@
                     {
                         "matcher": "A:",
                         "properties": {
-                            "color": "DEFAULT",
-                            "seriesType": "LINE"
+                            "color": "DEFAULT"
                         },
                         "seriesOverrides": []
                     }
@@ -660,30 +635,33 @@
                     "showLabels": false
                 }
             },
+            "queriesSettings": {
+                "resolution": ""
+            },
             "metricExpressions": [
-                "resolution=Inf&(builtin:service.errors.client.count:splitBy(\"dt.entity.service\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+                "resolution=null&(builtin:cloud.aws.elb.hosts.unhealthy:splitBy(\"dt.entity.elastic_load_balancer\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
             ]
         },
         {
-            "name": "Failure rate (any errors)",
+            "name": "Frontend errors percentage",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 1976,
-                "left": 0,
-                "width": 684,
+                "top": 304,
+                "left": 684,
+                "width": 342,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Failure rate (any errors)",
+            "customName": "CLB frontend errors percentage",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:service.errors.group.total.rate",
+                    "metric": "builtin:cloud.aws.elb.errors.frontend",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.service_method_group"
+                        "dt.entity.elastic_load_balancer"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -694,7 +672,7 @@
                 }
             ],
             "visualConfig": {
-                "type": "TOP_LIST",
+                "type": "GRAPH_CHART",
                 "global": {
                     "hideLegend": false
                 },
@@ -702,8 +680,7 @@
                     {
                         "matcher": "A:",
                         "properties": {
-                            "color": "DEFAULT",
-                            "seriesType": "LINE"
+                            "color": "DEFAULT"
                         },
                         "seriesOverrides": []
                     }
@@ -760,30 +737,33 @@
                     "showLabels": false
                 }
             },
+            "queriesSettings": {
+                "resolution": ""
+            },
             "metricExpressions": [
-                "resolution=Inf&(builtin:service.errors.group.total.rate:splitBy(\"dt.entity.service_method_group\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+                "resolution=null&(builtin:cloud.aws.elb.errors.frontend:splitBy(\"dt.entity.elastic_load_balancer\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
             ]
         },
         {
-            "name": "Number of any errors",
+            "name": "Backend connection errors",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 1976,
-                "left": 684,
-                "width": 684,
+                "top": 304,
+                "left": 1026,
+                "width": 342,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Number of any errors",
+            "customName": "CLB backend connection errors",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:service.errors.group.total.count",
+                    "metric": "builtin:cloud.aws.elb.errors.backend.connection",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.service_method_group"
+                        "dt.entity.elastic_load_balancer"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -794,7 +774,7 @@
                 }
             ],
             "visualConfig": {
-                "type": "TOP_LIST",
+                "type": "GRAPH_CHART",
                 "global": {
                     "hideLegend": false
                 },
@@ -802,8 +782,7 @@
                     {
                         "matcher": "A:",
                         "properties": {
-                            "color": "DEFAULT",
-                            "seriesType": "LINE"
+                            "color": "DEFAULT"
                         },
                         "seriesOverrides": []
                     }
@@ -860,31 +839,33 @@
                     "showLabels": false
                 }
             },
+            "queriesSettings": {
+                "resolution": ""
+            },
             "metricExpressions": [
-                "resolution=Inf&(builtin:service.errors.group.total.count:splitBy(\"dt.entity.service_method_group\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+                "resolution=null&(builtin:cloud.aws.elb.errors.backend.connection:splitBy(\"dt.entity.elastic_load_balancer\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
             ]
         },
-        "## [\u21e6 Return to Overview](#dashboard;id=00000000-dddd-bbbb-ffff-000000000001)\n![BackButton]()",
         {
-            "name": "Failure rate (any errors)",
+            "name": "Backend 5XX errors",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 342,
+                "top": 608,
                 "left": 0,
-                "width": 684,
+                "width": 342,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Failure rate (any errors)",
+            "customName": "CLB number of backend 5XX errors",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:service.errors.total.rate",
+                    "metric": "builtin:cloud.aws.elb.errors.backend.http5xx",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.service"
+                        "dt.entity.elastic_load_balancer"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -903,8 +884,7 @@
                     {
                         "matcher": "A:",
                         "properties": {
-                            "color": "DEFAULT",
-                            "seriesType": "LINE"
+                            "color": "DEFAULT"
                         },
                         "seriesOverrides": []
                     }
@@ -945,10 +925,13 @@
                                 "color": "#dc172a"
                             }
                         ],
+                        "queryId": "",
                         "visible": true
                     }
                 ],
-                "tableSettings": {},
+                "tableSettings": {
+                    "isThresholdBackgroundAppliedToCell": false
+                },
                 "graphChartSettings": {
                     "connectNulls": false
                 },
@@ -958,30 +941,135 @@
                     "showLabels": false
                 }
             },
+            "queriesSettings": {
+                "resolution": ""
+            },
             "metricExpressions": [
-                "resolution=null&(builtin:service.errors.total.rate:splitBy(\"dt.entity.service\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+                "resolution=null&(builtin:cloud.aws.elb.errors.backend.http5xx:splitBy(\"dt.entity.elastic_load_balancer\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
             ]
         },
         {
-            "name": "Number of any errors",
+            "name": "Backend 4XX errors",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 342,
+                "top": 608,
+                "left": 342,
+                "width": 342,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "CLB number of backend 4XX errors",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:cloud.aws.elb.errors.backend.http4xx",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.elastic_load_balancer"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "hideLegend": false
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "queryId": "",
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "isThresholdBackgroundAppliedToCell": false
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=null&(builtin:cloud.aws.elb.errors.backend.http4xx:splitBy(\"dt.entity.elastic_load_balancer\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Backend 3XX status codes",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 608,
                 "left": 684,
-                "width": 684,
+                "width": 342,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Number of any errors",
+            "customName": "CLB number of backend 3XX errors",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:service.errors.total.count",
+                    "metric": "builtin:cloud.aws.elb.errors.backend.http3xx",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.service"
+                        "dt.entity.elastic_load_balancer"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1000,8 +1088,7 @@
                     {
                         "matcher": "A:",
                         "properties": {
-                            "color": "DEFAULT",
-                            "seriesType": "LINE"
+                            "color": "DEFAULT"
                         },
                         "seriesOverrides": []
                     }
@@ -1042,10 +1129,13 @@
                                 "color": "#dc172a"
                             }
                         ],
+                        "queryId": "",
                         "visible": true
                     }
                 ],
-                "tableSettings": {},
+                "tableSettings": {
+                    "isThresholdBackgroundAppliedToCell": false
+                },
                 "graphChartSettings": {
                     "connectNulls": false
                 },
@@ -1055,30 +1145,33 @@
                     "showLabels": false
                 }
             },
+            "queriesSettings": {
+                "resolution": ""
+            },
             "metricExpressions": [
-                "resolution=null&(builtin:service.errors.total.count:splitBy(\"dt.entity.service\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+                "resolution=null&(builtin:cloud.aws.elb.errors.backend.http3xx:splitBy(\"dt.entity.elastic_load_balancer\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
             ]
         },
         {
-            "name": "Failure rate (server side errors)",
+            "name": "Backend 2XX status codes",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 988,
-                "left": 0,
-                "width": 684,
+                "top": 608,
+                "left": 1026,
+                "width": 342,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Failure rate (server side errors)",
+            "customName": "CLB number of backend 2XX errors",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:service.errors.server.rate",
+                    "metric": "builtin:cloud.aws.elb.errors.backend.http2xx",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.service"
+                        "dt.entity.elastic_load_balancer"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1097,8 +1190,7 @@
                     {
                         "matcher": "A:",
                         "properties": {
-                            "color": "DEFAULT",
-                            "seriesType": "LINE"
+                            "color": "DEFAULT"
                         },
                         "seriesOverrides": []
                     }
@@ -1139,10 +1231,13 @@
                                 "color": "#dc172a"
                             }
                         ],
+                        "queryId": "",
                         "visible": true
                     }
                 ],
-                "tableSettings": {},
+                "tableSettings": {
+                    "isThresholdBackgroundAppliedToCell": false
+                },
                 "graphChartSettings": {
                     "connectNulls": false
                 },
@@ -1152,506 +1247,12 @@
                     "showLabels": false
                 }
             },
-            "metricExpressions": [
-                "resolution=null&(builtin:service.errors.server.rate:splitBy(\"dt.entity.service\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
-            ]
-        },
-        {
-            "name": "Number of server side errors",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 988,
-                "left": 684,
-                "width": 684,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Number of server side errors",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "builtin:service.errors.server.count",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.service"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "hideLegend": false
-                },
-                "rules": [
-                    {
-                        "matcher": "A:",
-                        "properties": {
-                            "color": "DEFAULT",
-                            "seriesType": "LINE"
-                        },
-                        "seriesOverrides": []
-                    }
-                ],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                },
-                "heatmapSettings": {
-                    "yAxis": "VALUE"
-                },
-                "thresholds": [
-                    {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ],
-                        "visible": true
-                    }
-                ],
-                "tableSettings": {},
-                "graphChartSettings": {
-                    "connectNulls": false
-                },
-                "honeycombSettings": {
-                    "showHive": true,
-                    "showLegend": true,
-                    "showLabels": false
-                }
+            "queriesSettings": {
+                "resolution": ""
             },
             "metricExpressions": [
-                "resolution=null&(builtin:service.errors.server.count:splitBy(\"dt.entity.service\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+                "resolution=null&(builtin:cloud.aws.elb.errors.backend.http2xx:splitBy(\"dt.entity.elastic_load_balancer\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
             ]
-        },
-        {
-            "name": "Failure rate (client side errors)",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 1634,
-                "left": 0,
-                "width": 684,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Failure rate (client side errors)",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "builtin:service.errors.client.rate",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.service"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "hideLegend": false
-                },
-                "rules": [
-                    {
-                        "matcher": "A:",
-                        "properties": {
-                            "color": "DEFAULT",
-                            "seriesType": "LINE"
-                        },
-                        "seriesOverrides": []
-                    }
-                ],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                },
-                "heatmapSettings": {
-                    "yAxis": "VALUE"
-                },
-                "thresholds": [
-                    {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ],
-                        "visible": true
-                    }
-                ],
-                "tableSettings": {},
-                "graphChartSettings": {
-                    "connectNulls": false
-                },
-                "honeycombSettings": {
-                    "showHive": true,
-                    "showLegend": true,
-                    "showLabels": false
-                }
-            },
-            "metricExpressions": [
-                "resolution=null&(builtin:service.errors.client.rate:splitBy(\"dt.entity.service\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
-            ]
-        },
-        {
-            "name": "Number of client side errors",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 1634,
-                "left": 684,
-                "width": 684,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Number of client side errors",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "builtin:service.errors.client.count",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.service"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "hideLegend": false
-                },
-                "rules": [
-                    {
-                        "matcher": "A:",
-                        "properties": {
-                            "color": "DEFAULT",
-                            "seriesType": "LINE"
-                        },
-                        "seriesOverrides": []
-                    }
-                ],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                },
-                "heatmapSettings": {
-                    "yAxis": "VALUE"
-                },
-                "thresholds": [
-                    {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ],
-                        "visible": true
-                    }
-                ],
-                "tableSettings": {},
-                "graphChartSettings": {
-                    "connectNulls": false
-                },
-                "honeycombSettings": {
-                    "showHive": true,
-                    "showLegend": true,
-                    "showLabels": false
-                }
-            },
-            "metricExpressions": [
-                "resolution=null&(builtin:service.errors.client.count:splitBy(\"dt.entity.service\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
-            ]
-        },
-        {
-            "name": "Failure rate (any errors)",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 2280,
-                "left": 0,
-                "width": 684,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Failure rate (any errors)",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "builtin:service.errors.group.total.rate",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.service_method_group"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "hideLegend": false
-                },
-                "rules": [
-                    {
-                        "matcher": "A:",
-                        "properties": {
-                            "color": "DEFAULT",
-                            "seriesType": "LINE"
-                        },
-                        "seriesOverrides": []
-                    }
-                ],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                },
-                "heatmapSettings": {
-                    "yAxis": "VALUE"
-                },
-                "thresholds": [
-                    {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ],
-                        "visible": true
-                    }
-                ],
-                "tableSettings": {},
-                "graphChartSettings": {
-                    "connectNulls": false
-                },
-                "honeycombSettings": {
-                    "showHive": true,
-                    "showLegend": true,
-                    "showLabels": false
-                }
-            },
-            "metricExpressions": [
-                "resolution=null&(builtin:service.errors.group.total.rate:splitBy(\"dt.entity.service_method_group\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
-            ]
-        },
-        {
-            "name": "Number of any errors",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 2280,
-                "left": 684,
-                "width": 684,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Number of any errors",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "builtin:service.errors.group.total.count",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.service_method_group"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "hideLegend": false
-                },
-                "rules": [
-                    {
-                        "matcher": "A:",
-                        "properties": {
-                            "color": "DEFAULT",
-                            "seriesType": "LINE"
-                        },
-                        "seriesOverrides": []
-                    }
-                ],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                },
-                "heatmapSettings": {
-                    "yAxis": "VALUE"
-                },
-                "thresholds": [
-                    {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ],
-                        "visible": true
-                    }
-                ],
-                "tableSettings": {},
-                "graphChartSettings": {
-                    "connectNulls": false
-                },
-                "honeycombSettings": {
-                    "showHive": true,
-                    "showLegend": true,
-                    "showLabels": false
-                }
-            },
-            "metricExpressions": [
-                "resolution=null&(builtin:service.errors.group.total.count:splitBy(\"dt.entity.service_method_group\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
-            ]
-        },
-        {
-            "name": "NOTE: Dynamic Filters Do Not Affect  These Charts",
-            "tileType": "HEADER",
-            "configured": true,
-            "bounds": {
-                "top": 1938,
-                "left": 684,
-                "width": 684,
-                "height": 38
-            },
-            "tileFilter": {}
         }
     ]
 }
