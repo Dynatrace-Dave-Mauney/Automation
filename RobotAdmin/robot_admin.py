@@ -2213,7 +2213,7 @@ def delete_beta_auto_tags():
 	for auto_tag in auto_tag_list:
 		object_id = auto_tag.get('id')
 		name = auto_tag.get('name')
-		if name.startswith('BETAX '):
+		if name.startswith('BETA'):
 			print('deleting ' + name + ': ' + object_id)
 			delete(endpoint, object_id)
 

@@ -5,7 +5,7 @@ import os
 import shutil
 from inspect import currentframe
 
-DASHBOARD_TEMPLATE_PATH = 'Templates/Overview'
+DASHBOARD_TEMPLATE_PATH = 'Templates/Overview - Backup'
 DASHBOARD_FIXED_PATH = 'Templates/Overview-WithReturnFix'
 
 return_to_overview_markdown_tile = {
@@ -19,10 +19,10 @@ return_to_overview_markdown_tile = {
                 "height": 38
             },
             "tileFilter": {},
-            "markdown": "## [\u21e6 Return to Overview](#dashboard;id=00000000-dddd-bbbb-ffff-000000000001)\n![BackButton]()"
+            "markdown": "#### [\u21e6 Overview](#dashboard;id=00000000-dddd-bbbb-ffff-000000000001)\n![BackButton]()"
         }
 
-return_to_overview_markdown_string = "## [\u21e6 Return to Overview](#dashboard;id=00000000-dddd-bbbb-ffff-000000000001)\n![BackButton]()"
+return_to_overview_markdown_string = "#### [\u21e6 Overview](#dashboard;id=00000000-dddd-bbbb-ffff-000000000001)\n![BackButton]()"
 
 dashboard_metadata_template = {
         "name": None,
@@ -70,20 +70,21 @@ def fix_dashboard(dashboard):
 
     # print(f'{name} left is {left}')
     if 'TEMPLATE: Overview' not in name:
-        if '⇦' not in str(dashboard):
+        if 'BackButton' in str(dashboard):
+            index = 0
+            for tile in new_dashboard_json.get('tiles'):
+                if 'BackButton' in str(tile) and 'Overview' not in str(tile):
+                    # new_markdown = tile.get('markdown').replace('⇦', '⇦ Overview')
+                    tile['markdown'] = return_to_overview_markdown_string
+                    new_dashboard_json['tiles'][index] = tile
+                    print(f'Replaced the "Return to Overview" markdown string to the existing tile in {name}')
+                index += 1
+        else:
             tiles = new_dashboard_json.get('tiles')
             return_to_overview_markdown_tile['bounds']['left'] = left
             tiles.append(return_to_overview_markdown_tile)
             new_dashboard_json['tiles'] = tiles
-            print(f'Added a "Return to Overview" tile to {name} at {left}')
-        else:
-            index = 0
-            for tile in new_dashboard_json.get('tiles'):
-                if '⇦' in str(tile) and 'Return to Overview' not in str(tile):
-                    new_markdown = tile.get('markdown').replace('⇦', '⇦ Return to Overview')
-                    new_dashboard_json['tiles'][index] = new_markdown
-                    print(f'Added "Return to Overview" string to the existing tile in {name}')
-                index += 1
+            print(f'Added a "Return to Overview" markdown tile to {name} at {left}')
 
     return new_dashboard_json
 

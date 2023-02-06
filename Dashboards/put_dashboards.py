@@ -29,9 +29,10 @@ def run():
     #
     env_name, env, tenant, token = get_environment('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
     # path = '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json'
+    # path = 'Custom/Overview/00000000-dddd-bbbb-ffff-000000000001'
     # path = 'Custom/Overview/00000000-dddd-bbbb-ffff-000000000019'
-    # path = 'Custom/Overview/00000000-dddd-bbbb-ffff-00000000????'
-    path = 'Custom/Overview/00000000-dddd-bbbb-ffff-000000000001'
+    path = 'Custom/Overview/00000000-dddd-bbbb-ffff-00000000????'
+    # path = 'Custom/Overview/00000000-dddd-bbbb-ffff-0000000010??'
     put_dashboards(env, token, path, env_name, get_owner())
     #
     # env_name, env, tenant, token = get_environment('FreeTrial1', 'FREETRIAL1_TENANT', 'ROBOT_ADMIN_FREETRIAL1_TOKEN')

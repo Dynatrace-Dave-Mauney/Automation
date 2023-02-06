@@ -37,6 +37,8 @@ DATABASE_SERVICE_FILTERS = ['DATABASE_VENDOR', 'SERVICE_TYPE']
 PROCESS_GROUP_FILTERS = []
 HOST_FILTERS = ['HOST_MONITORING_MODE', 'HOST_VIRTUALIZATION_TYPE', 'OS_TYPE']
 
+CUSTOM_DEVICE_FILTERS = ['CUSTOM_DIMENSION:Custom Device']
+
 hasMobile = False
 
 confirmation_required = True
@@ -66,20 +68,24 @@ def customize_dashboard(dashboard):
     dashboard_json = json.loads(dashboard)
     new_dashboard_json = copy.deepcopy(dashboard_json)
     name = dashboard_json.get('dashboardMetadata').get('name')
+    print(name)
 
     filters = []
     if ': Overview' in name:
+        print(f'Overview in {name}')
         if not hasMobile:
             tiles = dashboard_json.get('tiles')
             app_markdown = tiles[0].get('markdown').replace('Web Apps', 'Web Applications').replace(' / [Mobile Apps](#dashboard;id=00000000-dddd-bbbb-ffff-000000000003)', '')
             new_dashboard_json['tiles'][0]['markdown'] = app_markdown
     else:
         if ': Hosts' in name:
+            print(f'Hosts in {name}')
             for value in HOST_TAGS:
                 filters.append('HOST_TAG_KEY:' + value)
             filters.extend(HOST_FILTERS)
         else:
             if ': Processes' in name or ': Java' in name or ': .NET' in name or ': Tomcat' in name or ': WebLogic' in name or ': WebSphere' in name:
+                print(f'Processes or Process Technology in {name}')
                 for value in PROCESS_GROUP_TAGS:
                     filters.append('PROCESS_GROUP_INSTANCE_TAG_KEY:' + value)
                 filters.extend(PROCESS_GROUP_FILTERS)
@@ -90,33 +96,40 @@ def customize_dashboard(dashboard):
                         pass
             else:
                 if ': Web Applications' in name:
+                    print(f'Web Applications in {name}')
                     for value in WEB_APPLICATION_TAGS:
                         filters.append('APPLICATION_TAG_KEY:' + value)
                 else:
                     if ': Service' in name:
+                        print(f'Service in {name}')
                         for value in SERVICE_TAGS:
                             filters.append('SERVICE_TAG_KEY:' + value)
                         filters.extend(SERVICE_FILTERS)
                     else:
                         if ': Databases' in name:
+                            print(f'Databases in {name}')
                             for value in DATABASE_SERVICE_TAGS:
                                 filters.append('SERVICE_TAG_KEY:' + value)
                             filters.extend(DATABASE_SERVICE_FILTERS)
                         else:
                             if ': Network' in name:
+                                print(f'Network in {name}')
                                 if 'Host' in name:
+                                    print('Host in name')
                                     for value in HOST_TAGS:
                                         filters.append('HOST_TAG_KEY:' + value)
                                     filters.extend(HOST_FILTERS)
                                 else:
                                     if 'Process' in name:
+                                        print(f'Process in *{name}')
                                         for value in PROCESS_GROUP_TAGS:
                                             filters.append('PROCESS_GROUP_INSTANCE_TAG_KEY:' + value)
                                         filters.extend(PROCESS_GROUP_FILTERS)
-                                    else:
-                                        if ': Key Requests' in name:
-                                            # Key Requests do not support any level of tag possible currently in dynamic filters
-                                            pass
+                            else:
+                                if 'DataPower' in name or 'F5' in name or 'IBM MQ' in name or 'SAP Hana' in name:
+                                    print(f'Extension in *{name}')
+                                    print('Adding custom device filter...')
+                                    filters.extend(CUSTOM_DEVICE_FILTERS)
 
     if filters:
         new_dashboard_json['dashboardMetadata']['dynamicFilters'] = {}
