@@ -80,9 +80,9 @@ def get_config(config_id, env, token):
         url = f'{env}/api/config/v1/{api}/{config_id}'
         # print(url)
         r = requests.get(url, headers=headers)
-        config_content = json.dumps(r.json(), indent=4)
+        # config_content = json.dumps(r.json(), indent=4)
         if r.status_code == 200:
-            return(r.json())
+            return r.json()
         else:
             if r.status_code == 404:
                 return None
@@ -536,7 +536,8 @@ def post(env, token, endpoint: str, payload: str) -> Response:
     # In general, avoid post in favor of put so "fixed ids" can be used
     json_data = json.loads(payload)
     # Remove id proactively
-    json_data.pop('id')
+    if json_data.get('id'):
+        json_data.pop('id')
     formatted_payload = json.dumps(json_data, indent=4, sort_keys=False)
     url = env + endpoint
     try:
@@ -872,16 +873,20 @@ def run():
                 print(f'Current mode:  {mode}')
                 print(f'Current API:  {api}')
             else:
+                config_id = input_string[7:]
                 save_path = f'{PATH}/{env_name}/DELETE/Backup/Config/{api}'
                 save(save_path, config_id + '.json', save_content)
                 print(f'Existing configuration saved to {save_path}/{config_id}.json')
                 endpoint = f'/api/config/v1/{api}'
-                config_id = input_string[7:]
                 delete(env, token, endpoint, config_id)
             continue
 
         if ' ' in input_string.rstrip().lstrip():
             print('Invalid command or config id. (Embedded space detected).')
+            continue
+
+        if '' in input_string.rstrip().lstrip():
+            print('Empty command ignored')
             continue
 
         if mode == 'configs':
