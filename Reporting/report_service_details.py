@@ -1,5 +1,6 @@
 import dynatrace_rest_api_helper
 import os
+import urllib.parse
 
 
 def summarize(env, token):
@@ -13,7 +14,8 @@ def process(env, token, print_mode):
     counts_service_type = {}
     counts_service_technology_types = {}
     endpoint = '/api/v2/entities'
-    params = 'pageSize=4000&entitySelector=type%28%22service%22%29&fields=%2Bproperties&to=-5m'
+    raw_params = 'pageSize=4000&entitySelector=type(SERVICE)&fields=+properties&to=-5m'
+    params = urllib.parse.quote(raw_params, safe='/,&=?')
     entities_json_list = dynatrace_rest_api_helper.get_rest_api_json(env, token, endpoint, params)
     if print_mode:
         print('entityId' + '|' + 'displayName' + '|' + 'detectedName' + '|' + 'serviceType' + '|' + 'listenPorts')

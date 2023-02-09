@@ -1,5 +1,6 @@
 import dynatrace_rest_api_helper
 import os
+import urllib.parse
 
 
 def summarize(env, token):
@@ -19,7 +20,8 @@ def process(env, token, print_mode):
     counts_hypervisor_type = {}
 
     endpoint = '/api/v2/entities'
-    params = 'pageSize=4000&entitySelector=type%28%22HOST%22%29&to=-5m&fields=properties%2Ctags'
+    raw_params = 'pageSize=4000&entitySelector=type(HOST)&to=-5m&fields=properties,tags'
+    params = urllib.parse.quote(raw_params, safe='/,&=?')
     entities_json_list = dynatrace_rest_api_helper.get_rest_api_json(env, token, endpoint, params)
     if print_mode:
         print('entityId' + '|' + 'displayName' + '|' + 'monitoringMode' + '|' + 'logicalCpuCores' + '|' + 'cpuCores' + '|' + 'memoryTotal' + '|' + 'osType' + '|' + 'state' + '|' + 'networkZone' + '|' + 'hypervisorType' + '|' + 'cloudType' + '|' + 'k8sCluster' + '|' + 'environment' + '|' + 'dataCenter')

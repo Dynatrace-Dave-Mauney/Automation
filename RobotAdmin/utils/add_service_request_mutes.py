@@ -131,7 +131,8 @@ def process():
     # print('tenable_request_already_muted_service_list: ' + str(tenable_request_already_muted_service_list))
 
     endpoint = '/api/v2/entities'
-    params = 'entitySelector=type%28SERVICE%29&fields=properties.SERVICE_TYPE&from=now-1y&pageSize=4000'
+    raw_params = 'entitySelector=type(SERVICE)&fields=properties.SERVICE_TYPE&from=now-1y&pageSize=4000'
+    params = urllib.parse.quote(raw_params, safe='/,&=?')
 
     service_list = []
     json_response_list = get_rest_api_json(env, token, endpoint, params)
