@@ -4,10 +4,11 @@ import json
 import os
 import requests
 import ssl
+import urllib.parse
 
 # env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-# env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
+# env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
+env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
 # env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
 
 tenant = os.environ.get(tenant_key)
@@ -50,11 +51,11 @@ def post(endpoint, payload):
                 print('Error in "post(env, endpoint, token, payload)" method')
                 print('Exit code shown below is the source code line number of the exit statement invoked')
                 print('See ' + error_filename + ' for more details')
-            exit(get_linenumber())
+            exit(get_line_number())
         return r
     except ssl.SSLError:
         print('SSL Error')
-        exit(get_linenumber())
+        exit(get_line_number())
 
 
 def put(endpoint, object_id, payload):
@@ -76,11 +77,11 @@ def put(endpoint, object_id, payload):
                 print('Error in "put(env, endpoint, token, object_id, payload)" method')
                 print('Exit code shown below is the source code line number of the exit statement invoked')
                 print('See ' + error_filename + ' for more details')
-            exit(get_linenumber())
+            exit(get_line_number())
         return r
     except ssl.SSLError:
         print('SSL Error')
-        exit(get_linenumber())
+        exit(get_line_number())
 
 
 def get_by_object_id(endpoint, object_id):
@@ -93,11 +94,11 @@ def get_by_object_id(endpoint, object_id):
             print('Endpoint: ' + endpoint)
             print('Object ID: ' + object_id)
             print('Exit code shown below is the source code line number of the exit statement invoked')
-            exit(get_linenumber())
+            exit(get_line_number())
         return r
     except ssl.SSLError:
         print('SSL Error')
-        exit(get_linenumber())
+        exit(get_line_number())
 
 
 def get_object_list(endpoint):
@@ -109,19 +110,19 @@ def get_object_list(endpoint):
             print('Error in "get_object_list(endpoint)" method')
             print('Endpoint: ' + endpoint)
             print('Exit code shown below is the source code line number of the exit statement invoked')
-            exit(get_linenumber())
+            exit(get_line_number())
         return r
     except ssl.SSLError:
         print('SSL Error')
-        exit(get_linenumber())
+        exit(get_line_number())
 
 
-def get_linenumber():
+def get_line_number():
     cf = currentframe()
     return cf.f_back.f_lineno
 
 
-def update(management_zone_name, host_group_list):
+def add_showcase_rules_to_mz(management_zone_name, host_group_list):
     global object_cache
     endpoint = '/api/config/v1/managementZones'
 
@@ -186,6 +187,49 @@ def update(management_zone_name, host_group_list):
     post(endpoint, json.dumps(config_object))
 
 
+def add_database_rule_to_mz(management_zone_name):
+    global object_cache
+    endpoint = '/api/config/v1/managementZones'
+
+    if not object_cache.get(endpoint):
+        r = get_object_list(endpoint)
+
+        # print(r.text)
+
+        config_json = json.loads(r.text)
+        config_list = config_json.get('values')
+        config_dict = {}
+        for config in config_list:
+            object_id = copy.deepcopy(config.get('id'))
+            name = copy.deepcopy(config.get('name'))
+            config_dict[name] = object_id
+
+        object_cache[endpoint] = config_dict
+
+    object_id = object_cache[endpoint].get(management_zone_name)
+    config_object = json.loads(get_by_object_id(endpoint, object_id).text)
+
+    tag = 'Host Group:' + management_zone_name
+    current_entity_selector_based_rules = config_object.get('entitySelectorBasedRules')
+    additional_entity_selector_based_rule = get_database_entity_selector_based_rule(tag)
+    if additional_entity_selector_based_rule not in current_entity_selector_based_rules:
+        config_object['entitySelectorBasedRules'].append(additional_entity_selector_based_rule)
+        print(f'Adding database rule to {management_zone_name}')
+        put(endpoint, object_id, json.dumps(config_object))
+
+
+def get_database_entity_selector_based_rule(tag):
+    database_entity_selector_based_rule = {
+            "enabled": True,
+            "entitySelector": "type(SERVICE),databaseName.exists(),toRelationships.calls(type(SERVICE),tag({{.tag}}))"
+        }
+
+    entity_selector = database_entity_selector_based_rule.get('entitySelector')
+    new_entity_selector = entity_selector.replace('{{.tag}}', tag)
+    database_entity_selector_based_rule['entitySelector'] = new_entity_selector
+    return database_entity_selector_based_rule
+
+
 def get_additional_entity_selector_based_rules(tag):
     additional_entity_selector_based_rules = [
         {
@@ -227,17 +271,57 @@ def get_additional_entity_selector_based_rules(tag):
 
     return new_entity_selector_based_rules
 
-def process():
-    # For when everything is commented out below...
-    pass
 
+def add_showcase_rules():
     for management_zone_host_group_of_same_name in management_zone_host_group_of_same_name_updates:
-        update(management_zone_host_group_of_same_name, [management_zone_host_group_of_same_name])
+        add_showcase_rules_to_mz(management_zone_host_group_of_same_name, [management_zone_host_group_of_same_name])
 
     for management_zone_with_multiple_host_groups_update in management_zone_with_multiple_host_groups_updates:
         management_zone = management_zone_with_multiple_host_groups_update[0]
         host_group_list = management_zone_with_multiple_host_groups_update[1]
-        update(management_zone, host_group_list)
+        add_showcase_rules_to_mz(management_zone, host_group_list)
+
+
+def add_database_rules():
+    endpoint = '/api/config/v1/managementZones'
+    management_zone_json = json.loads(get_object_list(endpoint).text)
+
+    management_zone_lookup_list = []
+    management_zone_list = management_zone_json.get('values')
+    for management_zone in management_zone_list:
+        management_zone_name = management_zone.get('name')
+        management_zone_lookup_list.append(management_zone_name)
+
+    host_group_lookup_list = []
+    raw_params = 'pageSize=4000&entitySelector=type(HOST_GROUP)&fields=+properties,+toRelationships&to=-72h'
+    params = urllib.parse.quote(raw_params, safe='/,&=?')
+    endpoint = f'/api/v2/entities?{params}'
+    host_group_json = json.loads(get_object_list(endpoint).text)
+    host_group_list = host_group_json.get('entities')
+    for host_group in host_group_list:
+        host_group_name = host_group.get('displayName')
+        host_group_lookup_list.append(host_group_name)
+
+    mz_equal_hg_list = set(management_zone_lookup_list) & set(host_group_lookup_list)
+
+    for mz_equal_hg in sorted(mz_equal_hg_list):
+        add_database_rule_to_mz(mz_equal_hg)
+
+
+def process():
+    # For when everything is commented out below...
+    pass
+
+    # enhancement_type = 'AddShowcaseRules'
+    enhancement_type = 'AddDatabaseRules'
+
+    if enhancement_type == 'AddShowcaseRules':
+        add_showcase_rules()
+    else:
+        if enhancement_type == 'AddDatabaseRules':
+            add_database_rules()
+        else:
+            print('Specify a supported enhancement type and run again')
 
 
 if __name__ == '__main__':
