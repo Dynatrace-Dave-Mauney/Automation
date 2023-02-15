@@ -1,29 +1,24 @@
 """
-Save Dynatrace settings to a single YAML file that can be used to PUT, POST, or DELETE settings later, and to JSON files.
+Save Dynatrace settings to individual JSON files and to a single YAML file that can be used to PUT, POST, or DELETE settings later.
+Note:  the PUT/POST module is not posted on Github as it is extremely "dangerous".
+If you have an urgent need for a "restore" capability, contact the author.
 
-Specifically Covers:
+Covers:
 All Settings 2.0 configurations, based on a full list of schemas returned by the API.
-Settings in the Configuration API spec (which must be downloaded manually and saved as "config_v1_spec3.json").
+Most settings in the Configuration API spec (which must be downloaded manually and saved as "config_v1_spec3.json").
+SLOs, Synthetic Monitors and Synthetic Locations from the Environment APIs (v1/v2).
 
 Token Permissions Required:
 "Read configuration: ReadConfig"
 "Read settings: settings.read"
 "credentialVault.read (Read credential vault entries)" - if you want to save credentials
-"DssFileManagement (Mobile symbolication file management)" - if you want to save symbol files
-
-Endpoints with multiple variables are not yet supported:
-/applications/mobile/{applicationId}/userActionAndSessionProperties/{key}
-/extensions/{id}/instances/{configurationId}
-/plugins/{id}/endpoints/{endpointId}
-/symfiles/{applicationId}/{packageName}/{os}/{versionCode}/{versionName}
+"DssFileManagement (Mobile symbolication file management)" - if you want to save symbol files (This may be obsolete now).
 """
-
 
 import copy
 from inspect import currentframe
 import json
 import os
-import re
 import requests
 import shutil
 import ssl
@@ -44,29 +39,156 @@ backup_directory_path = f'../$Output/DynatraceSettingsBackup/{env_name}'
 
 settings20_yaml_file_name = 'settings20.yaml'
 config_yaml_file_name = 'config.yaml'
+environment_yaml_file_name = 'environment.yaml'
 confirmation_required = True
 long_file_suffix = 0
 
-# Set to False for partial runs (configs only, settings only)
+# Set to False for partial runs (configs only, settings only, etc.)
+# OR, just answer "n" when prompted and leave this setting True
 remove_directory_at_startup = True
 
-configs = []
+supported_config_endpoints = [
+    '/alertingProfiles',
+    '/allowedBeaconOriginsForCors',
+    '/anomalyDetection/applications',
+    '/anomalyDetection/aws',
+    '/anomalyDetection/databaseServices',
+    '/anomalyDetection/diskEvents',
+    '/anomalyDetection/hosts',
+    '/anomalyDetection/metricEvents',
+    '/anomalyDetection/services',
+    '/anomalyDetection/vmware',
+    '/applicationDetectionRules',
+    '/applicationDetectionRules/hostDetection',
+    # '/applicationDetectionRules/order',
+    '/applications/mobile',
+    '/applications/mobile/{applicationId}/keyUserActions',
+    '/applications/mobile/{applicationId}/userActionAndSessionProperties',
+    '/applications/web',
+    '/applications/web/dataPrivacy',
+    '/applications/web/default',
+    '/applications/web/default/dataPrivacy',
+    '/applications/web/{id}/dataPrivacy',
+    '/applications/web/{id}/errorRules',
+    '/applications/web/{id}/keyUserActions',
+    '/autoTags',
+    '/aws/credentials',
+    '/aws/credentials/{id}/services',
+    '/aws/iamExternalId',
+    '/aws/privateLink',
+    '/aws/privateLink/allowlistedAccounts',
+    '/aws/supportedServices',
+    '/azure/credentials',
+    '/azure/credentials/{id}/services',
+    '/azure/supportedServices',
+    # '/calculatedMetrics/log', # Must be turned off if V2 Logging is in use
+    '/calculatedMetrics/mobile',
+    '/calculatedMetrics/rum',
+    '/calculatedMetrics/service',
+    '/calculatedMetrics/synthetic',
+    '/cloudFoundry/credentials',
+    '/conditionalNaming/{type}',
+    '/contentResources',
+    '/credentials',
+    '/dashboards',
+    # '/dashboards/{id}/shareSettings', # Not important?
+    '/dataPrivacy',
+    '/extensions',
+    '/extensions/activeGateExtensionModules',
+    '/frequentIssueDetection',
+    '/geographicRegions/ipAddressMappings',
+    '/geographicRegions/ipDetectionHeaders',
+    # '/hostgroups/{id}/autoupdate',
+    '/hosts/autoupdate',
+    # '/hosts/{id}/autoupdate',
+    # '/hosts/{id}/monitoring',
+    # '/hosts/{id}/technologies',
+    '/kubernetes/credentials',
+    '/maintenanceWindows',
+    '/managementZones',
+    '/notifications',
+    '/plugins',
+    '/plugins/activeGatePluginModules',
+    # '/plugins/{id}/endpoints',
+    '/remoteEnvironments',
+    # '/reports', # Not needed
+    '/service/customServices/{technology}',
+    # '/service/customServices/{technology}/order', # Endpoint does not support get method
+    '/service/detectionRules/FULL_WEB_REQUEST',
+    '/service/detectionRules/FULL_WEB_REQUEST/order',
+    '/service/detectionRules/FULL_WEB_SERVICE',
+    '/service/detectionRules/FULL_WEB_SERVICE/order',
+    '/service/detectionRules/OPAQUE_AND_EXTERNAL_WEB_REQUEST',
+    '/service/detectionRules/OPAQUE_AND_EXTERNAL_WEB_REQUEST/order',
+    '/service/detectionRules/OPAQUE_AND_EXTERNAL_WEB_SERVICE',
+    '/service/detectionRules/OPAQUE_AND_EXTERNAL_WEB_SERVICE/order',
+    '/service/failureDetection/parameterSelection/parameterSets',
+    '/service/failureDetection/parameterSelection/rules',
+    '/service/failureDetection/parameterSelection/rules/reorderRules',
+    '/service/requestAttributes',
+    '/service/requestNaming',
+    '/service/requestNaming/order',
+    '/service/resourceNaming',
+    '/technologies',
+]
 
-child_endpoints_covered_by_lists = []
-child_endpoints_not_covered_by_lists = []
+# For Testing, override the official list above
+# supported_config_endpoints = [
+#     '/alertingProfiles',
+#     '/technologies',
+# ]
 
-extension_technology_list = []
-conditional_naming_type_list = []
-custom_service_technology_list = []
+endpoint_child_keys = {
+    '/alertingProfiles': ['values', 'id'],
+    '/anomalyDetection/diskEvents': ['values', 'id'],
+    '/anomalyDetection/metricEvents': ['values', 'id'],
+    '/applicationDetectionRules': ['values', 'id'],
+    '/applications/mobile': ['values', 'id'],
+    '/applications/web': ['values', 'id'],
+    '/autoTags': ['values', 'id'],
+    '/aws/credentials': ['values', 'id'],
+    '/aws/privateLink/allowlistedAccounts': ['values', 'id'],
+    # '/aws/supportedServices': ['services', 'name'],
+    '/azure/credentials': ['values', 'id'],
+    # '/azure/supportedServices': ['services', 'name'],
+    '/calculatedMetrics/mobile': ['values', 'id'],
+    '/calculatedMetrics/rum': ['values', 'id'],
+    '/calculatedMetrics/service': ['values', 'id'],
+    '/calculatedMetrics/synthetic': ['values', 'id'],
+    '/credentials': ['credentials', 'id'],
+    '/dashboards': ['dashboards', 'id'],
+    '/extensions': ['extensions', 'id'],
+    # '/extensions/activeGateExtensionModules': ['values', 'id'],
+    '/cloudFoundry/credentials': ['values', 'id'],
+    '/kubernetes/credentials': ['values', 'id'],
+    '/maintenanceWindows': ['values', 'id'],
+    '/managementZones': ['values', 'id'],
+    '/notifications': ['values', 'id'],
+    '/plugins': ['values', 'id'],
+    # '/plugins/activeGatePluginModules': ['values', 'id'],
+    '/remoteEnvironments': ['values', 'id'],
+    '/reports': ['values', 'id'],
+    '/service/detectionRules/FULL_WEB_REQUEST': ['values', 'id'],
+    '/service/detectionRules/FULL_WEB_SERVICE': ['values', 'id'],
+    '/service/detectionRules/OPAQUE_AND_EXTERNAL_WEB_REQUEST': ['values', 'id'],
+    '/service/detectionRules/OPAQUE_AND_EXTERNAL_WEB_SERVICE': ['values', 'id'],
+    '/service/failureDetection/parameterSelection/parameterSets': ['values', 'id'],
+    '/service/failureDetection/parameterSelection/rules': ['values', 'id'],
+    '/service/requestAttributes': ['values', 'id'],
+    '/service/requestNaming': ['values', 'id'],
+}
 
 
 def initialize():
     if remove_directory_at_startup:
-        confirm('The ' + backup_directory_path + ' directory will now be removed to prepare for backup.')
-        remove_directory(backup_directory_path)
-
-    if not os.path.isdir(backup_directory_path):
-        make_directory(backup_directory_path)
+        message = f'The {backup_directory_path} directory will now be removed to prepare for backup.'
+        proceed = input('%s (Y/n) ' % message).upper() == 'Y'
+        if proceed:
+            remove_directory(backup_directory_path)
+            if not os.path.isdir(backup_directory_path):
+                make_directory(backup_directory_path)
+        else:
+            print(f'The {backup_directory_path} directory was not removed for for this backup.')
 
 
 def remove_directory(path):
@@ -82,88 +204,150 @@ def remove_directory(path):
         # print('Removed the directory %s ' % path)
 
 
-def save_entity(entity_type):
-    print('save_entity(' + entity_type + ')')
-
-    if entity_type.startswith('/dashboards') and entity_type.endswith('/shareSettings'):
-        # print(f'Skipping {entity_type} since "dashboards/*/shareSettings" gets 403 - Forbidden')
-        return
-
-    if entity_type.startswith('/extensions') and entity_type.endswith('/global'):
-        # print(f'Skipping {entity_type} since "extensions/*/global"  gets 400 - Bad Request')
-        return
-
-    if '/binary' in entity_type:
-        # print('Skipping binary entity!')
-        return
+def make_directory(path):
+    # print('make_directory(' + path + ')')
     try:
-        full_url = env + '/api/config/v1' + entity_type
-        resp = requests.get(full_url, headers={'Authorization': 'Api-Token ' + token})
-        if resp.status_code == 200:
-            save(entity_type, resp.json())
+        os.makedirs(path)
+    except OSError:
+        print('Creation of the directory %s failed' % path)
+        exit()
+    else:
+        pass
+        # print('Successfully created the directory %s ' % path)
+
+
+def save_configuration_api_settings():
+    # print('save_configuration_api_settings()')
+    filename = backup_directory_path + '/' + config_yaml_file_name
+    main_template = {'tenant': env_name, 'action': 'validate', 'configs': []}
+
+    yaml_dict = copy.deepcopy(main_template)
+    config_list = []
+
+    f = open('config_v1_spec3.json', )
+    data = json.load(f)
+    paths = data.get('paths')
+
+    endpoints = sorted(list(paths.keys()))
+
+    for endpoint in endpoints:
+        if not process_config_endpoint(endpoint, paths):
+            # print(f'Not processing endpoint {endpoint} {supported_config_endpoints}')
+            continue
+
+        print(f'processing endpoint {endpoint}')
+
+        if '{' in endpoint:
+            process_complex_endpoint(endpoint, paths, config_list)
         else:
-            print('REST API Call Failed!')
-            print(f'GET {full_url} {resp.status_code} - {resp.reason}')
-            # print(resp.text)
-            # Dynatrace Preset Dashboards give "403 - Forbidden"
-            # Some extensions return 400 for "/global" endpoint
-            if resp.status_code != 400 and resp.status_code != 403:
-                exit(get_linenumber())
-    except ssl.SSLError:
-        print('SSL Error')
-        exit(get_linenumber())
+            process_simple_endpoint(endpoint, None, config_list)
+
+        yaml_dict['configs'] = config_list
+
+        with open(filename, 'w') as file:
+            yaml.dump(yaml_dict, file, sort_keys=False)
 
 
-def save_list(list_type):
-    print('save_list(' + list_type + ')')
-    try:
-        full_url = env + '/api/config/v1' + list_type
-        resp = requests.get(full_url, headers={'Authorization': 'Api-Token ' + token})
+def process_config_endpoint(endpoint, paths):
+    # Does endpoint allow get method?
+    endpoint_dict = paths.get(endpoint)
+    methods = list(endpoint_dict.keys())
+    if 'get' not in methods:
+        # print(f'Endpoint {endpoint} does not allow get method')
+        return False
 
-        if resp.status_code != 200:
-            print('REST API Call Failed!')
-            print(f'GET {full_url} {resp.status_code} - {resp.reason}')
-            # print(resp.text)
-            exit(get_linenumber())
+    # # Is endpoint in the "least complex" list?
+    # if endpoint not in ['/alertingProfiles', '/allowedBeaconOriginsForCors', '/anomalyDetection/applications', '/anomalyDetection/aws', '/anomalyDetection/databaseServices', '/anomalyDetection/diskEvents', '/anomalyDetection/hosts', '/anomalyDetection/metricEvents', '/anomalyDetection/services', '/anomalyDetection/vmware', '/applicationDetectionRules', '/applicationDetectionRules/hostDetection', '/applicationDetectionRules/order', '/applications/mobile', '/applications/web', '/applications/web/dataPrivacy', '/applications/web/default', '/applications/web/default/dataPrivacy', '/autoTags', '/aws/credentials', '/aws/iamExternalId', '/aws/privateLink', '/aws/privateLink/allowlistedAccounts', '/aws/supportedServices', '/azure/credentials', '/azure/supportedServices', '/calculatedMetrics/log', '/calculatedMetrics/mobile', '/calculatedMetrics/rum', '/calculatedMetrics/service', '/calculatedMetrics/synthetic', '/cloudFoundry/credentials', '/contentResources', '/credentials', '/dashboards', '/dataPrivacy', '/extensions', '/extensions/activeGateExtensionModules', '/frequentIssueDetection', '/geographicRegions/ipAddressMappings', '/geographicRegions/ipDetectionHeaders', '/hosts/autoupdate', '/kubernetes/credentials', '/maintenanceWindows', '/managementZones', '/notifications', '/plugins', '/plugins/activeGatePluginModules', '/remoteEnvironments', '/reports', '/service/detectionRules/FULL_WEB_REQUEST', '/service/detectionRules/FULL_WEB_REQUEST/order', '/service/detectionRules/FULL_WEB_SERVICE', '/service/detectionRules/FULL_WEB_SERVICE/order', '/service/detectionRules/OPAQUE_AND_EXTERNAL_WEB_REQUEST', '/service/detectionRules/OPAQUE_AND_EXTERNAL_WEB_REQUEST/order', '/service/detectionRules/OPAQUE_AND_EXTERNAL_WEB_SERVICE', '/service/detectionRules/OPAQUE_AND_EXTERNAL_WEB_SERVICE/order', '/service/failureDetection/parameterSelection/parameterSets', '/service/failureDetection/parameterSelection/rules', '/service/failureDetection/parameterSelection/rules/reorderRules', '/service/requestAttributes', '/service/requestNaming', '/service/requestNaming/order', '/service/resourceNaming', '/technologies']:
+    #     return False
+    #
+    # # Fails if logging V2+
+    # if endpoint == '/calculatedMetrics/log':
+    #     return False
+
+    if endpoint in supported_config_endpoints:
+        return True
+    else:
+        return False
+
+
+def process_simple_endpoint(endpoint, endpoint_child_key, config_list):
+    resp = get_config_endpoint(endpoint)
+    # print('Children Process...')
+    if not endpoint_child_key:
+        endpoint_child_key = endpoint_child_keys.get(endpoint)
+    if endpoint_child_key:
+        if endpoint == '/aws/credentials':
+            children = json.loads(resp.text)
         else:
-            resp_json = resp.json()
-            inner_key = 'values'
-            if list_type == '/extensions':
-                inner_key = 'extensions'
+            children = json.loads(resp.text).get(endpoint_child_key[0])
+        for child in children:
+            config_id = child.get(endpoint_child_key[1])
+            resp = get_config_endpoint(f'{endpoint}/{config_id}')
+            # print(resp.text)
+            save_config(endpoint, f'{config_id}.json', resp.text, config_list)
+    else:
+        save_config(endpoint, 'root.json', resp.text, config_list)
+
+
+def process_complex_endpoint(endpoint, paths, config_list):
+    if endpoint == '/conditionalNaming/{type}':
+        original_endpoint = copy.deepcopy(endpoint)
+        conditional_naming_type_list = paths.get(endpoint).get('get').get('parameters')[0].get('schema').get('enum')
+        for conditional_naming_type in conditional_naming_type_list:
+            endpoint = original_endpoint.replace('{type}', conditional_naming_type)
+            process_simple_endpoint(endpoint, ['values', 'id'], config_list)
+    else:
+        if endpoint == '/service/customServices/{technology}':
+            original_endpoint = copy.deepcopy(endpoint)
+            custom_service_technology_list = paths.get(endpoint).get('get').get('parameters')[0].get('schema').get('enum')
+            for custom_service_technology in custom_service_technology_list:
+                endpoint = original_endpoint.replace('{technology}', custom_service_technology)
+                process_simple_endpoint(endpoint, ['values', 'id'], config_list)
+        else:
+            if endpoint in ['/applications/web/{id}/dataPrivacy', '/applications/web/{id}/errorRules', '/applications/web/{id}/keyUserActions']:
+                original_endpoint = copy.deepcopy(endpoint)
+                web_application_list = json.loads(get_config_endpoint('/applications/web').text).get('values')
+                for web_application in web_application_list:
+                    endpoint = original_endpoint.replace('{id}', web_application.get('id'))
+                    process_simple_endpoint(endpoint, None, config_list)
             else:
-                if list_type == '/dashboards':
-                    inner_key = 'dashboards'
+                if endpoint in ['/applications/mobile/{applicationId}/keyUserActions', '/applications/mobile/{applicationId}/userActionAndSessionProperties']:
+                    original_endpoint = copy.deepcopy(endpoint)
+                    mobile_application_list = json.loads(get_config_endpoint('/applications/mobile').text).get('values')
+                    for mobile_application in mobile_application_list:
+                        endpoint = original_endpoint.replace('{applicationId}', mobile_application.get('id'))
+                        process_simple_endpoint(endpoint, None, config_list)
                 else:
-                    if list_type == '/credentials':
-                        inner_key = 'credentials'
+                    if endpoint in ['/aws/credentials/{id}/services']:
+                        original_endpoint = copy.deepcopy(endpoint)
+                        aws_service_list = json.loads(get_config_endpoint('/aws/credentials').text)
+                        for aws_service in aws_service_list:
+                            endpoint = original_endpoint.replace('{id}', aws_service.get('id'))
+                            process_simple_endpoint(endpoint, None, config_list)
                     else:
-                        if list_type == '/symfiles':
-                            inner_key = 'symbolFiles'
-            if resp_json and 'Old API endpoints are disabled' not in str(resp_json):
-                if list_type == '/aws/credentials':
-                    entries = resp_json
-                else:
-                    entries = resp_json[inner_key]
+                        if endpoint in ['/azure/credentials/{id}/services']:
+                            original_endpoint = copy.deepcopy(endpoint)
+                            azure_service_list = json.loads(get_config_endpoint('/azure/credentials').text).get('values')
+                            for azure_service in azure_service_list:
+                                endpoint = original_endpoint.replace('{id}', azure_service.get('id'))
+                                process_simple_endpoint(endpoint, None, config_list)
 
-                if entries:
-                    for entry in entries:
-                        if list_type == '/applications/web/dataPrivacy':
-                            entity_id = entry['identifier']
-                            full_url = env + '/api/config/v1/applications/web/' + entity_id + '/dataPrivacy'
-                        else:
-                            entity_id = entry['id']
-                            full_url = env + '/api/config/v1' + list_type + '/' + entity_id
-                        resp = requests.get(full_url, headers={'Authorization': 'Api-Token ' + token})
-                        if resp.status_code != 200:
-                            print('REST API Call Failed!')
-                            print(f'GET {full_url} {resp.status_code} - {resp.reason}')
-                            # print(resp.text)
-                            exit(get_linenumber())
-                        else:
-                            save(list_type, resp.json())
-    except ssl.SSLError:
-        print('SSL Error')
-        exit(get_linenumber())
+
+def save_config(endpoint, json_file_name, payload, config_list):
+    # print(f'save_config({endpoint}, {json_file_name}, {payload})')
+    directory_path = backup_directory_path + '/api/config/v1' + endpoint
+
+    json_payload = json.loads(payload)
+    # Fix id's based on entity_type and certain dynatrace created id's that contain "." characters
+    if '/' in json_file_name or '.' in json_file_name:
+        json_file_name = json_file_name.replace('/', '_')
+        json_file_name = json_file_name.replace('.', '_')
+        json_file_name = json_file_name.replace(':', '_')
+
+    write_json(directory_path, json_file_name, json_payload)
+
+    json_payload['api-endpoint'] = endpoint
+    config_list.append(json_payload)
 
 
 def get_rest_api_json(endpoint, params):
@@ -174,7 +358,7 @@ def get_rest_api_json(endpoint, params):
         print('REST API Call Failed!')
         print(f'GET {full_url} {params} {resp.status_code} - {resp.reason}')
         # print(resp.text)
-        exit(get_linenumber())
+        exit(get_line_number())
 
     json_data = resp.json()
 
@@ -196,7 +380,7 @@ def get_rest_api_json(endpoint, params):
             print('Paginated REST API Call Failed!')
             print(f'GET {full_url} {resp.status_code} - {resp.reason}')
             # print(resp.text)
-            exit(get_linenumber())
+            exit(get_line_number())
 
         json_data = resp.json()
 
@@ -206,442 +390,24 @@ def get_rest_api_json(endpoint, params):
     return json_list
 
 
-def save_configuration_api_settings():
-    print('save_configuration_api_settings()')
+def get_config_endpoint(endpoint):
+    try:
+        full_url = env + '/api/config/v1' + endpoint
+        resp = requests.get(full_url, headers={'Authorization': 'Api-Token ' + token})
 
-    global extension_technology_list
-    global conditional_naming_type_list
-    global custom_service_technology_list
-
-    f = open('config_v1_spec3.json', )
-    data = json.load(f)
-    paths = data.get('paths')
-
-    # TODO: REMOVE
-    # for path in sorted(paths):
-    #     print(path)
-    # exit(1234)
-
-    extension_technology_list = paths.get('/extensions/{technology}/availableHosts').get('get').get('parameters')[0].get('schema').get('enum')
-    conditional_naming_type_list = paths.get('/conditionalNaming/{type}/{id}').get('get').get('parameters')[0].get('schema').get('enum')
-    custom_service_technology_list = paths.get('/service/customServices/{technology}').get('get').get('parameters')[0].get('schema').get('enum')
-
-    endpoint_methods = {}
-
-    endpoints = sorted(list(paths.keys()))
-
-    for endpoint in endpoints:
-        endpoint_dict = paths.get(endpoint)
-        methods = list(endpoint_dict.keys())
-        endpoint_methods[endpoint] = methods
-
-    for endpoint in endpoints:
-        # print(f'save_configuration_api_settings: {endpoint}')
-        # if an endpoint does not allow get, or has multiple variables, skip it, unless it
-        # is supported
-        # TODO: Verify this code better...remove print debugging statements...
-        # print(f'Checking {endpoint} {endpoint_methods[endpoint]} {str(endpoint).count("{")} {not endpoint.startswith("/conditionalNaming")}')
-        if 'get' in endpoint_methods[endpoint]:
-            if str(endpoint).count('{') <= 1 or endpoint.startswith('/conditionalNaming'):
-                # print(f'Loading children of {endpoint}')
-                load_child_endpoints(endpoint, endpoint_methods, paths)
-
-    # print(f'child_endpoints_covered_by_lists: {child_endpoints_covered_by_lists}')
-    # print(f'child_endpoints_not_covered_by_lists: {child_endpoints_not_covered_by_lists}')
-    # exit(get_linenumber())
-
-    for endpoint in endpoints:
-        if process_endpoint(endpoint):
-            supported_methods = endpoint_methods.get(endpoint)
-            if 'get' in supported_methods:
-                # print(f'save_configuration_api_settings: {endpoint} has get')
-                endpoint_dict = paths.get(endpoint)
-                get_dict = endpoint_dict.get('get')
-                summary = get_dict.get('summary')
-                responses_dict = get_dict.get('responses')
-                response_200_dict = responses_dict.get('200')
-                response_200_content = response_200_dict.get('content')
-                if summary.startswith('Lists') and ('List' in str(response_200_content) or 'EntityShortRepresentation' in str(response_200_content)):
-                    if endpoint == '/conditionalNaming/{type}':
-                        original_endpoint = copy.deepcopy(endpoint)
-                        for conditional_naming_type in conditional_naming_type_list:
-                            endpoint = original_endpoint.replace('{type}', conditional_naming_type)
-                            # print(f'save_configuration_api_settings: {endpoint} save list')
-                            save_list(endpoint)
-                    else:
-                        if endpoint == '/service/customServices/{technology}':
-                            original_endpoint = copy.deepcopy(endpoint)
-                            for custom_service_technology in custom_service_technology_list:
-                                endpoint = original_endpoint.replace('{technology}', custom_service_technology)
-                                # print(f'save_configuration_api_settings: {endpoint} save list')
-                                save_list(endpoint)
-                        else:
-                            # print(f'save_configuration_api_settings: {endpoint} save list')
-                            save_list(endpoint)
-                else:
-                    # print(f'save_configuration_api_settings: {endpoint} save entity')
-                    save_entity(endpoint)
-
-    # If you want to select some entities you can comment out the logic above and uncomment the ones you want below.
-    # save_entity("/allowedBeaconOriginsForCors")
-    # save_entity("/anomalyDetection/applications")
-    # save_entity("/anomalyDetection/aws")
-    # save_entity("/anomalyDetection/databaseServices")
-    # save_entity("/anomalyDetection/hosts")
-    # save_entity("/anomalyDetection/services")
-    # save_entity("/anomalyDetection/vmware")
-    # save_entity("/applicationDetectionRules/hostDetection")
-    # save_entity("/applications/web/default")
-    # save_entity("/applications/web/default/dataPrivacy")
-    # save_entity("/aws/iamExternalId")
-    # save_entity("/aws/privateLink")
-    # save_entity("/aws/privateLink/allowlistedAccounts")
-    # save_entity("/aws/supportedServices")
-    # save_entity("/azure/supportedServices")
-    # save_entity("/contentResources")
-    # save_entity("/frequentIssueDetection")
-    # save_entity("/geographicRegions/ipAddressMappings")
-    # save_entity("/geographicRegions/ipDetectionHeaders")
-    # save_entity("/hosts/autoupdate")
-    # save_entity("/symfiles/dtxdss-download")
-    # save_entity("/symfiles/info")
-    # save_entity("/symfiles/ios/supportedversion")
-    # save_entity("/technologies")
-    #
-    # save_list("/alertingProfiles")
-    # save_list("/anomalyDetection/diskEvents")
-    # save_list("/anomalyDetection/metricEvents")
-    # save_list("/applicationDetectionRules")
-    # save_list("/applications/mobile")
-    # save_list("/applications/web")
-    # save_list("/applications/web/dataPrivacy")
-    # save_list("/autoTags")
-    # save_list("/aws/credentials")
-    # save_list("/azure/credentials")
-    # save_list("/calculatedMetrics/mobile")
-    # save_list("/calculatedMetrics/rum")
-    # save_list("/calculatedMetrics/service")
-    # save_list("/calculatedMetrics/synthetic")
-    # save_list("/cloudFoundry/credentials")
-    # save_list("/credentials")
-    # save_list("/dashboards")
-    # # "/dataPrivacy" does not actually return a list
-    # save_entity("/dataPrivacy")
-    # save_list("/extensions")
-    # save_list("/extensions/activeGateExtensionModules")
-    # save_list("/kubernetes/credentials")
-    # save_list("/maintenanceWindows")
-    # save_list("/managementZones")
-    # save_list("/notifications")
-    # save_list("/plugins")
-    # save_list("/plugins/activeGatePluginModules")
-    # save_list("/remoteEnvironments")
-    # save_list("/reports")
-    # save_list("/service/detectionRules/FULL_WEB_REQUEST")
-    # save_list("/service/detectionRules/FULL_WEB_SERVICE")
-    # save_list("/service/detectionRules/OPAQUE_AND_EXTERNAL_WEB_REQUEST")
-    # save_list("/service/detectionRules/OPAQUE_AND_EXTERNAL_WEB_SERVICE")
-    # save_list("/service/failureDetection/parameterSelection/parameterSets")
-    # save_list("/service/failureDetection/parameterSelection/rules")
-    # save_list("/symfiles")
-    # # "/service/resourceNaming" does not actually return a list
-    # save_entity("/service/resourceNaming")
-    #
-    # These have problems due to missing permissions or other issues.
-    # # save_list("/calculatedMetrics/log")
-    # # save_list("/service/ibmMQTracing/imsEntryQueue")
-    # # save_list("/service/ibmMQTracing/queueManager")
-
-    filename = backup_directory_path + '/' + config_yaml_file_name
-    write_yaml(filename)
-
-
-def load_child_endpoints(endpoint, endpoint_methods, paths):
-    # print('load_child_endpoints(' + endpoint + ', ' + str(endpoint_methods) + ', ' + str(paths) + ')')
-    print('load_child_endpoints(' + endpoint + ', ' + str(endpoint_methods) + ')')
-    global child_endpoints_covered_by_lists
-    global child_endpoints_not_covered_by_lists
-
-    # if process_endpoint(endpoint):
-    supported_methods = endpoint_methods.get(endpoint)
-    debug = False
-    # if "custom.remote.python.datapowerxml" in endpoint:
-    #     debug = True
-    # if '/calculatedMetrics/' in endpoint:
-    # if endpoint in ['/alertingProfiles']:
-    # 	debug = True
-    if debug:
-        print('DEBUG')
-        print(f'endpoint: {endpoint}')
-        print(f'supported_methods: {supported_methods}')
-    if 'get' in supported_methods:
-        endpoint_dict = paths.get(endpoint)
-        get_dict = endpoint_dict.get('get')
-        summary = get_dict.get('summary')
-        if debug:
-            print(f'summary: {summary}')
-        responses_dict = get_dict.get('responses')
-        response_200_dict = responses_dict.get('200')
-        response_200_content = response_200_dict.get('content')
-        if debug:
-            print(f'response_200_content: {response_200_content}')
-        # if summary.startswith('List') and ('List' in str(response_200_content) or 'EntityShortRepresentation' in str(response_200_content)):
-        if 'list' in summary.lower() and ('List' in str(response_200_content) or 'EntityShortRepresentation' in str(response_200_content)):
-            if debug:
-                print('RESULT: added to child_endpoints_covered_by_lists')
-            if endpoint.startswith('/calculatedMetrics/'):
-                child_endpoints_covered_by_lists.append(endpoint + '/{metricKey}')
-            else:
-                child_endpoints_covered_by_lists.append(endpoint + '/{id}')
-    # else:
-    # 	return
-
-    if '/validator' in endpoint:
-        return
-    if '{' not in endpoint:
-        return
-    if endpoint in child_endpoints_covered_by_lists:
-        return
-    if endpoint.startswith('/aws/privateLink'):
-        return
-
-    # print('Child Endpoint Loaded to the "Child Endpoints Not Covered by Lists" list: ' + endpoint)
-    child_endpoints_not_covered_by_lists.append(endpoint)
-
-
-def process_endpoint(endpoint):
-    print('process_endpoint(' + endpoint + ')')
-    # /calculatedMetrics/log is obsolete if new logging is used (400 - Bad Request)
-    # /service/ibmMQTracing/imsEntryQueue is obsolete (410 - Gone)
-    # /service/ibmMQTracing/queueManager is obsolete (410 - Gone)
-    problematic_endpoints = [
-        '/calculatedMetrics/log',
-        '/service/ibmMQTracing/imsEntryQueue',
-        '/service/ibmMQTracing/queueManager'
-    ]
-
-    # slow_endpoints = ['/dashboards', '/extensions', '/anomalyDetection/metricEvents', '/calculatedMetrics/service', '/service/requestAttributes']
-    slow_endpoints = []
-    problematic_endpoints.extend(slow_endpoints)
-
-    # To focus only on one specific endpoint when testing...
-    # specific_endpoint_startswith = '/conditionalNaming'
-    # specific_endpoint_startswith = '/service/customServices/{technology}'
-    specific_endpoint_startswith = '/extensions'
-    if endpoint.startswith(specific_endpoint_startswith):
-        pass
-    else:
-        print(f'Skipping {endpoint} since it does not start with {specific_endpoint_startswith}')
-        return False
-
-    # To focus only on specific endpoints when testing...
-    # test_endpoints = ['/aws/credentials', '/anomalyDetection/aws']
-    # test_endpoints = [
-    #     '/service/ibmMQTracing/imsEntryQueue',
-    #     '/service/ibmMQTracing/queueManager'
-    # ]
-    # if endpoint in test_endpoints:
-    # 	return True
-    # else:
-    # 	return False
-
-    # To focus only on the problematic endpoints when testing...
-    # if endpoint in problematic_endpoints:
-    # 	return True
-    # else:
-    # 	return False
-
-    # To skip these...
-    # no_permissions_yet = ['/credentials', '/symfiles', '/symfiles/dtxdss-download', '/symfiles/info', '/symfiles/ios/supportedversion']
-    # problematic_endpoints.extend(no_permissions_yet)
-
-    # To skip these for testing
-    # skip_for_speed_when_testing = ['/dashboards', '/extensions', '/anomalyDetection/metricEvents', '/calculatedMetrics/service', '/service/requestAttributes']
-    # problematic_endpoints.extend(skip_for_speed_when_testing)
-
-    # Testing: skip to a specific endpoint!
-    # specific_endpoint_start = '/plugins'
-    # if endpoint < specific_endpoint_start:
-    #     # print(f'Skipping {endpoint} to head directly to {specific_endpoint_start}')
-    #     return False
-
-    # Testing: skip endpoints after a specific endpoint!
-    # specific_endpoint_end = '/plugint'
-    # if endpoint >= specific_endpoint_end:
-    #     # print(f'Skipping {endpoint} after {specific_endpoint_end}')
-    #     return False
-
-    if '/validator' in endpoint:
-        # print('Skipping {endpoint} because it is a validator')
-        return False
-    if endpoint == '/conditionalNaming/{type}' or endpoint == '/service/customServices/{technology}':
-        # print(f'Process {endpoint}')
-        return True
-    if '{' in endpoint:
-        # print(f'Skipping {endpoint} because it contains a brace character')
-        return False
-    if endpoint in problematic_endpoints:
-        # print(f'Skipping {endpoint} in the problematic endpoint list')
-        return False
-
-    return True
-
-
-def save(entity_type, yaml_dict):
-    # print('save(' + entity_type + ',' + str(yaml_dict))
-    print('save(' + entity_type + ')')
-    # Some entity types (like '/aws/credentials') may contain an empty string
-    if isinstance(yaml_dict, dict):
-        yaml_dict['api-endpoint'] = entity_type
-    else:
-        # print('Wrapping ' + entity_type + ' in a dictionary')
-        # print('Input Content: ' + str(yaml_dict))
-        # print('Input Type: ' + str(type(yaml_dict)))
-        new_yaml_dict = {'value': yaml_dict, 'api-endpoint': entity_type}
-        yaml_dict = new_yaml_dict
-        # print('Output Content: ' + str(yaml_dict))
-    global configs
-    configs.append(yaml_dict)
-
-    write_configuration_api_json(entity_type, yaml_dict)
-
-    if has_children(entity_type):
-        print(entity_type + ' has children!')
-        for _ in get_child_endpoints(entity_type):
-            save_child_endpoints(entity_type, yaml_dict)
-
-
-def has_children(entity_type):
-    print('has_children(' + entity_type + ')')
-    for endpoint in child_endpoints_not_covered_by_lists:
-        if endpoint.startswith(entity_type):
-            return True
-    # print(child_endpoints_not_covered_by_lists)
-    # print(child_endpoints_covered_by_lists)
-    # print(f'no children for {entity_type}')
-    return False
-
-
-def get_child_endpoints(entity_type):
-    print('get_child_endpoints(' + entity_type + ')')
-    endpoints = []
-    for endpoint in child_endpoints_not_covered_by_lists:
-        if endpoint.startswith(entity_type):
-            endpoints.append(endpoint)
-
-    # print(endpoints)
-    return endpoints
-
-
-def save_child_endpoints(parent_entity_type, parent_yaml_dict):
-    # print('save_child_endpoints(' + parent_entity_type + ', ' + str(parent_yaml_dict) + ')')
-    print('save_child_endpoints(' + parent_entity_type + ')')
-    for child_endpoint in get_child_endpoints(parent_entity_type):
-        # print(f'child_endpoint: {child_endpoint}')
-        # performance_skip_list = ['/extensions/{technology}/availableHosts', '/extensions/{id}/instances/{configurationId}']
-        # if child_endpoint in performance_skip_list:
-        # if child_endpoint.startswith('/extensions'):
-        #     pass
-        #     # print('Skipping ' + child_endpoint + ' for performance reasons')
-        # else:
-        # print('Child endpoint (incoming): ' + child_endpoint)
-        if child_endpoint.startswith('/applications/web') or child_endpoint.startswith('/applications/mobile'):
-            id_key = 'identifier'
-        else:
-            if child_endpoint.startswith('/aws/privateLink/allowlistedAccounts'):
-                id_key = 'endpoint'
-            else:
-                id_key = 'id'
-        parent_id = parent_yaml_dict.get(id_key)
-        # print(f'parent_id: {parent_id}')
-        if not parent_id:
-            print('id not found for parent_entity_type: ' + parent_entity_type)
-            print('id_key: ' + id_key)
-            # print('parent_yaml_dict: ' + str(parent_yaml_dict))
-            exit(get_linenumber())
-        if child_endpoint == '/extensions/{technology}/availableHosts':
-            for extension_technology in extension_technology_list:
-                endpoint = child_endpoint.replace('{technology}', extension_technology)
-                save_entity(endpoint)
-            return
-        else:
-            if child_endpoint == '/conditionalNaming/{type}':
-                for conditional_naming_type in conditional_naming_type_list:
-                    endpoint = child_endpoint.replace('{type}', conditional_naming_type)
-                    save_entity(endpoint)
-                return
-            else:
-                if child_endpoint == '/service/customServices/{technology}':
-                    for custom_service_technology in custom_service_technology_list:
-                        endpoint = child_endpoint.replace('{technology}', custom_service_technology)
-                        save_entity(endpoint)
-                    return
-                else:
-                    if '{applicationId}' in child_endpoint:
-                        endpoint = child_endpoint.replace('{applicationId}', parent_id)
-                    else:
-                        if '{endpointId}' in child_endpoint:
-                            endpoint = child_endpoint.replace('{endpointId}', parent_id)
-                        else:
-
-                            # if child_endpoint.startswith('/applications/web') and '{keyUserActionId}' in child_endpoint:
-                            #     endpoint = child_endpoint.replace('{keyUserActionId}', child_endpoint.get('id'))
-                            # else:
-                            endpoint = child_endpoint.replace('{id}', parent_id)
-                            # print('Child endpoint (outgoing): ' + endpoint)
-
-        save_entity(endpoint)
-
-
-def write_yaml(filename):
-    print('write_yaml(' + filename + ')')
-    global configs
-    main_template = {'tenant': env_name, 'action': 'validate', 'configs': []}
-    yaml_dict = copy.deepcopy(main_template)
-    yaml_dict['configs'] = configs
-
-    with open(filename, 'w') as file:
-        yaml.dump(yaml_dict, file, sort_keys=False)
-
-
-def write_configuration_api_json(entity_type, json_dict):
-    # print('write_configuration_api_json(' + entity_type + ',' + str(json_dict) + ')')
-    print('write_configuration_api_json(' + entity_type+ ')')
-
-    # The 'api-endpoint' field is needed for single-file YAML, but not for JSON files
-    # Remove it, if present
-    if json_dict.get('api-endpoint'):
-        json_dict.pop('api-endpoint')
-
-    directory_path = backup_directory_path + '/api/config/v1' + entity_type + '/'
-
-    if entity_type.startswith('/applications/web') or entity_type.startswith('/applications/mobile'):
-        id_key = 'identifier'
-    else:
-        if entity_type.startswith('/aws/privateLink/allowlistedAccounts'):
-            id_key = 'endpoint'
-        else:
-            if entity_type.startswith('/calculatedMetrics'):
-                id_key = 'tsmMetricKey'
-            else:
-                id_key = 'id'
-
-    config_id = json_dict.get(id_key)
-
-    if not config_id:
-        config_id = re.sub('.*/', '', entity_type)
-
-    # Fix id's based on entity_type and certain dynatrace created id's that contain "." characters
-    if '/' in config_id or '.' in config_id:
-        config_id = config_id.replace('/', '_')
-        config_id = config_id.replace('.', '_')
-        config_id = config_id.replace(':', '_')
-
-    write_json(directory_path, f'{config_id}.json', json_dict)
+        if resp.status_code != 200:
+            print('REST API Call Failed!')
+            print(f'GET {full_url} {resp.status_code} - {resp.reason}')
+            # print(resp.text)
+            exit(get_line_number())
+        return resp
+    except ssl.SSLError:
+        print('SSL Error')
+        exit(get_line_number())
 
 
 def save_settings20_objects():
-    print('save_settings20_objects()')
+    # print('save_settings20_objects()')
     filename = backup_directory_path + '/' + settings20_yaml_file_name
     main_template = {'tenant': env_name, 'action': 'validate', 'configs': []}
 
@@ -700,12 +466,11 @@ def save_settings20_objects():
 
 
 def write_settings20_json(schema_id, json_dict):
-    # print('write_settings20_json(' + schema_id + ',' + str(json_dict) + ')')
-    print('write_settings20_json(' + schema_id + ')')
+    object_id = json_dict.get('objectId')
+    # print(f'write_settings20_json({schema_id}, {str(json_dict)})')
+    print(f'write_settings20_json({schema_id}, {str(object_id)})')
     dir_name = schema_id.replace(':', '.')
     save_path = backup_directory_path + '/api/v2/settings/objects/' + dir_name
-
-    object_id = json_dict.get('objectId')
     if object_id:
         write_json(save_path, object_id, json_dict)
     else:
@@ -714,7 +479,7 @@ def write_settings20_json(schema_id, json_dict):
 
 def write_json(directory_path, filename, json_dict):
     # print('write_json(' + directory_path + ',' + filename + ',' + str(json_dict) + ')')
-    print('write_json(' + directory_path + ',' + filename + ')')
+    # print('write_json(' + directory_path + ',' + filename + ')')
     # print(directory_path)
     # print(filename)
     # print(json_dict)
@@ -729,16 +494,116 @@ def write_json(directory_path, filename, json_dict):
         file.write(json.dumps(json_dict, indent=4, sort_keys=False))
 
 
-def make_directory(path):
-    # print('make_directory(' + path + ')')
-    try:
-        os.makedirs(path)
-    except OSError:
-        print('Creation of the directory %s failed' % path)
-        exit()
-    else:
-        pass
-        # print('Successfully created the directory %s ' % path)
+def save_environment_objects():
+    # print('save_environment_objects()')
+    save_slo_objects()
+    save_synthetic_monitor_objects()
+    save_synthetic_location_objects()
+
+
+def save_slo_objects():
+    # print('save_slo_objects()')
+    filename = backup_directory_path + '/' + environment_yaml_file_name
+    main_template = {'tenant': env_name, 'action': 'validate', 'configs': []}
+
+    yaml_dict = copy.deepcopy(main_template)
+    config_list = []
+
+    endpoint = '/api/v2/slo'
+    params = f'&pageSize=500'
+    slo_json_list = get_rest_api_json(endpoint, params)
+
+    # print(slo_json_list)
+
+    # Not needed
+    # write_environment_json('api/v2/slo', 'root.json', slo_json_list)
+
+    for slo_json in slo_json_list:
+        inner_slo_json_list = slo_json.get('slo')
+        for inner_slo_json in inner_slo_json_list:
+            slo_id = inner_slo_json.get('id')
+            write_environment_json('api/v2/slo', slo_id, inner_slo_json)
+            config_list.append(inner_slo_json)
+
+    yaml_dict['slos'] = config_list
+
+    with open(filename, 'w') as file:
+        yaml.dump(yaml_dict, file, sort_keys=False)
+
+
+def save_synthetic_monitor_objects():
+    # print('save_synthetic_monitor_objects()')
+    filename = backup_directory_path + '/' + environment_yaml_file_name
+    main_template = {'tenant': env_name, 'action': 'validate', 'configs': []}
+
+    yaml_dict = copy.deepcopy(main_template)
+    config_list = []
+
+    endpoint = '/api/v1/synthetic/monitors'
+    raw_params = f'&pageSize=5000'
+    params = urllib.parse.quote(raw_params, safe='/,&=')
+    synthetic_monitor_json_list = get_rest_api_json(endpoint, params)
+
+    # print(synthetic_monitor_json_list)
+
+    # Not needed
+    # write_environment_json('api/v1/synthetic/monitors', 'root.json', synthetic_monitor_json_list)
+
+    for synthetic_monitor_json in synthetic_monitor_json_list:
+        inner_synthetic_monitor_json_list = synthetic_monitor_json.get('monitors')
+        for inner_synthetic_monitor_json in inner_synthetic_monitor_json_list:
+            synthetic_monitor_id = inner_synthetic_monitor_json.get('entityId')
+            endpoint = f'/api/v1/synthetic/monitors/{synthetic_monitor_id}'
+            params = ''
+            synthetic_monitor_details_json = get_rest_api_json(endpoint, params)
+            write_environment_json('api/v1/synthetic/monitors', synthetic_monitor_id, synthetic_monitor_details_json)
+            config_list.append(inner_synthetic_monitor_json)
+
+    yaml_dict['synthetic_monitors'] = config_list
+
+    with open(filename, 'w') as file:
+        yaml.dump(yaml_dict, file, sort_keys=False)
+
+
+def save_synthetic_location_objects():
+    # print('save_synthetic_location_objects()')
+    filename = backup_directory_path + '/' + environment_yaml_file_name
+    main_template = {'tenant': env_name, 'action': 'validate', 'configs': []}
+
+    yaml_dict = copy.deepcopy(main_template)
+    config_list = []
+
+    endpoint = '/api/v1/synthetic/locations'
+    raw_params = f'&pageSize=5000'
+    params = urllib.parse.quote(raw_params, safe='/,&=')
+    synthetic_location_json_list = get_rest_api_json(endpoint, params)
+
+    # print(synthetic_location_json_list)
+
+    # Not needed
+    # write_environment_json('api/v1/synthetic/location', 'root.json', synthetic_location_json_list)
+
+    for synthetic_location_json in synthetic_location_json_list:
+        inner_synthetic_location_json_list = synthetic_location_json.get('locations')
+        for inner_synthetic_location_json in inner_synthetic_location_json_list:
+            synthetic_location_id = inner_synthetic_location_json.get('entityId')
+            endpoint = f'/api/v1/synthetic/locations/{synthetic_location_id}'
+            params = ''
+            synthetic_location_details_json = get_rest_api_json(endpoint, params)
+            write_environment_json('api/v1/synthetic/location', synthetic_location_id, synthetic_location_details_json)
+            config_list.append(inner_synthetic_location_json)
+
+    yaml_dict['synthetic_locations'] = config_list
+
+    with open(filename, 'w') as file:
+        yaml.dump(yaml_dict, file, sort_keys=False)
+
+
+def write_environment_json(dir_name, environment_id, json_dict):
+    # print(f'write_environment_json({dir_name}, {environment_id}, {json_dict})')
+    print(f'write_environment_json({environment_id})')
+    save_path = f'{backup_directory_path}/{dir_name}'
+    write_json(save_path, environment_id, json_dict)
 
 
 def confirm(message):
@@ -746,11 +611,11 @@ def confirm(message):
     if confirmation_required:
         proceed = input('%s (Y/n) ' % message).upper() == 'Y'
         if not proceed:
-            exit(get_linenumber())
+            exit(get_line_number())
 
 
-def get_linenumber():
-    # print('get_linenumber()')
+def get_line_number():
+    # print('get_line_number()')
     cf = currentframe()
     return cf.f_back.f_lineno
 
@@ -760,3 +625,4 @@ if __name__ == '__main__':
     initialize()
     save_configuration_api_settings()
     save_settings20_objects()
+    save_environment_objects()
