@@ -60,15 +60,6 @@ def remove_duplicates(any_list):
     return new_list
 
 
-def get_tag_value(key, tags, default_value):
-    text_to_check = f"'key': '{key}'"
-    if text_to_check in str(tags):
-        for tag in tags:
-            if text_to_check in str(tag):
-                return tag.get('value')
-    return default_value
-
-
 def get_rest_api_json(url, token, endpoint, params):
     # print(f'get_rest_api_json({url}, {endpoint}, {params})')
     full_url = url + endpoint

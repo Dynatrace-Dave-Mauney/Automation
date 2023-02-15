@@ -4,7 +4,7 @@ import requests
 import socket
 import ssl_expiry
 import yaml
-import list_urls_referenced_by_synthetics
+import list_hosts_referenced_by_synthetics
 import list_hosts_monitored_by_oneagent
 
 
@@ -23,7 +23,7 @@ def process(env, token):
     fail_connect_count = 0
     fail_cert_count = 0
 
-    host_names_from_synthetics = list_urls_referenced_by_synthetics.process(env, token, False)
+    host_names_from_synthetics = list_hosts_referenced_by_synthetics.process(env, token, False)
     host_name_from_oneagents = list_hosts_monitored_by_oneagent.process(env, token, False)
 
     host_names.extend(host_names_from_synthetics)
