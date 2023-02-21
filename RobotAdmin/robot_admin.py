@@ -233,8 +233,15 @@ def process():
 	# put_health_check_request_naming_rules_user_agent()
 	# put_health_check_request_naming_rules_urls()
 
-	# Create manangement zones based on AWS integration names
+	# Create management zones based on AWS integration names
 	# post_management_zone_per_aws_credential_name()
+
+	# Report some request naming rules
+	# dump_request_naming_rules_rules()
+	# endpoint = '/api/config/v1/service/requestNaming'
+	# print(get_by_object_id(endpoint, 'aaaaaaaa-bbbb-cccc-dddd-000000000001').text)
+	# print(get_by_object_id(endpoint, 'aaaaaaaa-bbbb-cccc-dddd-000000000002').text)
+	# print(get_by_object_id(endpoint, 'aaaaaaaa-bbbb-cccc-dddd-000000000100').text)
 
 	# For extra safety
 	exit(8000)
@@ -277,7 +284,6 @@ def sanity_test():
 	process_all_request_naming_rules()
 	confirm('Do you want to create all conditional naming rules?')
 	process_all_conditional_naming_rules()
-
 
 
 def process_customer_specific_auto_tags():
@@ -419,14 +425,14 @@ def process_auto_tags_basics():
 
 	# "Special" Tags: Miscellaneous
 	put_auto_tag_service_topology_type()
-	put_auto_tag_process_technolgy()
+	put_auto_tag_process_technology()
 
 
 def process_auto_tags_host():
 	put_auto_tag('Host CPU Cores', 'HOST_DETECTED_NAME', 'EXISTS', '{Host:CpuCores}', 'HOST')
 	put_auto_tag('VMWare Data Center Name', 'VMWARE_DATACENTER_NAME', 'EXISTS', '{VmwareDatacenter:Name}', 'HOST')
 	put_auto_tag('VMWare VM Name', 'VMWARE_VM_NAME', 'EXISTS', '{VmwareVm:Name}', 'HOST')
-	put_auto_tag_host_technolgy()
+	put_auto_tag_host_technology()
 
 
 def process_auto_tags_process():
@@ -1509,7 +1515,7 @@ def put_auto_tag_data_center():
 		put(endpoint, object_id, payload)
 
 
-def put_auto_tag_process_technolgy():
+def put_auto_tag_process_technology():
 	name = 'Technology'
 
 	object_id = fixed_auto_tag_ids.get(name)
@@ -1542,7 +1548,7 @@ def put_auto_tag_process_technolgy():
 		put(endpoint, object_id, payload)
 
 
-def put_auto_tag_host_technolgy():
+def put_auto_tag_host_technology():
 	name = 'Host Technology'
 
 	object_id = fixed_auto_tag_ids.get(name)
@@ -2277,9 +2283,9 @@ def dump_auto_tags():
 	for request_attribute in request_attribute_list:
 		object_id = request_attribute.get('id')
 		name = request_attribute.get('name')
-		if object_id.startswith('aaaaaaaa-bbbb-cccc-dddd'):
 		# if name.lower() in str(fixed_request_attribute_ids).lower() and not object_id.startswith('aaaaaaaa-bbbb-cccc-dddd'):
 		# if not object_id.startswith('aaaaaaaa-bbbb-cccc-dddd'):
+		if object_id.startswith('aaaaaaaa-bbbb-cccc-dddd'):
 			print_lines.append(name + ': ' + object_id)
 
 	for print_line in sorted(print_lines):
@@ -2296,9 +2302,9 @@ def dump_request_attributes():
 	for request_attribute in request_attribute_list:
 		object_id = request_attribute.get('id')
 		name = request_attribute.get('name')
-		if object_id.startswith('aaaaaaaa-bbbb-cccc-dddd'):
 		# if name.lower() in str(fixed_request_attribute_ids).lower() and not object_id.startswith('aaaaaaaa-bbbb-cccc-dddd'):
 		# if not object_id.startswith('aaaaaaaa-bbbb-cccc-dddd'):
+		if object_id.startswith('aaaaaaaa-bbbb-cccc-dddd'):
 			print_lines.append(name + ': ' + object_id)
 
 	for print_line in sorted(print_lines):
@@ -2315,10 +2321,10 @@ def dump_request_naming_rules_rules():
 	for request_attribute in request_attribute_list:
 		object_id = request_attribute.get('id')
 		name = request_attribute.get('name')
-		if object_id.startswith('aaaaaaaa-bbbb-cccc-dddd'):
 		# if not object_id.startswith('aaaaaaaa-bbbb-cccc-dddd'):
 		# if name.lower() in str(fixed_request_attribute_ids).lower() and not object_id.startswith('aaaaaaaa-bbbb-cccc-dddd'):
 		# if True:
+		if object_id.startswith('aaaaaaaa-bbbb-cccc-dddd'):
 			print_lines.append(name + ': ' + object_id)
 
 	for print_line in sorted(print_lines):
@@ -2427,7 +2433,7 @@ def copy_paste_reuse_section():
 
 	# customer_specific Opt-Outs:
 	# Information not valuable to a wide enough audience:
-	# put_auto_tag_host_technolgy()
+	# put_auto_tag_host_technology()
 
 	# TODO: Figure why these placeholders are bad:
 	# put_auto_tag_typical_process_group_dynamic_key('Java Main CLass', 'JAVA_MAIN_CLASS', '{ProcessGroup:JavaMainCLass}')
