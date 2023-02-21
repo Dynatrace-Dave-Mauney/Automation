@@ -236,6 +236,10 @@ def process():
 	# Create management zones based on AWS integration names
 	# post_management_zone_per_aws_credential_name()
 
+	# Report all entities with fixed IDs
+	# print('Entities with fixed ids:')
+	# report_fixed_id_entities()
+
 	# Report some request naming rules
 	# dump_request_naming_rules_rules()
 	# endpoint = '/api/config/v1/service/requestNaming'
