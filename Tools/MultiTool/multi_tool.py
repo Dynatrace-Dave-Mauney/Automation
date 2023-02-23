@@ -885,7 +885,7 @@ def run():
             print('Invalid command or config id. (Embedded space detected).')
             continue
 
-        if '' in input_string.rstrip().lstrip():
+        if input_string.rstrip().lstrip() == '':
             print('Empty command ignored')
             continue
 
