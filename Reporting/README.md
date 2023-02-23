@@ -13,5 +13,9 @@ env_name, tenant_key, token_key = ('FreeTrial1', 'FREETRIAL1_TENANT', 'ROBOT_ADM
 ```
 An example HTML audit report can be viewed [here](https://dynatrace-dave-mauney.github.io/Automation/Example_Environment_Summary.html).
 
+You can optionally add "findings" by creating a text file with your comments under each "heading" that matches one in the audit report ("Cluster Summary", "ActiveGate Summary", etc.).
+
+You can see the default findings file name, and modify it if you wish, in the [findings_loader.py](https://github.com/Dynatrace-Dave-Mauney/Automation/blob/main/Reporting/findings_loader.py).
+
 
 

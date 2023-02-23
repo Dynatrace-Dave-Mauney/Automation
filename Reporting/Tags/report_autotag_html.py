@@ -48,6 +48,8 @@ def process(env, token):
 
     html_line_list = []
 
+    filename = f'{html_path}/TagSummary_For_{env_name}.html'
+
     for autotags_json in autotags_json_list:
         inner_autotags_json_list = autotags_json.get('values')
         for inner_autotags_json in inner_autotags_json_list:
@@ -58,7 +60,9 @@ def process(env, token):
             html = f'      {row_start}{col_start}{name}{col_end}{col_start}{description}{col_end}{row_end}'
             html_line_list.append(html)
 
-            write_html(f'{html_path}/TagSummary_For_{env_name}.html', sorted(html_line_list))
+            write_html(filename, sorted(html_line_list))
+
+    print(f'Output written to {filename}')
 
 
 def write_html(filename, html_line_list):
@@ -96,8 +100,8 @@ def write_h1_heading(outfile, heading):
 def main():
     global env_name
     # env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-    # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-    env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
+    env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
+    # env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
     # env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
 
     tenant = os.environ.get(tenant_key)
