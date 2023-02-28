@@ -5,9 +5,9 @@ import os
 import requests
 import ssl
 
-# env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
+env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
 # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
+# env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
 # env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
 
 tenant = os.environ.get(tenant_key)
@@ -33,12 +33,12 @@ def put(endpoint, object_id, payload):
 	# print('payload: ' + json_data)
 	try:
 		r = requests.put(url, json_data.encode('utf-8'), headers={'Authorization': 'Api-Token ' + token, 'Content-Type': 'application/json; charset=utf-8'})
-		print('Status Code: %d' % r.status_code)
-		print('Reason: %s' % r.reason)
-		if len(r.text) > 0:
-			print(r.text)
 		if r.status_code not in [200, 201, 204]:
 			# print(json_data)
+			print('Status Code: %d' % r.status_code)
+			print('Reason: %s' % r.reason)
+			if len(r.text) > 0:
+				print(r.text)
 			error_filename = '$put_error_payload.json'
 			with open(error_filename, 'w') as file:
 				file.write(json_data)
@@ -53,7 +53,7 @@ def put(endpoint, object_id, payload):
 
 
 def get_by_object_id(endpoint, object_id):
-	print(f'get_by_object_id({endpoint}, {object_id})')
+	# print(f'get_by_object_id({endpoint}, {object_id})')
 	url = env + endpoint + '/' + object_id
 	# print('GET: ' + url)
 	try:
@@ -92,7 +92,7 @@ def get_linenumber():
 
 
 def update(config_endpoint, tag_name, key, value):
-	print(f'update({config_endpoint}, {tag_name}, {key}, {value})')
+	# print(f'update({config_endpoint}, {tag_name}, {key}, {value})')
 	global object_cache
 	# print('update(' + config_endpoint + ',' + tag_name + ',' + key + ',' + value + ')')
 	endpoint = '/api/config/v1/' + config_endpoint
@@ -112,7 +112,7 @@ def update(config_endpoint, tag_name, key, value):
 
 		object_cache[endpoint] = config_dict
 
-		print(object_cache)
+		# print(object_cache)
 
 	object_id = object_cache[endpoint].get(tag_name)
 
@@ -120,7 +120,7 @@ def update(config_endpoint, tag_name, key, value):
 	if not object_id:
 		return
 
-	print(f'object_id: {object_id}')
+	# print(f'object_id: {object_id}')
 
 	config_object = json.loads(get_by_object_id(endpoint, object_id).text)
 
@@ -133,7 +133,7 @@ def update(config_endpoint, tag_name, key, value):
 
 	config_object[key] = value
 
-	print(config_object)
+	# print(config_object)
 
 	put(endpoint, object_id, json.dumps(config_object))
 
@@ -258,54 +258,55 @@ def process():
 
 	auto_tag_updates_customer_specific_no_prefix_no_suffix = [
 		('AWS ALB', 'description', 'Friendly names for AWS ALB entities'),
-		('AWS Availability Zone', 'description', 'DEPRECATED: Replaced with BETA AWS Availability Zone'),
+		('AWS Availability Zone-Original', 'description', 'DEPRECATED: Use AWS Availability Zone'),
 		('AWS RDS', 'description', 'Friendly names for AWS RDS entities'),
-		('Apache', 'description', 'DEPRECATED: Replaced with BETA Technology:APACHE_HTTP_SERVER'),
-		('Apache_Process', 'description', 'DEPRECATED: Replaced with BETA Technology:APACHE_HTTP_SERVER'),
+		('Apache', 'description', 'DEPRECATED: Replaced with Technology:APACHE_HTTP_SERVER'),
+		('Apache_Process', 'description', 'DEPRECATED: Replaced with Technology:APACHE_HTTP_SERVER'),
 		('App', 'description', 'Filter a dashboard or view to an application that is not covered fully by the standard "Application" tag'),
 		('Application', 'description', 'Filter a dashboard or view to an application (which is part of the Host Group name)'),
 		('Audit Tag', 'description', 'Used to enforce the Host Group naming standard'),
-		('ChannelPublishingJmsMessageListener', 'description', 'DEPRECATED: :Use BETA Service Name:ChannelPublishingJmsMessageListener'),
-		('Cloud Provider', 'description', 'DEPRECATED: Use BETA Cloud Provider'),
+		('ChannelPublishingJmsMessageListener', 'description', 'DEPRECATED: Use Service Name:ChannelPublishingJmsMessageListener'),
+		('Cloud Provider', 'description', 'Filter by Cloud Provider'),
 		('Company', 'description', 'Filter a dashboard or view to a company (which is part of the Host Group name)'),
-		('Context', 'description', 'DEPRECATED: Use BETA Web Context Root and BETA Technology:ORACLE_WEBLOGIC instead'),
+		('Context', 'description', 'DEPRECATED: Use Web Context Root and Technology:ORACLE_WEBLOGIC instead'),
 		('Docker Worker', 'description', 'DEPRECATED: tag appears to no longer work'),
 		('Environment', 'description', 'Filter a dashboard or view to an environment (which is part of the Host Group name)'),
-		('IIB Server Name', 'description', 'DEPRECATED: Use BETA IBM Integration Server Name'),
+		('IIB Server Name', 'description', 'DEPRECATED: Use IBM Integration Server Name'),
 		('IIB Service', 'description', 'DEPRECATED: tag appears to no longer work'),
-		('IIB', 'description', 'DEPRECATED: Use BETA IBM Integration Server Name:All'),
-		('J4LS_Cluster', 'description', 'DEPRECATED: Use BETA WebSphere Cluster Name:J4LS'),
-		('k8s Namespace', 'description', 'DEPRECATED: Use BETA Kubernetes Namespace'),
-		('Kubernetes_Namespace', 'description', 'DEPRECATED: Use BETA Kubernetes Namespace'),
+		('IIB', 'description', 'DEPRECATED: Use IBM Integration Server Name:All'),
+		('J4LS_Cluster', 'description', 'DEPRECATED: Use WebSphere Cluster Name:J4LS'),
+		('k8s Namespace', 'description', 'DEPRECATED: Use Kubernetes Namespace'),
+		('Kubernetes_Namespace', 'description', 'DEPRECATED: Use Kubernetes Namespace'),
 		('LLAWP', 'description', 'DEPRECATED: tag appears to no longer work'),
-		('Linux', 'description', 'DEPRECATED: Use BETA OS:Linux'),
-		('Location', 'description', 'DEPRECATED: Use BETA Data Center'),
+		('Linux', 'description', 'DEPRECATED: Use OS:Linux'),
+		('Location', 'description', 'DEPRECATED: Use Data Center'),
 		('MQ-QueueManager', 'description', 'Filter IBM MQ Custom Devices by the MQ Queue Manager name'),
 		('OCP', 'description', 'Filter to OCP services and process groups running Apache HTTPD Siteminder'),
 		('OCP_Node_Role', 'description', 'Filter hosts and process groups by OCP node role'),
-		('OpenShift', 'description', 'DEPRECATED: Use BETA Technology:OPENSHIFT'),
-		('OS', 'description', 'DEPRECATED: Use BETA OS'),
+		('OpenShift', 'description', 'DEPRECATED: Use Technology:OPENSHIFT'),
+		('OpenShift-Origina;', 'description', 'DEPRECATED: Use Technology:OPENSHIFT'),
+		('OS-Original', 'description', 'DEPRECATED: Use OS'),
 		('Other Services', 'description', ''),
 		('Phoenix', 'description', 'Filter process groups running Java for Phoenix'),
 		('Phoenix_Global_CustomService', 'description', 'DEPRECATED: tag appears to no longer work'),
 		('Phoenix_Global_MsgService', 'description', 'DEPRECATED: tag appears to no longer work'),
 		('Phoenix_Informatica_Outbound', 'description', 'DEPRECATED: tag appears to no longer work'),
 		('Phoenix_Java_Service', 'description', 'Filter services and process groups running Java for Phoenix'),
-		('Technology', 'description', 'DEPRECATED: Use BETA Technology'),
-		('Tivoli_agent', 'description', 'DEPRECATED: Use BETA Exe Name:klzagent'),
-		('Tivoli_Agent', 'description', 'DEPRECATED: Use BETA Exe Name:klzagent'),
+		('Technology-Original', 'description', 'DEPRECATED: Use Technology'),
+		('Tivoli_agent', 'description', 'DEPRECATED: Use Exe Name:klzagent'),
+		('Tivoli_Agent', 'description', 'DEPRECATED: Use Exe Name:klzagent'),
 		('UCD', 'description', 'Filter services running ActiveMQ and referencing "air-*" java jar path'),
 		('UCD_Agent', 'description', 'Filter process groups referencing "airworker.jar" or "air-monitor.jar" from the java jar path'),
-		('WebSphere Cell Name', 'description', 'DEPRECATED: Use BETA WebSphere Cell'),
-		('WebSphere Cluster Name', 'description', 'DEPRECATED: Use BETA WebSphere Cluster'),
-		('WebSphere_Process', 'description', 'DEPRECATED: Use BETA WebSphere Cluster'),
-		('Websphere', 'description', 'DEPRECATED: Use BETA WebSphere Cluster'),
-		('Websphere_Cluster', 'description', 'DEPRECATED: Use BETA WebSphere Cluster'),
-		('Windows', 'description', 'DEPRECATED: Use BETA OS:Windows'),
+		('WebSphere Cell Name', 'description', 'DEPRECATED: Use WebSphere Cell'),
+		('WebSphere Cluster Name', 'description', 'DEPRECATED: Use WebSphere Cluster'),
+		('WebSphere_Process', 'description', 'DEPRECATED: Use WebSphere Cluster'),
+		('Websphere', 'description', 'DEPRECATED: Use WebSphere Cluster'),
+		('Websphere_Cluster', 'description', 'DEPRECATED: Use WebSphere Cluster'),
+		('Windows', 'description', 'DEPRECATED: Use OS:Windows'),
 	]
 
 	if env_name in ['Prod', 'Prep', 'Dev']:
-		name_prefix = 'BETA'
+		name_prefix = ''
 		description_suffix = '(generated with RobotAdmin)'
 		update_auto_tag_list(name_prefix, description_suffix, auto_tag_updates)
 		update_auto_tag_list(None, None, auto_tag_updates_customer_specific_no_prefix_no_suffix)
@@ -326,7 +327,7 @@ def update_auto_tag_list(name_prefix, description_suffix, auto_tag_update_list):
 			if description_suffix:
 				value = f'{value} {description_suffix}'
 
-			print(name + ': ' + key + ': ' + value)
+			# print(name + ': ' + key + ': ' + value)
 			update('autoTags', name, key, value)
 
 
