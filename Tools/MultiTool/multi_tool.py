@@ -39,8 +39,11 @@ def list_config_endpoints():
     for endpoint in endpoints:
         endpoint_dict = paths.get(endpoint)
         methods = list(endpoint_dict.keys())
-        if 'get' in methods and str(endpoint).endswith('{id}'):
-            line = endpoint[1:].replace('/{id}', '')
+        # if 'get' in methods and str(endpoint).endswith('{id}'):
+        #     line = endpoint[1:].replace('/{id}', '')
+        #     lines.append(line)
+        if 'get' in methods and '{' not in str(endpoint):
+            line = endpoint[1:]
             lines.append(line)
 
     for line in sorted(lines):
@@ -100,7 +103,7 @@ def list_configs(env, token, filtering):
     headers = {'Authorization': 'Api-Token ' + token}
     try:
         url = f'{env}/api/config/v1/{api}'
-        # print(url)
+        print(url)
         r = requests.get(url, headers=headers)
         # config_content = json.dumps(r.json(), indent=4)
 
@@ -113,25 +116,43 @@ def list_configs(env, token, filtering):
                 if api == 'extensions':
                     key = 'extensions'
                 else:
-                    key = 'values'
+                    if api == 'technologies':
+                        key = 'technologies'
+                    else:
+                        key = 'values'
 
-            if api == 'aws/credentials':
-                values = json_response
-                # print(values)
-            else:
+            # For the endpoints that do not support lists or have not been added to the list above yet
+            values = json_response
+
+            if key in str(json_response):
                 values = json_response.get(key)
-                if values is None:
-                    print('API key not found in list, add new value key in code above the line number shown below')
-                    print(json_response)
-                    exit(get_line_number())
+
             lines = []
-            for value in values:
-                line = f'{value.get("name")}|{value.get("id")}'
+
+            if isinstance(values, list):
+                for value in values:
+                    if isinstance(value, dict):
+                        entity_name = value.get('name')
+                        entity_id = value.get('id')
+                        if entity_name and entity_id:
+                            line = f'{entity_name}|{entity_id}'
+                            if not filtering or filtering in line:
+                                lines.append(line)
+                        else:
+                            line = str(value)
+                            if not filtering or filtering in line:
+                                lines.append(line)
+                    else:
+                        line = str(value)
+                        if not filtering or filtering in line:
+                            lines.append(line)
+            else:
+                line = str(values)
                 if not filtering or filtering in line:
                     lines.append(line)
+
             for line in sorted(lines):
                 print(line)
-            # print(json.dumps(r.json(), indent=4))
         else:
             if r.status_code == 404:
                 if "HTTP 404 Not Found" in r.text:
@@ -143,7 +164,6 @@ def list_configs(env, token, filtering):
                     print(r.text)
     except ssl.SSLError:
         print("SSL Error")
-
 
 def view_entity(entity_id, env, token):
     headers = {'Authorization': 'Api-Token ' + token}
