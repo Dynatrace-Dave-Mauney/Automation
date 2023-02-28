@@ -1,65 +1,91 @@
+#
+# Compare links from Hub UI and API.
+# Output is written to the console in pipe-delimited format, to an Excel spreadsheet and to an HTML page.
+#
+
 import os
 import requests
 import time
+from bs4 import BeautifulSoup
 
 
-def process_hub_categories(env, token):
-    print('Hub Categories')
-    print(f'id|name|description')
-    endpoint = '/api/v2/hub/categories'
-    params = ''
-    hub_categories_json_list = get_rest_api_json(env, token, endpoint, params)
-    for hub_categories_json in hub_categories_json_list:
-        inner_hub_categories_json_list = hub_categories_json.get('items')
-        for inner_hub_categories_json in inner_hub_categories_json_list:
-            hub_category_id = inner_hub_categories_json.get('id')
-            hub_category_name = inner_hub_categories_json.get('name')
-            hub_category_description = inner_hub_categories_json.get('description')
-            print(f'{hub_category_id}|{hub_category_name}|{hub_category_description}')
+def get_links_from_api(env, token):
+    result = {}
 
-
-def process_hub_items(env, token, show_description_blocks):
-    print('Hub items')
-    print(f'id|name|description')
-    print('type|id|name|description|tags|documentationLink|marketingLink|comingSoon|artifactId')
     endpoint = '/api/v2/hub/items'
     params = ''
     hub_items_json_list = get_rest_api_json(env, token, endpoint, params)
     for hub_items_json in hub_items_json_list:
         inner_hub_items_json_list = hub_items_json.get('items')
         for inner_hub_items_json in inner_hub_items_json_list:
-            hub_item_type = inner_hub_items_json.get('type')
-            hub_item_id = inner_hub_items_json.get('itemId')
             hub_item_name = inner_hub_items_json.get('name')
-            hub_item_description = inner_hub_items_json.get('description')
-            hub_item_tags = inner_hub_items_json.get('tags')
             hub_item_documentation_link = inner_hub_items_json.get('documentationLink')
             hub_item_marketing_link = inner_hub_items_json.get('marketingLink')
-            hub_item_coming_soon = inner_hub_items_json.get('comingSoon')
-            hub_item_artifact_id = inner_hub_items_json.get('artifactId')
-            has_description_blocks = inner_hub_items_json.get('hasDescriptionBlocks')
-            if show_description_blocks and has_description_blocks:
-                hub_technology_description_list = get_technology_description_blocks(env, token, hub_item_id)
-                print(f'{hub_item_type}|{hub_item_id}|{hub_item_name}|{hub_item_description}|{hub_item_tags}|{hub_item_documentation_link}|{hub_item_marketing_link}|{hub_item_coming_soon}|{hub_item_artifact_id}')
-                for hub_technology_description in hub_technology_description_list:
-                    print(hub_technology_description)
+            result[hub_item_name] = (hub_item_documentation_link, hub_item_marketing_link)
+
+    return result
+
+
+def get_links_from_ui():
+    page = requests.get('https://www.dynatrace.com/hub/')
+    soup = BeautifulSoup(page.text, 'html.parser')
+
+    result = {}
+
+    for link in soup.find_all('a'):
+        title = link.get('title')
+        if title:
+            href = link.get('href')
+            if href.startswith('/'):
+                href = f'https://dynatrace.com{href}'
+            result[title] = href
+
+    return result
+
+
+def compare(api_links, ui_links):
+    api_keys = list(api_links.keys())
+    ui_keys = list(ui_links.keys())
+
+    all_keys = []
+
+    all_keys.extend(api_keys)
+    all_keys.extend(ui_keys)
+
+    all_unique_keys = sorted(list(set(all_keys)))
+
+    for key in all_unique_keys:
+        api_link_tuple = api_links.get(key, (None, None))
+        ui_link = ui_links.get(key)
+        if ui_link == api_link_tuple[0]:
+            match_description = 'Doc'
+        else:
+            if ui_link == api_link_tuple[1]:
+                match_description = 'Mkt'
             else:
-                print(f'{hub_item_type}|{hub_item_id}|{hub_item_name}|{hub_item_description}|{hub_item_tags}|{hub_item_documentation_link}|{hub_item_marketing_link}|{hub_item_coming_soon}|{hub_item_artifact_id}')
+                match_description = 'N/A'
+        if match_description == 'Doc':
+            print(f'{key}:{match_description}')
+            print(f'{key}:{ui_link}:{api_link_tuple}')
 
 
-def get_technology_description_blocks(env, token, hub_technology_id):
-    technology_description_blocks = []
-    endpoint = f'/api/v2/hub/technologies/{hub_technology_id}' 
-    params = ''
-    hub_technology_json = get_rest_api_json(env, token, endpoint, params)[0]
-    if not hub_technology_json.get('error'):
-        hub_technology_description_blocks = hub_technology_json.get('descriptionBlocks')
-        if hub_technology_description_blocks:
-            for hub_technology_description_block in hub_technology_description_blocks:
-                source = technology_description_blocks.append(hub_technology_description_block.get('source'))
-                if source:
-                    technology_description_blocks.append(source)
-    return technology_description_blocks
+def build_fall_back_links(api_links, ui_links):
+    api_keys = list(api_links.keys())
+    ui_keys = list(ui_links.keys())
+
+    all_keys = []
+
+    all_keys.extend(api_keys)
+    all_keys.extend(ui_keys)
+
+    all_unique_keys = sorted(list(set(all_keys)))
+
+    for key in all_unique_keys:
+        api_link_tuple = api_links.get(key, (None, None))
+        ui_link = ui_links.get(key)
+        if ui_link:
+            if not api_link_tuple[0] and not api_link_tuple[1]:
+                print(f'{key}:{ui_link}')
 
 
 def get_rest_api_json(url, token, endpoint, params):
@@ -130,8 +156,12 @@ def main():
 
     print('')
     print('Hub Summary')
-    # process_hub_categories(env, token)
-    process_hub_items(env, token, False)
+
+    api_links = get_links_from_api(env, token)
+    ui_links = get_links_from_ui()
+    # compare(api_links, ui_links)
+    build_fall_back_links(api_links, ui_links)
 
 if __name__ == '__main__':
     main()
+

@@ -1,252 +1,170 @@
 #
-# Scrape dynatrace.com/Hub and summarize how to deal with each technology.
+# Summarize how to deal with each technology listed by the hub API and/or the hub page at https://www.dynatrace.com/hub/.
 # Output is written to the console in pipe-delimited format, to an Excel spreadsheet and to an HTML page.
 #
 
+import os
 import requests
+import time
 import xlsxwriter
 from bs4 import BeautifulSoup
 
-include_list = [
-    '.NET / .NET Core',
-    '.NET Framework',
-    'ADO.NET',
-    'Amazon API Gateway',
-    'Amazon AppStream 2.0',
-    'Amazon Athena',
-    'Amazon Aurora',
-    'Amazon CloudFront',
-    'Amazon CloudSearch',
-    'Amazon CloudWatch Logs',
-    'Amazon Cloudwatch',
-    'Amazon Cognito',
-    'Amazon Corretto',
-    'Amazon DocumentDB',
-    'Amazon DynamoDB',
-    'Amazon EC2 Auto Scaling',
-    'Amazon EC2 Spot Fleet',
-    'Amazon EC2',
-    'Amazon Elastic Block Store (EBS)',
-    'Amazon Elastic Container Service (ECS)',
-    'Amazon Elastic File Service (EFS)',
-    'Amazon Elastic Inference',
-    'Amazon Elastic Kubernetes Service (EKS)',
-    'Amazon ElastiCache',
-    'Amazon Elasticsearch Service',
-    'Amazon EMR',
-    'Amazon FSx for Lustre',
-    'Amazon FSx for Windows File Server',
-    'Amazon GameLift',
-    'Amazon Inspector',
-    'Amazon Keyspaces for Apache Cassandra',
-    'Amazon Kinesis Data Analytics',
-    'Amazon Kinesis Data Firehose',
-    'Amazon Kinesis Data Streams',
-    'Amazon Kinesis Video Streams',
-    'Amazon Lex',
-    'Amazon Linux 2',
-    'Amazon Managed Service for Prometheus',
-    'Amazon MSK',
-    'Amazon Neptune',
-    'Amazon Redshift',
-    'Amazon Rekognition',
-    'Amazon Relational Database Service (RDS)',
-    'Amazon Route 53',
-    'Amazon S3',
-    'Amazon SageMaker',
-    'Amazon Simple Email Service (SES)',
-    'Amazon Simple Notification Service (SNS)',
-    'Amazon Simple Queue Service (SQS)',
-    'Amazon Simple Workflow Service (SWF)',
-    'Amazon Textract',
-    'Amazon Transfer Family',
-    'Amazon Translate',
-    'Amazon VPC (NAT Gateway)',
-    'Amazon WorkMail',
-    'Amazon WorkSpaces',
-    'Amazon MQ',
-    'AngularJS',
-    'Angular',
-    'Apache Cassandra (Remote)',
-    'Apache Cassandra',
-    'Apache HTTP Server',
-    'Apache Kafka',
-    'Apache Solr',
-    'Apache Tomcat',
-    'ASP.NET / ASP.NET Core',
-    'ASP.NET Owin/Katana',
-    'AWS AppSync',
-    'AWS Billing and Cost Management',
-    'AWS Chatbot',
-    'AWS CloudHSM',
-    'AWS CodeDeploy',
-    'AWS CodePipeline',
-    'AWS Database Migration Service',
-    'AWS DataSync',
-    'AWS Direct Connect',
-    'AWS Elastic Beanstalk',
-    'AWS Elastic Load Balancing',
-    'AWS Elemental MediaConnect',
-    'AWS Elemental MediaConvert',
-    'AWS Elemental MediaPackage',
-    'AWS Elemental MediaTailor',
-    'AWS Fargate',
-    'AWS Glue',
-    'AWS IoT Analytics',
-    'AWS IoT Things Graph',
-    'AWS IoT',
-    'AWS Lambda',
-    'AWS OpsWorks',
-    'AWS Outposts',
-    'AWS PrivateLink',
-    'AWS Service Catalog',
-    'AWS Step Functions',
-    'AWS Storage Gateway',
-    'AWS Systems Manager',
-    'AWS Transit Gateway',
-    'AWS Trusted Advisor',
-    'AWS Web Application Firewall (WAF)',
-    'AWS',
-    'Connection Pools: JBoss',
-    'Connection Pools: Tomcat',
-    'Connection Pools: WebLogic',
-    'CoreDNS',
-    'Docker',
-    'Elasticsearch',
-    'etcd for OpenShift',
-    'F5 BIG-IP LTM',
-    'Fluent Bit',
-    'Go',
-    'gRPC',
-    'HAProxy',
-    'IBM AIX',
-    'IBM DataPower',
-    'IBM DB2',
-    'IBM Integration Bus',
-    'IBM JVM',
-    'IBM MQ - ActiveGate',
-    'IBM MQ',
-    'IBM WebSphere Application Server',
-    'IBM WebSphere Liberty',
-    'Java JDBC',
-    'Java JMS',
-    'Java',
-    'JBoss Enterprise Application Platform',
-    'jQuery',
-    'Kubernetes Monitoring Statistics',
-    'Kubernetes persistent volume claims',
-    'Kubernetes',
-    'Linux',
-    'LoadRunner',
-    'Microsoft IIS',
-    'Microsoft Internet Explorer',
-    'Microsoft SQL Server',
-    'Mongo DB Atlas',
-    'MongoDB',
-    'Mozilla Firefox',
-    'MySQL (remote monitoring)',
-    'MySQL',
-    'Netty',
-    'Node.js',
-    'NTP sync check',
-    'OpenShift Control Plane',
-    'Oracle Database',
-    'Oracle WebLogic',
-    'PostgreSQL',
-    'Python',
-    'RabbitMQ',
-    'Red Hat Enterprise Linux CoreOS',
-    'Red Hat Enterprise Linux',
-    'Red Hat OpenShift',
-    'SAP HANA Database',
-    'ServiceNow',
-    'Snowflake',
-    'Synthetic monitor DNS',
-    'Synthetic monitor Ping',
-    'Synthetic monitor Ports',
-    'Synthetic Monitor SSH',
-    'Synthetic SFTP monitor',
-    'Ubuntu',
-    'VMware ESXi Host',
-    'VMware VCenter Alarms',
-    'VMware vCenter Server',
-    'VMware vSAN',
-    'VMware',
-    'Windows Communication Foundation (WCF)',
-    'Windows Scheduled Tasks',
-    'Windows Server File System Quotas',
-    'Windows',
-    'WSO2 API Manager',
-    'xMatters',
-]
 
-# how_to_monitor = {'xMatters': {'comment': 'Install the xMatters workflow', 'link': 'https://help.xmatters.com/integrations/monitoring/dynatrace.htm?cshid=Dynatrace'}}
+def process_hub_items(env, token):
+    api_results = process_hub_items_from_api(env, token)
+    web_results = process_hub_items_from_web()
+    merged_results = merge_results_into_dictionary(api_results, web_results)
+    process_merged_results(merged_results)
 
-def list_selected_links(filtering):
+
+def process_hub_items_from_api(env, token):
+    results = []
+
+    endpoint = '/api/v2/hub/items'
+    params = ''
+    hub_items_json_list = get_rest_api_json(env, token, endpoint, params)
+    for hub_items_json in hub_items_json_list:
+        inner_hub_items_json_list = hub_items_json.get('items')
+        for inner_hub_items_json in inner_hub_items_json_list:
+            hub_item_name = inner_hub_items_json.get('name')
+            hub_item_description = inner_hub_items_json.get('description')
+            hub_item_documentation_link = inner_hub_items_json.get('documentationLink')
+            hub_item_marketing_link = inner_hub_items_json.get('marketingLink')
+            comment = get_comment(hub_item_name)
+            results.append((hub_item_name, hub_item_description, comment, hub_item_documentation_link, hub_item_marketing_link))
+
+    return sorted(results)
+
+
+def process_hub_items_from_web():
     page = requests.get('https://www.dynatrace.com/hub/')
     soup = BeautifulSoup(page.text, 'html.parser')
 
-    lines = []
+    results = []
 
+    # Most technologies are found in an "a" tag and have links
     for link in soup.find_all('a'):
         title = link.get('title')
         href = link.get('href')
         description = link.find('p', class_='store-logowall__description-body')
         if description:
             description = description.text
-        if href.startswith('/'):
-            href = f'https://dynatrace.com{href}'
-        if title:
-            if not filtering or (filtering and title in include_list):
-                comment = get_comment(title)
-                line = f'{title}|{description}|{comment}|{href}'
-                lines.append(line)
-
-    for line in sorted(lines, key=str.lower):
-        print(line)
-
-    write_xlsx(sorted(lines, key=str.lower))
-    write_html(sorted(lines, key=str.lower))
-
-
-def check_hub_for_new_items():
-    page = requests.get('https://www.dynatrace.com/hub/')
-    soup = BeautifulSoup(page.text, 'html.parser')
-
-    lines = []
-
-    for link in soup.find_all('a'):
-        title = link.get('title')
-        href = link.get('href')
-        description = link.find('p', class_='store-logowall__description-body')
-        if description:
-            description = description.text
-        if href.startswith('/'):
+        if href and href.startswith('/'):
             href = f'https://dynatrace.com{href}'
         if title:
             comment = get_comment(title)
-            if comment == '':
-                line = f'{title}|{description}|{href}'
-                lines.append(line)
+            results.append((title, description, comment, href))
 
+    # Some technologies are found in a "div" tag and lack links
+    # These add little real value other than adding "Web" to the "Source" currently as the "href" is missing
+    for link in soup.find_all('div'):
+        title = link.get('title')
+        if title:
+            href = link.get('href')
+            description = link.find('p', class_='store-logowall__description-body')
+            if description:
+                description = description.text
+            if href and href.startswith('/'):
+                href = f'https://dynatrace.com{href}'
+            if description:
+                comment = get_comment(title)
+                results.append((title, description, comment, href))
+
+    return sorted(results)
+
+
+def merge_results_into_dictionary(api_results, web_results):
+    merged_results_dictionary = {}
+
+    for api_result in api_results:
+        hub_item_name, hub_item_description, comment, doc_link, mkt_link = api_result
+        merged_results_dictionary[hub_item_name] = {'api_desc': hub_item_description, 'comment': comment, 'doc_link': doc_link, 'mkt_link': mkt_link}
+
+    for web_result in web_results:
+        hub_item_name, hub_item_description, comment, link = web_result
+        merged_results_dictionary_item = merged_results_dictionary.get(hub_item_name)
+        if merged_results_dictionary.get(hub_item_name):
+            merged_results_dictionary_item['web_desc'] = hub_item_description
+            merged_results_dictionary_item['web_link'] = link
+            merged_results_dictionary_item[hub_item_name] = merged_results_dictionary_item
+        else:
+            merged_results_dictionary[hub_item_name] = {'web_desc': hub_item_description, 'comment': comment, 'web_link': link}
+
+    return merged_results_dictionary
+
+
+def process_merged_results(merged_results):
+    results = []
+    merged_result_keys = merged_results.keys()
+    for merged_result_key in merged_result_keys:
+        merged_result = merged_results.get(merged_result_key)
+        api_description = merged_result.get('api_desc')
+        web_description = merged_result.get('web_desc')
+        description = api_description
+        if not description:
+            description = web_description
+        doc_link = merged_result.get('doc_link')
+        mkt_link = merged_result.get('mkt_link')
+        web_link = merged_result.get('web_link')
+        best_link = web_link
+        if not best_link:
+            best_link = doc_link
+            if not best_link:
+                best_link = mkt_link
+                if not best_link:
+                    best_link = 'https://www.dynatrace.com/hub/'
+        source = 'API and Web'
+        if web_description:
+            if not api_description:
+                source = 'Web'
+        else:
+            if api_description:
+                source = 'API'
+        comment = merged_result.get('comment')
+
+        row = (merged_result_key, description, comment, best_link, web_link, doc_link, mkt_link, source)
+        results.append(row)
+
+    write_console(sorted(results, key=lambda result: result[0].lower()))
+    write_html(sorted(results, key=lambda result: result[0].lower()))
+    write_xlsx(sorted(results, key=lambda result: result[0].lower()))
+
+
+def check_hub_for_new_items(env, token):
     print('New to the Hub:')
-    for line in sorted(lines, key=str.lower):
-        print(line)
 
+    api_results = process_hub_items_from_api(env, token)
+    web_results = process_hub_items_from_web()
+    merged_results = merge_results_into_dictionary(api_results, web_results)
 
-
-# def build_how_to_monitor_dict():
-#     how_to_monitor_dict = {}
-#     page = requests.get('https://www.dynatrace.com/hub/')
-#     soup = BeautifulSoup(page.text, 'html.parser')
-#
-#     for link in soup.find_all('a'):
-#         title = link.get('title')
-#         if title:
-#             comment = get_comment(title)
-#             how_to_monitor_dict[title] = {'comment': comment, 'link': ''}
-#
-#     return how_to_monitor_dict
+    merged_result_keys = merged_results.keys()
+    for merged_result_key in merged_result_keys:
+        merged_result = merged_results.get(merged_result_key)
+        api_description = merged_result.get('api_desc')
+        web_description = merged_result.get('web_desc')
+        description = api_description
+        if not description:
+            description = web_description
+        doc_link = merged_result.get('doc_link')
+        mkt_link = merged_result.get('mkt_link')
+        web_link = merged_result.get('web_link')
+        best_link = web_link
+        if not best_link:
+            best_link = doc_link
+            if not best_link:
+                best_link = mkt_link
+                if not best_link:
+                    best_link = 'https://www.dynatrace.com/hub/'
+        source = 'API and Web'
+        if web_description:
+            if not api_description:
+                source = 'Web'
+        else:
+            if api_description:
+                source = 'API'
+        comment = merged_result.get('comment')
+        if comment == '':
+            print(f'{merged_result_key} | {description} | {best_link} | {source}')
 
 
 def get_comment(title):
@@ -325,7 +243,8 @@ def get_comment(title):
         'Google Virtual Private Cloud',
         'Google Virtual Private Cloud',
         'Google reCAPTCHA Enterprise',
-        'NetApp on Google Cloud',    ]
+        'NetApp on Google Cloud',
+    ]
 
     install_extension_list = [
         'Advanced SSL Certificate Check for Dynatrace',
@@ -359,6 +278,7 @@ def get_comment(title):
         'Microsoft Hyper-V (WMI)',
         'Mulesoft Cloudhub (Extension v2)',
         'MySQL (remote monitoring)',
+        'MySQL (remote monitoring v2)',
         'NetApp OnTap (Remote)',
         'Netbackup Jobs',
         'OpenShift Control Plane',
@@ -680,6 +600,7 @@ def get_comment(title):
         'Cloud Automation Control Plane',
         'Grail',
         'Log Management and Analytics powered by Grail',
+        'Log Monitoring for AWS',
         'Logstash',
         'Micrometer',
         'Neo4j',
@@ -689,6 +610,7 @@ def get_comment(title):
         'Perl',
         'PHP',
         'StatsD',
+        'Syslog (via Fluentd)',
         'Telegraf',
         'TIBCO EMS',
         'Vert.x',
@@ -732,20 +654,24 @@ def get_comment(title):
     special_instructions = {
         'ActiveGate': 'Install ActiveGate(s) for specific use cases: executing synthetics on the local network, running ActiveGate extensions or routing agent traffic more effectively.',
         'Adobe Analytics': 'Configure Session and User Action properties in RUM settings for the web application.',
-        'Google Analytics': 'Configure Session and User Action properties in RUM settings for the web application.',
-        'Session Replay': 'Configure Session Replay in RUM settings for the web application.',
+        'Amazon EC2': 'Perform AWS Integration and install a OneAgent on the EC2 instance, typically with "User Data".',
+        'Amazon EC2 Auto Scaling': 'Perform AWS Integration and add this service to monitoring. Install a OneAgent on the EC2 instance, typically with "User Data".',
+        'Amazon EC2 Spot Fleet': 'Perform AWS Integration and add this service to monitoring. Install a OneAgent on the EC2 instance, typically with "User Data".',
+        'Business events': 'If GRAIL is active, see link for details on configuring business events.',
+        'C': 'Use the Dynatrace SDK.',
+        'DC/OS': 'Install the Dynatrace package via the DC/OS user interface.',
         'Davis Assistant': 'Deprecated: do not use.',
         'Dynatrace Solution Server by ESA': 'Install to leverage the Dynatrace API Gateway by ESA and/or the Dynatrace ETL Service by ESA.',
-        'Python': 'Install OneAgent for process monitoring, and optionally use OpenTelemetry, SDK or Python Auto-Instrumenation from Github for tracing.',
+        'Google Analytics': 'Configure Session and User Action properties in RUM settings for the web application.',
         'gRPC': 'Install OneAgent and turn on gRPC OneAgent feature for language.',
-        'LoadRunner': 'Configure request attributes, etc.  See blog posts, RobotAdmin, etc.',
-        'Business events': 'If GRAIL is active, see link for details on configuring business events.',
-        'DC/OS': 'Install the Dynatrace package via the DC/OS user interface.',
-        'C': 'Use the Dynatrace SDK.',
         'LDAP': 'The link explains how to use manage users and groups via LDAP. To monitor LDAP, install a OneAgent for Host/Process monitoring and/or install the LDAP Synthetic Extension.',
+        'LoadRunner': 'Configure request attributes, etc.  See blog posts, RobotAdmin, etc.',
         'Microsoft Active Directory replication': 'Install extension both on a OneAgent and on the Dynatrace Cluster.  See hub link for more details.',
+        'Python': 'Install OneAgent for process monitoring, and optionally use OpenTelemetry, SDK or Python Auto-Instrumentation from Github for tracing.',
         'Runtime Application Protection': 'Activate the Application Security module.  Just contact us via in-product chat or directly via your account team.',
         'Runtime vulnerability detection': 'Activate the Application Security module.  Just follow instructions in the hub link.',
+        'Runtime Vulnerability Analytics': 'Activate the Application Security module.  Just follow instructions in the hub link.',
+        'Session Replay': 'Configure Session Replay in RUM settings for the web application.',
         'Snyk': 'Snyk is integrated with Dynatrace runtime vulnerability detection. Activate the Application Security module.  Just follow instructions in the hub link.',
     }
 
@@ -846,37 +772,58 @@ def get_comment(title):
 
     return comment
 
-def write_xlsx(lines):
-    workbook = xlsxwriter.Workbook('../../docs/HubSynopsis.xlsx')
+
+def write_console(rows):
+    print('Technology | Description | Monitoring Instructions | Best Link | Hub Link | Documentation Link | Marketing Link | Source')
+    for row in rows:
+        column_index = 0
+        for column in row:
+            if column_index == 0:
+                print(column, end='')
+            else:
+                print(f' | {column}', end='')
+            column_index += 1
+        print('')
+
+
+def write_xlsx(rows):
+    workbook = xlsxwriter.Workbook('../../docs/HubSummary.xlsx')
     header_format = workbook.add_format({'bold': True, 'bg_color': '#B7C9E2'})
 
-    worksheet = workbook.add_worksheet('Hub Synopsis')
+    worksheet = workbook.add_worksheet('Hub Summary')
 
     row_index = 0
-    # column_index = 0
+    column_index = 0
 
-    headers = ['Technology', 'Hub Description', 'Monitoring Synopsis']
-    worksheet.write(row_index, 0, headers[0], header_format)
-    worksheet.write(row_index, 1, headers[1], header_format)
-    worksheet.write(row_index, 2, headers[2], header_format)
+    headers = ['Technology', 'Description', 'Monitoring Instructions', 'Hub Link', 'Documentation Link', 'Marketing Link', 'Source']
+    for _ in headers:
+        worksheet.write(row_index, column_index, headers[column_index], header_format)
+        column_index += 1
     row_index += 1
 
-
-    for line in lines:
-        columns = line.split('|')
-        worksheet.write_url(row_index, 0, columns[3], string=columns[0])
-        worksheet.write(row_index, 1, columns[1])
-        worksheet.write(row_index, 2, columns[2])
+    for row in rows:
+        technology, description, instructions, best_link, web_link, doc_link, mkt_link, source = row
+        if best_link:
+            worksheet.write_url(row_index, 0, best_link, string=technology)
+        worksheet.write(row_index, 1, description)
+        worksheet.write(row_index, 2, instructions)
+        if web_link:
+            worksheet.write_url(row_index, 3, web_link, string=web_link)
+        if doc_link:
+            worksheet.write_url(row_index, 4, doc_link, string=doc_link)
+        if mkt_link:
+            worksheet.write_url(row_index, 5, mkt_link, string=mkt_link)
+        worksheet.write(row_index, 6, source)
         row_index += 1
 
     # worksheet.autofilter(0, 0, row_index, len(headers)) # add filter to all columns not needed here...
-    worksheet.autofilter(0, 2, row_index, 2) # add filter to only the third column
+    worksheet.autofilter(0, 2, row_index, 6)  # add filter to the third column to seventh column (Monitoring Instructions to Source)
     worksheet.autofit()
     workbook.close()
 
 
-def write_html(lines):
-    filename = '../../docs/HubSynopsis.html'
+def write_html(rows):
+    filename = '../../docs/HubSummary.html'
 
     html_top = '''<html>
       <body>
@@ -898,10 +845,13 @@ def write_html(lines):
     table_header = '''    <table>
           <tr>
             <th>Technology</th>
-            <th>Hub Description</th>
-            <th>Monitoring Synopsis</th>
+            <th>Description</th>
+            <th>Monitoring Instructions</th>
+            <th>Hub Link</th>
+            <th>Documentation Link</th>
+            <th>Marketing Link</th>
+            <th>Source</th>
           </tr>'''
-
     html_bottom = '''    </table>
       </body>
     </html>'''
@@ -916,16 +866,28 @@ def write_html(lines):
         write_line(file, html_top)
 
         # Write the tag summary header
-        write_h1_heading(file, f'Dynatrace Hub Synopsis')
+        write_h1_heading(file, f'Dynatrace Hub Summary')
 
         # Write Table Header
         write_line(file, table_header)
 
         # Write Table Rows
-        for line in lines:
-            columns = line.split('|')
-            tech_link = f'<a href="{columns[3]}">{columns[0]}</a>'
-            write_line(file, f'{row_start}{col_start}{tech_link}{col_end}{col_start}{columns[1]}{col_end}{col_start}{columns[2]}{col_end}{row_end}')
+        for row in rows:
+            technology, description, instructions, best_link, web_link, doc_link, mkt_link, source = row
+            tech_link = f'<a href="{best_link.lower()}">{technology}</a>'
+            if not web_link or web_link == 'None':
+                web_link = ''
+            else:
+                web_link = f'<a href="{web_link.lower()}">Link</a>'
+            if not doc_link or doc_link == 'None':
+                doc_link = ''
+            else:
+                doc_link = f'<a href="{doc_link.lower()}">Link</a>'
+            if not mkt_link or mkt_link == 'None':
+                mkt_link = ''
+            else:
+                mkt_link = f'<a href="{mkt_link.lower()}">Link</a>'
+            write_line(file, f'{row_start}{col_start}{tech_link}{col_end}{col_start}{description}{col_end}{col_start}{instructions}{col_end}{col_start}{web_link}{col_end}{col_start}{doc_link}{col_end}{col_start}{mkt_link}{col_end}{col_start}{source}{col_end}{row_end}')
 
         # Finish the HTML formatting
         write_line(file, html_bottom)
@@ -941,15 +903,79 @@ def write_line(outfile, content):
     outfile.write('\n')
 
 
+def get_rest_api_json(url, token, endpoint, params):
+    # print(f'get_rest_api_json({url}, {endpoint}, {params})')
+    full_url = url + endpoint
+    try:
+        resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
+    except ConnectionError:
+        print('Sleeping 30 seconds before retrying due to connection error...')
+        time.sleep(30)
+        resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
+
+    # print(f'GET {full_url} {resp.status_code} - {resp.reason}')
+    if resp.status_code != 200 and resp.status_code != 404:
+        print('REST API Call Failed!')
+        print(f'GET {full_url} {params} {resp.status_code} - {resp.reason}')
+        exit(1)
+
+    json_data = resp.json()
+
+    # Some json is just a list of dictionaries.
+    # Config V1 AWS Credentials is the only example I am aware of.
+    # For these, I have never seen pagination.
+    if type(json_data) is list:
+        # DEBUG:
+        # print(json_data)
+        return json_data
+
+    json_list = [json_data]
+    next_page_key = json_data.get('nextPageKey')
+
+    while next_page_key is not None:
+        # print(f'next_page_key: {next_page_key}')
+        params = {'nextPageKey': next_page_key}
+        full_url = url + endpoint
+        resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
+        # print(resp.url)
+
+        if resp.status_code != 200:
+            print('Paginated REST API Call Failed!')
+            print(f'GET {full_url} {resp.status_code} - {resp.reason}')
+            exit(1)
+
+        json_data = resp.json()
+        # print(json_data)
+
+        next_page_key = json_data.get('nextPageKey')
+        json_list.append(json_data)
+
+    return json_list
+
+
+def main():
+    # env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
+    # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
+    env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
+    # env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
+
+    tenant = os.environ.get(tenant_key)
+    token = os.environ.get(token_key)
+    env = f'https://{tenant}.live.dynatrace.com'
+
+    masked_token = token.split('.')[0] + '.' + token.split('.')[1] + '.* (Masked)'
+
+    print(f'Environment Name: {env_name}')
+    print(f'Environment:      {env}')
+    print(f'Token:            {masked_token}')
+
+    print('')
+    print('Hub Summary')
+
+    process_hub_items(env, token)
+    check_hub_for_new_items(env, token)
+
+
 if __name__ == '__main__':
-    filter_output = False
-
-    # check_hub_for_new_items()
-
-    list_selected_links(filter_output)
-
-    # how_to_monitor_dict = build_how_to_monitor_dict()
-    # for how_to_monitor in how_to_monitor_dict.items():
-    #     print(f"    '{how_to_monitor[0]}': {how_to_monitor[1]},")
-
+    main()
 
