@@ -479,10 +479,12 @@ def main():
         #    dashboard_counter += 1
         #    continue
 
-        if dashboard_dictionary['process']:
+        if dashboard_dictionary['process'] and dashboard_dictionary['tiles']:
             pass
         else:
+            print(f'Skipping {dashboard_dictionary}')
             continue
+
         dashboard = copy.deepcopy(dashboard_template)
         dashboard['metadata']['configurationVersions'] = [3]
         dashboard['metadata']['clusterVersion'] = dashboard_dictionary['clusterVersion']

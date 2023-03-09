@@ -11,8 +11,8 @@ def summarize(env, token):
 def process(env, token, print_mode):
     # timeframe = 'now-30d'
     # timeframe = 'now-5d'
-    # timeframe = 'now-24h'
-    timeframe = 'now-1h'
+    timeframe = 'now-24h'
+    # timeframe = 'now-1h'
     summary = []
 
     count_total = 0

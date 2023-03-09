@@ -9,7 +9,7 @@ import pathlib
 def load_dashboard_lookup():
     dashboard_lookup = {}
 
-    path = 'Templates/Overview/????????-????-????-????-????????????'
+    path = 'Templates/Overview/????????-????-????-????-????????????.json'
     for filename in glob.glob(path):
         with codecs.open(filename, encoding='utf-8') as f:
             dashboard = json.loads(f.read())
@@ -23,6 +23,7 @@ def load_dashboard_lookup():
 def write_markdown_menus(dashboard_lookup):
     menu_item_list = [
         '.NET',
+        'Administration',
         'AWS ALB',
         'AWS API Gateway',
         'AWS CloudWatch Logs',
@@ -46,17 +47,18 @@ def write_markdown_menus(dashboard_lookup):
         'Application Overview (Synthetics and Services)',
         'Application Overview (Web, HTTP Monitors, and Services)',
         'Application Overview (Web, Synthetics, and Services)',
+        'Detailed Drilldowns Menu',
         'Hosts (Detailed)',
         'IBM DataPower by Host',
         'IBM MQ Metrics by Best Split',
         'IBM MQ Metrics by Queue Manager and Best Split',
         'IBM MQ Metrics by Queue Manager',
         'Java',
+        'Kafka - Home',
         'Key Requests',
         'Network (Host-Level Details)',
         'Network (Process-Level Details)',
         'Processes',
-        'Request Headers',
         'SAP Hana Database',
         'Service Errors',
         'Service HTTP Errors',
@@ -65,6 +67,7 @@ def write_markdown_menus(dashboard_lookup):
         'Synthetics: Browser Monitor Events',
         'Tomcat',
         'VMware',
+        'Web Servers',
         'WebLogic by Name',
         'WebLogic by Process',
         'WebSphere Metrics by Pool',

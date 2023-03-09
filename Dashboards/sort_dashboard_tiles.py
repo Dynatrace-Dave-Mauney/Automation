@@ -5,8 +5,14 @@ import os
 import shutil
 from inspect import currentframe
 
-DASHBOARD_INPUT_PATH = '../$Input/Dashboards/Examples'
-DASHBOARD_OUTPUT_PATH = '../$Output/Dashboards/Sorted'
+# DASHBOARD_INPUT_PATH = '../$Input/Dashboards/Examples'
+# DASHBOARD_OUTPUT_PATH = '../$Output/Dashboards/Sorted'
+
+DASHBOARD_INPUT_PATH = 'Templates-Overview-Clean'
+DASHBOARD_OUTPUT_PATH = 'Templates-Overview-Clean-Sorted'
+
+# DASHBOARD_INPUT_PATH = 'Templates-Overview-Clean-Sorted'
+# DASHBOARD_OUTPUT_PATH = 'Templates-Overview-Clean-Resorted'
 
 confirmation_required = True
 remove_directory_at_startup = True
@@ -18,12 +24,12 @@ def sort_dashboards():
 
     for filename in glob.glob(DASHBOARD_INPUT_PATH + '/*'):
         with open(filename, 'r', encoding='utf-8') as f:
-            print(filename)
             dashboard = f.read()
             new_dashboard = sort_dashboard_tiles(dashboard)
             pretty_new_dashboard = json.dumps(new_dashboard, indent=4, sort_keys=False)
+            if pretty_new_dashboard != dashboard:
+                print(f'Modified {filename}')
             output_filename = DASHBOARD_OUTPUT_PATH + '/' + os.path.basename(filename)
-            print(output_filename)
             with open(output_filename, 'w') as outfile:
                 outfile.write(pretty_new_dashboard)
 

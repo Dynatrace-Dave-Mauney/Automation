@@ -23,7 +23,8 @@ def process(env_name, env, token):
 	dashboards_json_list = get_rest_api_json(env, token, endpoint, params)
 
 	count = 0
-	delete_list = ['00000000-dddd-bbbb-ffff-000000000003']
+	# delete_list = ['aaaaaaaa-bbbb-cccc-eeee-000000000000']
+	delete_list = []
 
 	for dashboards_json in dashboards_json_list:
 		inner_dashboards_json_list = dashboards_json.get('dashboards')
@@ -31,11 +32,42 @@ def process(env_name, env, token):
 			dashboard_id = inner_dashboards_json.get('id')
 			name = inner_dashboards_json.get('name')
 			owner = inner_dashboards_json.get('owner')
-			print(dashboard_id, name, owner)
+			# print(dashboard_id, name, owner)
 
 			# # # CAUTION HERE!!!! # # #
 			# # # More flexible delete option is more dangerous! # # #
-			# if owner.startswith('Dynatrace') and id.startswith('aaaaaaaa-bbbb-cccc-eeee-0000000000'):
+			# if owner.startswith('Dynatrace') and dashboard_id.startswith('aaaaaaaa-bbbb-cccc-eeee-0000000000'):
+			# 	delete_list.append(dashboard_id + ': ' + name + ': ' + owner)
+
+			# Full clean of 'Personal' environment
+			# if 'TagReferenceCheck' in name or 'Dynatrace Resources' in name:
+			# 	pass
+			# else:
+			# 	if owner == 'dave.mauney@dynatrace.com':
+			# 		delete_list.append(dashboard_id + ': ' + name + ': ' + owner)
+
+			# # Full clean of 'DynatraceDashboardGenerator' dashboards
+			# if owner == 'dave.mauney@dynatrace.com' and dashboard_id.startswith('aaaaaaaa-bbbb-cccc-dddd-00000000'):
+			# 	delete_list.append(dashboard_id + ': ' + name + ': ' + owner)
+
+			# Full clean of 'DynatraceDashboardGenerator' dashboards variant
+			# if owner == 'dave.mauney@dynatrace.com' and dashboard_id.startswith('aaaaaaaa-bbbb-cccc-dddd-10000000'):
+			# 	delete_list.append(dashboard_id + ': ' + name + ': ' + owner)
+
+			# Full clean of 'AWS Supporting Services (Improved)' dashboards variant
+			# if owner == 'dave.mauney@dynatrace.com' and dashboard_id.startswith('aaaaaaaa-bbbb-cccc-eeee-f00000000'):
+			# 	delete_list.append(dashboard_id + ': ' + name + ': ' + owner)
+
+			# Full clean of 'TEMP Detailed Drilldowns' dashboards variant
+			# if owner == 'dave.mauney@dynatrace.com' and dashboard_id.startswith('aaaaaaaa-bbbb-cccc-aaaa'):
+			# 	delete_list.append(dashboard_id + ': ' + name + ': ' + owner)
+
+			# Full clean of certain 'BizOps' dashboards
+			# if owner == 'dave.mauney@dynatrace.com' and dashboard_id.startswith('aaaaaaaa-000'):
+			# 	delete_list.append(dashboard_id + ': ' + name + ': ' + owner)
+
+			# Full clean of original 'Kafka' dashboards
+			# if owner == 'dave.mauney@dynatrace.com' and dashboard_id.startswith('aaaaaaaa-bbbb-cccc-ffff-00000000000'):
 			# 	delete_list.append(dashboard_id + ': ' + name + ': ' + owner)
 
 	delete_list = sorted(delete_list)

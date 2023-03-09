@@ -1,6 +1,5 @@
-# Put all dashboards in the specified directory to tenant/environment specified via command line argument.
-# Can also be run in IDE with no command line arguments.
-#
+# Put all dashboards match the file path pattern to the specified environment.
+# Parameters can be passed inline or from command line arguments.
 
 import json
 import glob
@@ -11,66 +10,87 @@ import sys
 import codecs
 
 
+supported_environments = {
+    'Prod': ('PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN'),
+    'Prep': ('PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN'),
+    'Dev': ('DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN'),
+    'Personal': ('PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN'),
+    'FreeTrial1': ('FREETRIAL1_TENANT', 'ROBOT_ADMIN_FREETRIAL1_TOKEN'),
+}
+
+
 def run():
-    """ For running directly from an IDE (or from a command line without using command line arguments) """
-    # env_name, env, tenant, token = get_environment('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-    # path = '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json'
-    # path = '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000117.json'
-    # path = '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000109.json'
-    # path = '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000112.json'
-    # path = '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000074.json'
-    # path = '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-100000000000.json'
-    # path = '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000???.json'
-    # put_dashboards(env, token, path, env_name, get_owner())
-    #
-    # env_name, env, tenant, token = get_environment('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-    # path = '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json'
-    # put_dashboards(env, token, path, env_name, get_owner())
-    #
-    env_name, env, tenant, token = get_environment('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-    # path = '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json'
-    # path = 'Custom/Overview/00000000-dddd-bbbb-ffff-000000000001'
-    # path = 'Custom/Overview/00000000-dddd-bbbb-ffff-000000000019'
-    path = 'Custom/Overview/00000000-dddd-bbbb-ffff-00000000????'
-    # path = 'Custom/Overview/00000000-dddd-bbbb-ffff-0000000010??'
-    put_dashboards(env, token, path, env_name, get_owner())
-    #
-    # env_name, env, tenant, token = get_environment('FreeTrial1', 'FREETRIAL1_TENANT', 'ROBOT_ADMIN_FREETRIAL1_TOKEN')
-    # path = 'Custom/Overview/00000000-dddd-bbbb-ffff-00000000????'
-    # put_dashboards(env, token, path, env_name, get_owner())
+    """ Used when running directly from an IDE (or from a command line without using command line arguments) """
+
+    # Use the owner stored in properties by default.
+    # Override it here or in the put_dashboard call, if needed.
+    # owner = get_owner()
+    owner = 'capesb@labcorp.com'
+
+    # Default prefix.
+    # Override it here or in the put_dashboard call, if needed.
+    prefix = ''
+
+    # Put dashboard(s) to the environment name, path, prefix and owner specified.
+    # Wildcards like "?" to signify any single character or "*" to signify any number of characters may be used.
+    # When wildcards are used, multiple dashboards may be referenced.
+    # Example Paths:
+    #  Single file reference:
+    #   '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json'
+    #   '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000117.json'
+    #  Multiple file reference (potentially, it depends on the content of the directory):
+    #   'Sandbox/00000000-dddd-bbbb-aaaa-????????????.json' # Strict reference
+    #   'Sandbox/*.json' # Lenient reference
+
+    # put_dashboards('Prod', '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json', 'Prod', owner)
+    # put_dashboards('Prep', '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json', 'Prep', owner)
+    # put_dashboards('Dev', '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json', 'Dev', owner)
+    # put_dashboards('Personal', 'Sandbox/00000000-dddd-bbbb-aaaa-???????????1.json', 'Personal', owner)
+    # put_dashboards('FreeTrial1', 'Sandbox/00000000-dddd-bbbb-aaaa-???????????1.json', 'Sandbox', owner)
+
+    # put_dashboards('Personal', 'Sandbox/00000000-dddd-bbbb-aaaa-????????????.json', 'Personal', owner)
+    # put_dashboards('Personal', 'Templates/Overview/00000000-dddd-bbbb-ffff-????????????.json', 'Test', owner)
+    # put_dashboards('Personal', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000900.json', 'Test', owner)
+    # put_dashboards('Personal', 'Curated/Details/*.json', 'TEMP', owner)
+    # put_dashboards('Personal', 'Curated/Details/Detailed_Drilldowns_Menu.json', 'TEMP', owner)
+
+    # put_dashboards('Personal', 'Curated/Details/Detailed_Drilldowns_Menu.json', 'TEMP', owner)
+    # put_dashboards('Personal', 'Curated/Details/*.json', 'TEMP', owner)
+    # put_dashboards('Prod', 'Curated/Details/*.json', 'TEMP', owner)
+    # put_dashboards('Prod', 'Curated/Details/Detailed_Drilldowns_Menu.json', 'TEMP', owner)
+
+    # put_dashboards('Personal', 'Templates-Overview-Clean/00000000-dddd-bbbb-ffff-00000000????.json', 'Personal', owner)
+    # put_dashboards('Personal', 'Templates/Overview/00000000-dddd-bbbb-ffff-00000000????.json', 'Personal', owner)
+
+    # DONE
+    # put_dashboards('Dev', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000001.json', 'Dev', owner)
+    # put_dashboards('Dev', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000047.json', 'Dev', owner)
+    # put_dashboards('Dev', 'Templates/Overview/00000000-dddd-bbbb-ffff-00000000006?.json', 'Dev', owner)
+    # put_dashboards('Dev', 'Templates/Overview/00000000-dddd-bbbb-ffff-0000000008??.json', 'Dev', owner)
+    # put_dashboards('Dev', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000900.json', 'Dev', owner)
+    # put_dashboards('Dev', 'Templates/Overview/00000000-dddd-bbbb-ffff-0000000010??.json', 'Dev', owner)
+    # put_dashboards('Dev', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000800.json', 'Dev', owner)
+
+    # DONE
+    # put_dashboards('Prep', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000001.json', 'Prep', owner)
+    # put_dashboards('Prep', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000047.json', 'Prep', owner)
+    # put_dashboards('Prep', 'Templates/Overview/00000000-dddd-bbbb-ffff-00000000006?.json', 'Prep', owner)
+    # put_dashboards('Prep', 'Templates/Overview/00000000-dddd-bbbb-ffff-0000000008??.json', 'Prep', owner)
+    # put_dashboards('Prep', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000900.json', 'Prep', owner)
+    # put_dashboards('Prep', 'Templates/Overview/00000000-dddd-bbbb-ffff-0000000010??.json', 'Prep', owner)
+
+    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000001.json', 'Prod', owner)
+    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000047.json', 'Prod', owner)
+    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-00000000006?.json', 'Prod', owner)
+    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-0000000008??.json', 'Prod', owner)
+    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000900.json', 'Prod', owner)
+    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-0000000010??.json', 'Prod', owner)
+
+    # owner = get_owner()
+    # put_dashboards('Prod', '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000???.json', 'Prod', owner)
 
 
-def get_environment(env_name, tenant_key, token_key):
-    tenant = os.environ.get(tenant_key)
-    token = os.environ.get(token_key)
-    env = f'https://{tenant}.live.dynatrace.com'
-
-    return env_name, env, tenant, token
-
-
-def get_owner():
-    return os.environ.get('DASHBOARD_OWNER_EMAIL', 'nobody@example.com')
-
-
-def put_dashboard(env, token, dashboard_id, payload):
-    url = env + '/api/config/v1/dashboards/' + dashboard_id
-    print('PUT: ' + url)
-    try:
-        r = requests.put(url, payload.encode('utf-8'),
-                         headers={'Authorization': 'Api-Token ' + token,
-                                  'Content-Type': 'application/json; charset=utf-8'})
-        # If you need to bypass certificate checks on managed and are ok with the risk:
-        # r = requests.put(url, payload, headers=HEADERS, verify=False)
-        if r.status_code not in [200, 201, 204]:
-            print('Status Code: %d' % r.status_code)
-            print('Reason: %s' % r.reason)
-            if len(r.text) > 0:
-                print(r.text)
-    except ssl.SSLError:
-        print('SSL Error')
-
-
-def put_dashboards(env, token, path, prefix, owner):
+def put_dashboards(env_name, path, prefix, owner):
     print('Prefix: ' + prefix)
     print('Owner:  ' + owner)
     for filename in glob.glob(path):
@@ -79,8 +99,19 @@ def put_dashboards(env, token, path, prefix, owner):
             dashboard_json = json.loads(dashboard)
             dashboard_id = dashboard_json.get('id')
             dashboard_name = dashboard_json.get('dashboardMetadata').get('name')
-            dashboard_name = dashboard_name.replace('TEMPLATE:', prefix + ':')
-            dashboard_name = dashboard_name.replace('BETA:', prefix + ':')
+
+            # Replace well-known placeholder prefixes or add a prefix, as needed
+            new_prefix = ''
+            if prefix and prefix != '':
+                new_prefix = f'{prefix}: '
+            if dashboard_name.startswith('TEMPLATE:'):
+                dashboard_name = dashboard_name.replace('TEMPLATE: ', new_prefix)
+            else:
+                if dashboard_name.startswith('BETA:'):
+                    dashboard_name = dashboard_name.replace('BETA: ', new_prefix)
+                else:
+                    dashboard_name = f'{new_prefix}{dashboard_name}'
+
             dashboard_owner = dashboard_json.get('dashboardMetadata').get('owner')
             dashboard_owner = dashboard_owner.replace('nobody@example.com', owner)
             dashboard_owner = dashboard_owner.replace('Dynatrace', owner)
@@ -88,11 +119,16 @@ def put_dashboards(env, token, path, prefix, owner):
             dashboard_json['dashboardMetadata']['name'] = dashboard_name
             dashboard_json['dashboardMetadata']['owner'] = dashboard_owner
 
-            # TODO: Comment out temp code
-            # Use these lines to modify id's to avoid overwrites
-            dashboard_id = dashboard_id.replace('aaaaaaaa-bbbb-cccc-dddd-0', 'aaaaaaaa-bbbb-cccc-dddd-1')
-            dashboard_json['id'] = dashboard_id
+            # Enable "preset" for Dashboard Overview Framework
+            if dashboard_id.startswith('00000000-dddd-bbbb-ffff'):
+                print(f'Set preset to True for {dashboard_id}:{dashboard_name}')
+                dashboard_json['dashboardMetadata']['preset'] = True
 
+            # Temp code to modify IDs
+            # dashboard_id = dashboard_id.replace('aaaaaaaa-bbbb-cccc-dddd-0', 'aaaaaaaa-bbbb-cccc-dddd-1')
+            # dashboard_json['id'] = dashboard_id
+
+            env, token = get_environment(env_name)
             tenant = env.split('.')[0].split('/')[2]
 
             new_tiles = []
@@ -115,6 +151,52 @@ def put_dashboards(env, token, path, prefix, owner):
             put_dashboard(env, token, dashboard_id, json.dumps(dashboard_json))
 
             print(env + '/#dashboard;id=' + dashboard_id)
+
+
+def get_owner():
+    return os.environ.get('DASHBOARD_OWNER_EMAIL', 'nobody@example.com')
+
+
+def get_environment(env_name):
+    if env_name not in supported_environments:
+        print(f'Invalid environment name: {env_name}')
+        return None, None
+
+    tenant_key, token_key = supported_environments.get(env_name)
+
+    if env_name and tenant_key and token_key:
+        tenant = os.environ.get(tenant_key)
+        token = os.environ.get(token_key)
+        env = f'https://{tenant}.live.dynatrace.com'
+
+        if tenant and token and '.' in token:
+            masked_token = token.split('.')[0] + '.' + token.split('.')[1] + '.* (Masked)'
+            print(f'Environment Name: {env_name}')
+            print(f'Environment:      {env}')
+            print(f'Token:            {masked_token}')
+            return env, token
+        else:
+            print('Invalid Environment Configuration!')
+            print(f'Set the "env_name ({env_name}), tenant_key ({tenant_key}), token_key ({token_key})" tuple as required and verify the tenant ({tenant}) and token ({token}) environment variables are accessible.')
+            exit(1)
+
+
+def put_dashboard(env, token, dashboard_id, payload):
+    url = env + '/api/config/v1/dashboards/' + dashboard_id
+    print('PUT: ' + url)
+    try:
+        r = requests.put(url, payload.encode('utf-8'),
+                         headers={'Authorization': 'Api-Token ' + token,
+                                  'Content-Type': 'application/json; charset=utf-8'})
+        # If you need to bypass certificate checks on managed and are ok with the risk:
+        # r = requests.put(url, payload, headers=HEADERS, verify=False)
+        if r.status_code not in [200, 201, 204]:
+            print('Status Code: %d' % r.status_code)
+            print('Reason: %s' % r.reason)
+            if len(r.text) > 0:
+                print(r.text)
+    except ssl.SSLError:
+        print('SSL Error')
 
 
 def main(arguments):
@@ -142,7 +224,7 @@ def main(arguments):
         print('1.0')
     else:
         if len(arguments) == 4:
-            put_dashboards(arguments[1], arguments[2], arguments[3], arguments[3], arguments[4])
+            put_dashboards(arguments[1], arguments[2], arguments[3], arguments[3])
         else:
             print(usage)
             raise ValueError('Incorrect arguments!')

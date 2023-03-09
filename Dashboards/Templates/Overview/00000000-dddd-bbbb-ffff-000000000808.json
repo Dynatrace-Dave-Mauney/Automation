@@ -1,0 +1,60 @@
+{
+    "metadata": {
+        "configurationVersions": [
+            6
+        ],
+        "clusterVersion": "1.261.134.20230302-084304"
+    },
+    "id": "00000000-dddd-bbbb-ffff-000000000808",
+    "dashboardMetadata": {
+        "name": "TEMPLATE: 3rd Party XHR Detection",
+        "shared": true,
+        "owner": "nobody@example.com",
+        "hasConsistentColors": true,
+        "tilesNameSize": "small"
+    },
+    "tiles": [
+        {
+            "name": "User Sessions Query",
+            "tileType": "DTAQL",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 0,
+                "width": 1520,
+                "height": 2014
+            },
+            "tileFilter": {},
+            "customName": "Potential Third Party Detection",
+            "query": "SELECT application, count(*) AS \"Number of Actions\", top(name, 500) AS \"Potential third party\" from useraction WHERE name STARTSWITH \"https\" AND type=\"Xhr\" GROUP BY application, name LIMIT 500",
+            "type": "TABLE",
+            "limit": 50
+        },
+        {
+            "name": "Markdown",
+            "tileType": "MARKDOWN",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 1520,
+                "width": 152,
+                "height": 38
+            },
+            "tileFilter": {},
+            "markdown": "#### [\u21e6 Overview](#dashboard;id=00000000-dddd-bbbb-ffff-000000000001)\n![BackButton]()"
+        },
+        {
+            "name": "Markdown",
+            "tileType": "MARKDOWN",
+            "configured": true,
+            "bounds": {
+                "top": 38,
+                "left": 1520,
+                "width": 494,
+                "height": 532
+            },
+            "tileFilter": {},
+            "markdown": "This dashboard displays a list of detected potential third party XHR actions. These URLs are XHRs being triggered as their own actions, and not as content within an existing waterfall/action. This typically happens with tracking metrics that occur as a user is scrolling down the page.\n\nThis list will only work if the application is using the default XHR URL naming convention for XHR actions\n\nThird party XHRs can potentially skew the data and should be excluded. This can be done under Application Settings -> Advanced Setup -> Exclude XHR requests from monitoring.\n\nUse a | to separate exclusion rules. Do not start or end your rules with |. Any periods should be escaped with a \\, meaning Dynatrace.com becomes 'Dynatrace\\.com.' A period and an asterisk (.\\*) can be used to set a wildcard. For instance, .\\*dynatrace\\.com.* will capture any URL containing Dynatrace.com. This includes subdomains (eg. Perform.dynatrace.com) and URL paths (eg. dynatrace.com/trial)\n\nSome first party URLs may appear in here, particularly metrics trackers. It is worth discussing with the customer where they want to track those, especially if they have a large volume and potentially impact the wider XHR metrics.*"
+        }
+    ]
+}

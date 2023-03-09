@@ -17,6 +17,7 @@ def save(path, file, content):
 
 
 def save_dashboards(env, token, path):
+	download_count = 0
 	try:
 		headers = {'Authorization': 'Api-Token ' + token}
 		r = requests.get(env + '/api/config/v1/dashboards', headers=headers)
@@ -30,14 +31,23 @@ def save_dashboards(env, token, path):
 			# if dashboard_owner == 'Dynatrace' and dashboard_name.startswith('A'):
 			# if dashboard_owner == 'nobody@example.com':
 			# if dashboard_owner == 'Dynatrace':
-			if True:
+			# if True:
+			if dashboard_owner == 'dave.mauney@dynatrace.com':
 				response = requests.get(env + '/api/config/v1/dashboards/' + dashboard_id, headers=headers)
 				dashboard = response.json()
+				dashboard_metadata = dashboard.get('dashboardMetadata')
+				dashboard_preset = dashboard_metadata.get('preset')
 				# if 'ism74021' in str(dashboard):
-				if True:
+				# aaaaaaaa-bbbb-cccc-dddd-1
+				# aaaaaaaa-bbbb-cccc-eeee-f
+				# if dashboard_preset:
+				# if True:
+				if dashboard_preset and (dashboard_id.startswith('aaaaaaaa-bbbb-cccc-abcd-0000000000') or dashboard_id.startswith('aaaaaaaa-bbbb-cccc-eeee-f')):
 					clean_filename = re.sub(r"[/\\?%*:|\"<>\x7F\x00-\x1F]", "-", f'{dashboard_name}.json')
 					print(f'Saving {dashboard_name} ({dashboard_id}) owned by {dashboard_owner} to {clean_filename}')
 					save(path, clean_filename, dashboard)
+					download_count +=1
+		print(f'Downloaded {download_count} dashboards to {path}')
 	except ssl.SSLError:
 		print("SSL Error")
 
@@ -64,6 +74,8 @@ def main(arguments):
 	env = f'https://{tenant}.live.dynatrace.com'
 
 	path = f'../$Output/Dashboards/Downloads/{env_name}'
+
+	print(f'Downloading dashboards for {env_name} to {path}')
 
 	if len(arguments) == 1:
 		save_dashboards(env, token, path)

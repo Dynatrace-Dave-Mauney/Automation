@@ -1,0 +1,2675 @@
+{
+    "metadata": {
+        "configurationVersions": [
+            6
+        ],
+        "clusterVersion": "1.261.134.20230302-084304"
+    },
+    "id": "00000000-dddd-bbbb-ffff-000000000803",
+    "dashboardMetadata": {
+        "name": "TEMPLATE: DEM Units Overview",
+        "shared": true,
+        "owner": "nobody@example.com",
+        "dashboardFilter": {
+            "timeframe": "-30d to now",
+            "managementZone": {
+                "id": "all",
+                "name": "All"
+            }
+        },
+        "tilesNameSize": "small",
+        "hasConsistentColors": true
+    },
+    "tiles": [
+        {
+            "name": "DEM Units",
+            "tileType": "HEADER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 0,
+                "width": 304,
+                "height": 38
+            },
+            "tileFilter": {}
+        },
+        {
+            "name": "Markdown",
+            "tileType": "MARKDOWN",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 722,
+                "width": 380,
+                "height": 38
+            },
+            "tileFilter": {},
+            "markdown": "## [Return to Licensing Overview \ud83d\udd19](#dashboard;id=aaaaaaaa-0001-0001-0001-000000000001)"
+        },
+        {
+            "name": "Web Sessions with Replay Total",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 38,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Sessions with Replay Total",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:billing.apps.web.sessionsWithReplayByApplication",
+                    "spaceAggregation": "SUM",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "Type"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [
+                            {
+                                "filter": "Type",
+                                "filterType": "DIMENSION",
+                                "filterOperator": "OR",
+                                "nestedFilters": [],
+                                "criteria": [
+                                    {
+                                        "value": "Billed",
+                                        "evaluator": "EQ"
+                                    }
+                                ]
+                            }
+                        ],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "SINGLE_VALUE",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A",
+                                ""
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "singleValueSettings": {
+                    "showSparkLine": true
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Web Sessions with Replay per App",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 38,
+                "left": 304,
+                "width": 608,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Sessions with Replay per Web App",
+            "queries": [
+                {
+                    "id": "C",
+                    "metric": "builtin:billing.apps.web.sessionsWithReplayByApplication",
+                    "spaceAggregation": "SUM",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.application",
+                        "Type"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [
+                            {
+                                "filter": "Type",
+                                "filterType": "DIMENSION",
+                                "filterOperator": "OR",
+                                "nestedFilters": [],
+                                "criteria": [
+                                    {
+                                        "value": "Billed",
+                                        "evaluator": "EQ"
+                                    }
+                                ]
+                            }
+                        ],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "C:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "C"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Web Sessions with Replay per Web App",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 38,
+                "left": 912,
+                "width": 608,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Sessions with Replay per Web App",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "metricSelector": "builtin:billing.apps.web.sessionsWithReplayByApplication:filter(and(eq(Type,Billed))):splitBy(\"dt.entity.application\",Type):value:auto:sort(value(sum,descending)):limit(10)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "thresholds": []
+            }
+        },
+        {
+            "name": "Markdown",
+            "tileType": "MARKDOWN",
+            "configured": true,
+            "bounds": {
+                "top": 38,
+                "left": 1558,
+                "width": 608,
+                "height": 418
+            },
+            "tileFilter": {},
+            "markdown": "# Digital Experience Monitoring Units (DEM)\n\n* Read more about DEM Units [here](https://www.dynatrace.com/support/help/shortlink/monitoring-consumption#digital-experience-monitoring-)\n\n## Real User Monitoring (RUM)\n\n* User session per application (With Session Replay) = 1.0 DEM\n* User session per application\t(Without Session Replay playback) =\t0.25 DEM\n\n* Session & Action Properties = 0.01 DEM\n\n## Synthetics\n\n* Synthetic actions (Browser Monitors, Browser Clickpaths)\t = 1.0 DEM\n\n* Synthetic request (HTTP monitor) = 0.1 DEM\n* Third-party synthetic result\t(Third-party synthetic API ingestion) = 0.1 DEM\n"
+        },
+        {
+            "name": "Mobile Sessions with Replay Total",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 342,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Sessions with Replay Total",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "metricSelector": "(builtin:billing.apps.mobile.sessionsWithReplayByApplication:splitBy():sum:auto:sort(value(sum,descending)):limit(10))",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "SINGLE_VALUE",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE",
+                            "alias": "builtin:billing.apps.web.sessionsWithReplayByApplication:splitBy():sum:auto:sort(value(sum,descending)):limit(10) + (builtin:billing.apps.mobile.sessionsWithReplayByApplication:splitBy():sum:auto:sort(value(sum,descending)):limit(10))"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A",
+                                ""
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "singleValueSettings": {
+                    "showSparkLine": true
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Mobile with Replay per App",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 342,
+                "left": 304,
+                "width": 608,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Sessions with Replay per Web App",
+            "queries": [
+                {
+                    "id": "B",
+                    "metric": "builtin:billing.apps.mobile.sessionsWithReplayByApplication",
+                    "spaceAggregation": "SUM",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.mobile_application",
+                        "Type"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [
+                            {
+                                "filter": "Type",
+                                "filterType": "DIMENSION",
+                                "filterOperator": "OR",
+                                "nestedFilters": [],
+                                "criteria": [
+                                    {
+                                        "value": "Billed",
+                                        "evaluator": "EQ"
+                                    }
+                                ]
+                            }
+                        ],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "B:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "B"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Mobile with Replay per Web App",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 342,
+                "left": 912,
+                "width": 608,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Sessions with Replay per Web App",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:billing.apps.mobile.sessionsWithReplayByApplication",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.mobile_application",
+                        "Type"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [
+                            {
+                                "filter": "Type",
+                                "filterType": "DIMENSION",
+                                "filterOperator": "OR",
+                                "nestedFilters": [],
+                                "criteria": [
+                                    {
+                                        "value": "Billed",
+                                        "evaluator": "EQ"
+                                    }
+                                ]
+                            }
+                        ],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "thresholds": []
+            }
+        },
+        {
+            "name": "Web Sessions without Replay Total",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 646,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Sessions without Replay Total",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:billing.apps.web.sessionsWithoutReplayByApplication",
+                    "spaceAggregation": "SUM",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.application",
+                        "Type"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [
+                            {
+                                "filter": "Type",
+                                "filterType": "DIMENSION",
+                                "filterOperator": "OR",
+                                "nestedFilters": [],
+                                "criteria": [
+                                    {
+                                        "value": "Billed",
+                                        "evaluator": "EQ"
+                                    }
+                                ]
+                            }
+                        ],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "SINGLE_VALUE",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A",
+                                ""
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "singleValueSettings": {
+                    "showSparkLine": true
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Web Sessions without Replay per App",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 646,
+                "left": 304,
+                "width": 608,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Sessions without Replay per Web App",
+            "queries": [
+                {
+                    "id": "C",
+                    "metric": "builtin:billing.apps.web.sessionsWithoutReplayByApplication",
+                    "spaceAggregation": "SUM",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.application",
+                        "Type"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [
+                            {
+                                "filter": "Type",
+                                "filterType": "DIMENSION",
+                                "filterOperator": "OR",
+                                "nestedFilters": [],
+                                "criteria": [
+                                    {
+                                        "value": "Billed",
+                                        "evaluator": "EQ"
+                                    }
+                                ]
+                            }
+                        ],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "C:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "C"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Web Sessions without Replay per Web App",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 646,
+                "left": 912,
+                "width": 608,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Sessions without Replay per Web App",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "metricSelector": "builtin:billing.apps.web.sessionsWithoutReplayByApplication:filter(and(eq(Type,Billed))):splitBy(\"dt.entity.application\",Type):value:auto:sort(value(sum,descending)):limit(10)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "thresholds": []
+            }
+        },
+        {
+            "name": "Mobile Sessions without Replay Total",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 950,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Sessions without Replay Total",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:billing.apps.mobile.sessionsWithoutReplayByApplication",
+                    "spaceAggregation": "SUM",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "Type"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [
+                            {
+                                "filter": "Type",
+                                "filterType": "DIMENSION",
+                                "filterOperator": "OR",
+                                "nestedFilters": [],
+                                "criteria": [
+                                    {
+                                        "value": "Billed",
+                                        "evaluator": "EQ"
+                                    }
+                                ]
+                            }
+                        ],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "SINGLE_VALUE",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A",
+                                ""
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "singleValueSettings": {
+                    "showSparkLine": true
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Mobile Sessions without Replay per App",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 950,
+                "left": 304,
+                "width": 608,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Sessions without Replay per Web App",
+            "queries": [
+                {
+                    "id": "B",
+                    "metric": "builtin:billing.apps.mobile.sessionsWithoutReplayByApplication",
+                    "spaceAggregation": "SUM",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.mobile_application",
+                        "Type"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [
+                            {
+                                "filter": "Type",
+                                "filterType": "DIMENSION",
+                                "filterOperator": "OR",
+                                "nestedFilters": [],
+                                "criteria": [
+                                    {
+                                        "value": "Billed",
+                                        "evaluator": "EQ"
+                                    }
+                                ]
+                            }
+                        ],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "B:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "B"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Mobile Sessions without Replay per Web App",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 950,
+                "left": 912,
+                "width": 608,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Sessions without Replay per Web App",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:billing.apps.mobile.sessionsWithoutReplayByApplication",
+                    "spaceAggregation": "SUM",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.mobile_application",
+                        "Type"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [
+                            {
+                                "filter": "Type",
+                                "filterType": "DIMENSION",
+                                "filterOperator": "OR",
+                                "nestedFilters": [],
+                                "criteria": [
+                                    {
+                                        "value": "Billed",
+                                        "evaluator": "EQ"
+                                    }
+                                ]
+                            }
+                        ],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "thresholds": []
+            }
+        },
+        {
+            "name": "Custom Sessions without Replay Total",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1254,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Sessions without Replay Total",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:billing.apps.custom.sessionsWithoutReplayByApplication",
+                    "spaceAggregation": "SUM",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "Type"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [
+                            {
+                                "filter": "Type",
+                                "filterType": "DIMENSION",
+                                "filterOperator": "OR",
+                                "nestedFilters": [],
+                                "criteria": [
+                                    {
+                                        "value": "Billed",
+                                        "evaluator": "EQ"
+                                    }
+                                ]
+                            }
+                        ],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "SINGLE_VALUE",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A",
+                                ""
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "singleValueSettings": {
+                    "showSparkLine": true
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Custom Sessions without Replay per App",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1254,
+                "left": 304,
+                "width": 608,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Sessions without Replay per Web App",
+            "queries": [
+                {
+                    "id": "D",
+                    "metric": "builtin:billing.apps.custom.sessionsWithoutReplayByApplication",
+                    "spaceAggregation": "SUM",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_application",
+                        "Type"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [
+                            {
+                                "filter": "Type",
+                                "filterType": "DIMENSION",
+                                "filterOperator": "OR",
+                                "nestedFilters": [],
+                                "criteria": [
+                                    {
+                                        "value": "Billed",
+                                        "evaluator": "EQ"
+                                    }
+                                ]
+                            }
+                        ],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "D:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "D"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Custom Sessions without Replay per Web App",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1254,
+                "left": 912,
+                "width": 608,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Sessions without Replay per Web App",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:billing.apps.custom.sessionsWithoutReplayByApplication",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "Type",
+                        "dt.entity.custom_application"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [
+                            {
+                                "filter": "Type",
+                                "filterType": "DIMENSION",
+                                "filterOperator": "OR",
+                                "nestedFilters": [],
+                                "criteria": [
+                                    {
+                                        "value": "Billed",
+                                        "evaluator": "EQ"
+                                    }
+                                ]
+                            }
+                        ],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "thresholds": []
+            }
+        },
+        {
+            "name": "Web User Actions and Session Properties Total",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1558,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "User Actions and Session Properties Total",
+            "queries": [
+                {
+                    "id": "B",
+                    "timeAggregation": "DEFAULT",
+                    "metricSelector": "builtin:billing.apps.web.userActionPropertiesByApplication:splitBy():sum:auto:sort(value(sum,descending)):limit(10)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "SINGLE_VALUE",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "B:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "B",
+                                ""
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "singleValueSettings": {
+                    "showSparkLine": true
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Web User Action and Session Properties per App",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1558,
+                "left": 304,
+                "width": 608,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "User Action and Session Properties per Web App",
+            "queries": [
+                {
+                    "id": "B",
+                    "metric": "builtin:billing.apps.web.userActionPropertiesByApplication",
+                    "spaceAggregation": "SUM",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.application"
+                    ],
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "B:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "B"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Web User Action and Session Properties per Web App",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1558,
+                "left": 912,
+                "width": 608,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "User Action and Session Properties per Web App",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:billing.apps.web.userActionPropertiesByApplication",
+                    "spaceAggregation": "SUM",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.application"
+                    ],
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "thresholds": []
+            }
+        },
+        {
+            "name": "Mobile User Actions and Session Properties Total",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1862,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "User Actions and Session Properties Total",
+            "queries": [
+                {
+                    "id": "B",
+                    "timeAggregation": "DEFAULT",
+                    "metricSelector": "(builtin:billing.apps.mobile.userActionPropertiesByMobileApplication:splitBy():sum:auto:sort(value(sum,descending)):limit(10))",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "SINGLE_VALUE",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "B:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "B",
+                                ""
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "singleValueSettings": {
+                    "showSparkLine": true
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Mobile User Action and Session Properties per App",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1862,
+                "left": 304,
+                "width": 608,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "User Action and Session Properties per Web App",
+            "queries": [
+                {
+                    "id": "C",
+                    "metric": "builtin:billing.apps.mobile.userActionPropertiesByMobileApplication",
+                    "spaceAggregation": "SUM",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.mobile_application"
+                    ],
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "C:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "C"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Mobile User Action and Session Properties per Web App",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1862,
+                "left": 912,
+                "width": 608,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "User Action and Session Properties per Web App",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "metricSelector": "builtin:billing.apps.mobile.userActionPropertiesByMobileApplication:splitBy(\"dt.entity.mobile_application\"):value:auto:sort(value(sum,descending)):limit(10)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "thresholds": []
+            }
+        },
+        {
+            "name": "Custom User Actions and Session Properties Total",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2166,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "User Actions and Session Properties Total",
+            "queries": [
+                {
+                    "id": "B",
+                    "timeAggregation": "DEFAULT",
+                    "metricSelector": "(builtin:billing.apps.custom.userActionPropertiesByDeviceApplication:splitBy():sum:auto:sort(value(sum,descending)):limit(10))",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "SINGLE_VALUE",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "B:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "B",
+                                ""
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "singleValueSettings": {
+                    "showSparkLine": true
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Custom User Action and Session Properties per App",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2166,
+                "left": 304,
+                "width": 608,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "User Action and Session Properties per Web App",
+            "queries": [
+                {
+                    "id": "D",
+                    "metric": "builtin:billing.apps.custom.userActionPropertiesByDeviceApplication",
+                    "spaceAggregation": "SUM",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_application"
+                    ],
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "D:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "D"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Custom User Action and Session Properties per Web App",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2166,
+                "left": 912,
+                "width": 608,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "User Action and Session Properties per Web App",
+            "queries": [
+                {
+                    "id": "A",
+                    "timeAggregation": "DEFAULT",
+                    "metricSelector": "builtin:billing.apps.custom.userActionPropertiesByDeviceApplication:splitBy(\"dt.entity.custom_application\"):value:auto:sort(value(sum,descending)):limit(10)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "thresholds": []
+            }
+        },
+        {
+            "name": "Synthetic Actions Total",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2470,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Synthetic Actions Total",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "metricSelector": "builtin:billing.synthetic.actions:splitBy():value:auto:sort(value(sum,descending)):limit(10)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "SINGLE_VALUE",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A",
+                                ""
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "thresholds": []
+            }
+        },
+        {
+            "name": "Synthetic Actions per Browser Monitor",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2470,
+                "left": 304,
+                "width": 608,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Synthetic Actions per Browser Monitor",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "metricSelector": "builtin:billing.synthetic.actions:splitBy(\"dt.entity.synthetic_test\",\"Location type\"):value:auto:sort(value(sum,descending)):limit(10)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Synthetic Actions per Browser Monitor",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2470,
+                "left": 912,
+                "width": 608,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Synthetic Actions per Browser Monitor",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "metricSelector": "builtin:billing.synthetic.actions:splitBy(\"dt.entity.synthetic_test\",\"Location type\"):value:auto:sort(value(sum,descending)):limit(10)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "thresholds": []
+            }
+        },
+        {
+            "name": "Synthetic Requests Total",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2774,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Synthetic Requests Total",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "metricSelector": "builtin:billing.synthetic.requests:splitBy():value:auto:sort(value(sum,descending)):limit(10)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "SINGLE_VALUE",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A",
+                                ""
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "thresholds": []
+            }
+        },
+        {
+            "name": "Synthetic Requests per HTTP Monitor",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2774,
+                "left": 304,
+                "width": 608,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Synthetic Requests per HTTP Monitor",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "metricSelector": "builtin:billing.synthetic.requests:splitBy(\"dt.entity.http_check\",\"Location type\"):value:auto:sort(value(sum,descending)):limit(10)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Synthetic Requests per HTTP Monitor",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2774,
+                "left": 912,
+                "width": 608,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Synthetic Requests per HTTP Monitor",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "metricSelector": "builtin:billing.synthetic.requests:splitBy(\"dt.entity.http_check\",\"Location type\"):value:auto:sort(value(sum,descending)):limit(10)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "thresholds": []
+            }
+        },
+        {
+            "name": "Third-party Results Total",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3078,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:billing.synthetic.external",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "limit": 1,
+                    "metricSelector": "builtin:billing.synthetic.external:(fold,):splitBy():avg:auto:sort(value(avg,descending)):limit(1)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "SINGLE_VALUE",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Third-party Results per Test",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3078,
+                "left": 304,
+                "width": 608,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:billing.synthetic.external",
+                    "spaceAggregation": "SUM",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.external_synthetic_test"
+                    ],
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "limit": 20,
+                    "metricSelector": "builtin:billing.synthetic.external:splitBy(dt.entity.external_synthetic_test):sum:auto:sort(value(avg,descending)):limit(20)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Third-party Results per Test",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3078,
+                "left": 912,
+                "width": 608,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:billing.synthetic.external",
+                    "spaceAggregation": "SUM",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.external_synthetic_test"
+                    ],
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "limit": 10,
+                    "metricSelector": "builtin:billing.synthetic.external:fold:splitBy(dt.entity.external_synthetic_test):sum:auto:sort(value(avg,descending)):limit(10)",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ]
+            }
+        }
+    ]
+}
