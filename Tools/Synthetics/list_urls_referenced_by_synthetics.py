@@ -1,10 +1,7 @@
-import ipaddress
 import os
 import requests
 import time
 import urllib.parse
-from urllib.parse import urlparse
-
 
 def process(env, token, print_mode):
     url_reference_list = process_entity_type(env, token)
