@@ -1,17 +1,23 @@
 import os
 import requests
 import time
-# import urllib.parse
+import urllib.parse
 import xlsxwriter
+
+include_disabled = False
+html_file_name = '../../$Output/Reporting/Synthetics/EstimatedSyntheticConsumption.html'
+xlsx_file_name = '../../$Output/Reporting/Synthetics/EstimatedSyntheticConsumption.xlsx'
 
 
 def process(env, token):
     row_count = 0
     rows = []
     endpoint = '/api/v1/synthetic/monitors'
-    # raw_params = 'enabled=true'
-    # params = urllib.parse.quote(raw_params, safe='/,&=')
-    params = ''
+    if include_disabled:
+        params = ''
+    else:
+        raw_params = 'enabled=true'
+        params = urllib.parse.quote(raw_params, safe='/,&=')
     synthetics_json_list = get_rest_api_json(env, token, endpoint, params)
     for synthetics_json in synthetics_json_list:
         inner_synthetics_json_list = synthetics_json.get('monitors')
@@ -31,8 +37,10 @@ def process(env, token):
             else:
                 synthetic_state = 'a disabled'
             if synthetic_type == 'BROWSER':
+                synthetic_type = 'Browser'
                 step_key = 'events'
             else:
+                synthetic_type = 'HTTP'
                 step_key = 'requests'
             script_events = synthetic_json.get('script').get(step_key)
             # for script_event in script_events:
@@ -55,16 +63,16 @@ def process(env, token):
                 estimated_hourly_consumption_literal = 'DEM Unit'
 
             # Print a verbose summary of each Synthetic to the console
-            # print(f'{synthetic_name} is {synthetic_state} {synthetic_type.capitalize()} test with {event_count} {event_count_literal} scheduled to run every {synthetic_frequency} {synthetic_frequency_literal} from {synthetic_location_count} {synthetic_location_count_literal} for an estimated hourly consumption of {estimated_hourly_consumption} {estimated_hourly_consumption_literal}')
+            # print(f'{synthetic_name} is {synthetic_state} {synthetic_type} test with {event_count} {event_count_literal} scheduled to run every {synthetic_frequency} {synthetic_frequency_literal} from {synthetic_location_count} {synthetic_location_count_literal} for an estimated hourly consumption of {estimated_hourly_consumption} {estimated_hourly_consumption_literal}')
 
             # Save columns for each row to be output as HTML and XLSX
-            row = (synthetic_name, synthetic_enabled, synthetic_type.capitalize(), event_count, synthetic_frequency, synthetic_location_count, estimated_hourly_consumption)
+            row = (synthetic_name, synthetic_enabled, synthetic_type, event_count, synthetic_frequency, synthetic_location_count, estimated_hourly_consumption)
             rows.append(row)
             row_count += 1
 
             # For testing, stop at a small number of rows
-            if row_count >= 100:
-                break
+            # if row_count >= 50:
+            #     break
 
         write_html(sorted(rows, key=lambda result: row[0].lower()))
         write_xlsx(sorted(rows, key=lambda result: row[0].lower()))
@@ -75,19 +83,19 @@ def estimate_consumption(synthetic_enabled, synthetic_type, event_count, synthet
     if not synthetic_enabled:
         return 0
 
-    multiplier = 1
-    if synthetic_type == 'HTTP':
-        multiplier = .1
-
     hourly_frequency = 60/synthetic_frequency
 
-    hourly_consumption = (event_count * hourly_frequency * synthetic_location_count) * multiplier
+    hourly_consumption = (event_count * hourly_frequency * synthetic_location_count)
+
+    if synthetic_type == 'HTTP':
+        hourly_consumption = hourly_consumption / 10
 
     return hourly_consumption
 
 
 def write_xlsx(rows):
-    workbook = xlsxwriter.Workbook('../../$Output/Reporting/Synthetics/EstimatedSyntheticConsumption.xlsx')
+    # workbook = xlsxwriter.Workbook('../../$Output/Reporting/Synthetics/EstimatedSyntheticConsumption.xlsx')
+    workbook = xlsxwriter.Workbook(xlsx_file_name)
     header_format = workbook.add_format({'bold': True, 'bg_color': '#B7C9E2'})
 
     worksheet = workbook.add_worksheet('Estimated Synthetic Consumption')
@@ -122,7 +130,7 @@ def write_xlsx(rows):
 
 
 def write_html(rows):
-    filename = '../../$Output/Reporting/Synthetics/EstimatedSyntheticConsumption.html'
+    # filename = '../../$Output/Reporting/Synthetics/EstimatedSyntheticConsumption.html'
 
     html_top = '''<html>
       <body>
@@ -162,7 +170,7 @@ def write_html(rows):
     col_start = '<td>'
     col_end = '</td>'
 
-    with open(filename, 'w', encoding='utf8') as file:
+    with open(html_file_name, 'w', encoding='utf8') as file:
         # Begin HTML formatting
         write_line(file, html_top)
 
@@ -199,9 +207,9 @@ def get_rest_api_json(url, token, endpoint, params):
     # print(f'get_rest_api_json({url}, {endpoint}, {params})')
     full_url = url + endpoint
     try:
-        resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
-    except ConnectionError:
-        print('Sleeping 30 seconds before retrying due to connection error...')
+        resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token}, timeout=60.0)
+    except (ConnectionError, TimeoutError):
+        print('Sleeping 30 seconds before retrying due to connection or timeout error...')
         time.sleep(30)
         resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
 
@@ -263,6 +271,8 @@ def main():
 
     print('')
     print('Estimate Synthetic Consumption')
+    print(f'HTML report will be written to "{html_file_name}"')
+    print(f'Excel report will be written to "{xlsx_file_name}"')
     process(env, token)
 
 
