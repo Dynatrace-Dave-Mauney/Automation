@@ -4,7 +4,7 @@ import time
 import urllib.parse
 import xlsxwriter
 
-include_disabled = False
+include_disabled = True
 html_file_name = '../../$Output/Reporting/Synthetics/EstimatedSyntheticConsumption.html'
 xlsx_file_name = '../../$Output/Reporting/Synthetics/EstimatedSyntheticConsumption.xlsx'
 
@@ -63,7 +63,7 @@ def process(env, token):
                 estimated_hourly_consumption_literal = 'DEM Unit'
 
             # Print a verbose summary of each Synthetic to the console
-            # print(f'{synthetic_name} is {synthetic_state} {synthetic_type} test with {event_count} {event_count_literal} scheduled to run every {synthetic_frequency} {synthetic_frequency_literal} from {synthetic_location_count} {synthetic_location_count_literal} for an estimated hourly consumption of {estimated_hourly_consumption} {estimated_hourly_consumption_literal}')
+            print(f'{synthetic_name} is {synthetic_state} {synthetic_type} test with {event_count} {event_count_literal} scheduled to run every {synthetic_frequency} {synthetic_frequency_literal} from {synthetic_location_count} {synthetic_location_count_literal} for an estimated hourly consumption of {estimated_hourly_consumption} {estimated_hourly_consumption_literal}')
 
             # Save columns for each row to be output as HTML and XLSX
             row = (synthetic_name, synthetic_enabled, synthetic_type, event_count, synthetic_frequency, synthetic_location_count, estimated_hourly_consumption)
@@ -71,8 +71,8 @@ def process(env, token):
             row_count += 1
 
             # For testing, stop at a small number of rows
-            # if row_count >= 50:
-            #     break
+            if row_count >= 50:
+                break
 
         write_html(sorted(rows, key=lambda result: row[0].lower()))
         write_xlsx(sorted(rows, key=lambda result: row[0].lower()))
@@ -103,7 +103,7 @@ def write_xlsx(rows):
     row_index = 0
     column_index = 0
 
-    headers = ['Synthetic Name', 'State (Enabled/Disabled)', 'Type (Browser/HTTP)', '>Number of Steps', 'Frequency (Runs every X minutes)', 'Number of Locations', 'Hourly DEM Unit Consumption']
+    headers = ['Synthetic Name', 'State (Enabled/Disabled)', 'Type (Browser/HTTP)', 'Number of Steps', 'Frequency (Runs every X minutes)', 'Number of Locations', 'Hourly DEM Unit Consumption']
     for _ in headers:
         worksheet.write(row_index, column_index, headers[column_index], header_format)
         column_index += 1
@@ -123,8 +123,7 @@ def write_xlsx(rows):
         worksheet.write(row_index, 6, estimated_hourly_consumption)
         row_index += 1
 
-    # worksheet.autofilter(0, 0, row_index, len(headers)) # add filter to all columns not needed here...
-    # worksheet.autofilter(0, 2, row_index, 6)  # add filter to the third column to seventh column (Monitoring Instructions to Source)
+    worksheet.autofilter(0, 0, row_index, len(headers)) # add filter to all columns
     worksheet.autofit()
     workbook.close()
 
