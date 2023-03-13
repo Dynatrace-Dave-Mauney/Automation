@@ -7,7 +7,7 @@ current_cluster_version = '1.261.134.20230302-084304'
 current_configuration_versions = [6]
 
 DASHBOARD_INPUT_PATH = 'Templates/Overview'
-DASHBOARD_INPUT_PATH = 'Templates-Overview-Clean'
+# DASHBOARD_INPUT_PATH = 'Templates-Overview-Clean'
 
 
 def verify_dashboards():

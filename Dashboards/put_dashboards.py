@@ -1,4 +1,4 @@
-# Put all dashboards match the file path pattern to the specified environment.
+# Put all dashboards matching the file path pattern to the specified environment.
 # Parameters can be passed inline or from command line arguments.
 
 import json
@@ -24,8 +24,8 @@ def run():
 
     # Use the owner stored in properties by default.
     # Override it here or in the put_dashboard call, if needed.
-    # owner = get_owner()
-    owner = 'capesb@labcorp.com'
+    owner = get_owner()
+    # owner = 'nobody@example.com'
 
     # Default prefix.
     # Override it here or in the put_dashboard call, if needed.
@@ -48,46 +48,21 @@ def run():
     # put_dashboards('Personal', 'Sandbox/00000000-dddd-bbbb-aaaa-???????????1.json', 'Personal', owner)
     # put_dashboards('FreeTrial1', 'Sandbox/00000000-dddd-bbbb-aaaa-???????????1.json', 'Sandbox', owner)
 
-    # put_dashboards('Personal', 'Sandbox/00000000-dddd-bbbb-aaaa-????????????.json', 'Personal', owner)
     # put_dashboards('Personal', 'Templates/Overview/00000000-dddd-bbbb-ffff-????????????.json', 'Test', owner)
-    # put_dashboards('Personal', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000900.json', 'Test', owner)
-    # put_dashboards('Personal', 'Curated/Details/*.json', 'TEMP', owner)
-    # put_dashboards('Personal', 'Curated/Details/Detailed_Drilldowns_Menu.json', 'TEMP', owner)
+    # put_dashboards('Personal', 'Sandbox/00000000-dddd-bbbb-aaaa-????????????.json', 'Personal', owner)
 
-    # put_dashboards('Personal', 'Curated/Details/Detailed_Drilldowns_Menu.json', 'TEMP', owner)
-    # put_dashboards('Personal', 'Curated/Details/*.json', 'TEMP', owner)
-    # put_dashboards('Prod', 'Curated/Details/*.json', 'TEMP', owner)
-    # put_dashboards('Prod', 'Curated/Details/Detailed_Drilldowns_Menu.json', 'TEMP', owner)
+    # put_dashboards('Dev', 'Templates/Overview/00000000-dddd-bbbb-ffff-00000000????.json', 'Dev', owner)
 
-    # put_dashboards('Personal', 'Templates-Overview-Clean/00000000-dddd-bbbb-ffff-00000000????.json', 'Personal', owner)
-    # put_dashboards('Personal', 'Templates/Overview/00000000-dddd-bbbb-ffff-00000000????.json', 'Personal', owner)
+    # put_dashboards('Prep', 'Templates/Overview/00000000-dddd-bbbb-ffff-00000000????.json', 'Prep', owner)
 
-    # DONE
-    # put_dashboards('Dev', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000001.json', 'Dev', owner)
-    # put_dashboards('Dev', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000047.json', 'Dev', owner)
-    # put_dashboards('Dev', 'Templates/Overview/00000000-dddd-bbbb-ffff-00000000006?.json', 'Dev', owner)
-    # put_dashboards('Dev', 'Templates/Overview/00000000-dddd-bbbb-ffff-0000000008??.json', 'Dev', owner)
-    # put_dashboards('Dev', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000900.json', 'Dev', owner)
-    # put_dashboards('Dev', 'Templates/Overview/00000000-dddd-bbbb-ffff-0000000010??.json', 'Dev', owner)
-    # put_dashboards('Dev', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000800.json', 'Dev', owner)
-
-    # DONE
-    # put_dashboards('Prep', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000001.json', 'Prep', owner)
-    # put_dashboards('Prep', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000047.json', 'Prep', owner)
-    # put_dashboards('Prep', 'Templates/Overview/00000000-dddd-bbbb-ffff-00000000006?.json', 'Prep', owner)
-    # put_dashboards('Prep', 'Templates/Overview/00000000-dddd-bbbb-ffff-0000000008??.json', 'Prep', owner)
-    # put_dashboards('Prep', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000900.json', 'Prep', owner)
-    # put_dashboards('Prep', 'Templates/Overview/00000000-dddd-bbbb-ffff-0000000010??.json', 'Prep', owner)
-
-    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000001.json', 'Prod', owner)
-    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000047.json', 'Prod', owner)
-    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-00000000006?.json', 'Prod', owner)
-    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-0000000008??.json', 'Prod', owner)
-    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000900.json', 'Prod', owner)
-    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-0000000010??.json', 'Prod', owner)
+    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-00000000????.json', 'Prod', owner)
 
     # owner = get_owner()
-    # put_dashboards('Prod', '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000???.json', 'Prod', owner)
+    # owner = 'xxxxxx@xxxxxxx.com'
+    # put_dashboards('Personal', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000001???.json', 'Personal', owner)
+    # put_dashboards('Dev', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000001???.json', 'Dev', owner)
+    # put_dashboards('Prep', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000001???.json', 'Prep', owner)
+    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000001???.json', 'Prod', owner)
 
 
 def put_dashboards(env_name, path, prefix, owner):

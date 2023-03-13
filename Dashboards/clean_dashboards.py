@@ -11,8 +11,8 @@ from json import JSONDecodeError
 DASHBOARD_INPUT_PATH = 'Templates/Overview'
 DASHBOARD_OUTPUT_PATH = 'Templates-Overview-Clean'
 
-DASHBOARD_INPUT_PATH = 'Templates-Overview-Clean'
-DASHBOARD_OUTPUT_PATH = 'Templates-Overview-Reclean'
+# DASHBOARD_INPUT_PATH = 'Templates-Overview-Clean'
+# DASHBOARD_OUTPUT_PATH = 'Templates-Overview-Reclean'
 
 confirmation_required = True
 remove_directory_at_startup = True

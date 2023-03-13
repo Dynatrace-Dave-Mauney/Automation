@@ -4,7 +4,8 @@ Generate "AWS Home Menu" Dashboard JSON.
 
 import json
 
-directory_path = '../../Dashboards/Templates/Overview'
+# directory_path = '../../Dashboards/Templates/Overview'
+directory_path = 'Templates/Overview'
 dashboard_name = '00000000-dddd-bbbb-ffff-000000001000.json'
 
 def main():
@@ -16,12 +17,13 @@ def main():
 		('AWS Connect', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001011'),
 		('AWS Connect Details', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001020'),
 		('AWS DynamoDB', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001002'),
-		('AWS DynamoDB Accelerator (DAX)', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001021'),
+		('AWS DynamoDB Accelerator (DAX)', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001022'),
 		('AWS EBS', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001003'),
 		('AWS EC2', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001004'),
 		('AWS EC2 Auto Scaling', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001021'),
 		('AWS ECS ContainerInsights', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001013'),
 		('AWS ECS', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001012'),
+		('AWS ES', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001024'),
 		('AWS Kinesis Data Streams', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001019'),
 		('AWS Lambda Functions', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001005'),
 		('AWS Lex', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001014'),
@@ -31,7 +33,8 @@ def main():
 		('AWS Route 53', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001016'),
 		('AWS Route 53 Resolver', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001017'),
 		('AWS Site-to-Site VPN', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001018'),
-]
+		('AWS SQS', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001025'),
+	]
 
 	view_links = [
 		('AWS', '#awses'),
@@ -45,14 +48,16 @@ def main():
     "configurationVersions": [
       6
     ],
-    "clusterVersion": "1.240.132.20220503-084001"
+    "clusterVersion": "1.261.134.20230302-084304"
   },
   "id": "00000000-dddd-bbbb-ffff-000000001000",
   "dashboardMetadata": {
     "name": "TEMPLATE: AWS Home",
     "shared": true,
     "owner": "nobody@example.com",
-    "preset": true
+    "preset": false,
+    "tilesNameSize": "small",
+    "hasConsistentColors": true
   },
   "tiles": [
     {
@@ -118,6 +123,18 @@ def main():
 	print(dashboard_template)
 
 	write_json(directory_path, dashboard_name, json.loads(dashboard_template))
+
+	aws_markdown_menu = '			"markdown": "'
+	for dashboard_link in dashboard_links:
+		dashboard_key, dashboard_link = dashboard_link
+		aws_markdown_menu += f'  \\n[{dashboard_key}]({dashboard_link})'
+	aws_markdown_menu += '"'
+
+	filename = 'Templates/Overview/markdown_aws_menu.json'
+	with open(filename, 'w') as file:
+		file.write(aws_markdown_menu)
+
+
 
 def write_json(directory_path, filename, json_dict):
 	# print('write_json(' + directory_path + ',' + filename + ',' + str(json_dict) + ')')
