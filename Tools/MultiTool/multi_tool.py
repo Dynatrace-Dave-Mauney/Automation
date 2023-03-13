@@ -135,7 +135,11 @@ def list_configs(env, token, filtering):
                         entity_name = value.get('name')
                         entity_id = value.get('id')
                         if entity_name and entity_id:
-                            line = f'{entity_name}|{entity_id}'
+                            if api == 'dashboards':
+                                owner = value.get('owner')
+                                line = f'{entity_name}|{entity_id}|{owner}'
+                            else:
+                                line = f'{entity_name}|{entity_id}'
                             if not filtering or filtering in line:
                                 lines.append(line)
                         else:
