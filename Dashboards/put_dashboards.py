@@ -64,6 +64,23 @@ def run():
     # put_dashboards('Prep', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000001???.json', 'Prep', owner)
     # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000001???.json', 'Prod', owner)
 
+    # owner = 'xxxxx@xxxxxxx.com'
+    # put_dashboards('Dev', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000001.json', 'Dev', owner)
+    # put_dashboards('Dev', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000022.json', 'Dev', owner)
+    # put_dashboards('Dev', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000023.json', 'Dev', owner)
+    # put_dashboards('Dev', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000024.json', 'Dev', owner)
+    # put_dashboards('Dev', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000032.json', 'Dev', owner)
+    # put_dashboards('Prep', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000001.json', 'Prep', owner)
+    # put_dashboards('Prep', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000022.json', 'Prep', owner)
+    # put_dashboards('Prep', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000023.json', 'Prep', owner)
+    # put_dashboards('Prep', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000024.json', 'Prep', owner)
+    # put_dashboards('Prep', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000032.json', 'Prep', owner)
+    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000001.json', 'Prod', owner)
+    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000022.json', 'Prod', owner)
+    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000023.json', 'Prod', owner)
+    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000024.json', 'Prod', owner)
+    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000032.json', 'Prod', owner)
+
 
 def put_dashboards(env_name, path, prefix, owner):
     print('Prefix: ' + prefix)
