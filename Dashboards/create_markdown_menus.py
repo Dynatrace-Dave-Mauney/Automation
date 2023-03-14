@@ -33,9 +33,13 @@ def write_markdown_menus(dashboard_lookup):
         'Detailed Drilldowns Menu',
         'Hosts (Detailed)',
         'IBM DataPower by Host',
+        'IBM DataPower Overview',
         'IBM MQ Metrics by Best Split',
         'IBM MQ Metrics by Queue Manager and Best Split',
         'IBM MQ Metrics by Queue Manager',
+        'IBM WebSphere Metrics by Pool',
+        'IBM WebSphere Metrics by Process and Pool',
+        'IBM WebSphere Metrics by Process',
         'Java',
         'Kafka - Home',
         'Key Requests',
@@ -53,9 +57,6 @@ def write_markdown_menus(dashboard_lookup):
         'Web Servers',
         'WebLogic by Name',
         'WebLogic by Process',
-        'WebSphere Metrics by Pool',
-        'WebSphere Metrics by Process and Pool',
-        'WebSphere Metrics by Process',
     ]
 
     markdown_menu = '			"markdown": "More Details\\n\\n'
