@@ -1,48 +1,13 @@
 import copy
 import json
-import os
 import requests
 import ssl
 import urllib.parse
 from inspect import currentframe
 from requests import Response
 
-
-def get_rest_api_json(url, token, endpoint, params):
-    full_url = url + endpoint
-    resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
-    if resp.status_code != 200:
-        print('REST API Call Failed!')
-        print(f'GET {full_url} {params} {resp.status_code} - {resp.reason}')
-        exit(1)
-
-    json_data = resp.json()
-
-    # Some json is just a list of dictionaries.
-    # Config V1 AWS Credentials is the only example I am aware of.
-    # For these, I have never seen pagination.
-    if type(json_data) is list:
-        return json_data
-
-    json_list = [json_data]
-    next_page_key = json_data.get('nextPageKey')
-
-    while next_page_key is not None:
-        params = {'nextPageKey': next_page_key}
-        full_url = url + endpoint
-        resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
-
-        if resp.status_code != 200:
-            print('Paginated REST API Call Failed!')
-            print(f'GET {full_url} {resp.status_code} - {resp.reason}')
-            exit(1)
-
-        json_data = resp.json()
-
-        next_page_key = json_data.get('nextPageKey')
-        json_list.append(json_data)
-
-    return json_list
+from Reuse import dynatrace_api
+from Reuse import environment
 
 
 def process(env, token):
@@ -50,13 +15,13 @@ def process(env, token):
     endpoint = '/api/v2/entities'
     raw_params = 'pageSize=1000&entitySelector=type(CLOUD_APPLICATION_NAMESPACE)'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    kubernetes_namespaces_json_list = get_rest_api_json(env, token, endpoint, params)
+    kubernetes_namespaces_json_list = dynatrace_api.get(env, token, endpoint, params)
 
     # Get all hosts with "Kubernetes Namespace" tag(s)
     endpoint = '/api/v2/entities'
     raw_params = 'entitySelector=type(HOST),tag("Kubernetes Namespace")&fields=+tags'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    hosts_json_list = get_rest_api_json(env, token, endpoint, params)
+    hosts_json_list = dynatrace_api.get(env, token, endpoint, params)
 
     namespaces = []
     for kubernetes_namespaces_json in kubernetes_namespaces_json_list:
@@ -169,7 +134,7 @@ def delete_kubernetes_namespace_management_zones(env_name, env, token):
     endpoint = '/api/config/v1/managementZones'
     raw_params = 'pageSize=1000'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    management_zone_json_list = get_rest_api_json(env, token, endpoint, params)
+    management_zone_json_list = dynatrace_api.get(env, token, endpoint, params)
 
     print(management_zone_json_list)
 
@@ -214,23 +179,12 @@ def get_line_number():
 
 
 def run():
-    # env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-    # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-    env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-    # env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
-    # env_name, tenant_key, token_key = ('FreeTrial1', 'FREETRIAL1_TENANT', 'ROBOT_ADMIN_FREETRIAL1_TOKEN')
+    # env_name, env, token = environment.get_environment('Prod')
+    # env_name, env, token = environment.get_environment('Prep')
+    # env_name, env, token = environment.get_environment('Dev')
+    env_name, env, token = environment.get_environment('Personal')
+    # env_name, env, token = environment.get_environment('FreeTrial1')
 
-    tenant = os.environ.get(tenant_key)
-    token = os.environ.get(token_key)
-    env = f'https://{tenant}.live.dynatrace.com'
-
-    masked_token = token.split('.')[0] + '.' + token.split('.')[1] + '.* (Masked)'
-
-    print(f'Environment Name: {env_name}')
-    print(f'Environment:      {env}')
-    print(f'Token:            {masked_token}')
-
-    print('')
     print('Generate kubernetes management zones by namespace')
 
     # delete_kubernetes_namespace_management_zones(env_name, env, token)

@@ -8,6 +8,9 @@ import urllib.parse
 from inspect import currentframe
 from requests import Response
 
+from Reuse import environment
+from Reuse import dynatrace_api
+
 PATH = '../../$Output/Tools/MultiTool/Saved'
 
 api = ''
@@ -169,6 +172,7 @@ def list_configs(env, token, filtering):
     except ssl.SSLError:
         print("SSL Error")
 
+
 def view_entity(entity_id, env, token):
     headers = {'Authorization': 'Api-Token ' + token}
     try:
@@ -241,7 +245,7 @@ def view_entity_v1(entity_id, env, token):
 def list_entity_types(env, token, filtering):
     endpoint = '/api/v2/entityTypes'
     params = ''
-    entities_json_list = get_rest_api_json(env, token, endpoint, params)
+    entities_json_list = dynatrace_api.get(env, token, endpoint, params)
 
     print('id' + '|' + 'name')
 
@@ -260,7 +264,7 @@ def list_entities_of_type(env, token, entity_type, filtering):
     endpoint = '/api/v2/entities'
     entity_selector = 'type(' + entity_type + ')'
     params = '&entitySelector=' + urllib.parse.quote(entity_selector)
-    entities_json_list = get_rest_api_json(env, token, endpoint, params)
+    entities_json_list = dynatrace_api.get(env, token, endpoint, params)
 
     lines = []
 
@@ -306,7 +310,7 @@ def view_object(object_id, env, token):
 def list_schemas(env, token, filtering):
     endpoint = '/api/v2/settings/schemas'
     params = ''
-    settings_json_list = get_rest_api_json(env, token, endpoint, params)
+    settings_json_list = dynatrace_api.get(env, token, endpoint, params)
 
     schema_ids = []
     schema_dict = {}
@@ -328,7 +332,7 @@ def list_objects_at_environment_scope(env, token, filtering):
     endpoint = '/api/v2/settings/objects'
     raw_params = 'scopes=environment&fields=schemaId,value&pageSize=500'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    settings_object = get_rest_api_json(env, token, endpoint, params)[0]
+    settings_object = dynatrace_api.get(env, token, endpoint, params)[0]
     items = settings_object.get('items')
     for item in items:
         schema_id = item.get('schemaId')
@@ -346,7 +350,7 @@ def list_objects_of_schema(env, token, schema_id, filtering):
     endpoint = f'/api/v2/settings/objects'
     raw_params = f'schemaIds={schema_id}&fields=scope,objectId,value&pageSize=500'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    settings_object = get_rest_api_json(env, token, endpoint, params)[0]
+    settings_object = dynatrace_api.get(env, token, endpoint, params)[0]
     print(settings_object)
 
     items = settings_object.get('items')
@@ -367,7 +371,7 @@ def list_metrics(env, token, filtering):
     # raw_params = 'pageSize=500&fields=+created'
     raw_params = 'pageSize=500'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    metrics_json_list = get_rest_api_json(env, token, endpoint, params)
+    metrics_json_list = dynatrace_api.get(env, token, endpoint, params)
     # print('metric_id' + '|' + 'displayName' + '|' + 'created')
     print('metric_id' + '|' + 'displayName')
 
@@ -471,7 +475,7 @@ def list_events(env, token, filtering):
     page_size = 1000
     from_time = 'now-24h'
     params = f'pageSize={page_size}&from={from_time}'
-    events_json_list = get_rest_api_json(env, token, endpoint, params)
+    events_json_list = dynatrace_api.get(env, token, endpoint, params)
 
     print('Events')
     print('eventId|eventType|title|startTime|endTime|duration (D:HH:MM:SS.MMM')
@@ -510,50 +514,6 @@ def format_time_duration(start_time, end_time):
             duration -= minutes * 60
         formatted_time_duration = f'{days}:{hours:02d}:{minutes:02d}:{duration:02d}.{millis}'
         return formatted_time_duration
-
-
-def get_rest_api_json(url, token, endpoint, params):
-    # print(f'get_rest_api_json({url}, {endpoint}, {params})')
-    full_url = url + endpoint
-    resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
-    # print(f'GET {full_url} {resp.status_code} - {resp.reason}')
-    if resp.status_code != 200 and resp.status_code != 404:
-        print('REST API Call Failed!')
-        print(f'GET {full_url} {params} {resp.status_code} - {resp.reason}')
-        exit(1)
-
-    json_data = resp.json()
-
-    # Some json is just a list of dictionaries.
-    # Config V1 AWS Credentials is the only example I am aware of.
-    # For these, I have never seen pagination.
-    if type(json_data) is list:
-        # DEBUG:
-        # print(json_data)
-        return json_data
-
-    json_list = [json_data]
-    next_page_key = json_data.get('nextPageKey')
-
-    while next_page_key is not None:
-        # print(f'next_page_key: {next_page_key}')
-        params = {'nextPageKey': next_page_key}
-        full_url = url + endpoint
-        resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
-        # print(resp.url)
-
-        if resp.status_code != 200:
-            print('Paginated REST API Call Failed!')
-            print(f'GET {full_url} {resp.status_code} - {resp.reason}')
-            exit(1)
-
-        json_data = resp.json()
-        # print(json_data)
-
-        next_page_key = json_data.get('nextPageKey')
-        json_list.append(json_data)
-
-    return json_list
 
 
 def post(env, token, endpoint: str, payload: str) -> Response:
@@ -669,31 +629,7 @@ def change_environment(new_env):
         print('Invalid Environment Name...')
         return new_env, 'INVALID', 'NA'
 
-    return get_environment(new_env)
-
-
-def get_environment(env_name):
-    if env_name not in supported_environments:
-        print(f'Invalid environment name: {env_name}')
-        return env_name, None, None
-
-    tenant_key, token_key = supported_environments.get(env_name)
-
-    if env_name and tenant_key and token_key:
-        tenant = os.environ.get(tenant_key)
-        token = os.environ.get(token_key)
-        env = f'https://{tenant}.live.dynatrace.com'
-
-        if tenant and token and '.' in token:
-            masked_token = token.split('.')[0] + '.' + token.split('.')[1] + '.* (Masked)'
-            print(f'Environment Name: {env_name}')
-            print(f'Environment:      {env}')
-            print(f'Token:            {masked_token}')
-            return env_name, env, token
-        else:
-            print('Invalid Environment Configuration!')
-            print(f'Set the "env_name ({env_name}), tenant_key ({tenant_key}), token_key ({token_key})" tuple as required and verify the tenant ({tenant}) and token ({token}) environment variables are accessible.')
-            exit(1)
+    return environment.get_environment(new_env)
 
 
 def run():
@@ -703,11 +639,11 @@ def run():
     global save_content
 
     # Set Environment
-    # env_name, env, token = get_environment('Prod')
-    # env_name, env, token = get_environment('Prep')
-    # env_name, env, token = get_environment('Dev')
-    # env_name, env, token = get_environment('Personal')
-    env_name, env, token = get_environment('FreeTrial1')
+    # env_name, env, token = environment.get_environment('Prod')
+    # env_name, env, token = environment.get_environment('Prep')
+    # env_name, env, token = environment.get_environment('Dev')
+    # env_name, env, token = environment.get_environment('Personal')
+    env_name, env, token = environment.get_environment('FreeTrial1')
 
     print_help()
 

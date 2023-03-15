@@ -1,6 +1,7 @@
-import dynatrace_rest_api_helper
-import os
 import urllib.parse
+
+from Reuse import dynatrace_api
+from Reuse import environment
 
 
 expected_rum_host_headers = ['Host', 'X-Forwarded-Host', 'X-Host']
@@ -10,173 +11,168 @@ rum_ip_determination = []
 rum_ip_mappings_added = False
 
 ignore_list = [
-	'builtin:alerting.profile',
-	'builtin:apis.detection-rules',
-	'builtin:container.monitoring-rule',
-	'builtin:container.technology',
-	'builtin:dashboards.general',
-	'builtin:dashboards.presets',
-	'builtin:deployment.management.update-windows',
-	'builtin:elasticsearch.user-session-export-settings-v2',
-	'builtin:eula-settings',
-	'builtin:logmonitoring.log-dpp-rules',
-	'builtin:logmonitoring.log-events',
-	'builtin:mainframe.mqfilters',
-	'builtin:mainframe.txmonitoring',
-	'builtin:mainframe.txstartfilters',
-	'builtin:monitoredentities.generic.relation',
-	'builtin:monitoredentities.generic.type',
-	'builtin:monitoring.slo',
-	'builtin:oneagent.features',
-	'builtin:os-services-monitoring',
-	'builtin:problem.notifications',
-	'builtin:process-group.cloud-application-workload-detection',
-	'builtin:process-group.detection-flags',
-	'builtin:process.built-in-process-monitoring-rule',
-	'builtin:resource-attribute',
-	'builtin:span-attribute',
-	'builtin:span-entry-points',
-	'builtin:span-event-attribute',
-	'builtin:tags.auto-tagging'
+    'builtin:alerting.profile',
+    'builtin:apis.detection-rules',
+    'builtin:container.monitoring-rule',
+    'builtin:container.technology',
+    'builtin:dashboards.general',
+    'builtin:dashboards.presets',
+    'builtin:deployment.management.update-windows',
+    'builtin:elasticsearch.user-session-export-settings-v2',
+    'builtin:eula-settings',
+    'builtin:logmonitoring.log-dpp-rules',
+    'builtin:logmonitoring.log-events',
+    'builtin:mainframe.mqfilters',
+    'builtin:mainframe.txmonitoring',
+    'builtin:mainframe.txstartfilters',
+    'builtin:monitoredentities.generic.relation',
+    'builtin:monitoredentities.generic.type',
+    'builtin:monitoring.slo',
+    'builtin:oneagent.features',
+    'builtin:os-services-monitoring',
+    'builtin:problem.notifications',
+    'builtin:process-group.cloud-application-workload-detection',
+    'builtin:process-group.detection-flags',
+    'builtin:process.built-in-process-monitoring-rule',
+    'builtin:resource-attribute',
+    'builtin:span-attribute',
+    'builtin:span-entry-points',
+    'builtin:span-event-attribute',
+    'builtin:tags.auto-tagging'
 ]
 
 
 def summarize(env, token):
-	return process(env, token, False)
+    return process(env, token, False)
 
 
 def process_environment_scope(env, token, print_mode):
-	summary = []
-	findings = []
+    summary = []
+    findings = []
 
-	# summary.append('Interesting Settings 2.0 schemas with objects defined:')
+    # summary.append('Interesting Settings 2.0 schemas with objects defined:')
 
-	endpoint = '/api/v2/settings/objects'
-	raw_params = 'scopes=environment&fields=schemaId,value&pageSize=500'
-	params = urllib.parse.quote(raw_params, safe='/,&=')
-	settings_object = dynatrace_rest_api_helper.get_rest_api_json(env, token, endpoint, params)[0]
-	items = settings_object.get('items')
-	for item in items:
-		schema_id = item.get('schemaId')
-		value = str(item.get('value'))
-		value = value.replace('{', '')
-		value = value.replace('}', '')
-		value = value.replace("'", "")
-		if print_mode:
-			if schema_id not in ignore_list:
-				print(schema_id + ': ' + value)
+    endpoint = '/api/v2/settings/objects'
+    raw_params = 'scopes=environment&fields=schemaId,value&pageSize=500'
+    params = urllib.parse.quote(raw_params, safe='/,&=')
+    settings_object = dynatrace_api.get(env, token, endpoint, params)[0]
+    items = settings_object.get('items')
+    for item in items:
+        schema_id = item.get('schemaId')
+        value = str(item.get('value'))
+        value = value.replace('{', '')
+        value = value.replace('}', '')
+        value = value.replace("'", "")
+        if print_mode:
+            if schema_id not in ignore_list:
+                print(schema_id + ': ' + value)
 
-		add_findings(findings, schema_id, item)
+        add_findings(findings, schema_id, item)
 
-	# It just happens that the whole summary can be sorted in this particular case.
-	summary = sorted(summary)
+    # It just happens that the whole summary can be sorted in this particular case.
+    summary = sorted(summary)
 
-	add_findings_based_on_lists(findings)
-	add_findings_based_on_booleans(findings)
+    add_findings_based_on_lists(findings)
+    add_findings_based_on_booleans(findings)
 
-	if len(findings) > 0:
-		summary.append('Environment findings:')
-		summary.extend(findings)
-	else:
-		summary.append('Environment has no findings')
+    if len(findings) > 0:
+        summary.append('Environment findings:')
+        summary.extend(findings)
+    else:
+        summary.append('Environment has no findings')
 
-	if print_mode:
-		print_list(summary)
-		print('Environment Scope Done!')
+    if print_mode:
+        print_list(summary)
+        print('Environment Scope Done!')
 
-	return summary
+    return summary
 
 
 def add_findings(findings, schema_id, item):
-	value = item.get('value')
+    value = item.get('value')
 
-	if schema_id == 'builtin:audit-log':
-		if value.get('enabled') is not True:
-			findings.append('Audit logging is disabled.')
-		return
+    if schema_id == 'builtin:audit-log':
+        if value.get('enabled') is not True:
+            findings.append('Audit logging is disabled.')
+        return
 
-	if schema_id == 'builtin:networkzones':
-		if value.get('enabled') is not True:
-			findings.append('Network zones are disabled.')
-		return
+    if schema_id == 'builtin:networkzones':
+        if value.get('enabled') is not True:
+            findings.append('Network zones are disabled.')
+        return
 
-	if schema_id == 'builtin:anomaly-detection.frequent-issues':
-		if value.get('detectFrequentIssuesInApplications') and \
-			value.get('detectFrequentIssuesInTransactionsAndServices') and \
-			value.get('detectFrequentIssuesInInfrastructure'):
-			pass
-		else:
-			findings.append('Frequent issue detection has been modified.')
-		return
+    if schema_id == 'builtin:anomaly-detection.frequent-issues':
+        if value.get('detectFrequentIssuesInApplications') and \
+            value.get('detectFrequentIssuesInTransactionsAndServices') and \
+            value.get('detectFrequentIssuesInInfrastructure'):
+            pass
+        else:
+            findings.append('Frequent issue detection has been modified.')
+        return
 
-	# TODO: Figure out best way to handle differences of more complex schemas (list at bottom of source code)
-	# if schema_id == 'builtin:anomaly-detection.databases':
-	# 	print(str(item))
-	# 	exit()
-	# 	# 'responseTime: enabled: True, detectionMode: auto, autoDetection: responseTimeAll: degradationMilliseconds: 5.0, degradationPercent: 50.0, responseTimeSlowest: slowestDegradationMilliseconds: 20.0, slowestDegradationPercent: 100.0, overAlertingProtection: requestsPerMinute: 10.0, minutesAbnormalState: 1, failureRate: enabled: True, detectionMode: auto, autoDetection: absoluteIncrease: 0.0, relativeIncrease: 50.0, overAlertingProtection: requestsPerMinute: 10.0, minutesAbnormalState: 1, loadDrops: enabled: False, loadSpikes: enabled: False, databaseConnections: enabled: True, maxFailedConnects: 5, timePeriod: 5'
+    # TODO: Figure out best way to handle differences of more complex schemas (list at bottom of source code)
+    # if schema_id == 'builtin:anomaly-detection.databases':
+    # 	print(str(item))
+    # 	exit()
+    # 	# 'responseTime: enabled: True, detectionMode: auto, autoDetection: responseTimeAll: degradationMilliseconds: 5.0, degradationPercent: 50.0, responseTimeSlowest: slowestDegradationMilliseconds: 20.0, slowestDegradationPercent: 100.0, overAlertingProtection: requestsPerMinute: 10.0, minutesAbnormalState: 1, failureRate: enabled: True, detectionMode: auto, autoDetection: absoluteIncrease: 0.0, relativeIncrease: 50.0, overAlertingProtection: requestsPerMinute: 10.0, minutesAbnormalState: 1, loadDrops: enabled: False, loadSpikes: enabled: False, databaseConnections: enabled: True, maxFailedConnects: 5, timePeriod: 5'
 
-	# Schemas that need to be saved for later processing
-	if schema_id == 'builtin:rum.ip-mappings':
-		global rum_ip_mappings_added
-		rum_ip_mappings_added = True
-		return
+    # Schemas that need to be saved for later processing
+    if schema_id == 'builtin:rum.ip-mappings':
+        global rum_ip_mappings_added
+        rum_ip_mappings_added = True
+        return
 
-	if schema_id == 'builtin:rum.host-headers':
-		global rum_host_headers
-		rum_host_headers.append(value.get('headerName'))
-		return
+    if schema_id == 'builtin:rum.host-headers':
+        global rum_host_headers
+        rum_host_headers.append(value.get('headerName'))
+        return
 
-	if schema_id == 'builtin:rum.ip-determination':
-		global rum_ip_determination
-		rum_ip_determination.append(value.get('headerName'))
-		return
+    if schema_id == 'builtin:rum.ip-determination':
+        global rum_ip_determination
+        rum_ip_determination.append(value.get('headerName'))
+        return
 
 
 def add_findings_based_on_lists(findings):
-	sorted_rum_host_headers = sorted(rum_host_headers)
-	if sorted_rum_host_headers != expected_rum_host_headers:
-		findings.append('Host headers have been modified:')
-		findings.append('Expected: ' + str(expected_rum_host_headers))
-		findings.append('Actual: ' + str(sorted_rum_host_headers))
+    sorted_rum_host_headers = sorted(rum_host_headers)
+    if sorted_rum_host_headers != expected_rum_host_headers:
+        findings.append('Host headers have been modified:')
+        findings.append('Expected: ' + str(expected_rum_host_headers))
+        findings.append('Actual: ' + str(sorted_rum_host_headers))
 
-	sorted_rum_ip_determination = sorted(rum_ip_determination)
-	if sorted_rum_ip_determination != expected_rum_ip_determination:
-		findings.append('Host ip determination headers have been modified:')
-		findings.append('Expected: ' + str(expected_rum_ip_determination))
-		findings.append('Actual: ' + str(sorted_rum_ip_determination))
+    sorted_rum_ip_determination = sorted(rum_ip_determination)
+    if sorted_rum_ip_determination != expected_rum_ip_determination:
+        findings.append('Host ip determination headers have been modified:')
+        findings.append('Expected: ' + str(expected_rum_ip_determination))
+        findings.append('Actual: ' + str(sorted_rum_ip_determination))
 
 
 def add_findings_based_on_booleans(findings):
-	if rum_ip_mappings_added:
-		findings.append('RUM IP mappings have been added.')
+    if rum_ip_mappings_added:
+        findings.append('RUM IP mappings have been added.')
 
 
 def process(env, token, print_mode):
-	return process_environment_scope(env, token, print_mode)
+    return process_environment_scope(env, token, print_mode)
 
 
 def print_list(any_list):
-	for line in any_list:
-		line = line.replace('are 0', 'are no')
-		print(line)
+    for line in any_list:
+        line = line.replace('are 0', 'are no')
+        print(line)
 
 
 def main():
-    # env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-    # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-    # env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-    env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
-
-    tenant = os.environ.get(tenant_key)
-    token = os.environ.get(token_key)
-    env = f'https://{tenant}.live.dynatrace.com'
+    # env_name, env, token = environment.get_environment('Prod')
+    # env_name, env, token = environment.get_environment('Prep')
+    # env_name, env, token = environment.get_environment('Dev')
+    env_name, env, token = environment.get_environment('Personal')
+    # env_name, env, token = environment.get_environment('FreeTrial1')
 
     process(env, token, True)
 
 
 if __name__ == '__main__':
-    # print('Not to be run standalone.  Use one of the "perform_*.py" modules to run this module.')
-    # exit(1)
     main()
 
 # TODO: Figure out best way to handle differences of more complex schemas:

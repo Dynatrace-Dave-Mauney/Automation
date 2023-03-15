@@ -1,8 +1,10 @@
 import math
-import os
-import requests
 import sys
 import urllib.parse
+
+from Reuse import dynatrace_api
+from Reuse import environment
+
 
 PATH = '../../$Output/Reporting/Hosts'
 
@@ -12,7 +14,7 @@ def get_hosts(env, token):
     endpoint = '/api/v2/entities'
     raw_params = f'pageSize=500&entitySelector=type(HOST)&fields=+properties.monitoringMode,+properties.state,+properties.physicalMemory,+toRelationships'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    hosts = get_rest_api_json(env, token, endpoint, params)
+    hosts = dynatrace_api.get(env, token, endpoint, params)
     return hosts
 
 
@@ -77,50 +79,6 @@ def write_infra_only_candidate_hosts_file(env_name, env, token):
         file.write('</html>\n')
 
 
-def get_rest_api_json(url, token, endpoint, params):
-    # print(f'get_rest_api_json({url}, {endpoint}, {params})')
-    full_url = url + endpoint
-    resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
-    # print(f'GET {full_url} {resp.status_code} - {resp.reason}')
-    if resp.status_code != 200 and resp.status_code != 404:
-        print('REST API Call Failed!')
-        print(f'GET {full_url} {params} {resp.status_code} - {resp.reason}')
-        exit(1)
-
-    json_data = resp.json()
-
-    # Some json is just a list of dictionaries.
-    # Config V1 AWS Credentials is the only example I am aware of.
-    # For these, I have never seen pagination.
-    if type(json_data) is list:
-        # DEBUG:
-        # print(json_data)
-        return json_data
-
-    json_list = [json_data]
-    next_page_key = json_data.get('nextPageKey')
-
-    while next_page_key is not None:
-        # print(f'next_page_key: {next_page_key}')
-        params = {'nextPageKey': next_page_key}
-        full_url = url + endpoint
-        resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
-        # print(resp.url)
-
-        if resp.status_code != 200:
-            print('Paginated REST API Call Failed!')
-            print(f'GET {full_url} {resp.status_code} - {resp.reason}')
-            exit(1)
-
-        json_data = resp.json()
-        # print(json_data)
-
-        next_page_key = json_data.get('nextPageKey')
-        json_list.append(json_data)
-
-    return json_list
-
-
 def process(env_name, env, token):
     masked_token = token.split('.')[0] + '.' + token.split('.')[1] + '.* (Masked)'
 
@@ -136,14 +94,11 @@ def process(env_name, env, token):
 
 
 def run():
-    # env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-    # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-    env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-    # env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
-
-    tenant = os.environ.get(tenant_key)
-    token = os.environ.get(token_key)
-    env = f'https://{tenant}.live.dynatrace.com'
+    # env_name, env, token = environment.get_environment('Prod')
+    # env_name, env, token = environment.get_environment('Prep')
+    # env_name, env, token = environment.get_environment('Dev')
+    env_name, env, token = environment.get_environment('Personal')
+    # env_name, env, token = environment.get_environment('FreeTrial1')
 
     process(env_name, env, token)
 

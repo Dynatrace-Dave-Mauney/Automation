@@ -16,7 +16,6 @@ Token Permissions Required:
 """
 
 import copy
-from inspect import currentframe
 import json
 import os
 import requests
@@ -25,15 +24,16 @@ import ssl
 import yaml
 import urllib.parse
 
-# env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-# env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-# env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
-# env_name, tenant_key, token_key = ('FreeTrial1', 'FREETRIAL1_TENANT', 'ROBOT_ADMIN_FREETRIAL1_TOKEN')
+from inspect import currentframe
 
-tenant = os.environ.get(tenant_key)
-token = os.environ.get(token_key)
-env = f'https://{tenant}.live.dynatrace.com'
+from Reuse import dynatrace_api
+from Reuse import environment
+
+# env_name, env, token = environment.get_environment('Prod')
+# env_name, env, token = environment.get_environment('Prep')
+# env_name, env, token = environment.get_environment('Dev')
+env_name, env, token = environment.get_environment('Personal')
+# env_name, env, token = environment.get_environment('FreeTrial1')
 
 backup_directory_path = f'../$Output/DynatraceSettingsBackup/{env_name}'
 
@@ -350,46 +350,6 @@ def save_config(endpoint, json_file_name, payload, config_list):
     config_list.append(json_payload)
 
 
-def get_rest_api_json(endpoint, params):
-    # print('get_rest_api_json(' + env + ', ' + token + ', ' + endpoint + ', ' + params + ')')
-    full_url = env + endpoint
-    resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
-    if resp.status_code != 200 and resp.status_code != 404:
-        print('REST API Call Failed!')
-        print(f'GET {full_url} {params} {resp.status_code} - {resp.reason}')
-        # print(resp.text)
-        exit(get_line_number())
-
-    json_data = resp.json()
-
-    # Some json is just a list of dictionaries.
-    # Config V1 AWS Credentials is the only example I am aware of.
-    # For these, I have never seen pagination.
-    if type(json_data) is list:
-        return json_data
-
-    json_list = [json_data]
-    next_page_key = json_data.get('nextPageKey')
-
-    while next_page_key is not None:
-        params = {'nextPageKey': next_page_key}
-        # full_url = env + endpoint
-        resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
-
-        if resp.status_code != 200:
-            print('Paginated REST API Call Failed!')
-            print(f'GET {full_url} {resp.status_code} - {resp.reason}')
-            # print(resp.text)
-            exit(get_line_number())
-
-        json_data = resp.json()
-
-        next_page_key = json_data.get('nextPageKey')
-        json_list.append(json_data)
-
-    return json_list
-
-
 def get_config_endpoint(endpoint):
     try:
         full_url = env + '/api/config/v1' + endpoint
@@ -419,7 +379,7 @@ def save_settings20_objects():
 
     endpoint = '/api/v2/settings/schemas'
     params = ''
-    settings_json_list = get_rest_api_json(endpoint, params)
+    settings_json_list = dynatrace_api.get(env, token, endpoint, params)
 
     schema_ids = []
     schema_dict = {}
@@ -444,7 +404,7 @@ def save_settings20_objects():
             # raw_params = f'schemaIds={schema_id}&scopes=environment&fields=objectId,value&pageSize=500'
             raw_params = f'schemaIds={schema_id}&fields=objectId,value,scope&pageSize=500'
             params = urllib.parse.quote(raw_params, safe='/,&=')
-            setting_object = get_rest_api_json(endpoint, params)[0]
+            setting_object = dynatrace_api.get(env, token, endpoint, params)[0]
             items = setting_object.get('items')
             for item in items:
                 # print(item)
@@ -511,7 +471,7 @@ def save_slo_objects():
 
     endpoint = '/api/v2/slo'
     params = f'&pageSize=500'
-    slo_json_list = get_rest_api_json(endpoint, params)
+    slo_json_list = dynatrace_api.get(env, token, endpoint, params)
 
     # print(slo_json_list)
 
@@ -542,7 +502,7 @@ def save_synthetic_monitor_objects():
     endpoint = '/api/v1/synthetic/monitors'
     raw_params = f'&pageSize=5000'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    synthetic_monitor_json_list = get_rest_api_json(endpoint, params)
+    synthetic_monitor_json_list = dynatrace_api.get(env, token, endpoint, params)
 
     # print(synthetic_monitor_json_list)
 
@@ -555,7 +515,7 @@ def save_synthetic_monitor_objects():
             synthetic_monitor_id = inner_synthetic_monitor_json.get('entityId')
             endpoint = f'/api/v1/synthetic/monitors/{synthetic_monitor_id}'
             params = ''
-            synthetic_monitor_details_json = get_rest_api_json(endpoint, params)
+            synthetic_monitor_details_json = dynatrace_api.get(env, token, endpoint, params)
             write_environment_json('api/v1/synthetic/monitors', synthetic_monitor_id, synthetic_monitor_details_json)
             config_list.append(inner_synthetic_monitor_json)
 
@@ -576,7 +536,7 @@ def save_synthetic_location_objects():
     endpoint = '/api/v1/synthetic/locations'
     raw_params = f'&pageSize=5000'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    synthetic_location_json_list = get_rest_api_json(endpoint, params)
+    synthetic_location_json_list = dynatrace_api.get(env, token, endpoint, params)
 
     # print(synthetic_location_json_list)
 
@@ -589,7 +549,7 @@ def save_synthetic_location_objects():
             synthetic_location_id = inner_synthetic_location_json.get('entityId')
             endpoint = f'/api/v1/synthetic/locations/{synthetic_location_id}'
             params = ''
-            synthetic_location_details_json = get_rest_api_json(endpoint, params)
+            synthetic_location_details_json = dynatrace_api.get(env, token, endpoint, params)
             write_environment_json('api/v1/synthetic/location', synthetic_location_id, synthetic_location_details_json)
             config_list.append(inner_synthetic_location_json)
 

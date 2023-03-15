@@ -2,17 +2,17 @@
 # Save metrics from Dynatrace REST API to a file in JSON format.
 #
 
-from dynatrace_rest_api_helper import get_rest_api_json
 import json
 import sys
 
+from Reuse import dynatrace_api
 
 def get_metrics(url, token):
     # print(f'get_metrics({url}, {token}')
     endpoint = '/api/v2/metrics'
     params = '?pageSize=1000&fields=+displayName,+description,+unit,+aggregationTypes,' \
              '+defaultAggregation,+dimensionDefinitions,+transformations,+entityType'
-    metrics = get_rest_api_json(url, token, endpoint, params)
+    metrics = dynatrace_api.get(url, token, endpoint, params)
     return metrics
 
 

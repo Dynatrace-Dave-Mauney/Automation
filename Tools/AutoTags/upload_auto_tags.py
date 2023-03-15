@@ -2,24 +2,16 @@
 
 import json
 import glob
-import os
 import requests
 import ssl
 import codecs
 
-
-supported_environments = {
-    'Prod': ('PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN'),
-    'Prep': ('PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN'),
-    'Dev': ('DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN'),
-    'Personal': ('PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN'),
-    'FreeTrial1': ('FREETRIAL1_TENANT', 'ROBOT_ADMIN_FREETRIAL1_TOKEN'),
-}
+from Reuse import environment
 
 
 def run():
-    pass
-    # upload_auto_tags('Dev', 'uploads/DEV/*.json')
+    # pass
+    upload_auto_tags('Dev', 'uploads/DEV/*.json')
 
 
 def upload_auto_tags(env_name, path):
@@ -33,32 +25,8 @@ def upload_auto_tags(env_name, path):
                 auto_tag_json.pop('id')
             auto_tag_name = auto_tag_json.get('name')
             print(filename + ': ' + auto_tag_id + ': ' + auto_tag_name)
-            env, token = get_environment(env_name)
+            _, env, token = environment.get_environment(env_name)
             post_auto_tag(env, token, auto_tag_id, json.dumps(auto_tag_json))
-
-
-def get_environment(env_name):
-    if env_name not in supported_environments:
-        print(f'Invalid environment name: {env_name}')
-        return None, None
-
-    tenant_key, token_key = supported_environments.get(env_name)
-
-    if env_name and tenant_key and token_key:
-        tenant = os.environ.get(tenant_key)
-        token = os.environ.get(token_key)
-        env = f'https://{tenant}.live.dynatrace.com'
-
-        if tenant and token and '.' in token:
-            masked_token = token.split('.')[0] + '.' + token.split('.')[1] + '.* (Masked)'
-            print(f'Environment Name: {env_name}')
-            print(f'Environment:      {env}')
-            print(f'Token:            {masked_token}')
-            return env, token
-        else:
-            print('Invalid Environment Configuration!')
-            print(f'Set the "env_name ({env_name}), tenant_key ({tenant_key}), token_key ({token_key})" tuple as required and verify the tenant ({tenant}) and token ({token}) environment variables are accessible.')
-            exit(1)
 
 
 def post_auto_tag(env, token, auto_tag_id, payload):

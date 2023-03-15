@@ -5,23 +5,22 @@ Token Permissions Required:
 "Read settings: settings.read"
 """
 
-
-from inspect import currentframe
 import json
 import os
 import requests
 import shutil
 import urllib.parse
 
-# Environment Details (Short Name, Tenant, Token)
-# environment_details = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-# environment_details = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-environment_details = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
+from inspect import currentframe
 
-env_name = environment_details[0]
-tenant = os.environ.get(environment_details[1])
-token = os.environ.get(environment_details[2])
-env = f'https://{tenant}.live.dynatrace.com'
+from Reuse import dynatrace_api
+from Reuse import environment
+
+# env_name, env, token = environment.get_environment('Prod')
+# env_name, env, token = environment.get_environment('Prep')
+# env_name, env, token = environment.get_environment('Dev')
+env_name, env, token = environment.get_environment('Personal')
+# env_name, env, token = environment.get_environment('FreeTrial1')
 
 save_directory_path = '../../$Output/Tools/Settings20/Downloads/' + env_name
 
@@ -53,46 +52,6 @@ def remove_directory(path):
         print('Removed the directory %s ' % path)
 
 
-def get_rest_api_json(endpoint, params):
-    print('get_rest_api_json(' + env + ', ' + token + ', ' + endpoint + ', ' + params + ')')
-    full_url = env + endpoint
-    resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
-    if resp.status_code != 200 and resp.status_code != 404:
-        print('REST API Call Failed!')
-        print(f'GET {full_url} {params} {resp.status_code} - {resp.reason}')
-        print(resp.text)
-        exit(get_linenumber())
-
-    json_data = resp.json()
-
-    # Some json is just a list of dictionaries.
-    # Config V1 AWS Credentials is the only example I am aware of.
-    # For these, I have never seen pagination.
-    if type(json_data) is list:
-        return json_data
-
-    json_list = [json_data]
-    next_page_key = json_data.get('nextPageKey')
-
-    while next_page_key is not None:
-        params = {'nextPageKey': next_page_key}
-        # full_url = env + endpoint
-        resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
-
-        if resp.status_code != 200:
-            print('Paginated REST API Call Failed!')
-            print(f'GET {full_url} {resp.status_code} - {resp.reason}')
-            print(resp.text)
-            exit(get_linenumber())
-
-        json_data = resp.json()
-
-        next_page_key = json_data.get('nextPageKey')
-        json_list.append(json_data)
-
-    return json_list
-
-
 def save_settings20_objects():
     print('save_settings20_objects()')
 
@@ -102,7 +61,7 @@ def save_settings20_objects():
 
     endpoint = '/api/v2/settings/schemas'
     params = ''
-    settings_json_list = get_rest_api_json(endpoint, params)
+    settings_json_list = dynatrace_api.get(env, token, endpoint, params)
 
     schema_ids = []
     schema_dict = {}
@@ -126,7 +85,7 @@ def save_settings20_objects():
             # params = f'schemaIds={schema_id.replace}&scopes=environment&fields=objectId,value&pageSize=500'
             raw_params = f'schemaIds={schema_id}&fields=objectId,value,scope&pageSize=500'
             params = urllib.parse.quote(raw_params, safe='/,&=')
-            setting_object = get_rest_api_json(endpoint, params)[0]
+            setting_object = dynatrace_api.get(env, token, endpoint, params)[0]
             items = setting_object.get('items')
             for item in items:
                 print(item)

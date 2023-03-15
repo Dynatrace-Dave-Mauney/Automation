@@ -1,8 +1,9 @@
 # Report manual tags on a specified monitored entity
 
-import dynatrace_rest_api_helper
-import os
 import urllib.parse
+
+from Reuse import dynatrace_api
+from Reuse import environment
 
 
 def process(env, token, print_mode):
@@ -12,7 +13,7 @@ def process(env, token, print_mode):
     print('Tags for ' + entity_name)
     raw_params = f'entitySelector=entityId(HTTP_CHECK-DD6BA68782BF144B)'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    manual_tags_json_list = dynatrace_rest_api_helper.get_rest_api_json(env, token, endpoint, params)
+    manual_tags_json_list = dynatrace_api.get(env, token, endpoint, params)
     print('key' + '|' + 'value' + '|' + 'stringRepresentation')
 
     for manual_tags_json in manual_tags_json_list:
@@ -25,14 +26,11 @@ def process(env, token, print_mode):
 
 
 def main():
-    env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-    # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-    # env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-    # env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
-
-    tenant = os.environ.get(tenant_key)
-    token = os.environ.get(token_key)
-    env = f'https://{tenant}.live.dynatrace.com'
+    # env_name, env, token = environment.get_environment('Prod')
+    # env_name, env, token = environment.get_environment('Prep')
+    # env_name, env, token = environment.get_environment('Dev')
+    env_name, env, token = environment.get_environment('Personal')
+    # env_name, env, token = environment.get_environment('FreeTrial1')
 
     process(env, token, True)
 

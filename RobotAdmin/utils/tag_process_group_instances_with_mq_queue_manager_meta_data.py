@@ -1,9 +1,12 @@
 from inspect import currentframe
 import json
-import os
 import requests
 import ssl
 import urllib.parse
+
+from Reuse import dynatrace_api
+from Reuse import environment
+
 
 # Can be modified.  This is the key used for the tag.
 tag_key = 'Queue Manager'
@@ -11,14 +14,11 @@ tag_key = 'Queue Manager'
 # Should remain constant.  This is the key for the plugin metadata used to identify MQ Queue Managers.
 plugin_key = 'Queue manager'
 
-# env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-# env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-# env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
-
-tenant = os.environ.get(tenant_key)
-token = os.environ.get(token_key)
-env = f'https://{tenant}.live.dynatrace.com'
+# env_name, env, token = environment.get_environment('Prod')
+# env_name, env, token = environment.get_environment('Prep')
+# env_name, env, token = environment.get_environment('Dev')
+env_name, env, token = environment.get_environment('Personal')
+# env_name, env, token = environment.get_environment('FreeTrial1')
 
 
 def process():
@@ -26,7 +26,7 @@ def process():
     endpoint = '/api/v2/entities'
     entity_selector = 'type(' + entity_type + ')'
     params = '&entitySelector=' + urllib.parse.quote(entity_selector) + '&fields=' + urllib.parse.quote('properties.softwareTechnologies,properties.customPgMetadata,tags')
-    entities_json_list = get_rest_api_json(env, endpoint, params)
+    entities_json_list = dynatrace_api.get(env, token, endpoint, params)
     for entities_json in entities_json_list:
         inner_entities_json_list = entities_json.get('entities')
         for inner_entities_json in inner_entities_json_list:
@@ -86,41 +86,6 @@ def post(endpoint, payload):
 def get_line_number():
     cf = currentframe()
     return cf.f_back.f_lineno
-
-
-def get_rest_api_json(url, endpoint, params):
-    # print(f'get_rest_api_json({url}, {endpoint}, {params})')
-    full_url = url + endpoint
-    resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
-    # print(f'GET {full_url} {resp.status_code} - {resp.reason}')
-    if resp.status_code != 200:
-        print('REST API Call Failed!')
-        print(f'GET {full_url} {params} {resp.status_code} - {resp.reason}')
-        exit(1)
-
-    response_json = resp.json()
-    json_list = [response_json]
-    next_page_key = response_json.get('nextPageKey')
-
-    while next_page_key is not None:
-        # print(f'next_page_key: {next_page_key}')
-        params = {'nextPageKey': next_page_key}
-        full_url = url + endpoint
-        resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
-        # print(resp.url)
-
-        if resp.status_code != 200:
-            print('Paginated REST API Call Failed!')
-            print(f'GET {full_url} {resp.status_code} - {resp.reason}')
-            exit(1)
-
-        response_json = resp.json()
-        # print(json)
-
-        next_page_key = response_json.get('nextPageKey')
-        json_list.append(response_json)
-
-    return json_list
 
 
 if __name__ == '__main__':

@@ -1,78 +1,86 @@
-import sys
+import json
+import urllib.parse
 
-# Support import from "Reuse" package when invoked from command line
-# sys.path.append("../..")
-
-from Reuse import environment
 from Reuse import dynatrace_api
+from Reuse import environment
 
 
-def test_get():
-    env, token = environment.get_environment('Dev')
-    endpoint = '/api/v1/synthetic/monitors'
+def test_get_alerting_profiles(env, token):
+    endpoint = '/api/config/v1/alertingProfiles'
     params = ''
-    synthetics_json_list = dynatrace_api.get(env, token, endpoint, params)
-    for synthetics_json in synthetics_json_list:
-        inner_synthetics_json_list = synthetics_json.get('monitors')
-        for inner_synthetics_json in inner_synthetics_json_list:
-            # print(inner_synthetics_json)
-            endpoint = '/api/v1/synthetic/monitors/' + inner_synthetics_json.get('entityId')
-            synthetic_json = dynatrace_api.get(env, token, endpoint, params)[0]
-            # print(synthetic_json)
-            synthetic_name = synthetic_json.get('name')
-            synthetic_type = synthetic_json.get('type')
-            synthetic_enabled = synthetic_json.get('enabled')
-            synthetic_frequency = synthetic_json.get('frequencyMin')
-            synthetic_locations = synthetic_json.get('locations')
-            synthetic_location_count = len(synthetic_locations)
-            if synthetic_enabled:
-                synthetic_state = 'an enabled'
-            else:
-                synthetic_state = 'a disabled'
-            if synthetic_type == 'BROWSER':
-                synthetic_type = 'Browser'
-                step_key = 'events'
-            else:
-                synthetic_type = 'HTTP'
-                step_key = 'requests'
-            script_events = synthetic_json.get('script').get(step_key)
-            # for script_event in script_events:
-            #     print(script_event)
-            event_count = len(script_events)
-
-            estimated_hourly_consumption = estimate_consumption(synthetic_enabled, synthetic_type, event_count,
-                                                                synthetic_frequency, synthetic_location_count)
-
-            event_count_literal = 'steps'
-            if event_count == 1:
-                event_count_literal = 'step'
-            synthetic_frequency_literal = 'minutes'
-            if synthetic_frequency == 1:
-                synthetic_frequency_literal = 'minute'
-            synthetic_location_count_literal = 'locations'
-            if synthetic_location_count == 1:
-                synthetic_location_count_literal = 'location'
-            estimated_hourly_consumption_literal = 'DEM Units'
-            if estimated_hourly_consumption == 1:
-                estimated_hourly_consumption_literal = 'DEM Unit'
-
-            print(f'{synthetic_name} is {synthetic_state} {synthetic_type} test with {event_count} {event_count_literal} scheduled to run every {synthetic_frequency} {synthetic_frequency_literal} from {synthetic_location_count} {synthetic_location_count_literal} for an estimated hourly consumption of {estimated_hourly_consumption} {estimated_hourly_consumption_literal}')
+    results = dynatrace_api.get(env, token, endpoint, params)
+    print(results)
 
 
-def estimate_consumption(synthetic_enabled, synthetic_type, event_count, synthetic_frequency, synthetic_location_count):
-    # https://www.dynatrace.com/support/help/shortlink/digital-experience-monitoring-units#synthetic-actionsrequests-calculation-example
-    if not synthetic_enabled:
-        return 0
+def test_get_metrics(env, token):
+    endpoint = '/api/v2/metrics'
+    raw_params = 'pageSize=1000&fields=+displayName,+description,+unit,+aggregationTypes,+defaultAggregation,+dimensionDefinitions,+transformations,+entityType'
+    params = urllib.parse.quote(raw_params, safe='/,&=')
+    results = dynatrace_api.get(env, token, endpoint, params)
+    print(results)
 
-    hourly_frequency = 60/synthetic_frequency
 
-    hourly_consumption = (event_count * hourly_frequency * synthetic_location_count)
+def test_get_entity_types(env, token):
+    endpoint = '/api/v2/entityTypes'
+    raw_params = 'pageSize=500'
+    params = urllib.parse.quote(raw_params, safe='/,&=')
+    results = dynatrace_api.get(env, token, endpoint, params)
+    print(results)
 
-    if synthetic_type == 'HTTP':
-        hourly_consumption = hourly_consumption / 10
 
-    return hourly_consumption
+def test_get_entity_type_host(env, token):
+    endpoint = '/api/v2/entities'
+    raw_params = 'pageSize=500&entitySelector=type(HOST)&fields=+properties.monitoringMode, +properties.state,+toRelationships'
+    params = urllib.parse.quote(raw_params, safe='/,&=')
+    hosts = dynatrace_api.get(env, token, endpoint, params)
+    print(hosts)
+    for entities in hosts:
+        total_count = int(entities.get('totalCount'))
+        if total_count > 0:
+            host_entities = entities.get('entities')
+            for host in host_entities:
+                print(host)
+
+
+def test_post(env, token):
+    endpoint = '/api/config/v1/autoTags'
+    payload = json.dumps({'name': 'TestAutoTag', 'rules': []})
+    dynatrace_api.post(env, token, endpoint, payload)
+
+
+
+def test_post_plain_text(env, token):
+    endpoint = '/api/v2/metrics/ingest'
+    payload = 'com.dynatrace.automation.responseTime,language=python 1000'
+    dynatrace_api.post_plain_text(env, token, endpoint, payload)
+
+
+def test_put(env, token):
+    endpoint = '/api/config/v1/autoTags'
+    object_id = 'ab3162ba-71d5-3ceb-b92d-408656024be8'
+    payload = json.dumps({'name': 'TestAutoTag', 'rules': []})
+    dynatrace_api.put(env, token, endpoint, object_id, payload)
+
+
+def test_delete(env, token):
+    endpoint = '/api/config/v1/autoTags'
+    object_id = 'ab3162ba-71d5-3ceb-b92d-408656024be8'
+    dynatrace_api.delete(env, token, endpoint, object_id)
+
+
+def main():
+    _, env, token = environment.get_environment('Personal')
+    # test_get_alerting_profiles(env, token)
+    # test_get_metrics(env, token)
+    # test_get_entity_types(env, token)
+    # test_get_entity_type_host(env, token)
+
+    # test_post(env, token)
+    # test_post_plain_text(env, token)
+    # test_put(env, token)
+    # test_delete(env, token)
 
 
 if __name__ == '__main__':
-    test_get()
+    main()
+

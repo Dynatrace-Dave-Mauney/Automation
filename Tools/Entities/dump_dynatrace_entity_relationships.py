@@ -6,10 +6,11 @@
 #
 
 import json
-import os
 import requests
 import sys
-# import urllib3
+
+from Reuse import environment
+
 
 PATH = '../../$Output/Tools/Entities/Relationships'
 
@@ -23,8 +24,7 @@ entities_written = []
 services_encountered = []
 
 
-def get_rest_api_json(url, token, endpoint, params, verify):
-    # print(f'get_rest_api_json({url}, {endpoint}, {params})')
+def get_entity(url, token, endpoint, params, verify):
     full_url = url + endpoint
     resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token}, verify=verify)
     # print(f'GET {full_url} {resp.status_code} - {resp.reason}')
@@ -53,7 +53,7 @@ def get_entity_stack(url, token, verify, entities, level):
         # print(f'entity: {entity}')
         endpoint = '/api/v2/entities/' + entity
         params = ''
-        entity_json = get_rest_api_json(url, token, endpoint, params, verify)
+        entity_json = get_entity(url, token, endpoint, params, verify)
         entity_id = entity_json.get('entityId')
         display_name = entity_json.get('displayName')
         print(indent + entity_id + ':' + display_name)
@@ -124,14 +124,11 @@ def process(env, token, verify, entity_list_string):
 
 
 def run():
-    env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-    # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-    # env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-    # env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
-
-    tenant = os.environ.get(tenant_key)
-    token = os.environ.get(token_key)
-    env = f'https://{tenant}.live.dynatrace.com'
+    # env_name, env, token = environment.get_environment('Prod')
+    # env_name, env, token = environment.get_environment('Prep')
+    # env_name, env, token = environment.get_environment('Dev')
+    env_name, env, token = environment.get_environment('Personal')
+    # env_name, env, token = environment.get_environment('FreeTrial1')
 
     service = 'SERVICE-5946F26F5835488B'
 

@@ -3,51 +3,20 @@ import requests
 import urllib.parse
 import xlsxwriter
 
+from Reuse import dynatrace_api
+from Reuse import environment
+
+
 host_group_lookup = {}
 host_group_auto_update_setting_cache = {}
 report = []
-
-def get_rest_api_json(url, token, endpoint, params):
-    full_url = url + endpoint
-    resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
-    # print(f'GET {full_url} {params} {resp.status_code} - {resp.reason}')
-    if resp.status_code != 200 and resp.status_code != 404:
-        print('REST API Call Failed!')
-        print(f'GET {full_url} {params} {resp.status_code} - {resp.reason}')
-        exit(1)
-
-    json = resp.json()
-
-    if type(json) is list:
-        return json
-
-    json_list = [json]
-    next_page_key = json.get('nextPageKey')
-
-    while next_page_key is not None:
-        params = {'nextPageKey': next_page_key}
-        full_url = url + endpoint
-        resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
-
-        if resp.status_code != 200:
-            print('Paginated REST API Call Failed!')
-            print(f'GET {full_url} {resp.status_code} - {resp.reason}')
-            exit(1)
-
-        json = resp.json()
-
-        next_page_key = json.get('nextPageKey')
-        json_list.append(json)
-
-    return json_list
-
 
 def load_host_group_lookup():
     global host_group_lookup
     endpoint = '/api/v2/entities'
     raw_params = 'pageSize=4000&entitySelector=type(HOST_GROUP)&to=-24h'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    entities_json_list = get_rest_api_json(env, token, endpoint, params)
+    entities_json_list = dynatrace_api.get(env, token, endpoint, params)
     for entities_json in entities_json_list:
         inner_entities_json_list = entities_json.get('entities')
         for inner_entities_json in inner_entities_json_list:
@@ -58,7 +27,7 @@ def load_host_group_lookup():
 
 def get_host_auto_update_setting(host_id):
     endpoint = '/api/config/v1/hosts/' + host_id + '/autoupdate'
-    settings_json_list = get_rest_api_json(env, token, endpoint, '')
+    settings_json_list = dynatrace_api.get(env, token, endpoint, '')
     settings_json = settings_json_list[0]
     return settings_json.get('setting', 'None')
 
@@ -73,7 +42,7 @@ def get_host_group_auto_update_setting(host_group_id):
         return host_group_auto_update_setting_cache.get(host_group_id)
 
     endpoint = '/api/config/v1/hostgroups/' + host_group_id + '/autoupdate'
-    settings_json_list = get_rest_api_json(env, token, endpoint, '')
+    settings_json_list = dynatrace_api.get(env, token, endpoint, '')
     settings_json = settings_json_list[0]
     return settings_json.get('setting', 'None')
 
@@ -86,7 +55,7 @@ def process(env, token):
     # raw_params = 'pageSize=4000&entitySelector=type(HOST)&to=-24h&fields=properties,tags'
     raw_params = 'pageSize=4000&entitySelector=type(HOST)&to=-24h&fields=properties.installerVersion,tags'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    entities_json_list = get_rest_api_json(env, token, endpoint, params)
+    entities_json_list = dynatrace_api.get(env, token, endpoint, params)
     print('Host Group Name' + '|' + 'Host Name' + '|' + 'Installer Version' + '|' + 'Host Group ID' + '|' + 'Host ID')
     for entities_json in entities_json_list:
         inner_entities_json_list = entities_json.get('entities')
@@ -168,23 +137,12 @@ def write_xlsx_from_list(rows):
 
 
 if __name__ == '__main__':
-    # env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-    # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-    # env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-    env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
-    # env_name, tenant_key, token_key = ('FreeTrial1', 'FREETRIAL1_TENANT', 'ROBOT_ADMIN_FREETRIAL1_TOKEN')
+    # env_name, env, token = environment.get_environment('Prod')
+    # env_name, env, token = environment.get_environment('Prep')
+    # env_name, env, token = environment.get_environment('Dev')
+    env_name, env, token = environment.get_environment('Personal')
+    # env_name, env, token = environment.get_environment('FreeTrial1')
 
-    tenant = os.environ.get(tenant_key)
-    token = os.environ.get(token_key)
-    env = f'https://{tenant}.live.dynatrace.com'
-
-    masked_token = token.split('.')[0] + '.' + token.split('.')[1] + '.* (Masked)'
-
-    print(f'Environment Name: {env_name}')
-    print(f'Environment:      {env}')
-    print(f'Token:            {masked_token}')
-
-    print('')
     print('Host Group Auto Update Details')
 
     process(env, token)

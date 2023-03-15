@@ -1,7 +1,7 @@
-import dynatrace_rest_api_helper
-import os
 import urllib.parse
 
+from Reuse import dynatrace_api
+from Reuse import environment
 
 schema_defaults = {
     'builtin:alerting.profile': [
@@ -84,8 +84,6 @@ schema_defaults = {
         "{'apiName': 'Built-In .NET IBM MQ', 'apiColor': '#ffd0ab', 'technology': 'dotNet', 'thirdPartyApi': True, 'conditions': [{'base': 'FQCN', 'matcher': 'BEGINS_WITH', 'pattern': 'IBM.WMQ.'}, {'base': 'FQCN', 'matcher': 'BEGINS_WITH', 'pattern': 'IBM.XMS.'}]}",
         "{'apiName': 'Built-In .NET MongoDB', 'apiColor': '#fff29a', 'technology': 'dotNet', 'thirdPartyApi': True, 'conditions': [{'base': 'FQCN', 'matcher': 'BEGINS_WITH', 'pattern': 'MongoDB.'}]}",
         "{'apiName': 'Built-In Wordpress', 'apiColor': '#b4e5f9', 'technology': 'PHP', 'thirdPartyApi': True, 'conditions': [{'base': 'FILE_NAME', 'matcher': 'CONTAINS', 'pattern': 'wp-includes/'}]}"],
-    'builtin:anomaly-detection.infrastructure-disks': [
-        "{'disk': {'diskLowSpaceDetection': {'enabled': True, 'detectionMode': 'auto'}, 'diskSlowWritesAndReadsDetection': {'enabled': True, 'detectionMode': 'auto'}, 'diskLowInodesDetection': {'enabled': True, 'detectionMode': 'auto'}}}"],
     'builtin:anomaly-detection.infrastructure-disks': [
         "{'disk': {'diskLowSpaceDetection': {'enabled': True, 'detectionMode': 'auto'}, 'diskSlowWritesAndReadsDetection': {'enabled': True, 'detectionMode': 'auto'}, 'diskLowInodesDetection': {'enabled': True, 'detectionMode': 'auto'}}}"],
     'builtin:os-services-monitoring': [
@@ -204,7 +202,7 @@ def process(env, token, print_mode):
 
     endpoint = '/api/v2/settings/schemas'
     params = ''
-    settings_json_list = dynatrace_rest_api_helper.get_rest_api_json(env, token, endpoint, params)
+    settings_json_list = dynatrace_api.get(env, token, endpoint, params)
 
     if print_mode:
         print('schemaId' + '|' + 'displayName' + '|' + 'latestSchemaVersion')
@@ -222,17 +220,17 @@ def process(env, token, print_mode):
             endpoint = '/api/v2/settings/objects'
             raw_params = f'schemaIds={schema_id}&scopes=environment&fields=objectId,value&pageSize=500'
             params = urllib.parse.quote(raw_params, safe='/,&=')
-            object = dynatrace_rest_api_helper.get_rest_api_json(env, token, endpoint, params)[0]
-            items = object.get('items')
+            settings_object = dynatrace_api.get(env, token, endpoint, params)[0]
+            items = settings_object.get('items')
             count_objects = 0
             for item in items:
-                objectId = item.get('objectId')
+                object_id = item.get('objectId')
                 value = str(item.get('value'))
                 value = value.replace('{', '')
                 value = value.replace('}', '')
                 value = value.replace("'", "")
                 if print_mode:
-                    print(value + ' - ' + objectId)
+                    print(value + ' - ' + object_id)
                 count_objects += 1
 
             if print_mode:
@@ -295,19 +293,13 @@ def values_differ_from_defaults(schema_id, items, defaults, print_mode):
 
 
 def main():
-    # env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-    # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-    # env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-    env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
-
-    tenant = os.environ.get(tenant_key)
-    token = os.environ.get(token_key)
-    env = f'https://{tenant}.live.dynatrace.com'
-
+    # env_name, env, token = environment.get_environment('Prod')
+    # env_name, env, token = environment.get_environment('Prep')
+    # env_name, env, token = environment.get_environment('Dev')
+    env_name, env, token = environment.get_environment('Personal')
+    # env_name, env, token = environment.get_environment('FreeTrial1')
     process(env, token, True)
 
 
 if __name__ == '__main__':
-    # print('Not to be run standalone.  Use one of the "perform_*.py" modules to run this module.')
-    # exit(1)
     main()

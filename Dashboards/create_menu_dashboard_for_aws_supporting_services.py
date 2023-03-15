@@ -1,7 +1,9 @@
 import json
-import os
 import requests
 import ssl
+
+from Reuse import environment
+
 
 menu_dashboard_template = {
   "metadata": {
@@ -110,20 +112,8 @@ def put_dashboard(env, token, dashboard_id, payload):
 def main():
     # env_name, env, tenant, token = get_environment('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
     # env_name, env, tenant, token = get_environment('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-    env_name, env, tenant, token = get_environment('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-
-    print('Environment:     ' + env_name)
-    print('Environment URL: ' + env)
-
+    env_name, env, token = environment.get_environment('Dev')
     index_dashboards(env, token)
-
-
-def get_environment(env_name, tenant_key, token_key):
-    tenant = os.environ.get(tenant_key)
-    token = os.environ.get(token_key)
-    env = f'https://{tenant}.live.dynatrace.com'
-
-    return env_name, env, tenant, token
 
 
 if __name__ == '__main__':

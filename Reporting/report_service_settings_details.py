@@ -1,6 +1,5 @@
-import dynatrace_rest_api_helper
-import os
-
+from Reuse import dynatrace_api
+from Reuse import environment
 
 friendly_type_name = {'detectionRules/FULL_WEB_REQUEST': 'detectionRules (FULL_WEB_REQUEST)', 'detectionRules/FULL_WEB_SERVICE': 'detectionRules (FULL_WEB_SERVICE)', 'detectionRules/OPAQUE_AND_EXTERNAL_WEB_REQUEST': 'detectionRules (OPAQUE_AND_EXTERNAL_WEB_REQUEST)', 'detectionRules/OPAQUE_AND_EXTERNAL_WEB_SERVICE': 'detectionRules (OPAQUE_AND_EXTERNAL_WEB_SERVICE)', 'failureDetection/parameterSelection/parameterSets': 'failure detection parameter sets', 'failureDetection/parameterSelection/rules': 'failure detection parameter selection', 'ibmMQTracing/imsEntryQueue': 'ibm mq tracing ims entry queue', 'requestAttributes': 'request attributes', 'requestNaming': 'request naming'}
 
@@ -45,7 +44,7 @@ def process_type(env, token, print_mode, entity_type):
 
     endpoint = '/api/config/v1/service/' + entity_type
     params = ''
-    service_settings_json_list = dynatrace_rest_api_helper.get_rest_api_json(env, token, endpoint, params)
+    service_settings_json_list = dynatrace_api.get(env, token, endpoint, params)
 
     for service_settings_json in service_settings_json_list:
         inner_service_settings_json_list = service_settings_json.get('values')
@@ -73,7 +72,7 @@ def process_custom_service_language(env, token, print_mode, language):
 
     endpoint = '/api/config/v1/service/customServices/' + language
     params = ''
-    custom_services_json_list = dynatrace_rest_api_helper.get_rest_api_json(env, token, endpoint, params)
+    custom_services_json_list = dynatrace_api.get(env, token, endpoint, params)
 
     for custom_services_json in custom_services_json_list:
         inner_custom_services_json_list = custom_services_json.get('values')
@@ -84,7 +83,7 @@ def process_custom_service_language(env, token, print_mode, language):
             # for later if details of rules, etc. are needed from each custom_service...
             # endpoint = '/api/config/v1/custom_services/' + entity_id
             # params = ''
-            # custom_service = dynatrace_rest_api_helper.get_rest_api_json(env, token, endpoint, params)[0]
+            # custom_service = dynatrace_api.get(env, token, endpoint, params)[0]
 
             if print_mode:
                 print(entity_id + '|' + name)
@@ -106,19 +105,14 @@ def print_list(any_list):
         
 
 def main():
-    env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-    # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-    # env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-    # env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
-
-    tenant = os.environ.get(tenant_key)
-    token = os.environ.get(token_key)
-    env = f'https://{tenant}.live.dynatrace.com'
+    # env_name, env, token = environment.get_environment('Prod')
+    # env_name, env, token = environment.get_environment('Prep')
+    # env_name, env, token = environment.get_environment('Dev')
+    env_name, env, token = environment.get_environment('Personal')
+    # env_name, env, token = environment.get_environment('FreeTrial1')
 
     process(env, token, True)
 
 
 if __name__ == '__main__':
-    # print('Not to be run standalone.  Use one of the "perform_*.py" modules to run this module.')
-    # exit(1)
     main()

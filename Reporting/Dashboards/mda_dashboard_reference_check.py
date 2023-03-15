@@ -1,70 +1,13 @@
-import os
-import requests
-
 from inspect import currentframe
-from json.decoder import JSONDecodeError
 
-# env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-# env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-# env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
+from Reuse import dynatrace_api
+from Reuse import environment
 
-tenant = os.environ.get(tenant_key)
-token = os.environ.get(token_key)
-env = f'https://{tenant}.live.dynatrace.com'
-
-
-def get_rest_api_json(url, endpoint, params):
-    # print(f'get_rest_api_json({url}, {endpoint}, {params})')
-    full_url = url + endpoint
-    resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
-    # print(f'GET {full_url} {resp.status_code} - {resp.reason}')
-    # print(f'Response Text {resp.text}')
-    if resp.status_code != 200 and resp.status_code != 404:
-        print('REST API Call Failed!')
-        print(f'GET {full_url} {params} {resp.status_code} - {resp.reason}')
-        exit(1)
-
-    try:
-        json = resp.json()
-
-        # Some json is just a list of dictionaries.
-        # Config V1 AWS Credentials is the only example I am aware of.
-        # For these, I have never seen pagination.
-        if type(json) is list:
-            # DEBUG:
-            # print(json)
-            return json
-
-        json_list = [json]
-
-        next_page_key = json.get('nextPageKey')
-
-        while next_page_key is not None:
-            # print(f'next_page_key: {next_page_key}')
-            params = {'nextPageKey': next_page_key}
-            full_url = url + endpoint
-            resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
-            # print(resp.url)
-
-            if resp.status_code != 200:
-                print('Paginated REST API Call Failed!')
-                print(f'GET {full_url} {resp.status_code} - {resp.reason}')
-                exit(1)
-
-            json = resp.json()
-            # print(json)
-
-            next_page_key = json.get('nextPageKey')
-            json_list.append(json)
-
-        return json_list
-
-    except JSONDecodeError:
-        print('JSON decode error. Response: ')
-        print(resp)
-        print(resp.text)
-        exit(get_line_number())
+# env_name, env, token = environment.get_environment('Prod')
+# env_name, env, token = environment.get_environment('Prep')
+# env_name, env, token = environment.get_environment('Dev')
+env_name, env, token = environment.get_environment('Personal')
+# env_name, env, token = environment.get_environment('FreeTrial1')
 
 
 def get_line_number():
@@ -89,7 +32,7 @@ def process():
 
     endpoint = '/api/config/v1/dashboards'
     params = ''
-    dashboards_json_list = get_rest_api_json(env, endpoint, params)
+    dashboards_json_list = dynatrace_api.get(env, token, endpoint, params)
     dashboard_id_list = []
     for dashboards_json in dashboards_json_list:
         inner_dashboards_json_list = dashboards_json.get('dashboards')
@@ -97,7 +40,7 @@ def process():
             entity_id = inner_dashboards_json.get('id')
             dashboard_id_list.append(entity_id)
     for dashboard_id in sorted(dashboard_id_list):
-        dashboard_json = get_rest_api_json(env, endpoint + '/' + dashboard_id, params)
+        dashboard_json = dynatrace_api.get(env, token, endpoint + '/' + dashboard_id, params)
         for dashboard in dashboard_json:
             dashboard_metadata = dashboard.get('dashboardMetadata')
             name = dashboard_metadata.get('name')

@@ -1,5 +1,5 @@
-import dynatrace_rest_api_helper
-import os
+from Reuse import dynatrace_api
+from Reuse import environment
 
 
 def summarize(env, token):
@@ -13,7 +13,7 @@ def process(env, token, print_mode):
 
     endpoint = '/api/config/v1/managementZones'
     params = ''
-    management_zones_json_list = dynatrace_rest_api_helper.get_rest_api_json(env, token, endpoint, params)
+    management_zones_json_list = dynatrace_api.get(env, token, endpoint, params)
 
     if print_mode:
         print('id' + '|' + 'name')
@@ -27,7 +27,7 @@ def process(env, token, print_mode):
             # for later if details of rules, etc. are needed from each management_zone...
             # endpoint = '/api/config/v1/management_zones/' + id
             # params = ''
-            # management_zone = dynatrace_rest_api_helper.get_rest_api_json(env, token, endpoint, params)[0]
+            # management_zone = dynatrace_api.get(env, token, endpoint, params)[0]
 
             if print_mode:
                 print(entity_id + '|' + name)
@@ -53,19 +53,14 @@ def print_list(any_list):
         
 
 def main():
-    env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-    # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-    # env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-    # env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
-
-    tenant = os.environ.get(tenant_key)
-    token = os.environ.get(token_key)
-    env = f'https://{tenant}.live.dynatrace.com'
+    # env_name, env, token = environment.get_environment('Prod')
+    # env_name, env, token = environment.get_environment('Prep')
+    # env_name, env, token = environment.get_environment('Dev')
+    env_name, env, token = environment.get_environment('Personal')
+    # env_name, env, token = environment.get_environment('FreeTrial1')
 
     process(env, token, True)
 
 
 if __name__ == '__main__':
-    # print('Not to be run standalone.  Use one of the "perform_*.py" modules to run this module.')
-    # exit(1)
     main()

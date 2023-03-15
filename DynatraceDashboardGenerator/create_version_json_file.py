@@ -4,13 +4,13 @@
 
 import json
 import sys
-from dynatrace_rest_api_helper import get_rest_api_json
 
+from Reuse import dynatrace_api
 
 def get_version(url, token):
     endpoint = '/api/v1/config/clusterversion'
     params = ''
-    json_list = get_rest_api_json(url, token, endpoint, params)
+    json_list = dynatrace_api.get(url, token, endpoint, params)
     # version: str = json_list[0].get('version', '')
     version = json_list[0]
     return version

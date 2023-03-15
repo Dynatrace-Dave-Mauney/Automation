@@ -25,7 +25,7 @@ def get_environment(env_name):
             print(f'Environment Name: {env_name}')
             print(f'Environment:      {env}')
             print(f'Token:            {masked_token}')
-            return env, token
+            return env_name, env, token
         else:
             print('Invalid Environment Configuration!')
             print(f'Set the "env_name ({env_name}), tenant_key ({tenant_key}), token_key ({token_key})" tuple as required and verify the tenant ({tenant}) and token ({token}) environment variables are accessible.')

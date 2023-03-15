@@ -1,5 +1,5 @@
-import dynatrace_rest_api_helper
-import os
+from Reuse import dynatrace_api
+from Reuse import environment
 
 
 def summarize(env, token):
@@ -10,7 +10,7 @@ def process(env, token, print_mode):
     summary = []
     endpoint = '/api/config/v1/anomalyDetection/databaseServices'
     params = ''
-    anomaly_json = dynatrace_rest_api_helper.get_rest_api_json(env, token, endpoint, params)[0]
+    anomaly_json = dynatrace_api.get(env, token, endpoint, params)[0]
 
     default_response_time_degradation_detection_mode = 'DETECT_AUTOMATICALLY'
     default_response_time_degradation_milliseconds = 5
@@ -92,7 +92,7 @@ def process(env, token, print_mode):
         load_spike_enabled == default_load_spike_enabled and \
         failure_rate_increase_detection_mode == default_failure_rate_increase_detection_mode and \
         failing_service_call_percentage_increase_absolute == default_failing_service_call_percentage_increase_absolute and \
-        failing_service_call_percentage_increase_relative == default_failing_service_call_percentage_increase_relative:
+            failing_service_call_percentage_increase_relative == default_failing_service_call_percentage_increase_relative:
         summary.append('Anomaly detection settings for database services have not been modified.')
     else:
         summary.append('Anomaly detection settings for database services have been modified.' + '')
@@ -141,19 +141,14 @@ def convert_boolean(boolean):
         
 
 def main():
-    env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-    # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-    # env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-    # env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
-
-    tenant = os.environ.get(tenant_key)
-    token = os.environ.get(token_key)
-    env = f'https://{tenant}.live.dynatrace.com'
+    # env_name, env, token = environment.get_environment('Prod')
+    # env_name, env, token = environment.get_environment('Prep')
+    # env_name, env, token = environment.get_environment('Dev')
+    env_name, env, token = environment.get_environment('Personal')
+    # env_name, env, token = environment.get_environment('FreeTrial1')
 
     process(env, token, True)
 
 
 if __name__ == '__main__':
-    # print('Not to be run standalone.  Use one of the "perform_*.py" modules to run this module.')
-    # exit(1)
     main()

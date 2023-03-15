@@ -1,6 +1,7 @@
-import dynatrace_rest_api_helper
-import os
 import urllib.parse
+
+from Reuse import dynatrace_api
+from Reuse import environment
 
 
 def summarize(env, token):
@@ -12,7 +13,7 @@ def get_process_groups(env, token):
 
 	endpoint = '/api/v1/entity/infrastructure/process-groups'
 	params = ''
-	process_groups_json_list = dynatrace_rest_api_helper.get_rest_api_json(env, token, endpoint, params)
+	process_groups_json_list = dynatrace_api.get(env, token, endpoint, params)
 	for process_groups_json in process_groups_json_list:
 		entity_id = process_groups_json.get('entityId')
 		name = process_groups_json.get('displayName')
@@ -33,7 +34,7 @@ def process_process_group(entity_id, name, env, token, print_mode):
 	schema_ids_param = ''
 	raw_params = f'{schema_ids_param}&scopes={entity_id}&fields=schemaId,value&pageSize=500'
 	params = urllib.parse.quote(raw_params, safe='/,&=')
-	settings_object = dynatrace_rest_api_helper.get_rest_api_json(env, token, endpoint, params)[0]
+	settings_object = dynatrace_api.get(env, token, endpoint, params)[0]
 	items = settings_object.get('items', [])
 
 	if items:
@@ -122,19 +123,14 @@ def print_list(any_list):
 
 
 def main():
-    # env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-    # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-    # env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-    env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
+	# env_name, env, token = environment.get_environment('Prod')
+	# env_name, env, token = environment.get_environment('Prep')
+	# env_name, env, token = environment.get_environment('Dev')
+	env_name, env, token = environment.get_environment('Personal')
+	# env_name, env, token = environment.get_environment('FreeTrial1')
 
-    tenant = os.environ.get(tenant_key)
-    token = os.environ.get(token_key)
-    env = f'https://{tenant}.live.dynatrace.com'
-
-    process(env, token, True)
+	process(env, token, True)
 
 
 if __name__ == '__main__':
-    # print('Not to be run standalone.  Use one of the "perform_*.py" modules to run this module.')
-    # exit(1)
-    main()
+	main()

@@ -1,8 +1,9 @@
-import dynatrace_rest_api_helper
-import os
 import urllib.parse
 from datetime import date
 from itertools import groupby
+
+from Reuse import dynatrace_api
+from Reuse import environment
 
 
 supported_environments = {
@@ -46,7 +47,7 @@ def get_tag_data(env, token):
     endpoint = '/api/config/v1/autoTags'
     raw_params = 'fields=+description'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    autotags_json_list = dynatrace_rest_api_helper.get_rest_api_json(env, token, endpoint, params)
+    autotags_json_list = dynatrace_api.get(env, token, endpoint, params)
 
     tag_data_list = []
 
@@ -84,8 +85,10 @@ def process(env_name_list, all_env_name_data):
             html = f'      {row_start}{col_start}{autotag_name}{col_end}{col_start}{str(autotag_description)}{col_end}{col_start}{str(autotag_env_name_list)}{col_end}{row_end}'
         html_line_list.append(html)
 
-    write_html(f'{html_path}/TagSummary.html', sorted(html_line_list))
+    file_name = f'{html_path}/TagSummary.html'
+    write_html(file_name, sorted(html_line_list))
 
+    print(f'Output written to {file_name}')
 
 def write_html(filename, html_line_list):
     with open(filename, 'w', encoding='utf8') as file:
@@ -119,30 +122,6 @@ def write_h1_heading(outfile, heading):
     outfile.write('\n')
 
 
-def get_environment(env_name):
-    if env_name not in supported_environments:
-        print(f'Invalid environment name: {env_name}')
-        return env_name, None, None
-
-    tenant_key, token_key = supported_environments.get(env_name)
-
-    if env_name and tenant_key and token_key:
-        tenant = os.environ.get(tenant_key)
-        token = os.environ.get(token_key)
-        env = f'https://{tenant}.live.dynatrace.com'
-
-        if tenant and token and '.' in token:
-            masked_token = token.split('.')[0] + '.' + token.split('.')[1] + '.* (Masked)'
-            print(f'Environment Name: {env_name}')
-            print(f'Environment:      {env}')
-            print(f'Token:            {masked_token}')
-            return env_name, env, token
-        else:
-            print('Invalid Environment Configuration!')
-            print(f'Set the "env_name ({env_name}), tenant_key ({tenant_key}), token_key ({token_key})" tuple as required and verify the tenant ({tenant}) and token ({token}) environment variables are accessible.')
-            exit(1)
-
-
 def add_or_update(env_name, env_name_data, all_env_name_data):
     env_name_data_current = all_env_name_data.get(env_name_data[0])
     if env_name_data_current:
@@ -166,13 +145,13 @@ def main():
     all_env_name_data = {}
 
     for env_name in env_name_list:
-        env_name, env, token = get_environment(env_name)
+        env_name, env, token = environment.get_environment(env_name)
         env_name_data_list = get_tag_data(env, token)
         for env_name_data in env_name_data_list:
             add_or_update(env_name, env_name_data, all_env_name_data)
 
-    for key in sorted(all_env_name_data.keys()):
-        print(key, str(all_env_name_data.get(key)))
+    # for key in sorted(all_env_name_data.keys()):
+    #     print(key, str(all_env_name_data.get(key)))
 
     process(env_name_list, all_env_name_data)
 

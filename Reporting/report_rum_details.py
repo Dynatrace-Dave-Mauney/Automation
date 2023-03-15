@@ -1,5 +1,5 @@
-import dynatrace_rest_api_helper
-import os
+from Reuse import dynatrace_api
+from Reuse import environment
 
 
 friendly_type_name = {'allowedBeaconOriginsForCors': 'allowed beacon origins for CORS', 'applicationDetectionRules': 'application detection rules', 'applicationDetectionRules/hostDetection': 'host detection rules', 'contentResources': 'content resources', 'geographicRegions/ipDetectionHeaders': 'IP detection headers', 'geographicRegions/ipAddressMappings': 'IP address mappings', 'applications/mobile': 'mobile applications', 'applications/web': 'web applications'}
@@ -37,7 +37,7 @@ def process_type(env, token, print_mode, entity_type):
 
     endpoint = '/api/config/v1/' + entity_type
     params = ''
-    rum_json_list = dynatrace_rest_api_helper.get_rest_api_json(env, token, endpoint, params)
+    rum_json_list = dynatrace_api.get(env, token, endpoint, params)
 
     if print_mode:
         if entity_type == 'applications/web':
@@ -71,7 +71,7 @@ def process_string_list(env, token, print_mode, entity_type):
 
     endpoint = '/api/config/v1/' + entity_type
     params = ''
-    rum_json_list = dynatrace_rest_api_helper.get_rest_api_json(env, token, endpoint, params)
+    rum_json_list = dynatrace_api.get(env, token, endpoint, params)
 
     if print_mode:
         print(string_list_key[entity_type])
@@ -100,19 +100,14 @@ def print_list(any_list):
 
 
 def main():
-    env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-    # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-    # env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-    # env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
-
-    tenant = os.environ.get(tenant_key)
-    token = os.environ.get(token_key)
-    env = f'https://{tenant}.live.dynatrace.com'
+    # env_name, env, token = environment.get_environment('Prod')
+    # env_name, env, token = environment.get_environment('Prep')
+    # env_name, env, token = environment.get_environment('Dev')
+    env_name, env, token = environment.get_environment('Personal')
+    # env_name, env, token = environment.get_environment('FreeTrial1')
 
     process(env, token, True)
 
 
 if __name__ == '__main__':
-    # print('Not to be run standalone.  Use one of the "perform_*.py" modules to run this module.')
-    # exit(1)
     main()

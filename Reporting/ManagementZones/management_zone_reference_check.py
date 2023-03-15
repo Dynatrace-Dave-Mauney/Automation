@@ -1,71 +1,15 @@
-import os
-import requests
 import urllib.parse
 
 from inspect import currentframe
-from json.decoder import JSONDecodeError
 
-env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-# env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-# env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-# env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
+from Reuse import dynatrace_api
+from Reuse import environment
 
-tenant = os.environ.get(tenant_key)
-token = os.environ.get(token_key)
-env = f'https://{tenant}.live.dynatrace.com'
-
-
-def get_rest_api_json(url, endpoint, params):
-    # print(f'get_rest_api_json({url}, {endpoint}, {params})')
-    full_url = url + endpoint
-    resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
-    # print(f'GET {full_url} {resp.status_code} - {resp.reason}')
-    # print(f'Response Text {resp.text}')
-    if resp.status_code != 200 and resp.status_code != 404:
-        print('REST API Call Failed!')
-        print(f'GET {full_url} {params} {resp.status_code} - {resp.reason}')
-        exit(1)
-
-    try:
-        json = resp.json()
-
-        # Some json is just a list of dictionaries.
-        # Config V1 AWS Credentials is the only example I am aware of.
-        # For these, I have never seen pagination.
-        if type(json) is list:
-            # DEBUG:
-            # print(json)
-            return json
-
-        json_list = [json]
-
-        next_page_key = json.get('nextPageKey')
-
-        while next_page_key is not None:
-            # print(f'next_page_key: {next_page_key}')
-            params = {'nextPageKey': next_page_key}
-            full_url = url + endpoint
-            resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
-            # print(resp.url)
-
-            if resp.status_code != 200:
-                print('Paginated REST API Call Failed!')
-                print(f'GET {full_url} {resp.status_code} - {resp.reason}')
-                exit(1)
-
-            json = resp.json()
-            # print(json)
-
-            next_page_key = json.get('nextPageKey')
-            json_list.append(json)
-
-        return json_list
-
-    except JSONDecodeError:
-        print('JSON decode error. Response: ')
-        print(resp)
-        print(resp.text)
-        exit(get_line_number())
+# env_name, env, token = environment.get_environment('Prod')
+# env_name, env, token = environment.get_environment('Prep')
+# env_name, env, token = environment.get_environment('Dev')
+env_name, env, token = environment.get_environment('Personal')
+# env_name, env, token = environment.get_environment('FreeTrial1')
 
 
 def get_line_number():
@@ -77,7 +21,7 @@ def load_management_zone_lookup():
     management_zone_lookup = {}
     endpoint = '/api/config/v1/managementZones'
     params = ''
-    management_zones_json_list = get_rest_api_json(env, endpoint, params)
+    management_zones_json_list = dynatrace_api.get(env, token, endpoint, params)
     for management_zones_json in management_zones_json_list:
         inner_management_zones_json_list = management_zones_json.get('values')
         for inner_management_zones_json in inner_management_zones_json_list:
@@ -97,7 +41,7 @@ def process():
     # It may take a while and I have not tested it yet.  I opted for hard coding a list to start.
     # endpoint = '/api/config/v1/managementZones'
     # params = ''
-    # management_zones_json_list = get_rest_api_json(env, endpoint, params)
+    # management_zones_json_list = dynatrace_api.get(env, token, endpoint, params)
     # management_zone_list = []
     # for management_zones_json in management_zones_json_list:
     #     inner_management_zones_json_list = management_zones_json.get('values')
@@ -106,6 +50,7 @@ def process():
     #         name = inner_management_zones_json.get('name')
     #         management_zone_list.append(name)
 
+    # management_zone_list = ['TagReferenceCheck']
     management_zone_list = []
 
     if not management_zone_list:
@@ -118,7 +63,7 @@ def process():
 
     endpoint = '/api/config/v1/dashboards'
     params = ''
-    dashboards_json_list = get_rest_api_json(env, endpoint, params)
+    dashboards_json_list = dynatrace_api.get(env, token, endpoint, params)
     dashboard_id_list = []
     for dashboards_json in dashboards_json_list:
         inner_dashboards_json_list = dashboards_json.get('dashboards')
@@ -126,7 +71,7 @@ def process():
             entity_id = inner_dashboards_json.get('id')
             dashboard_id_list.append(entity_id)
     for dashboard_id in sorted(dashboard_id_list):
-        dashboard_json = get_rest_api_json(env, endpoint + '/' + dashboard_id, params)
+        dashboard_json = dynatrace_api.get(env, token, endpoint + '/' + dashboard_id, params)
         for dashboard in dashboard_json:
             dashboard_metadata = dashboard.get('dashboardMetadata')
             name = dashboard_metadata.get('name')
@@ -146,7 +91,7 @@ def process():
 
     endpoint = '/api/config/v1/alertingProfiles'
     params = ''
-    alerting_profiles_json_list = get_rest_api_json(env, endpoint, params)
+    alerting_profiles_json_list = dynatrace_api.get(env, token, endpoint, params)
     alerting_profile_id_list = []
     for alerting_profiles_json in alerting_profiles_json_list:
         inner_alerting_profiles_json_list = alerting_profiles_json.get('values')
@@ -154,7 +99,7 @@ def process():
             entity_id = inner_alerting_profiles_json.get('id')
             alerting_profile_id_list.append(entity_id)
     for alerting_profile_id in sorted(alerting_profile_id_list):
-        alerting_profile_json = get_rest_api_json(env, endpoint + '/' + alerting_profile_id, params)
+        alerting_profile_json = dynatrace_api.get(env, token, endpoint + '/' + alerting_profile_id, params)
         for alerting_profile in alerting_profile_json:
             display_name = alerting_profile.get('displayName')
             management_zone_id = alerting_profile.get('managementZoneId')
@@ -173,7 +118,7 @@ def process():
     endpoint = '/api/v2/settings/objects'
     raw_params = 'schemaIds=builtin:alerting.maintenance-window&fields=objectId,value'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    settings_json_list = get_rest_api_json(env, endpoint, params)
+    settings_json_list = dynatrace_api.get(env, token, endpoint, params)
 
     for settings_json in settings_json_list:
         inner_settings_json_list = settings_json.get('items')

@@ -3,16 +3,16 @@
 # This requires getting all entity types first (from REST rather than file, for convenience)
 #
 
-from dynatrace_rest_api_helper import get_rest_api_json
 import json
 import sys
 
+from Reuse import dynatrace_api
 
 def get_entity_types(url, token):
     # print(f'get_entity_types({url}, {token})')
     endpoint = '/api/v2/entityTypes'
     params = 'pageSize=500'
-    json_list = get_rest_api_json(url, token, endpoint, params)
+    json_list = dynatrace_api.get(url, token, endpoint, params)
     entity_types = []
     for json_dict in json_list:
         entity_types.extend(json_dict.get('types'))
@@ -35,7 +35,7 @@ def get_entities(url, token, entity_types):
         fields = 'fromRelationships,+lastSeenTms,+firstSeenTms,+managementZones,+toRelationships,+tags,+properties'
         # if entity_type == 'SERVICE':
         params = params + '&fields=' + fields
-        entities_list = get_rest_api_json(url, token, endpoint, params)
+        entities_list = dynatrace_api.get(url, token, endpoint, params)
         # print(entities_list[0])
         # exit()
 
@@ -79,7 +79,7 @@ def process(arguments):
 
 def main(arguments):
     help_text = '''
-    create_entities_file.py creates a entities.txt file for an environment
+    create_entities_file.py creates an entities.txt file for an environment
 
     Usage:    create_entities_file.py <tenant/environment URL> <token>
     '''

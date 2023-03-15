@@ -13,49 +13,8 @@ import requests
 from inspect import currentframe
 from requests import Response
 
-
-def get_rest_api_json(url, token, endpoint, params):
-    # print(f'get_rest_api_json({url}, {endpoint}, {params})')
-    full_url = url + endpoint
-    resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
-    # print(f'GET {full_url} {resp.status_code} - {resp.reason}')
-    if resp.status_code != 200 and resp.status_code != 404:
-        print('REST API Call Failed!')
-        print(f'GET {full_url} {params} {resp.status_code} - {resp.reason}')
-        exit(1)
-
-    json_data = resp.json()
-
-    # Some json is just a list of dictionaries.
-    # Config V1 AWS Credentials is the only example I am aware of.
-    # For these, I have never seen pagination.
-    if type(json_data) is list:
-        # DEBUG:
-        # print(json)
-        return json_data
-
-    json_list = [json_data]
-    next_page_key = json_data.get('nextPageKey')
-
-    while next_page_key is not None:
-        # print(f'next_page_key: {next_page_key}')
-        params = {'nextPageKey': next_page_key}
-        full_url = url + endpoint
-        resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
-        # print(resp.url)
-
-        if resp.status_code != 200:
-            print('Paginated REST API Call Failed!')
-            print(f'GET {full_url} {resp.status_code} - {resp.reason}')
-            exit(1)
-
-        json_data = resp.json()
-        # print(json)
-
-        next_page_key = json_data.get('nextPageKey')
-        json_list.append(json_data)
-
-    return json_list
+from Reuse import dynatrace_api
+from Reuse import environment
 
 
 def get_by_object_id(env, token, endpoint, object_id):
@@ -150,7 +109,7 @@ def get_line_number():
 def process(source_env, source_token, target_env, target_token):
     endpoint = '/api/config/v1/dashboards'
     params = ''
-    dashboard_json_list = get_rest_api_json(source_env, source_token, endpoint, params)
+    dashboard_json_list = dynatrace_api.get(source_env, source_token, endpoint, params)
     for dashboard_json in dashboard_json_list:
         inner_dashboard_json_list = dashboard_json.get('dashboards')
         for inner_dashboard_json in inner_dashboard_json_list:
@@ -173,15 +132,10 @@ def process(source_env, source_token, target_env, target_token):
 
 
 def main():
-    env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-    source_tenant = os.environ.get(tenant_key)
-    source_token = os.environ.get(token_key)
-    source_env = f'https://{source_tenant}.live.dynatrace.com'
-
-    env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-    target_tenant = os.environ.get(tenant_key)
-    target_token = os.environ.get(token_key)
-    target_env = f'https://{target_tenant}.live.dynatrace.com'
+    source_env_name = 'Personal'
+    target_env_name = 'FreeTrial1'
+    env_name, source_env, source_token = environment.get_environment(source_env_name)
+    env_name, target_env, target_token = environment.get_environment(target_env_name)
     process(source_env, source_token, target_env, target_token)
 
 

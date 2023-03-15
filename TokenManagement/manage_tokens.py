@@ -7,6 +7,8 @@ import ssl
 
 endpoint = '/api/v2/apiTokens'
 
+# Token Management requires a different API token from the other modules, so an alternate way to get the
+# environment and token is employed
 env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'TOKEN_MANAGEMENT_PROD_TOKEN')
 # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'TOKEN_MANAGEMENT_PREP_TOKEN')
 # env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'TOKEN_MANAGEMENT_DEV_TOKEN')

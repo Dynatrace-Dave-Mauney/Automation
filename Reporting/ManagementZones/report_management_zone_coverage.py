@@ -1,8 +1,9 @@
 import copy
-import os
-import requests
 import urllib.parse
 import xlsxwriter
+
+from Reuse import dynatrace_api
+from Reuse import environment
 
 # Typical AWS customer list.
 # Amend as needed from 'monitored_entity_filters', which was obtained by running 'dump_monitored_entity_filters()'
@@ -166,7 +167,7 @@ def process(env_name, env, token):
 
     endpoint = '/api/config/v1/managementZones'
     params = ''
-    management_zone_json_list = get_rest_api_json(env, token, endpoint, params)
+    management_zone_json_list = dynatrace_api.get(env, token, endpoint, params)
 
     for management_zone_json in management_zone_json_list:
         inner_management_zone_json_list = management_zone_json.get('values')
@@ -185,7 +186,9 @@ def process(env_name, env, token):
 
 
 def write_xlsx(env_name, mz_coverage_dict):
-    workbook = xlsxwriter.Workbook(f'../../$Output/Reporting/ManagementZones/Management_Zone_Coverage_{env_name}.xlsx')
+    file_name = f'../../$Output/Reporting/ManagementZones/Management_Zone_Coverage_{env_name}.xlsx'
+
+    workbook = xlsxwriter.Workbook(file_name)
     worksheet = workbook.add_worksheet()
 
     row_index = 0
@@ -213,6 +216,7 @@ def write_xlsx(env_name, mz_coverage_dict):
 
     workbook.close()
 
+    print(f'Output written to {file_name}')
 
 def get_mz_coverage_for_entity_type(env, token, entity_type, mz_coverage_dict):
     # Skip special entity types used for counting only
@@ -226,7 +230,7 @@ def get_mz_coverage_for_entity_type(env, token, entity_type, mz_coverage_dict):
         raw_params += ',properties.serviceType'
     # raw_params = f'&entitySelector={entity_selector}'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    entities_json_list = get_rest_api_json(env, token, endpoint, params)
+    entities_json_list = dynatrace_api.get(env, token, endpoint, params)
     # print(entities_json_list)
 
     for entities_json in entities_json_list:
@@ -253,76 +257,23 @@ def increment_mz_coverage_dict_counts(entity_type, management_zone_list, mz_cove
         mz_coverage_dict[mz_name][entity_type] += 1
 
 
-def get_rest_api_json(url, token, endpoint, params):
-    # print(f'get_rest_api_json({url}, {endpoint}, {params})')
-    full_url = url + endpoint
-    resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
-    # print(f'GET {full_url} {resp.status_code} - {resp.reason}')
-    if resp.status_code != 200 and resp.status_code != 404:
-        print('REST API Call Failed!')
-        print(f'GET {full_url} {params} {resp.status_code} - {resp.reason}')
-        exit(1)
-
-    json = resp.json()
-
-    # Some json is just a list of dictionaries.
-    # Config V1 AWS Credentials is the only example I am aware of.
-    # For these, I have never seen pagination.
-    if type(json) is list:
-        # DEBUG:
-        # print(json)
-        return json
-
-    json_list = [json]
-    next_page_key = json.get('nextPageKey')
-
-    while next_page_key is not None:
-        # print(f'next_page_key: {next_page_key}')
-        params = {'nextPageKey': next_page_key}
-        full_url = url + endpoint
-        resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
-        # print(resp.url)
-
-        if resp.status_code != 200:
-            print('Paginated REST API Call Failed!')
-            print(f'GET {full_url} {resp.status_code} - {resp.reason}')
-            exit(1)
-
-        json = resp.json()
-        # print(json)
-
-        next_page_key = json.get('nextPageKey')
-        json_list.append(json)
-
-    return json_list
-
-
 def main():
     # print('Management Zone Coverage')
-    # env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
-    # tenant = os.environ.get(tenant_key)
-    # token = os.environ.get(token_key)
-    # env = f'https://{tenant}.live.dynatrace.com'
+
+    # env_name, env, token = environment.get_environment('Prod')
     # process(env_name, env, token)
 
-    env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-    tenant = os.environ.get(tenant_key)
-    token = os.environ.get(token_key)
-    env = f'https://{tenant}.live.dynatrace.com'
+    # env_name, env, token = environment.get_environment('Prep')
+    # process(env_name, env, token)
+
+    # env_name, env, token = environment.get_environment('Dev')
+    # process(env_name, env, token)
+
+    env_name, env, token = environment.get_environment('Personal')
     process(env_name, env, token)
 
-    # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-    # tenant = os.environ.get(tenant_key)
-    # token = os.environ.get(token_key)
-    # env = f'https://{tenant}.live.dynatrace.com'
-    # process(env, token)
-    #
-    # env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-    # tenant = os.environ.get(tenant_key)
-    # token = os.environ.get(token_key)
-    # env = f'https://{tenant}.live.dynatrace.com'
-    # process(env, token)
-    #
+    # env_name, env, token = environment.get_environment('FreeTrial1')
+    # process(env_name, env, token)
 
 
 if __name__ == '__main__':
