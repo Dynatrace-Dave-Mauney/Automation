@@ -1,10 +1,7 @@
 import copy
 import json
-import requests
-import ssl
 import urllib.parse
 from inspect import currentframe
-from requests import Response
 
 from Reuse import dynatrace_api
 from Reuse import environment
@@ -36,7 +33,6 @@ def process(env, token):
 
     for namespace in sorted(namespaces):
         post_namespace(env, token, namespace)
-
 
 
 def post_namespace(env, token, name_space_name):
@@ -88,38 +84,7 @@ def post_namespace(env, token, name_space_name):
     management_zone['rules'][0]['conditions'][0]['comparisonInfo']['value']['value'] = name_space_name
 
     endpoint = '/api/config/v1/managementZones'
-    post(env, token, endpoint, json.dumps(management_zone))
-
-
-def post(env, token, endpoint, payload):
-    json_data = json.loads(payload)
-    formatted_payload = json.dumps(json_data, indent=4, sort_keys=False)
-    url = env + endpoint
-    try:
-        r = requests.post(url, payload.encode('utf-8'), headers={'Authorization': 'Api-Token ' + token, 'Content-Type': 'application/json; charset=utf-8'})
-
-        if r.status_code == 201:
-            management_zone_id = r.json().get('id')
-            management_zone_name = r.json().get('name')
-            print(f'Created management zone: "{management_zone_name}" ({management_zone_id}) at endpoint "{endpoint}"')
-        else:
-            error_filename = '$post_error_payload.json'
-            with open(error_filename, 'w') as file:
-                file.write(formatted_payload)
-                name = json_data.get('name')
-                if name:
-                    print('Name: ' + name)
-                print('Error in "post(env, token, endpoint, payload)" method')
-                print('See ' + error_filename + ' for more details')
-                print('Status Code: %d' % r.status_code)
-                print('Reason: %s' % r.reason)
-                if len(r.text) > 0:
-                    print(r.text)
-            exit(get_line_number())
-        return r
-    except ssl.SSLError:
-        print('SSL Error')
-        exit(get_line_number())
+    dynatrace_api.post(env, token, endpoint, json.dumps(management_zone))
 
 
 def delete_kubernetes_namespace_management_zones(env_name, env, token):
@@ -145,32 +110,7 @@ def delete_kubernetes_namespace_management_zones(env_name, env, token):
             management_zone_name = inner_management_zone_json.get('name')
             if management_zone_name.startswith('ZZ K8s NS'):
                 print(f'{management_zone_name} ({management_zone_id})')
-                delete(env, token, endpoint, management_zone_id)
-
-
-def delete(env, token, endpoint, object_id):
-    url = env + endpoint + '/' + object_id
-    try:
-        r: Response = requests.delete(url, headers={'Authorization': 'Api-Token ' + token, 'Content-Type': 'application/json; charset=utf-8'})
-        if r.status_code == 204:
-            print('Deleted ' + object_id + ' (' + endpoint + ')')
-        else:
-            print('Status Code: %d' % r.status_code)
-            print('Reason: %s' % r.reason)
-            if len(r.text) > 0:
-                print(r.text)
-        if r.status_code not in [200, 201, 204]:
-            # print(json_data)
-            print('Error in "delete(endpoint, object_id)" method')
-            print('Env: ' + env)
-            print('Endpoint: ' + endpoint)
-            print('Token: ' + token)
-            print('Object ID: ' + object_id)
-            print('Exit code shown below is the source code line number of the exit statement invoked')
-        return r
-    except ssl.SSLError:
-        print('SSL Error')
-        exit(get_line_number())
+                dynatrace_api.delete(env, token, endpoint, management_zone_id)
 
 
 def get_line_number():
@@ -187,9 +127,9 @@ def run():
 
     print('Generate kubernetes management zones by namespace')
 
-    # delete_kubernetes_namespace_management_zones(env_name, env, token)
+    delete_kubernetes_namespace_management_zones(env_name, env, token)
 
-    process(env, token)
+    # process(env, token)
 
 
 if __name__ == '__main__':

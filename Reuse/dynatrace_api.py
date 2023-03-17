@@ -1,8 +1,11 @@
+import json
 import requests
 import ssl
 import time
 
+from inspect import currentframe
 from json import JSONDecodeError
+from requests import Response
 
 
 def get(url, token, endpoint, params):
@@ -59,9 +62,87 @@ def get(url, token, endpoint, params):
         print('JSON decode error. Response: ')
         print(resp)
         print(resp.text)
+        exit(1)
 
 
-def post(env, token, endpoint, payload):
+def get_by_object_id(env, token, endpoint, object_id):
+    url = env + endpoint + '/' + object_id
+    try:
+        r = requests.get(url, params='', headers={'Authorization': 'Api-Token ' + token})
+        if r.status_code not in [200]:
+            print('Error in "dynatrace_api.get_by_object_id(env, token, endpoint, object_id)" method')
+            print('Endpoint: ' + endpoint)
+            print('Object ID: ' + object_id)
+            print('Exit code shown below is the source code line number of the exit statement invoked')
+            exit(get_line_number())
+        return json.loads(r.text)
+    except ssl.SSLError:
+        print('SSL Error')
+        exit(get_line_number())
+
+
+def post(env, token, endpoint: str, payload: str) -> Response:
+    # In general, avoid post in favor of put so "fixed ids" can be used
+    json_data = json.loads(payload)
+    # print(payload)
+    # Remove id if present
+    # print(f'Popped: {json_data.pop("id")}')
+    # json_data.pop("id")
+    formatted_payload = json.dumps(json_data, indent=4, sort_keys=False)
+    url = env + endpoint
+    try:
+        r: Response = requests.post(url, formatted_payload.encode('utf-8'), headers={'Authorization': 'Api-Token ' + token, 'Content-Type': 'application/json; charset=utf-8'})
+        # print('Status Code: %d' % r.status_code)
+        # print('Reason: %s' % r.reason)
+        # if len(r.text) > 0:
+        #     print(r.text)
+        if r.status_code not in [200, 201, 204]:
+            print('Status Code: %d' % r.status_code)
+            print('Reason: %s' % r.reason)
+            if len(r.text) > 0:
+                print(r.text)
+            error_filename = '$post_error_payload.json'
+            with open(error_filename, 'w') as file:
+                file.write(formatted_payload)
+                name = json_data.get('name')
+                if name:
+                    print('Name: ' + name)
+                print('Error in "dynatrace_api.post(env, token, endpoint: str, payload: str)" method')
+                print('Exit code shown below is the source code line number of the exit statement invoked')
+                print('See ' + error_filename + ' for more details')
+            exit(get_line_number())
+        return r
+    except ssl.SSLError:
+        print('SSL Error')
+        exit(get_line_number())
+
+
+def put(env, token, endpoint, object_id, payload):
+    # In general, favor put over post so "fixed ids" can be used
+    json_data = json.dumps(json.loads(payload), indent=4, sort_keys=False)
+    url = env + endpoint + '/' + object_id
+    try:
+        r: Response = requests.put(url, json_data.encode('utf-8'), headers={'Authorization': 'Api-Token ' + token, 'Content-Type': 'application/json; charset=utf-8'})
+        if r.status_code not in [200, 201, 204]:
+            error_filename = '$put_error_payload.json'
+            with open(error_filename, 'w') as file:
+                file.write(json_data)
+                print('Error in "dynatrace_api.put(env, token, endpoint, object_id, payload)" method')
+                print('Exit code shown below is the source code line number of the exit statement invoked')
+                print('See ' + error_filename + ' for more details')
+            exit(get_line_number())
+        return r
+    except ssl.SSLError:
+        print('SSL Error')
+        exit(get_line_number())
+
+
+def get_line_number():
+    cf = currentframe()
+    return cf.f_back.f_lineno
+
+
+def postv1(env, token, endpoint, payload):
     url = env + endpoint
     print('POST: ' + url)
     print('payload: ' + payload)
@@ -95,7 +176,7 @@ def post_plain_text(env, token, endpoint, payload):
         print('SSL Error')
 
 
-def put(env, token, endpoint, object_id, payload):
+def putv1(env, token, endpoint, object_id, payload):
     url = env + endpoint + '/' + object_id
     print('PUT: ' + url)
     print('payload: ' + payload)
@@ -115,14 +196,13 @@ def put(env, token, endpoint, object_id, payload):
 
 def delete(env, token, endpoint, object_id):
     url = f'{env}{endpoint}/{object_id}'
-    print('DELETE: ' + url)
     try:
         r = requests.delete(url, headers={'Authorization': 'Api-Token ' + token, 'Content-Type': 'application/json; charset=utf-8'})
-        print('Status Code: %d' % r.status_code)
-        print('Reason: %s' % r.reason)
-        if len(r.text) > 0:
-            print(r.text)
         if r.status_code not in [200, 201, 204]:
+            print('Status Code: %d' % r.status_code)
+            print('Reason: %s' % r.reason)
+            if len(r.text) > 0:
+                print(r.text)
             exit()
     except ssl.SSLError:
         print('SSL Error')

@@ -106,78 +106,10 @@ def turn_on_process_group_monitoring_setting(process_group_to_update):
 
     if put_object_id_list:
         for put_object_id in put_object_id_list:
-            put(endpoint, put_object_id)
+            dynatrace_api.put(env, token, endpoint, put_object_id, json.dumps(post_payload_list))
 
     if post_payload_list:
-        post(endpoint, json.dumps(post_payload_list))
-
-
-def post(endpoint, payload):
-    print('post(env, endpoint, token, payload)')
-    json_data = json.loads(payload)
-    formatted_payload = json.dumps(json_data, indent=4, sort_keys=False)
-    url = env + endpoint
-    # print('POST: ' + url)
-    # print('payload: ' + json_data)
-    try:
-        r = requests.post(url, payload.encode('utf-8'), headers={'Authorization': 'Api-Token ' + token, 'Content-Type': 'application/json; charset=utf-8'})
-        print('Status Code: %d' % r.status_code)
-        print('Reason: %s' % r.reason)
-        if len(r.text) > 0:
-            print(r.text)
-        if r.status_code not in [200, 201, 204]:
-            # print(json_data)
-            error_filename = '$post_error_payload.json'
-            with open(error_filename, 'w') as file:
-                file.write(formatted_payload)
-                if not(isinstance(json_data, list)):
-                    name = json_data.get('name')
-                    if name:
-                        print('Name: ' + name)
-                print('Error in "post(env, endpoint, token, payload)" method')
-                print('Exit code shown below is the source code line number of the exit statement invoked')
-                print('See ' + error_filename + ' for more details')
-            exit(get_line_number())
-        return r
-    except ssl.SSLError:
-        print('SSL Error')
-        exit(get_line_number())
-
-
-def put(endpoint, object_id):
-    print('put(env, endpoint, token, payload)')
-
-    payload = '{"value": {"enabled": true, "alertingMode": "ON_PGI_UNAVAILABILITY"}}'
-
-    json_data = json.loads(payload)
-    formatted_payload = json.dumps(json_data, indent=4, sort_keys=False)
-    url = env + endpoint + '/' + object_id
-    # print('PUT: ' + url)
-    # print('payload: ' + json_data)
-    try:
-        r = requests.put(url, payload.encode('utf-8'),
-                         headers={'Authorization': 'Api-Token ' + token, 'Content-Type': 'application/json; charset=utf-8'})
-        print('Status Code: %d' % r.status_code)
-        print('Reason: %s' % r.reason)
-        if len(r.text) > 0:
-            print(r.text)
-        if r.status_code not in [200, 201, 204]:
-            # print(json_data)
-            error_filename = '$put_error_payload.json'
-            with open(error_filename, 'w') as file:
-                file.write(formatted_payload)
-                if not(isinstance(json_data, list)):
-                    name = json_data.get('name')
-                    if name:
-                        print('Name: ' + name)
-                print('Error in "put(env, endpoint, token, payload)" method')
-                print('Exit code shown below is the source code line number of the exit statement invoked')
-                print('See ' + error_filename + ' for more details')
-            exit(get_line_number())
-        return r
-    except ssl.SSLError:
-        print('SSL Error')
-        exit(get_line_number())
+        dynatrace_api.post(env, token, endpoint, json.dumps(post_payload_list))
 
 
 def get_line_number():
@@ -185,35 +117,7 @@ def get_line_number():
     return cf.f_back.f_lineno
 
 
-def delete(endpoint, object_id):
-    url = env + endpoint + '/' + object_id
-    try:
-        r: Response = requests.delete(url, headers={'Authorization': 'Api-Token ' + token, 'Content-Type': 'application/json; charset=utf-8'})
-        if r.status_code == 204:
-            print('Deleted ' + object_id + ' (' + endpoint + ')')
-        else:
-            print('Status Code: %d' % r.status_code)
-            print('Reason: %s' % r.reason)
-            if len(r.text) > 0:
-                print(r.text)
-        if r.status_code not in [200, 201, 204]:
-            # print(json_data)
-            print('Error in "delete(endpoint, object_id)" method')
-            print('Env: ' + env)
-            print('Endpoint: ' + endpoint)
-            print('Token: ' + token)
-            print('Object ID: ' + object_id)
-            print('Exit code shown below is the source code line number of the exit statement invoked')
-        return r
-    except ssl.SSLError:
-        print('SSL Error')
-        exit(get_line_number())
-
-
 if __name__ == '__main__':
     # For testing POST vs PUT you may want to delete an object ID
-    # delete('/api/v2/settings/objects', 'vu9U3hXa3q0AAAABACtidWlsdGluOmF2YWlsYWJpbGl0eS5wcm9jZXNzLWdyb3VwLWFsZXJ0aW5nAA1QUk9DRVNTX0dST1VQABA0RkNFQkM5RjIzQTlGRkZDACQxMTI0YjgwYS1kYTJkLTM2OGYtODNmZi1lM2U3Mzk0OGY3YzO-71TeFdrerQ')
-    # delete('/api/v2/settings/objects', 'vu9U3hXa3q0AAAABACtidWlsdGluOmF2YWlsYWJpbGl0eS5wcm9jZXNzLWdyb3VwLWFsZXJ0aW5nAA1QUk9DRVNTX0dST1VQABA0RjdBMzhCRDg5MUQxMENGACQ2YTE3NmYxZC03MzU2LTMxNDMtODVjMS02YTg3ZTk1OTk2Mja-71TeFdrerQ')
-    # delete('/api/v2/settings/objects', 'vu9U3hXa3q0AAAABACtidWlsdGluOmF2YWlsYWJpbGl0eS5wcm9jZXNzLWdyb3VwLWFsZXJ0aW5nAA1QUk9DRVNTX0dST1VQABAzRjQyODNBMDMwQ0I4Qjg0ACRhZjJlYWRiOS03YjY5LTNlODQtOTllOS03MDQxMzBiZDUwYTO-71TeFdrerQ')
-    # vu9U3hXa3q0AAAABACtidWlsdGluOmF2YWlsYWJpbGl0eS5wcm9jZXNzLWdyb3VwLWFsZXJ0aW5nAA1QUk9DRVNTX0dST1VQABAzRjQyODNBMDMwQ0I4Qjg0ACRhZjJlYWRiOS03YjY5LTNlODQtOTllOS03MDQxMzBiZDUwYTO-71TeFdrerQ
+    # dynatrace_api.delete(env, token, '/api/v2/settings/objects', 'vu9U3hXa3q0AAAABACtidWlsdGluOmF2YWlsYWJpbGl0eS5wcm9jZXNzLWdyb3VwLWFsZXJ0aW5nAA1QUk9DRVNTX0dST1VQABAzRjQyODNBMDMwQ0I4Qjg0ACRhZjJlYWRiOS03YjY5LTNlODQtOTllOS03MDQxMzBiZDUwYTO-71TeFdrerQ')
     process()
