@@ -1,94 +1,18 @@
 import copy
-from inspect import currentframe
 import json
-import os
-import requests
-import ssl
 
-env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-# env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-# env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-# env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
+from Reuse import dynatrace_api
+from Reuse import environment
 
-tenant = os.environ.get(tenant_key)
-token = os.environ.get(token_key)
-env = f'https://{tenant}.live.dynatrace.com'
+# env_name, env, token = environment.get_environment('Prod')
+# env_name, env, token = environment.get_environment('Prep')
+# env_name, env, token = environment.get_environment('Dev')
+env_name, env, token = environment.get_environment('Personal')
+# env_name, env, token = environment.get_environment('FreeTrial1')
 
-masked_token = token.split('.')[0] + '.' + token.split('.')[1] + '.* (Masked)'
-
-print(f'Environment Name: {env_name}')
-print(f'Environment:      {env}')
-print(f'Token:            {masked_token}')
-
-print('')
-print('Configuration Updater')
+print('Update Tag Descriptions')
 
 object_cache = {}
-
-
-def put(endpoint, object_id, payload):
-	json_data = json.dumps(json.loads(payload), indent=4, sort_keys=False)
-	url = env + endpoint + '/' + object_id
-	# print('PUT: ' + url)
-	# print('payload: ' + json_data)
-	try:
-		r = requests.put(url, json_data.encode('utf-8'), headers={'Authorization': 'Api-Token ' + token, 'Content-Type': 'application/json; charset=utf-8'})
-		if r.status_code not in [200, 201, 204]:
-			# print(json_data)
-			print('Status Code: %d' % r.status_code)
-			print('Reason: %s' % r.reason)
-			if len(r.text) > 0:
-				print(r.text)
-			error_filename = '$put_error_payload.json'
-			with open(error_filename, 'w') as file:
-				file.write(json_data)
-				print('Error in "put(env, endpoint, token, object_id, payload)" method')
-				print('Exit code shown below is the source code line number of the exit statement invoked')
-				print('See ' + error_filename + ' for more details')
-			exit(get_linenumber())
-		return r
-	except ssl.SSLError:
-		print('SSL Error')
-		exit(get_linenumber())
-
-
-def get_by_object_id(endpoint, object_id):
-	# print(f'get_by_object_id({endpoint}, {object_id})')
-	url = env + endpoint + '/' + object_id
-	# print('GET: ' + url)
-	try:
-		r = requests.get(url, params='', headers={'Authorization': 'Api-Token ' + token})
-		if r.status_code not in [200]:
-			print('Error in "get_by_object_id(endpoint, object_id)" method')
-			print('Endpoint: ' + endpoint)
-			print('Object ID: ' + object_id)
-			print('Exit code shown below is the source code line number of the exit statement invoked')
-			exit(get_linenumber())
-		return r
-	except ssl.SSLError:
-		print('SSL Error')
-		exit(get_linenumber())
-
-
-def get_object_list(endpoint):
-	url = env + endpoint
-	# print('GET: ' + url)
-	try:
-		r = requests.get(url, params='', headers={'Authorization': 'Api-Token ' + token})
-		if r.status_code not in [200]:
-			print('Error in "get_object_list(endpoint)" method')
-			print('Endpoint: ' + endpoint)
-			print('Exit code shown below is the source code line number of the exit statement invoked')
-			exit(get_linenumber())
-		return r
-	except ssl.SSLError:
-		print('SSL Error')
-		exit(get_linenumber())
-
-
-def get_linenumber():
-	cf = currentframe()
-	return cf.f_back.f_lineno
 
 
 def update(config_endpoint, tag_name, key, value):
@@ -98,7 +22,7 @@ def update(config_endpoint, tag_name, key, value):
 	endpoint = '/api/config/v1/' + config_endpoint
 
 	if not object_cache.get(endpoint):
-		r = get_object_list(endpoint)
+		r = dynatrace_api.get_object_list(env, token, endpoint)
 
 		# print(r.text)
 
@@ -122,7 +46,7 @@ def update(config_endpoint, tag_name, key, value):
 
 	# print(f'object_id: {object_id}')
 
-	config_object = json.loads(get_by_object_id(endpoint, object_id).text)
+	config_object = dynatrace_api.get_by_object_id(env, token, endpoint, object_id)
 
 	# print(object)
 
@@ -135,7 +59,7 @@ def update(config_endpoint, tag_name, key, value):
 
 	# print(config_object)
 
-	put(endpoint, object_id, json.dumps(config_object))
+	dynatrace_api.put(env, token, endpoint, object_id, json.dumps(config_object))
 
 	print('For "' + tag_name + '" (' + endpoint + '/' + object_id + ') ' + key + ' changed from "' + str(current_value) + '" to + "' + str(value) + '"')
 
@@ -192,7 +116,8 @@ def process():
 		('Hybris Config Directory', 'description', 'Filter a dashboard or view to a Hybris Config Directory'),
 		('Hybris Data Directory', 'description', 'Filter a dashboard or view to a Hybris Data Directory'),
 		('IBM CICS Region', 'description', 'Filter a dashboard or view to a IBM CICS Region'),
-		('IBM CTG Name', 'description', 'Filter a dashboard or view to a IBM CTG Name'),
+		# This tag is now broken, so updates fail
+		# ('IBM CTG Name', 'description', 'Filter a dashboard or view to an IBM CTG Name'),
 		('IBM IMS Connect Region', 'description', 'Filter a dashboard or view to a IBM IMS Connect Region'),
 		('IBM IMS Control Region', 'description', 'Filter a dashboard or view to a IBM IMS Control Region'),
 		('IBM IMS Message Processing Region', 'description', 'Filter a dashboard or view to a IBM IMS Message Processing Region'),

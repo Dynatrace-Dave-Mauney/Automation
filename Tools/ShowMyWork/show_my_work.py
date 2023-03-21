@@ -3,21 +3,17 @@
 # Dashboards/Templates
 # Dashboards/Sandbox)
 
-from inspect import currentframe
 import json
-import os
-import requests
-import ssl
-from requests import Response
 
-# env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-# env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-# env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
+from Reuse import dynatrace_api
+from Reuse import environment
 
-tenant = os.environ.get(tenant_key)
-token = os.environ.get(token_key)
-env = f'https://{tenant}.live.dynatrace.com'
+
+# env_name, env, token = environment.get_environment('Prod')
+# env_name, env, token = environment.get_environment('Prep')
+# env_name, env, token = environment.get_environment('Dev')
+env_name, env, token = environment.get_environment('Personal')
+# env_name, env, token = environment.get_environment('FreeTrial1')
 
 fixed_id_startswith_list = {
 	'aaaaaaaa-bbbb-cccc-dddd-000000000001',  # RobotAdmin Added Entities
@@ -49,7 +45,7 @@ def report_fixed_id_entities():
 def report_fixed_id_entity(entity_type, endpoint):
 	print(f'{entity_type}:')
 	print_lines = []
-	r = get_object_list(endpoint)
+	r = dynatrace_api.get_object_list(env, token, endpoint)
 	entity_json = json.loads(r.text)
 	if endpoint == '/api/config/v1/dashboards':
 		values_key = 'dashboards'
@@ -72,26 +68,6 @@ def is_fixed_id(entity_id):
 			return True
 
 	return False
-
-
-def get_object_list(endpoint: str) -> Response:
-	url = env + endpoint
-	try:
-		r: Response = requests.get(url, params='', headers={'Authorization': 'Api-Token ' + token})
-		if r.status_code not in [200]:
-			print('Error in "get_object_list(endpoint)" method')
-			print('Endpoint: ' + endpoint)
-			print('Exit code shown below is the source code line number of the exit statement invoked')
-			exit(get_line_number())
-		return r
-	except ssl.SSLError:
-		print('SSL Error')
-		exit(get_line_number())
-
-
-def get_line_number():
-	cf = currentframe()
-	return cf.f_back.f_lineno
 
 
 if __name__ == '__main__':

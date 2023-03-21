@@ -4,8 +4,6 @@
 # WriteConfig (Write configuration)
 
 import json
-import requests
-import ssl
 import urllib.parse
 import yaml
 
@@ -56,7 +54,7 @@ def change_host_group_autoupdate_setting(host_group, setting):
     old_setting = settings_json.get('setting')
     version = settings_json.get('version')
     payload = {'setting': setting, 'version': version}
-    put(env, endpoint, token, host_group_id, json.dumps(payload))
+    put(env, endpoint, token, json.dumps(payload))
     print('Autoupdate setting changed from ' + old_setting + ' to ' + setting + ' for host group ' + host_group + '(' + host_group_id + ')')
 
 
@@ -68,31 +66,13 @@ def change_host_autoupdate_setting(host, setting):
     old_setting = settings_json.get('setting')
     version = settings_json.get('version')
     payload = {'setting': setting, 'version': version}
-    put(env, endpoint, token, host_id, json.dumps(payload))
+    put(env, endpoint, token, json.dumps(payload))
     print('Autoupdate setting changed from ' + old_setting + ' to ' + setting + ' for host ' + host + '(' + host_id + ')')
 
 
-def put(env, endpoint, token, object_id, payload):
-    url = env + endpoint
-    # print('PUT: ' + url)
-    # print('payload: ' + payload)
-    try:
-        r = requests.put(url, payload.encode('utf-8'),
-                         headers={'Authorization': 'Api-Token ' + token,
-                                  'Content-Type': 'application/json; charset=utf-8'})
-        # print('Status Code: %d' % r.status_code)
-        # print('Reason: %s' % r.reason)
-        # if len(r.text) > 0:
-        #     print(r.text)
-        if r.status_code not in [200, 201, 204]:
-            print('Aborting due to Unexpected Status Code: %d' % r.status_code)
-            print(r.reason)
-            print(r.text)
-            print(url)
-            print(payload)
-            exit(2)
-    except ssl.SSLError:
-        print('SSL Error')
+def put(env, endpoint, token, payload):
+    # The host group or host id is already embedded in the endpoint
+    dynatrace_api.put_without_id(env, token, endpoint, payload)
 
 
 def load_host_group_lookup(host_groups):

@@ -1,9 +1,6 @@
 from inspect import currentframe
 import json
-import requests
-import ssl
 import urllib.parse
-from requests import Response
 
 from Reuse import dynatrace_api
 from Reuse import environment

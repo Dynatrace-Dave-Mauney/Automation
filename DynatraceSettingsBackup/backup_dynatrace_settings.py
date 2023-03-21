@@ -18,9 +18,7 @@ Token Permissions Required:
 import copy
 import json
 import os
-import requests
 import shutil
-import ssl
 import yaml
 import urllib.parse
 
@@ -32,8 +30,8 @@ from Reuse import environment
 # env_name, env, token = environment.get_environment('Prod')
 # env_name, env, token = environment.get_environment('Prep')
 # env_name, env, token = environment.get_environment('Dev')
-env_name, env, token = environment.get_environment('Personal')
-# env_name, env, token = environment.get_environment('FreeTrial1')
+# env_name, env, token = environment.get_environment('Personal')
+env_name, env, token = environment.get_environment('FreeTrial1')
 
 backup_directory_path = f'../$Output/DynatraceSettingsBackup/{env_name}'
 
@@ -351,19 +349,8 @@ def save_config(endpoint, json_file_name, payload, config_list):
 
 
 def get_config_endpoint(endpoint):
-    try:
-        full_url = env + '/api/config/v1' + endpoint
-        resp = requests.get(full_url, headers={'Authorization': 'Api-Token ' + token})
-
-        if resp.status_code != 200:
-            print('REST API Call Failed!')
-            print(f'GET {full_url} {resp.status_code} - {resp.reason}')
-            # print(resp.text)
-            exit(get_line_number())
-        return resp
-    except ssl.SSLError:
-        print('SSL Error')
-        exit(get_line_number())
+    full_endpoint = f'/api/config/v1{endpoint}'
+    return dynatrace_api.get_object_list(env, token, full_endpoint)
 
 
 def save_settings20_objects():

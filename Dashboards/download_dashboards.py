@@ -4,9 +4,10 @@ Save dashboards from the tenant to the path indicated below.
 import json
 import os
 import re
-import requests
-import ssl
 import sys
+
+from Reuse import dynatrace_api
+from Reuse import environment
 
 
 def save(path, file, content):
@@ -18,38 +19,34 @@ def save(path, file, content):
 
 def save_dashboards(env, token, path):
 	download_count = 0
-	try:
-		headers = {'Authorization': 'Api-Token ' + token}
-		r = requests.get(env + '/api/config/v1/dashboards', headers=headers)
-		res = r.json()
-		for entry in res['dashboards']:
-			dashboard_name = entry.get('name')
-			dashboard_id = entry.get('id')
-			dashboard_owner = entry.get('owner')
-			# if dashboard_id.startswith('00000000-dddd-bbbb-ffff-0000000000'):
-			# if ((dashboard_name.startswith('Prod:') or dashboard_name.startswith('Prep:')) and dashboard_id.startswith('00000000-dddd-bbbb-ffff-0000000000')):
-			# if dashboard_owner == 'Dynatrace' and dashboard_name.startswith('A'):
-			# if dashboard_owner == 'nobody@example.com':
-			# if dashboard_owner == 'Dynatrace':
-			# if True:
-			if dashboard_owner == 'dave.mauney@dynatrace.com':
-				response = requests.get(env + '/api/config/v1/dashboards/' + dashboard_id, headers=headers)
-				dashboard = response.json()
-				dashboard_metadata = dashboard.get('dashboardMetadata')
-				dashboard_preset = dashboard_metadata.get('preset')
-				# if 'ism74021' in str(dashboard):
-				# aaaaaaaa-bbbb-cccc-dddd-1
-				# aaaaaaaa-bbbb-cccc-eeee-f
-				# if dashboard_preset:
-				# if True:
-				if dashboard_preset and (dashboard_id.startswith('aaaaaaaa-bbbb-cccc-abcd-0000000000') or dashboard_id.startswith('aaaaaaaa-bbbb-cccc-eeee-f')):
-					clean_filename = re.sub(r"[/\\?%*:|\"<>\x7F\x00-\x1F]", "-", f'{dashboard_name}.json')
-					print(f'Saving {dashboard_name} ({dashboard_id}) owned by {dashboard_owner} to {clean_filename}')
-					save(path, clean_filename, dashboard)
-					download_count +=1
-		print(f'Downloaded {download_count} dashboards to {path}')
-	except ssl.SSLError:
-		print("SSL Error")
+	r = dynatrace_api.get_object_list(env, token, endpoint='/api/config/v1/dashboards')
+	res = r.json()
+	for entry in res['dashboards']:
+		dashboard_name = entry.get('name')
+		dashboard_id = entry.get('id')
+		dashboard_owner = entry.get('owner')
+		# if dashboard_id.startswith('00000000-dddd-bbbb-ffff-0000000000'):
+		# if ((dashboard_name.startswith('Prod:') or dashboard_name.startswith('Prep:')) and dashboard_id.startswith('00000000-dddd-bbbb-ffff-0000000000')):
+		# if dashboard_owner == 'Dynatrace' and dashboard_name.startswith('A'):
+		# if dashboard_owner == 'nobody@example.com':
+		# if dashboard_owner == 'Dynatrace':
+		# if True:
+		if dashboard_owner == 'dave.mauney@dynatrace.com':
+			dashboard = dynatrace_api.get_by_object_id(env, token, endpoint='/api/config/v1/dashboards', object_id=dashboard_id)
+			dashboard_metadata = dashboard.get('dashboardMetadata')
+			dashboard_preset = dashboard_metadata.get('preset')
+			# if 'ism74021' in str(dashboard):
+			# aaaaaaaa-bbbb-cccc-dddd-1
+			# aaaaaaaa-bbbb-cccc-eeee-f
+			# if dashboard_preset:
+			# if dashboard_preset and (dashboard_id.startswith('aaaaaaaa-bbbb-cccc-abcd-0000000000') or dashboard_id.startswith('aaaaaaaa-bbbb-cccc-eeee-f')):
+			if True:
+				clean_filename = re.sub(r"[/\\?%*:|\"<>\x7F\x00-\x1F]", "-", f'{dashboard_name}.json')
+				print(f'Saving {dashboard_name} ({dashboard_id}) owned by {dashboard_owner} to {clean_filename}')
+				save(path, clean_filename, dashboard)
+				download_count +=1
+
+	print(f'Downloaded {download_count} dashboards to {path}')
 
 def main(arguments):
 	usage = '''
@@ -64,14 +61,11 @@ def main(arguments):
 	print('args' + str(arguments))
 	print(os.getcwd())
 
-	# env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-	# env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-	env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-	# env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
-
-	tenant = os.environ.get(tenant_key)
-	token = os.environ.get(token_key)
-	env = f'https://{tenant}.live.dynatrace.com'
+	# env_name, env, token = environment.get_environment('Prod')
+	# env_name, env, token = environment.get_environment('Prep')
+	# env_name, env, token = environment.get_environment('Dev')
+	env_name, env, token = environment.get_environment('Personal')
+	# env_name, env, token = environment.get_environment('FreeTrial1')
 
 	path = f'../$Output/Dashboards/Downloads/{env_name}'
 

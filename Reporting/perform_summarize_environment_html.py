@@ -1,4 +1,3 @@
-import os
 import sys
 from datetime import date
 import findings_loader
@@ -43,16 +42,14 @@ import report_synthetic_details
 import report_synthetic_http_check_details
 import report_synthetic_location_details
 
-env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-# env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-# env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-# env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
-# env_name, tenant_key, token_key = ('FreeTrial1', 'FREETRIAL1_TENANT', 'ROBOT_ADMIN_FREETRIAL1_TOKEN')
+from Reuse import dynatrace_api
+from Reuse import environment
 
-
-tenant = os.environ.get(tenant_key)
-token = os.environ.get(token_key)
-env = f'https://{tenant}.live.dynatrace.com'
+# env_name, env, token = environment.get_environment('Prod')
+# env_name, env, token = environment.get_environment('Prep')
+# env_name, env, token = environment.get_environment('Dev')
+env_name, env, token = environment.get_environment('Personal')
+# env_name, env, token = environment.get_environment('FreeTrial1')
 
 #
 # Access Token Scopes Required:
@@ -178,7 +175,8 @@ def process():
 	# print(findings)
 
 	with open(outfile_name, "w", encoding='utf8') as outfile:
-		# print(type(outfile))
+		print(f'Writing HTML output to {outfile_name}')
+
 		today = date.today()
 		report_date = str(today.month) + '/' + str(today.day) + '/' + str(today.year)
 

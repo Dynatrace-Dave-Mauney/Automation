@@ -4,11 +4,10 @@
 import json
 import glob
 import os
-import requests
-import ssl
 import sys
 import codecs
 
+from Reuse import dynatrace_api
 from Reuse import environment
 
 
@@ -38,8 +37,8 @@ def run():
     # put_dashboards('Prod', '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json', 'Prod', owner)
     # put_dashboards('Prep', '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json', 'Prep', owner)
     # put_dashboards('Dev', '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json', 'Dev', owner)
-    put_dashboards('Personal', '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json', 'Personal', owner)
-    # put_dashboards('FreeTrial1', '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json', 'FreeTrial1', owner)
+    # put_dashboards('Personal', '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json', 'Personal', owner)
+    put_dashboards('FreeTrial1', '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json', 'FreeTrial1', owner)
     # put_dashboards('Personal', 'Sandbox/00000000-dddd-bbbb-aaaa-???????????1.json', 'Personal', owner)
     # put_dashboards('FreeTrial1', 'Sandbox/00000000-dddd-bbbb-aaaa-???????????1.json', 'Sandbox', owner)
 
@@ -145,21 +144,8 @@ def get_owner():
 
 
 def put_dashboard(env, token, dashboard_id, payload):
-    url = env + '/api/config/v1/dashboards/' + dashboard_id
-    print('PUT: ' + url)
-    try:
-        r = requests.put(url, payload.encode('utf-8'),
-                         headers={'Authorization': 'Api-Token ' + token,
-                                  'Content-Type': 'application/json; charset=utf-8'})
-        # If you need to bypass certificate checks on managed and are ok with the risk:
-        # r = requests.put(url, payload, headers=HEADERS, verify=False)
-        if r.status_code not in [200, 201, 204]:
-            print('Status Code: %d' % r.status_code)
-            print('Reason: %s' % r.reason)
-            if len(r.text) > 0:
-                print(r.text)
-    except ssl.SSLError:
-        print('SSL Error')
+    endpoint = '/api/config/v1/dashboards'
+    dynatrace_api.put(env, token, endpoint, dashboard_id, payload)
 
 
 def main(arguments):

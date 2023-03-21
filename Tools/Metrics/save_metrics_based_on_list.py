@@ -1,9 +1,10 @@
 import os
-import requests
-import ssl
 import sys
 import json
-# from pathlib import Path
+
+from Reuse import dynatrace_api
+from Reuse import environment
+
 
 selector_file_name = '../../$Input/Tools/Metrics/metrics.txt'
 PATH = PATH = '../../$Output/Tools/Metrics/Saved'
@@ -16,35 +17,28 @@ def save(path, file, content):
         text_file.write("%s" % json.dumps(content, indent=4))
 
 
-def save_metric(metric, env, token):
-    headers = {'Authorization': 'Api-Token ' + token}
-    try:
-        r = requests.get(env + '/api/v2/metrics/' + metric, headers=headers)
-        print('Saving ' + metric + ' to ' + PATH)
-        save(PATH, metric.replace(':', '-') + '.json', r.json())
-    except ssl.SSLError:
-        print("SSL Error")
+def save_metric(env, token, metric_id):
+    metric = dynatrace_api.get_by_object_id(env, token, endpoint='/api/v2/metrics', object_id=metric_id)
+    print('Saving ' + metric_id + ' to ' + PATH)
+    save(PATH, metric_id.replace(':', '-') + '.json', metric)
 
 
 def process(env, token):
     selector_file = open(selector_file_name, 'r')
     for line in selector_file:
-        metric = line.rstrip()
-        save_metric(metric, env, token)
+        metric_id = line.rstrip()
+        save_metric(env, token, metric_id)
     selector_file.close()
 
     print('Done!')
 
 
 def run():
-    # env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-    # env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-    # env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-    env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
-
-    tenant = os.environ.get(tenant_key)
-    token = os.environ.get(token_key)
-    env = f'https://{tenant}.live.dynatrace.com'
+    # env_name, env, token = environment.get_environment('Prod')
+    # env_name, env, token = environment.get_environment('Prep')
+    # env_name, env, token = environment.get_environment('Dev')
+    env_name, env, token = environment.get_environment('Personal')
+    # env_name, env, token = environment.get_environment('FreeTrial1')
 
     process(env, token)
 

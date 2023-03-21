@@ -1,6 +1,4 @@
 import json
-import requests
-import ssl
 import sys
 import time
 import urllib.parse
@@ -74,57 +72,12 @@ def post_event(env, token, event_type, title, start_time, end_time, timeout, ent
 
 
 def post(env, token, endpoint: str, payload: str) -> Response:
-    # In general, avoid post in favor of put so "fixed ids" can be used
-    json_data = json.loads(payload)
-    formatted_payload = json.dumps(json_data, indent=4, sort_keys=False)
-    url = env + endpoint
-    try:
-        r: Response = requests.post(url, payload.encode('utf-8'), headers={'Authorization': 'Api-Token ' + token, 'Content-Type': 'application/json; charset=utf-8'})
-        # print('Status Code: %d' % r.status_code)
-        # print('Reason: %s' % r.reason)
-        # if len(r.text) > 0:
-        #     print(r.text)
-        if r.status_code not in [200, 201, 204]:
-            error_filename = '$post_error_payload.json'
-            with open(error_filename, 'w') as file:
-                file.write(formatted_payload)
-                name = json_data.get('name')
-                if name:
-                    print('Name: ' + name)
-                print('Error in "post(endpoint, payload)" method')
-                print('Exit code shown below is the source code line number of the exit statement invoked')
-                print('See ' + error_filename + ' for more details')
-            exit(get_line_number())
-        return r
-    except ssl.SSLError:
-        print('SSL Error')
-        exit(get_line_number())
+    return dynatrace_api.post(env, token, endpoint, payload)
 
 
 def get_process_group_instance(env, token, process_group_instance_id):
-    headers = {'Authorization': 'Api-Token ' + token}
-    endpoint = f'api/v1/entity/infrastructure/processes/{process_group_instance_id}'
-
-    try:
-        url = f'{env}/{endpoint}'
-        r = requests.get(url, headers=headers)
-        # entity_content = json.dumps(r.json(), indent=4)
-        if r.status_code == 200:
-            # print(json.dumps(r.json(), indent=4))
-            # return r.json().get('discoveredName')
-            # return r.json().get('metadata').get('pluginMetadata').get('Queue manager')
-            return r.json()
-        else:
-            if r.status_code == 404:
-                if "The given entity id is not assigned to an entity" in r.text:
-                    print(f'Process Group Instance ID {process_group_instance_id} not found on this tenant')
-            else:
-                print('Status Code: %d' % r.status_code)
-                print('Reason: %s' % r.reason)
-                if len(r.text) > 0:
-                    print(r.text)
-    except ssl.SSLError:
-        print("SSL Error")
+    endpoint = f'/api/v1/entity/infrastructure/processes'
+    return(dynatrace_api.get_by_object_id(env, token, endpoint, process_group_instance_id))
 
 
 def get_current_time_as_epoch_in_milliseconds():

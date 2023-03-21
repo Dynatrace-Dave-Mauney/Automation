@@ -2,16 +2,15 @@
 
 import json
 import glob
-import requests
-import ssl
 import codecs
 
+from Reuse import dynatrace_api
 from Reuse import environment
 
 
 def run():
     # pass
-    upload_auto_tags('Dev', 'uploads/DEV/*.json')
+    upload_auto_tags('Personal', 'uploads/DEV/*.json')
 
 
 def upload_auto_tags(env_name, path):
@@ -30,19 +29,8 @@ def upload_auto_tags(env_name, path):
 
 
 def post_auto_tag(env, token, auto_tag_id, payload):
-    url = env + '/api/config/v1/autoTags/'
-    print('post: ' + url)
-    try:
-        r = requests.post(url, payload.encode('utf-8'), headers={'Authorization': 'Api-Token ' + token, 'Content-Type': 'application/json; charset=utf-8'})
-        # If you need to bypass certificate checks on managed and are ok with the risk:
-        # r = requests.post(url, payload, headers=HEADERS, verify=False)
-        if r.status_code not in [200, 201, 204]:
-            print('Status Code: %d' % r.status_code)
-            print('Reason: %s' % r.reason)
-            if len(r.text) > 0:
-                print(r.text)
-    except ssl.SSLError:
-        print('SSL Error')
+    endpoint = '/api/config/v1/autoTags'
+    dynatrace_api.post(env, token, endpoint, payload)
 
 
 if __name__ == '__main__':

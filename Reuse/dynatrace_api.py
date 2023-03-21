@@ -65,6 +65,20 @@ def get(url, token, endpoint, params):
         exit(1)
 
 
+def get_object_list(env, token, endpoint):
+    url = env + endpoint
+    try:
+        r = requests.get(url, params='', headers={'Authorization': 'Api-Token ' + token})
+        if r.status_code not in [200]:
+            print(r.status_code)
+            print(r.reason)
+            exit(get_line_number())
+        return r
+    except ssl.SSLError:
+        print('SSL Error')
+        exit(get_line_number())
+
+
 def get_by_object_id(env, token, endpoint, object_id):
     url = env + endpoint + '/' + object_id
     try:
@@ -121,6 +135,25 @@ def put(env, token, endpoint, object_id, payload):
     # In general, favor put over post so "fixed ids" can be used
     json_data = json.dumps(json.loads(payload), indent=4, sort_keys=False)
     url = env + endpoint + '/' + object_id
+    try:
+        r: Response = requests.put(url, json_data.encode('utf-8'), headers={'Authorization': 'Api-Token ' + token, 'Content-Type': 'application/json; charset=utf-8'})
+        if r.status_code not in [200, 201, 204]:
+            error_filename = '$put_error_payload.json'
+            with open(error_filename, 'w') as file:
+                file.write(json_data)
+                print('Error in "dynatrace_api.put(env, token, endpoint, object_id, payload)" method')
+                print('Exit code shown below is the source code line number of the exit statement invoked')
+                print('See ' + error_filename + ' for more details')
+            exit(get_line_number())
+        return r
+    except ssl.SSLError:
+        print('SSL Error')
+        exit(get_line_number())
+
+
+def put_without_id(env, token, endpoint, payload):
+    json_data = json.dumps(json.loads(payload), indent=4, sort_keys=False)
+    url = env + endpoint
     try:
         r: Response = requests.put(url, json_data.encode('utf-8'), headers={'Authorization': 'Api-Token ' + token, 'Content-Type': 'application/json; charset=utf-8'})
         if r.status_code not in [200, 201, 204]:
@@ -207,3 +240,10 @@ def delete(env, token, endpoint, object_id):
     except ssl.SSLError:
         print('SSL Error')
 
+def delete_with_response(env, token, endpoint, object_id):
+    url = f'{env}{endpoint}/{object_id}'
+    try:
+        r = requests.delete(url, headers={'Authorization': 'Api-Token ' + token, 'Content-Type': 'application/json; charset=utf-8'})
+        return r
+    except ssl.SSLError:
+        print('SSL Error')

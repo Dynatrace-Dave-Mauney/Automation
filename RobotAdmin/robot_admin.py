@@ -5,20 +5,17 @@
 import copy
 from inspect import currentframe
 import json
-import os
-import requests
-import ssl
 import time
 from requests import Response
 
-# env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-# env_name, tenant_key, token_key = ('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-# env_name, tenant_key, token_key = ('Dev', 'DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN')
-env_name, tenant_key, token_key = ('Personal', 'PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN')
+from Reuse import dynatrace_api
+from Reuse import environment
 
-tenant = os.environ.get(tenant_key)
-token = os.environ.get(token_key)
-env = f'https://{tenant}.live.dynatrace.com'
+# env_name, env, token = environment.get_environment('Prod')
+# env_name, env, token = environment.get_environment('Prep')
+# env_name, env, token = environment.get_environment('Dev')
+# env_name, env, token = environment.get_environment('Personal')
+env_name, env, token = environment.get_environment('FreeTrial1')
 
 offline = False
 confirmation_required = True
@@ -73,7 +70,8 @@ fixed_auto_tag_ids = {
 	'Hybris Config Directory': 'aaaaaaaa-bbbb-cccc-dddd-000000000046',
 	'Hybris Data Directory': 'aaaaaaaa-bbbb-cccc-dddd-000000000047',
 	'IBM CICS Region': 'aaaaaaaa-bbbb-cccc-dddd-000000000048',
-	'IBM CTG Name': 'aaaaaaaa-bbbb-cccc-dddd-000000000049',
+	# This one is now broken so skip it.
+	# 'IBM CTG Name': 'aaaaaaaa-bbbb-cccc-dddd-000000000049',
 	'IBM IMS Connect Region': 'aaaaaaaa-bbbb-cccc-dddd-000000000050',
 	'IBM IMS Control Region': 'aaaaaaaa-bbbb-cccc-dddd-000000000051',
 	'IBM IMS Message Processing Region': 'aaaaaaaa-bbbb-cccc-dddd-000000000052',
@@ -201,11 +199,13 @@ def process():
 	# For when everything is commented out below...
 	pass
 
-	print('Environment:     ' + env_name)
-	print('Environment URL: ' + env)
+	# Run a sanity test, if pointed to 'Personal' or 'FreeTrial1' environment only
+	# sanity_test()
 
-	# Run a quick sanity test, if pointed to 'Personal' environment only
-	sanity_test()
+	# Test other methods not covered by "sanity_test()"
+	# post_web_application('Test Web App')
+	# dump_json('/api/config/v1/autoTags', 'aaaaaaaa-bbbb-cccc-dddd-000000000001')
+	# add_database_relationship_entity_selector_to_tag('aaaaaaaa-bbbb-cccc-dddd-000000000077', 'OS', 'Tag')
 
 	# Safety Exit
 	print('Safety Exit!')
@@ -237,15 +237,15 @@ def process():
 	# post_management_zone_per_aws_credential_name()
 
 	# Report all entities with fixed IDs
-	# print('Entities with fixed ids:')
+	# print("Entities with fixed ids:")
 	# report_fixed_id_entities()
 
 	# Report some request naming rules
 	# dump_request_naming_rules_rules()
 	# endpoint = '/api/config/v1/service/requestNaming'
-	# print(get_by_object_id(endpoint, 'aaaaaaaa-bbbb-cccc-dddd-000000000001').text)
-	# print(get_by_object_id(endpoint, 'aaaaaaaa-bbbb-cccc-dddd-000000000002').text)
-	# print(get_by_object_id(endpoint, 'aaaaaaaa-bbbb-cccc-dddd-000000000100').text)
+	# print(get_by_object_id(endpoint, 'aaaaaaaa-bbbb-cccc-dddd-000000000001'))
+	# print(get_by_object_id(endpoint, 'aaaaaaaa-bbbb-cccc-dddd-000000000002'))
+	# print(get_by_object_id(endpoint, 'aaaaaaaa-bbbb-cccc-dddd-000000000100'))
 
 	# For extra safety
 	exit(8000)
@@ -266,7 +266,7 @@ def process():
 
 def sanity_test():
 	# Safety Check
-	if env_name != 'Personal':
+	if env_name not in ['Personal', 'FreeTrial1']:
 		print('Error in "sanity_test()" method')
 		print('Not for use in this environment')
 		print('Env: ' + env)
@@ -603,7 +603,8 @@ def process_auto_tags_google_cloud_platform():
 
 def process_auto_tags_ibm_cics():
 	put_auto_tag_typical_process_group_dynamic_key('IBM CICS Region', 'IBM_CICS_REGION', '{ProcessGroup:IBMCicsRegion}')
-	put_auto_tag_typical_process_group_dynamic_key('IBM CTG Name', 'IBM_CTG_NAME', '{ProcessGroup:IBMCtgName}')
+	# This one is broken now, so skip it.
+	# put_auto_tag_typical_process_group_dynamic_key('IBM CTG Name', 'IBM_CTG_NAME', '{ProcessGroup:IBMCtgName}')
 
 
 def process_auto_tags_ibm_ims():
@@ -639,84 +640,25 @@ def put(endpoint, object_id, payload):
 			name = json.loads(payload).get('name')
 
 	json_data = json.dumps(json.loads(payload), indent=4, sort_keys=False)
-	url = env + endpoint + '/' + object_id
-	try:
-		r: Response = requests.put(url, json_data.encode('utf-8'), headers={'Authorization': 'Api-Token ' + token, 'Content-Type': 'application/json; charset=utf-8'})
-		if r.status_code == 201:
-			print('Added ' + name + ': ' + object_id + ' (' + endpoint + ')')
-		else:
-			if r.status_code == 204:
-				print('Updated ' + name + ': ' + object_id + ' (' + endpoint + ')')
-			else:
-				print('Status Code: %d' % r.status_code)
-				print('Reason: %s' % r.reason)
-				if len(r.text) > 0:
-					print(r.text)
-		if r.status_code not in [200, 201, 204]:
-			error_filename = '$put_error_payload.json'
-			with open(error_filename, 'w') as file:
-				file.write(json_data)
-				print('Error in "put(endpoint, object_id, payload)" method')
-				print('Exit code shown below is the source code line number of the exit statement invoked')
-				print('See ' + error_filename + ' for more details')
-			exit(get_line_number())
-		return r
-	except ssl.SSLError:
-		print('SSL Error')
-		exit(get_line_number())
+
+	r = dynatrace_api.put(env, token, endpoint, object_id, json_data.encode('utf-8'))
+
+	if r.status_code == 201:
+		print('Added ' + name + ': ' + object_id + ' (' + endpoint + ')')
+	else:
+		if r.status_code == 204:
+			print('Updated ' + name + ': ' + object_id + ' (' + endpoint + ')')
 
 
 def post(endpoint: str, payload: str) -> Response:
-	# In general, avoid post in favor of put so "fixed ids" can be used
-	json_data = json.loads(payload)
-	formatted_payload = json.dumps(json_data, indent=4, sort_keys=False)
-	url = env + endpoint
-	try:
-		r: Response = requests.post(url, payload.encode('utf-8'), headers={'Authorization': 'Api-Token ' + token, 'Content-Type': 'application/json; charset=utf-8'})
-		print('Status Code: %d' % r.status_code)
-		print('Reason: %s' % r.reason)
-		if len(r.text) > 0:
-			print(r.text)
-		if r.status_code not in [200, 201, 204]:
-			error_filename = '$post_error_payload.json'
-			with open(error_filename, 'w') as file:
-				file.write(formatted_payload)
-				name = json_data.get('name')
-				if name:
-					print('Name: ' + name)
-				print('Error in "post(endpoint, payload)" method')
-				print('Exit code shown below is the source code line number of the exit statement invoked')
-				print('See ' + error_filename + ' for more details')
-			exit(get_line_number())
-		return r
-	except ssl.SSLError:
-		print('SSL Error')
-		exit(get_line_number())
+	r = dynatrace_api.post(env, token, endpoint, payload)
+	return r
 
 
 def delete(endpoint, object_id):
-	url = env + endpoint + '/' + object_id
-	try:
-		r: Response = requests.delete(url, headers={'Authorization': 'Api-Token ' + token, 'Content-Type': 'application/json; charset=utf-8'})
-		if r.status_code == 204:
-			print('Deleted ' + object_id + ' (' + endpoint + ')')
-		else:
-			print('Status Code: %d' % r.status_code)
-			print('Reason: %s' % r.reason)
-			if len(r.text) > 0:
-				print(r.text)
-		if r.status_code not in [200, 201, 204]:
-			# print(json_data)
-			print('Error in "delete(endpoint, object_id)" method')
-			print('Env: ' + env)
-			print('Endpoint: ' + endpoint)
-			print('Token: ' + token)
-			print('Object ID: ' + object_id)
-			print('Exit code shown below is the source code line number of the exit statement invoked')
-		return r
-	except ssl.SSLError:
-		print('SSL Error')
-		exit(get_line_number())
+	r = dynatrace_api.delete(env, token, endpoint, object_id)
+	print(f'Deleted {object_id} ({endpoint}')
+	return r
 
 
 def post_management_zone_per_aws_credential_name():
@@ -1123,34 +1065,30 @@ def add_database_relationship_entity_selector_to_tag(tag_id, tag_key, tag_value)
 		print('add_database_relationship_entity_selector_to_tag skipped in offline mode...')
 		return
 	endpoint = '/api/config/v1/autoTags'
-	try:
-		r = requests.get(env + endpoint + '/' + tag_id, headers={'Authorization': 'Api-Token ' + token})
-		res = r.json()
-		name = res.get('name')
-		if name != tag_key:
-			print('Error in "add_database_relationship_entity_selector_to_tag(tag_id, tag_key, tag_value)" method')
-			print('Tag name and tag_key do not match!')
-			print('Tag ID: ' + tag_id)
-			print('Tag Key: ' + tag_key)
-			print('Tag Value: ' + tag_value)
-			print('Exit code shown below is the source code line number of the exit statement invoked')
-			exit(get_line_number())
-		entity_selector_based_rules = res.get('entitySelectorBasedRules')
+	res = get_by_object_id(endpoint, tag_id)
+	name = res.get('name')
+	if name != tag_key:
+		print('Error in "add_database_relationship_entity_selector_to_tag(tag_id, tag_key, tag_value)" method')
+		print('Tag name and tag_key do not match!')
+		print('Tag ID: ' + tag_id)
+		print('Tag Key: ' + tag_key)
+		print('Tag Value: ' + tag_value)
+		print('Exit code shown below is the source code line number of the exit statement invoked')
+		exit(get_line_number())
+	entity_selector_based_rules = res.get('entitySelectorBasedRules')
+	# print(entity_selector_based_rules)
+	new_rule = build_database_to_relationship_entity_selector(tag_key, tag_value)
+	value_formats = []
+	for entity_selector_based_rule in entity_selector_based_rules:
+		value_formats.append(entity_selector_based_rule.get('valueFormat'))
+	if new_rule.get('valueFormat') in value_formats:
+		print('Rule already present...skipping...')
+	else:
+		entity_selector_based_rules.append(new_rule)
 		# print(entity_selector_based_rules)
-		new_rule = build_database_to_relationship_entity_selector(tag_key, tag_value)
-		value_formats = []
-		for entity_selector_based_rule in entity_selector_based_rules:
-			value_formats.append(entity_selector_based_rule.get('valueFormat'))
-		if new_rule.get('valueFormat') in value_formats:
-			print('Rule already present...skipping...')
-		else:
-			entity_selector_based_rules.append(new_rule)
-			# print(entity_selector_based_rules)
-			res['entitySelectorBasedRules'] = entity_selector_based_rules
-			payload = json.dumps(res)
-			put(endpoint, tag_id, payload)
-	except ssl.SSLError:
-		print('SSL Error')
+		res['entitySelectorBasedRules'] = entity_selector_based_rules
+		payload = json.dumps(res)
+		put(endpoint, tag_id, payload)
 
 
 def build_database_to_relationship_entity_selector(tag_key, tag_value):
@@ -1704,42 +1642,19 @@ def save(path, name, payload):
 
 
 def dump_json(endpoint, object_id):
-	r = get_by_object_id(endpoint, object_id)
-	json_data = json.dumps(json.loads(r.text), indent=4, sort_keys=False)
+	response = get_by_object_id(endpoint, object_id)
+	json_data = json.dumps(response, indent=4, sort_keys=False)
 	print(json_data)
 	with open('$DUMP-' + object_id, 'w') as file:
 		file.write(json_data)
 
 
 def get_by_object_id(endpoint, object_id):
-	url = env + endpoint + '/' + object_id
-	try:
-		r = requests.get(url, params='', headers={'Authorization': 'Api-Token ' + token})
-		if r.status_code not in [200]:
-			print('Error in "get_by_object_id(endpoint, object_id)" method')
-			print('Endpoint: ' + endpoint)
-			print('Object ID: ' + object_id)
-			print('Exit code shown below is the source code line number of the exit statement invoked')
-			exit(get_line_number())
-		return r
-	except ssl.SSLError:
-		print('SSL Error')
-		exit(get_line_number())
+	return dynatrace_api.get_by_object_id(env, token, endpoint, object_id)
 
 
 def get_object_list(endpoint: str) -> Response:
-	url = env + endpoint
-	try:
-		r: Response = requests.get(url, params='', headers={'Authorization': 'Api-Token ' + token})
-		if r.status_code not in [200]:
-			print('Error in "get_object_list(endpoint)" method')
-			print('Endpoint: ' + endpoint)
-			print('Exit code shown below is the source code line number of the exit statement invoked')
-			exit(get_line_number())
-		return r
-	except ssl.SSLError:
-		print('SSL Error')
-		exit(get_line_number())
+	return dynatrace_api.get_object_list(env, token, endpoint)
 
 
 def put_conditional_naming_rules(rule_type, name, attribute, name_format):
@@ -2097,7 +2012,7 @@ def delete_all_entities_with_fixed_ids():
 
 def delete_auto_tags_with_fixed_ids():
 	# Safety Check
-	if env_name != 'Personal':
+	if env_name not in ['Personal', 'FreeTrial1']:
 		print('Error in "delete_auto_tags_with_fixed_ids()" method')
 		print('Not for use in this environment')
 		print('Env: ' + env)
@@ -2122,7 +2037,7 @@ def delete_auto_tags_with_fixed_ids():
 
 def delete_request_attributes_with_fixed_ids():
 	# Safety Check
-	if env_name != 'Personal':
+	if env_name not in ['Personal', 'FreeTrial1']:
 		print('Error in "delete_request_attributes_with_fixed_ids()" method')
 		print('Not for use in this environment')
 		print('Env: ' + env)
@@ -2143,7 +2058,7 @@ def delete_request_attributes_with_fixed_ids():
 
 def delete_request_naming_rules_with_fixed_ids():
 	# Safety Check
-	if env_name != 'Personal':
+	if env_name not in ['Personal', 'FreeTrial1']:
 		print('Error in "delete_request_naming_rules_with_fixed_ids()" method')
 		print('Not for use in this environment')
 		print('Env: ' + env)
@@ -2166,7 +2081,7 @@ def delete_request_naming_rules_with_fixed_ids():
 
 def delete_conditional_naming_rules_with_fixed_ids():
 	# Safety Check
-	if env_name != 'Personal':
+	if env_name not in ['Personal', 'FreeTrial1']:
 		print('Error in "delete_conditional_naming_rules_with_fixed_ids()" method')
 		print('Not for use in this environment')
 		print('Env: ' + env)
@@ -2188,7 +2103,7 @@ def delete_conditional_naming_rules_with_fixed_ids():
 
 def delete_auto_tags():
 	# Safety Check
-	if env_name != 'Personal':
+	if env_name not in ['Personal', 'FreeTrial1']:
 		print('Error in "delete_auto_tags()" method')
 		print('Not for use in this environment')
 		print('Env: ' + env)
@@ -2209,7 +2124,7 @@ def delete_auto_tags():
 
 def delete_beta_auto_tags():
 	# Safety Check
-	if env_name != 'Personal':
+	if env_name not in ['Personal', 'FreeTrial1']:
 		print('Error in "delete_beta_auto_tags()" method')
 		print('Not for use in this environment')
 		print('Env: ' + env)
@@ -2230,7 +2145,7 @@ def delete_beta_auto_tags():
 
 def delete_request_attributes():
 	# Safety Check
-	if env_name != 'Personal':
+	if env_name not in ['Personal', 'FreeTrial1']:
 		print('Error in "delete_request_attributes()" method')
 		print('Not for use in this environment')
 		print('Env: ' + env)
