@@ -4,11 +4,11 @@
 #
 
 import requests
-import xlsxwriter
 from bs4 import BeautifulSoup
 
 from Reuse import dynatrace_api
 from Reuse import environment
+from Reuse import report_writer
 
 
 def process_hub_items(env, token):
@@ -95,7 +95,13 @@ def merge_results_into_dictionary(api_results, web_results):
 
 
 def process_merged_results(merged_results):
-    results = []
+    xlsx_file_name = '../../docs/HubSummary.xlsx'
+    html_file_name = '../../docs/HubSummary.html'
+
+    console_rows = []
+    html_rows = []
+    xlsx_rows = []
+
     merged_result_keys = merged_results.keys()
     for merged_result_key in merged_result_keys:
         merged_result = merged_results.get(merged_result_key)
@@ -123,12 +129,45 @@ def process_merged_results(merged_results):
                 source = 'API'
         comment = merged_result.get('comment')
 
-        row = (merged_result_key, description, comment, best_link, web_link, doc_link, mkt_link, source)
-        results.append(row)
+        console_rows.append((merged_result_key, description, comment, best_link, web_link, doc_link, mkt_link, source))
 
-    write_console(sorted(results, key=lambda result: result[0].lower()))
-    write_html(sorted(results, key=lambda result: result[0].lower()))
-    write_xlsx(sorted(results, key=lambda result: result[0].lower()))
+        html_merged_result_key_link = f'<a href="{best_link.lower()}">{merged_result_key}</a>'
+        if best_link:
+            html_best_link = f'<a href="{best_link.lower()}">{best_link}</a>'
+        else:
+            html_best_link = ''
+        if web_link:
+            html_web_link = f'<a href="{web_link.lower()}">{web_link}</a>'
+        else:
+            html_web_link = ''
+        if doc_link:
+            html_doc_link = f'<a href="{doc_link.lower()}">{doc_link}</a>'
+        else:
+            html_doc_link = ''
+        if mkt_link:
+            html_mkt_link = f'<a href="{mkt_link.lower()}">{mkt_link}</a>'
+        else:
+            html_mkt_link = ''
+        html_rows.append((html_merged_result_key_link, description, comment, html_best_link, html_web_link, html_doc_link, html_mkt_link, source))
+
+        xlsx_merged_result_key_link = {'link': {'url': best_link, 'text': merged_result_key}}
+        xlsx_rows.append((xlsx_merged_result_key_link, description, comment, best_link, web_link, doc_link, mkt_link, source))
+
+    # write_console(sorted(results, key=lambda result: result[0].lower()))
+    # write_html(sorted(results, key=lambda result: result[0].lower()))
+    # write_xlsx(sorted(results, key=lambda result: result[0].lower()))
+
+    write_console(sorted(console_rows, key=lambda row: row[0].lower()))
+    write_xlsx(xlsx_file_name, sorted(xlsx_rows, key=lambda row: row[0].get('text', '').lower()))
+    write_html(html_file_name, sorted(html_rows, key=lambda row: extract_href_text(row[0]).lower()))
+
+
+def extract_href_text(html):
+    # Extract just the text from an HTML href (used for sorting when a link is in the column)
+    soup = BeautifulSoup(html, 'html.parser')
+    link = soup.find('a')
+    text = link.get_text()
+    return text
 
 
 def check_hub_for_new_items(env, token):
@@ -775,133 +814,24 @@ def get_comment(title):
 
 
 def write_console(rows):
-    print('Technology | Description | Monitoring Instructions | Best Link | Hub Link | Documentation Link | Marketing Link | Source')
-    for row in rows:
-        column_index = 0
-        for column in row:
-            if column_index == 0:
-                print(column, end='')
-            else:
-                print(f' | {column}', end='')
-            column_index += 1
-        print('')
+    title = 'Hub Summary'
+    headers = ('Technology', 'Description', 'Monitoring Instructions', 'Best Link', 'Hub Link', 'Documentation Link', 'Marketing Link', 'Source')
+    delimiter = ' | '
+    report_writer.write_console(title, headers, rows, delimiter)
 
 
-def write_xlsx(rows):
-    workbook = xlsxwriter.Workbook('../../docs/HubSummary.xlsx')
-    header_format = workbook.add_format({'bold': True, 'bg_color': '#B7C9E2'})
-
-    worksheet = workbook.add_worksheet('Hub Summary')
-
-    row_index = 0
-    column_index = 0
-
-    headers = ['Technology', 'Description', 'Monitoring Instructions', 'Hub Link', 'Documentation Link', 'Marketing Link', 'Source']
-    for _ in headers:
-        worksheet.write(row_index, column_index, headers[column_index], header_format)
-        column_index += 1
-    row_index += 1
-
-    for row in rows:
-        technology, description, instructions, best_link, web_link, doc_link, mkt_link, source = row
-        if best_link:
-            worksheet.write_url(row_index, 0, best_link, string=technology)
-        worksheet.write(row_index, 1, description)
-        worksheet.write(row_index, 2, instructions)
-        if web_link:
-            worksheet.write_url(row_index, 3, web_link, string=web_link)
-        if doc_link:
-            worksheet.write_url(row_index, 4, doc_link, string=doc_link)
-        if mkt_link:
-            worksheet.write_url(row_index, 5, mkt_link, string=mkt_link)
-        worksheet.write(row_index, 6, source)
-        row_index += 1
-
-    # worksheet.autofilter(0, 0, row_index, len(headers)) # add filter to all columns not needed here...
-    worksheet.autofilter(0, 2, row_index, 6)  # add filter to the third column to seventh column (Monitoring Instructions to Source)
-    worksheet.autofit()
-    workbook.close()
+def write_xlsx(xlsx_file_name, rows):
+    worksheet_name = 'Hub Summary'
+    headers = ('Technology', 'Description', 'Monitoring Instructions', 'Best Link', 'Hub Link', 'Documentation Link', 'Marketing Link', 'Source')
+    header_format = None
+    auto_filter = (0, len(headers))
+    report_writer.write_xlsx(xlsx_file_name, worksheet_name, headers, rows, header_format, auto_filter)
 
 
-def write_html(rows):
-    filename = '../../docs/HubSummary.html'
-
-    html_top = '''<html>
-      <body>
-        <head>
-          <style>
-            table, th, td {
-              border: 1px solid black;
-              border-collapse: collapse;
-            }
-            th, td {
-              padding: 5px;
-            }
-            th {
-              text-align: left;
-            }
-          </style>
-        </head>'''
-
-    table_header = '''    <table>
-          <tr>
-            <th>Technology</th>
-            <th>Description</th>
-            <th>Monitoring Instructions</th>
-            <th>Hub Link</th>
-            <th>Documentation Link</th>
-            <th>Marketing Link</th>
-            <th>Source</th>
-          </tr>'''
-    html_bottom = '''    </table>
-      </body>
-    </html>'''
-
-    row_start = '<tr>'
-    row_end = '</tr>'
-    col_start = '<td>'
-    col_end = '</td>'
-
-    with open(filename, 'w', encoding='utf8') as file:
-        # Begin HTML formatting
-        write_line(file, html_top)
-
-        # Write the tag summary header
-        write_h1_heading(file, f'Dynatrace Hub Summary')
-
-        # Write Table Header
-        write_line(file, table_header)
-
-        # Write Table Rows
-        for row in rows:
-            technology, description, instructions, best_link, web_link, doc_link, mkt_link, source = row
-            tech_link = f'<a href="{best_link.lower()}">{technology}</a>'
-            if not web_link or web_link == 'None':
-                web_link = ''
-            else:
-                web_link = f'<a href="{web_link.lower()}">Link</a>'
-            if not doc_link or doc_link == 'None':
-                doc_link = ''
-            else:
-                doc_link = f'<a href="{doc_link.lower()}">Link</a>'
-            if not mkt_link or mkt_link == 'None':
-                mkt_link = ''
-            else:
-                mkt_link = f'<a href="{mkt_link.lower()}">Link</a>'
-            write_line(file, f'{row_start}{col_start}{tech_link}{col_end}{col_start}{description}{col_end}{col_start}{instructions}{col_end}{col_start}{web_link}{col_end}{col_start}{doc_link}{col_end}{col_start}{mkt_link}{col_end}{col_start}{source}{col_end}{row_end}')
-
-        # Finish the HTML formatting
-        write_line(file, html_bottom)
-
-
-def write_h1_heading(outfile, heading):
-    outfile.write('    <h1>' + heading + '</h1>')
-    outfile.write('\n')
-
-
-def write_line(outfile, content):
-    outfile.write(content)
-    outfile.write('\n')
+def write_html(html_file_name, rows):
+    page_heading = 'Hub Summary'
+    table_headers = ('Technology', 'Description', 'Monitoring Instructions', 'Best Link', 'Hub Link', 'Documentation Link', 'Marketing Link', 'Source')
+    report_writer.write_html(html_file_name, page_heading, table_headers, rows)
 
 
 def main():

@@ -1,15 +1,13 @@
-import os
-import requests
 import urllib.parse
-import xlsxwriter
 
 from Reuse import dynatrace_api
 from Reuse import environment
+from Reuse import report_writer
 
 
 host_group_lookup = {}
 host_group_auto_update_setting_cache = {}
-report = []
+
 
 def load_host_group_lookup():
     global host_group_lookup
@@ -47,7 +45,8 @@ def get_host_group_auto_update_setting(host_group_id):
     return settings_json.get('setting', 'None')
 
 
-def process(env, token):
+def process():
+    xlsx_file_name = 'autoupdate.xlsx'
     rows = []
     global host_group_lookup
     load_host_group_lookup()
@@ -87,53 +86,26 @@ def process(env, token):
 
             # print(host_name + '|' + host_id + '|' + host_group + '|' + host_group_id)
             # print(host_group + '|' + host_name + '|' + host_group_id + '|' + host_id)
-            line = host_group + '|' + host_name + '|' + str(installer_version) + '|' + host_group_id + '|' + host_id
-            report.append(line)
 
-            columns = []
-            columns.append(host_group)
-            columns.append(host_name)
-            columns.append(str(installer_version))
-            columns.append(host_group_id)
-            columns.append(host_id)
-            rows.append(columns)
+            rows.append((host_group, host_name, installer_version, host_group_id, host_id))
 
-    for line in sorted(report):
-        print(line)
-
-    # for row in sorted(rows):
-    #     print(row)
-
-    write_xlsx_from_list(sorted(rows))
+    write_console(sorted(rows, key=lambda row: row[0].lower()))
+    write_xlsx(xlsx_file_name, sorted(rows, key=lambda row: row[0].lower()))
 
 
-def write_xlsx_from_list(rows):
-    workbook = xlsxwriter.Workbook('autoupdate.xlsx')
-    worksheet = workbook.add_worksheet()
+def write_console(rows):
+    title = 'Host Group Auto Update Details'
+    headers = ('Host Group Name', 'Host Name', 'Installer Version', 'Host Group ID', 'Host ID', 'Scope', 'Setting')
+    delimiter = '|'
+    report_writer.write_console(title, headers, rows, delimiter)
 
-    row_index = 0
-    column_index = 0
 
-    headers = ['Host Group Name', 'Host Name', 'Installer Version', 'Host Group ID', 'Host ID', 'Scope', 'Setting']
-
-    worksheet.write(row_index, 0, headers[0])
-    worksheet.write(row_index, 1, headers[1])
-    worksheet.write(row_index, 2, headers[2])
-    worksheet.write(row_index, 3, headers[3])
-    worksheet.write(row_index, 4, headers[4])
-    worksheet.write(row_index, 5, headers[5])
-    worksheet.write(row_index, 6, headers[6])
-    row_index += 1
-
-    for row in rows:
-        worksheet.write(row_index, 0, row[0])
-        worksheet.write(row_index, 1, row[1])
-        worksheet.write(row_index, 2, row[2])
-        worksheet.write(row_index, 3, row[3])
-        worksheet.write(row_index, 4, row[4])
-        row_index += 1
-
-    workbook.close()
+def write_xlsx(xlsx_file_name, rows):
+    worksheet_name = 'Host Group Auto Update Details'
+    headers = ('Host Group Name', 'Host Name', 'Installer Version', 'Host Group ID', 'Host ID', 'Scope', 'Setting')
+    header_format = None
+    auto_filter = (0, len(headers))
+    report_writer.write_xlsx(xlsx_file_name, worksheet_name, headers, rows, header_format, auto_filter)
 
 
 if __name__ == '__main__':
@@ -143,6 +115,4 @@ if __name__ == '__main__':
     env_name, env, token = environment.get_environment('Personal')
     # env_name, env, token = environment.get_environment('FreeTrial1')
 
-    print('Host Group Auto Update Details')
-
-    process(env, token)
+    process()

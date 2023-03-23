@@ -5,14 +5,21 @@
 #
 
 import requests
-import xlsxwriter
 from bs4 import BeautifulSoup
 
+from Reuse import report_writer
+
+
 def process_hub_items():
+    xlsx_file_name = '../../docs/HubSummaryFromWeb.xlsx'
+    html_file_name = '../../docs/HubSummaryFromWeb.html'
+
     page = requests.get('https://www.dynatrace.com/hub/')
     soup = BeautifulSoup(page.text, 'html.parser')
 
-    lines = []
+    console_rows = []
+    html_rows = []
+    xlsx_rows = []
 
     for link in soup.find_all('a'):
         title = link.get('title')
@@ -24,14 +31,28 @@ def process_hub_items():
             href = f'https://dynatrace.com{href}'
         if title:
             comment = get_comment(title)
-            line = f'{title}|{description}|{comment}|{href}'
-            lines.append(line)
+            console_rows.append((title, description, comment, href))
 
-    for line in sorted(lines, key=str.lower):
-        print(line)
+            if not href or href == 'None':
+                href = f'https://www.dynatrace.com/hub/'
 
-    write_xlsx(sorted(lines, key=str.lower))
-    write_html(sorted(lines, key=str.lower))
+            html_hub_link = f'<a href="{href.lower()}">{title}</a>'
+            html_rows.append((html_hub_link, description, comment))
+
+            xlsx_hub_link = {'link': {'url': href, 'text': title}}
+            xlsx_rows.append((xlsx_hub_link, description, comment))
+
+    write_console(sorted(console_rows, key=lambda row: row[0].lower()))
+    write_xlsx(xlsx_file_name, sorted(xlsx_rows, key=lambda row: row[0].get('text', '').lower()))
+    write_html(html_file_name, sorted(html_rows, key=lambda row: extract_href_text(row[0]).lower()))
+
+
+def extract_href_text(html):
+    # Extract just the text from an HTML href (used for sorting when a link is in the column)
+    soup = BeautifulSoup(html, 'html.parser')
+    link = soup.find('a')
+    text = link.get_text()
+    return text
 
 
 def check_hub_for_new_items():
@@ -57,7 +78,6 @@ def check_hub_for_new_items():
     print('New to the Hub:')
     for line in sorted(lines, key=str.lower):
         print(line)
-
 
 
 def get_comment(title):
@@ -136,7 +156,8 @@ def get_comment(title):
         'Google Virtual Private Cloud',
         'Google Virtual Private Cloud',
         'Google reCAPTCHA Enterprise',
-        'NetApp on Google Cloud',    ]
+        'NetApp on Google Cloud',
+    ]
 
     install_extension_list = [
         'Advanced SSL Certificate Check for Dynatrace',
@@ -664,99 +685,26 @@ def get_comment(title):
 
     return comment
 
-def write_xlsx(lines):
-    workbook = xlsxwriter.Workbook('../../docs/HubSummaryFromWeb.xlsx')
-    header_format = workbook.add_format({'bold': True, 'bg_color': '#B7C9E2'})
 
-    worksheet = workbook.add_worksheet('Hub Summary')
-
-    row_index = 0
-    # column_index = 0
-
-    headers = ['Technology', 'Description', 'Monitoring Instructions']
-    worksheet.write(row_index, 0, headers[0], header_format)
-    worksheet.write(row_index, 1, headers[1], header_format)
-    worksheet.write(row_index, 2, headers[2], header_format)
-    row_index += 1
+def write_console(rows):
+    title = 'Hub Summary from Web'
+    headers = ('Technology',  'Description', 'Monitoring Instructions', 'Link')
+    delimiter = ' | '
+    report_writer.write_console(title, headers, rows, delimiter)
 
 
-    for line in lines:
-        columns = line.split('|')
-        worksheet.write_url(row_index, 0, columns[3], string=columns[0])
-        worksheet.write(row_index, 1, columns[1])
-        worksheet.write(row_index, 2, columns[2])
-        row_index += 1
-
-    # worksheet.autofilter(0, 0, row_index, len(headers)) # add filter to all columns not needed here...
-    worksheet.autofilter(0, 2, row_index, 2) # add filter to only the third column
-    worksheet.autofit()
-    workbook.close()
+def write_xlsx(xlsx_file_name, rows):
+    worksheet_name = 'Hub Summary from Web'
+    headers = ('Technology',  'Description', 'Monitoring Instructions')
+    header_format = None
+    auto_filter = (0, len(headers))
+    report_writer.write_xlsx(xlsx_file_name, worksheet_name, headers, rows, header_format, auto_filter)
 
 
-def write_html(lines):
-    filename = '../../docs/HubSummaryFromWeb.html'
-
-    html_top = '''<html>
-      <body>
-        <head>
-          <style>
-            table, th, td {
-              border: 1px solid black;
-              border-collapse: collapse;
-            }
-            th, td {
-              padding: 5px;
-            }
-            th {
-              text-align: left;
-            }
-          </style>
-        </head>'''
-
-    table_header = '''    <table>
-          <tr>
-            <th>Technology</th>
-            <th>Description</th>
-            <th>Monitoring Instructions</th>
-          </tr>'''
-
-    html_bottom = '''    </table>
-      </body>
-    </html>'''
-
-    row_start = '<tr>'
-    row_end = '</tr>'
-    col_start = '<td>'
-    col_end = '</td>'
-
-    with open(filename, 'w', encoding='utf8') as file:
-        # Begin HTML formatting
-        write_line(file, html_top)
-
-        # Write the tag summary header
-        write_h1_heading(file, f'Dynatrace Hub Summary')
-
-        # Write Table Header
-        write_line(file, table_header)
-
-        # Write Table Rows
-        for line in lines:
-            columns = line.split('|')
-            tech_link = f'<a href="{columns[3]}">{columns[0]}</a>'
-            write_line(file, f'{row_start}{col_start}{tech_link}{col_end}{col_start}{columns[1]}{col_end}{col_start}{columns[2]}{col_end}{row_end}')
-
-        # Finish the HTML formatting
-        write_line(file, html_bottom)
-
-
-def write_h1_heading(outfile, heading):
-    outfile.write('    <h1>' + heading + '</h1>')
-    outfile.write('\n')
-
-
-def write_line(outfile, content):
-    outfile.write(content)
-    outfile.write('\n')
+def write_html(html_file_name, rows):
+    page_heading = 'Hub Summary from Web'
+    table_headers = ('Technology',  'Description', 'Monitoring Instructions')
+    report_writer.write_html(html_file_name, page_heading, table_headers, rows)
 
 
 if __name__ == '__main__':

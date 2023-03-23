@@ -1,16 +1,20 @@
 import urllib.parse
-import xlsxwriter
 
 from Reuse import dynatrace_api
 from Reuse import environment
+from Reuse import report_writer
 
 
 include_disabled = True
-html_file_name = '../../$Output/Reporting/Synthetics/EstimatedSyntheticConsumption.html'
-xlsx_file_name = '../../$Output/Reporting/Synthetics/EstimatedSyntheticConsumption.xlsx'
 
 
-def process(env, token):
+def process(env_name, env, token):
+    html_file_name = f'../../$Output/Reporting/Synthetics/{env_name}/EstimatedSyntheticConsumption.html'
+    xlsx_file_name = f'../../$Output/Reporting/Synthetics/{env_name}/EstimatedSyntheticConsumption.xlsx'
+
+    print(f'HTML report will be written to "{html_file_name}"')
+    print(f'Excel report will be written to "{xlsx_file_name}"')
+
     row_count = 0
     rows = []
     endpoint = '/api/v1/synthetic/monitors'
@@ -23,10 +27,8 @@ def process(env, token):
     for synthetics_json in synthetics_json_list:
         inner_synthetics_json_list = synthetics_json.get('monitors')
         for inner_synthetics_json in inner_synthetics_json_list:
-            # print(inner_synthetics_json)
             endpoint = '/api/v1/synthetic/monitors/' + inner_synthetics_json.get('entityId')
             synthetic_json = dynatrace_api.get(env, token, endpoint, params)[0]
-            # print(synthetic_json)
             synthetic_name = synthetic_json.get('name')
             synthetic_type = synthetic_json.get('type')
             synthetic_enabled = synthetic_json.get('enabled')
@@ -44,8 +46,6 @@ def process(env, token):
                 synthetic_type = 'HTTP'
                 step_key = 'requests'
             script_events = synthetic_json.get('script').get(step_key)
-            # for script_event in script_events:
-            #     print(script_event)
             event_count = len(script_events)
 
             estimated_hourly_consumption = estimate_consumption(synthetic_enabled, synthetic_type, event_count, synthetic_frequency, synthetic_location_count)
@@ -64,19 +64,19 @@ def process(env, token):
                 estimated_hourly_consumption_literal = 'DEM Unit'
 
             # Print a verbose summary of each Synthetic to the console
-            print(f'{synthetic_name} is {synthetic_state} {synthetic_type} test with {event_count} {event_count_literal} scheduled to run every {synthetic_frequency} {synthetic_frequency_literal} from {synthetic_location_count} {synthetic_location_count_literal} for an estimated hourly consumption of {estimated_hourly_consumption} {estimated_hourly_consumption_literal}')
+            # print(f'{synthetic_name} is {synthetic_state} {synthetic_type} test with {event_count} {event_count_literal} scheduled to run every {synthetic_frequency} {synthetic_frequency_literal} from {synthetic_location_count} {synthetic_location_count_literal} for an estimated hourly consumption of {estimated_hourly_consumption} {estimated_hourly_consumption_literal}')
 
-            # Save columns for each row to be output as HTML and XLSX
-            row = (synthetic_name, synthetic_enabled, synthetic_type, event_count, synthetic_frequency, synthetic_location_count, estimated_hourly_consumption)
-            rows.append(row)
+            row_data = (synthetic_name, synthetic_enabled, synthetic_type, event_count, synthetic_frequency, synthetic_location_count, estimated_hourly_consumption)
+            rows.append(row_data)
             row_count += 1
 
             # For testing, stop at a small number of rows
             if row_count >= 50:
                 break
 
-        write_html(sorted(rows, key=lambda result: row[0].lower()))
-        write_xlsx(sorted(rows, key=lambda result: row[0].lower()))
+        write_console(sorted(rows, key=lambda row: row[0].lower()))
+        write_html(html_file_name, sorted(rows, key=lambda row: row[0].lower()))
+        write_xlsx(xlsx_file_name, sorted(rows, key=lambda row: row[0].lower()))
 
 
 def estimate_consumption(synthetic_enabled, synthetic_type, event_count, synthetic_frequency, synthetic_location_count):
@@ -94,111 +94,25 @@ def estimate_consumption(synthetic_enabled, synthetic_type, event_count, synthet
     return hourly_consumption
 
 
-def write_xlsx(rows):
-    # workbook = xlsxwriter.Workbook('../../$Output/Reporting/Synthetics/EstimatedSyntheticConsumption.xlsx')
-    workbook = xlsxwriter.Workbook(xlsx_file_name)
-    header_format = workbook.add_format({'bold': True, 'bg_color': '#B7C9E2'})
-
-    worksheet = workbook.add_worksheet('Estimated Synthetic Consumption')
-
-    row_index = 0
-    column_index = 0
-
+def write_console(rows):
+    title = 'Estimated Synthetic Consumption'
     headers = ['Synthetic Name', 'State (Enabled/Disabled)', 'Type (Browser/HTTP)', 'Number of Steps', 'Frequency (Runs every X minutes)', 'Number of Locations', 'Hourly DEM Unit Consumption']
-    for _ in headers:
-        worksheet.write(row_index, column_index, headers[column_index], header_format)
-        column_index += 1
-    row_index += 1
-
-    for row in rows:
-        synthetic_name, synthetic_enabled, synthetic_type, event_count, synthetic_frequency, synthetic_location_count, estimated_hourly_consumption = row
-        worksheet.write(row_index, 0, synthetic_name)
-        if synthetic_enabled:
-            worksheet.write(row_index, 1, 'Enabled')
-        else:
-            worksheet.write(row_index, 1, 'Disabled')
-        worksheet.write(row_index, 2, synthetic_type)
-        worksheet.write(row_index, 3, event_count)
-        worksheet.write(row_index, 4, synthetic_frequency)
-        worksheet.write(row_index, 5, synthetic_location_count)
-        worksheet.write(row_index, 6, estimated_hourly_consumption)
-        row_index += 1
-
-    worksheet.autofilter(0, 0, row_index, len(headers))  # add filter to all columns
-    worksheet.autofit()
-    workbook.close()
+    delimiter = '|'
+    report_writer.write_console(title, headers, rows, delimiter)
 
 
-def write_html(rows):
-    # filename = '../../$Output/Reporting/Synthetics/EstimatedSyntheticConsumption.html'
-
-    html_top = '''<html>
-      <body>
-        <head>
-          <style>
-            table, th, td {
-              border: 1px solid black;
-              border-collapse: collapse;
-            }
-            th, td {
-              padding: 5px;
-            }
-            th {
-              text-align: left;
-            }
-          </style>
-        </head>'''
-
-    table_header = '''    <table>
-          <tr>
-            <th>Synthetic Name</th>
-            <th>State (Enabled/Disabled)</th>
-            <th>Type (Browser/HTTP)</th>
-            <th>Number of Steps</th>
-            <th>Frequency (Runs every X minutes)</th>
-            <th>Number of Locations</th>
-            <th>Hourly DEM Unit Consumption</th>
-          </tr>'''
-    html_bottom = '''    </table>
-      </body>
-    </html>'''
-
-    row_start = '<tr>'
-    row_end = '</tr>'
-    col_start = '<td>'
-    col_end = '</td>'
-
-    with open(html_file_name, 'w', encoding='utf8') as file:
-        # Begin HTML formatting
-        write_line(file, html_top)
-
-        # Write the tag summary header
-        write_h1_heading(file, f'Estimated Synthetic Consumption')
-
-        # Write Table Header
-        write_line(file, table_header)
-
-        # Write Table Rows
-        for row in rows:
-            synthetic_name, synthetic_enabled, synthetic_type, event_count, synthetic_frequency, synthetic_location_count, estimated_hourly_consumption = row
-            if synthetic_enabled:
-                synthetic_state = 'Enabled'
-            else:
-                synthetic_state = 'Disabled'
-            write_line(file, f'{row_start}{col_start}{synthetic_name}{col_end}{col_start}{synthetic_state}{col_end}{col_start}{synthetic_type}{col_end}{col_start}{event_count}{col_end}{col_start}{synthetic_frequency}{col_end}{col_start}{synthetic_location_count}{col_end}{col_start}{estimated_hourly_consumption}{col_end}{row_end}')
-
-        # Finish the HTML formatting
-        write_line(file, html_bottom)
+def write_xlsx(xlsx_file_name, rows):
+    worksheet_name = 'Estimated Synthetic Consumption'
+    headers = ['Synthetic Name', 'State (Enabled/Disabled)', 'Type (Browser/HTTP)', 'Number of Steps', 'Frequency (Runs every X minutes)', 'Number of Locations', 'Hourly DEM Unit Consumption']
+    header_format = None
+    auto_filter = (0, len(headers))
+    report_writer.write_xlsx(xlsx_file_name, worksheet_name, headers, rows, header_format, auto_filter)
 
 
-def write_h1_heading(outfile, heading):
-    outfile.write('    <h1>' + heading + '</h1>')
-    outfile.write('\n')
-
-
-def write_line(outfile, content):
-    outfile.write(content)
-    outfile.write('\n')
+def write_html(html_file_name, rows):
+    page_heading = 'Estimated Synthetic Consumption'
+    table_headers = ['Synthetic Name', 'State (Enabled/Disabled)', 'Type (Browser/HTTP)', 'Number of Steps', 'Frequency (Runs every X minutes)', 'Number of Locations', 'Hourly DEM Unit Consumption']
+    report_writer.write_html(html_file_name, page_heading, table_headers, rows)
 
 
 def main():
@@ -208,10 +122,7 @@ def main():
     env_name, env, token = environment.get_environment('Personal')
     # env_name, env, token = environment.get_environment('FreeTrial1')
 
-    print('Estimate Synthetic Consumption')
-    print(f'HTML report will be written to "{html_file_name}"')
-    print(f'Excel report will be written to "{xlsx_file_name}"')
-    process(env, token)
+    process(env_name, env, token)
 
 
 if __name__ == '__main__':

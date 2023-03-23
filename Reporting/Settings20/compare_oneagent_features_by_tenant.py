@@ -180,5 +180,6 @@ def main():
 
     print(f'Output written to {xlsx_file_name}')
 
+
 if __name__ == '__main__':
     main()

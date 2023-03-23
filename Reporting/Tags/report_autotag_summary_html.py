@@ -5,13 +5,6 @@ from itertools import groupby
 from Reuse import dynatrace_api
 from Reuse import environment
 
-
-supported_environments = {
-    'Prod': ('PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN'),
-    'Prep': ('PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN'),
-    'Dev': ('DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN'),
-}
-
 html_path = '../../$Output/Reporting'
 
 html_top = '''<html>
@@ -89,6 +82,7 @@ def process(env_name_list, all_env_name_data):
     write_html(file_name, sorted(html_line_list))
 
     print(f'Output written to {file_name}')
+
 
 def write_html(filename, html_line_list):
     with open(filename, 'w', encoding='utf8') as file:

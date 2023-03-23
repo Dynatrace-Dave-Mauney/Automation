@@ -1,9 +1,9 @@
 import copy
 import urllib.parse
-import xlsxwriter
 
 from Reuse import dynatrace_api
 from Reuse import environment
+from Reuse import report_writer
 
 # Typical AWS customer list.
 # Amend as needed from 'monitored_entity_filters', which was obtained by running 'dump_monitored_entity_filters()'
@@ -159,6 +159,8 @@ monitored_entity_filters = [
 
 
 def process(env_name, env, token):
+    file_name = f'../../$Output/Reporting/ManagementZones/Management_Zone_Coverage_{env_name}.xlsx'
+
     mz_coverage_dict = {}
 
     counts_by_entity_type_template = {}
@@ -172,51 +174,41 @@ def process(env_name, env, token):
     for management_zone_json in management_zone_json_list:
         inner_management_zone_json_list = management_zone_json.get('values')
         for inner_management_zone_json in inner_management_zone_json_list:
-            # mz_id = inner_management_zone_json.get('id')
             mz_name = inner_management_zone_json.get('name')
-            # print(mz_name)
             mz_coverage_dict[mz_name] = copy.deepcopy(counts_by_entity_type_template)
-
-    # print(mz_coverage_dict)
 
     for entity_type_of_interest in entity_types_of_interest:
         get_mz_coverage_for_entity_type(env, token, entity_type_of_interest, mz_coverage_dict)
 
-    write_xlsx(env_name, mz_coverage_dict)
+    rows = []
+    for key in sorted(mz_coverage_dict.keys()):
+        row = [key]
+        for entity_type in entity_types_of_interest:
+            row.append(mz_coverage_dict.get(key).get(entity_type))
+        rows.append(row)
+
+    # write_xlsx(env_name, mz_coverage_dict)
+    write_console(rows)
+    write_xlsx(file_name, rows)
 
 
-def write_xlsx(env_name, mz_coverage_dict):
-    file_name = f'../../$Output/Reporting/ManagementZones/Management_Zone_Coverage_{env_name}.xlsx'
-
-    workbook = xlsxwriter.Workbook(file_name)
-    worksheet = workbook.add_worksheet()
-
-    row_index = 0
-    column_index = 0
-
+def write_console(rows):
+    title = 'Management Zone Coverage'
     headers = ['Management Zone']
     headers.extend(entity_types_of_interest)
+    delimiter = '|'
+    report_writer.write_console(title, headers, rows, delimiter)
 
-    for header in headers:
-        worksheet.write(row_index, column_index, header)
-        column_index += 1
 
-    row_index += 1
+def write_xlsx(xlsx_file_name, rows):
+    worksheet_name = 'Management Zone Coverage'
+    headers = ['Management Zone']
+    headers.extend(entity_types_of_interest)
+    header_format = None
+    auto_filter = (0, len(headers))
+    report_writer.write_xlsx(xlsx_file_name, worksheet_name, headers, rows, header_format, auto_filter)
+    print(f'Output written to {xlsx_file_name}')
 
-    column_index = 0
-    for key in sorted(mz_coverage_dict.keys()):
-        worksheet.write(row_index, column_index, key)
-        column_index += 1
-
-        for entity_type in entity_types_of_interest:
-            worksheet.write(row_index, column_index, mz_coverage_dict.get(key).get(entity_type))
-            column_index += 1
-        column_index = 0
-        row_index += 1
-
-    workbook.close()
-
-    print(f'Output written to {file_name}')
 
 def get_mz_coverage_for_entity_type(env, token, entity_type, mz_coverage_dict):
     # Skip special entity types used for counting only
@@ -228,27 +220,17 @@ def get_mz_coverage_for_entity_type(env, token, entity_type, mz_coverage_dict):
     raw_params = f'&entitySelector={entity_selector}&fields=managementZones'
     if entity_type == 'SERVICE':
         raw_params += ',properties.serviceType'
-    # raw_params = f'&entitySelector={entity_selector}'
     params = urllib.parse.quote(raw_params, safe='/,&=')
     entities_json_list = dynatrace_api.get(env, token, endpoint, params)
-    # print(entities_json_list)
 
     for entities_json in entities_json_list:
         inner_entities_json_list = entities_json.get('entities')
         for inner_entities_json in inner_entities_json_list:
-            # print(inner_entities_json)
-            # entity_id = inner_entities_json.get('entityId')
-            # entity_type = inner_entities_json.get('type')
-            # display_name = inner_entities_json.get('displayName')
             management_zone_list = inner_entities_json.get('managementZones')
-            # print(entity_id + '|' + display_name + '|' + str(management_zone_list))
-
             if management_zone_list:
                 increment_mz_coverage_dict_counts(entity_type, management_zone_list, mz_coverage_dict)
                 if entity_type == 'SERVICE' and inner_entities_json.get('properties').get('serviceType') == 'DATABASE_SERVICE':
                     increment_mz_coverage_dict_counts('DATABASE_SERVICE', management_zone_list, mz_coverage_dict)
-
-    # print(mz_coverage_dict)
 
 
 def increment_mz_coverage_dict_counts(entity_type, management_zone_list, mz_coverage_dict):
@@ -258,8 +240,6 @@ def increment_mz_coverage_dict_counts(entity_type, management_zone_list, mz_cove
 
 
 def main():
-    # print('Management Zone Coverage')
-
     # env_name, env, token = environment.get_environment('Prod')
     # process(env_name, env, token)
 
