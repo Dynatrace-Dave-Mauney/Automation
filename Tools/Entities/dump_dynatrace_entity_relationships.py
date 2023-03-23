@@ -6,33 +6,18 @@
 #
 
 import json
-import requests
 import sys
 
+from Reuse import dynatrace_api
 from Reuse import environment
 
 
 PATH = '../../$Output/Tools/Entities/Relationships'
 
-# If "verify=False" is used on "requests.get" calls, do not print warnings
-# urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
-# indent = 0
 outfile = open(PATH + '/dynatrace_entity_relationships.txt', 'w')
 
 entities_written = []
 services_encountered = []
-
-
-def get_entity(url, token, endpoint, params, verify):
-    full_url = url + endpoint
-    resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token}, verify=verify)
-    # print(f'GET {full_url} {resp.status_code} - {resp.reason}')
-    if resp.status_code != 200:
-        print('REST API Call Failed!')
-        print(f'GET {resp.url} {resp.status_code} - {resp.reason}')
-        exit(1)
-    return resp.json()
 
 
 def get_entity_stack(url, token, verify, entities, level):
@@ -40,7 +25,6 @@ def get_entity_stack(url, token, verify, entities, level):
     global services_encountered
     global entities_written
 
-    # print(f'entities: {entities}')
     indent = ' ' * level
     level_in = level
     for entity in entities:
@@ -51,9 +35,10 @@ def get_entity_stack(url, token, verify, entities, level):
 
         # print(f'level: {level}')
         # print(f'entity: {entity}')
-        endpoint = '/api/v2/entities/' + entity
-        params = ''
-        entity_json = get_entity(url, token, endpoint, params, verify)
+
+        endpoint = '/api/v2/entities'
+        entity_json = dynatrace_api.get_by_object_id(url, token, endpoint, entity)
+
         entity_id = entity_json.get('entityId')
         display_name = entity_json.get('displayName')
         print(indent + entity_id + ':' + display_name)
@@ -70,12 +55,10 @@ def get_entity_stack(url, token, verify, entities, level):
 
         runs_on_child_entities = []
         runs_on_child_dicts = entity_json.get('fromRelationships').get('runsOn')
-        # print(runs_on_child_dicts)
         if runs_on_child_dicts:
             print(indent + 'Runs On:')
             print(indent + 'Runs On:', file=outfile)
             for runs_on_child_dict in runs_on_child_dicts:
-                # print(calls_child_dict)
                 entity_id = runs_on_child_dict.get('id')
                 if entity_id:
                     runs_on_child_entities.append(entity_id)
@@ -83,7 +66,6 @@ def get_entity_stack(url, token, verify, entities, level):
 
         calls_child_entities = []
         calls_child_dicts = entity_json.get('fromRelationships').get('calls')
-        # print(calls_child_dicts)
         if calls_child_dicts:
             print(indent + 'Calls:')
             print(indent + 'Calls:', file=outfile)
@@ -124,10 +106,10 @@ def process(env, token, verify, entity_list_string):
 
 
 def run():
-    # env_name, env, token = environment.get_environment('Prod')
+    env_name, env, token = environment.get_environment('Prod')
     # env_name, env, token = environment.get_environment('Prep')
     # env_name, env, token = environment.get_environment('Dev')
-    env_name, env, token = environment.get_environment('Personal')
+    # env_name, env, token = environment.get_environment('Personal')
     # env_name, env, token = environment.get_environment('FreeTrial1')
 
     service = 'SERVICE-5946F26F5835488B'

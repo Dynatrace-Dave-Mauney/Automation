@@ -1,5 +1,4 @@
 # Generate an ALLOW rule for every settings 2.0 schema id.
-import requests
 
 from Reuse import dynatrace_api
 from Reuse import environment

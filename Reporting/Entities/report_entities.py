@@ -1,4 +1,3 @@
-import requests
 import urllib.parse
 
 from Reuse import dynatrace_api

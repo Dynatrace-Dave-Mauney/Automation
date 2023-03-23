@@ -1,18 +1,5 @@
-# import requests, ssl, os, sys, json, glob
-import requests
-
 from Reuse import dynatrace_api
 from Reuse import environment
-
-
-def delete(url, token, endpoint, params):
-	full_url = url + endpoint
-	resp = requests.delete(full_url, params=params, headers={'Authorization': "Api-Token " + token})
-	# print(f'DELTE {full_url} {resp.status_code} - {resp.reason}')
-	if resp.status_code != 204:
-		print('REST API Call Failed!')
-		print(f'DELETE {full_url} {params} {resp.status_code} - {resp.reason}')
-		exit(1)
 
 
 def process(env_name, env, token):
@@ -24,7 +11,7 @@ def process(env_name, env, token):
 	dashboards_json_list = dynatrace_api.get(env, token, endpoint, params)
 
 	count = 0
-	# delete_list = ['aaaaaaaa-bbbb-cccc-eeee-000000000000']
+	# delete_list = ['f0c29915-7717-4afd-9ed0-a6031fa670cd']
 	delete_list = []
 
 	for dashboards_json in dashboards_json_list:
@@ -36,7 +23,7 @@ def process(env_name, env, token):
 			# print(dashboard_id, name, owner)
 
 			# # # CAUTION HERE!!!! # # #
-			# # # More flexible delete option is more dangerous! # # #
+			# # # More flexible delete options are more dangerous! # # #
 			# if owner.startswith('Dynatrace') and dashboard_id.startswith('aaaaaaaa-bbbb-cccc-eeee-0000000000'):
 			# 	delete_list.append(dashboard_id + ': ' + name + ': ' + owner)
 
@@ -90,7 +77,7 @@ def process(env_name, env, token):
 				dashboard_id = line.split(':', 1)[0]
 				endpoint = '/api/config/v1/dashboards/' + dashboard_id
 				params = ''
-				delete(env, token, endpoint, params)
+				dynatrace_api.delete(env, token, endpoint, params)
 				print('DELETED: ' + line)
 				count += 1
 

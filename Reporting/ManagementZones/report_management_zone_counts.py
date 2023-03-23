@@ -1,5 +1,3 @@
-import requests
-
 from Reuse import dynatrace_api
 from Reuse import environment
 

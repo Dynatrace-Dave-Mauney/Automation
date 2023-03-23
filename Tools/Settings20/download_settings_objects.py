@@ -7,7 +7,6 @@ Token Permissions Required:
 
 import json
 import os
-import requests
 import shutil
 import urllib.parse
 
