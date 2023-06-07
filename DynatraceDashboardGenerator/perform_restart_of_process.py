@@ -15,10 +15,11 @@ import create_index_of_generated_dashboards
 def main():
     from Reuse import environment
 
-    # _, env, token = environment.get_environment('Prod')
+    _, env, token = environment.get_environment('Prod')
+    # _, env, token = environment.get_environment('NonProd')
     # _, env, token = environment.get_environment('Prep')
     # _, env, token = environment.get_environment('Dev')
-    _, env, token = environment.get_environment('Personal')
+    # _, env, token = environment.get_environment('Personal')
     # _, env, token = environment.get_environment('FreeTrial1')
 
     database = r'DynatraceDashboardGenerator.db'

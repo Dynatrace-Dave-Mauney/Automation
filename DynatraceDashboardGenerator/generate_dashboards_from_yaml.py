@@ -97,6 +97,10 @@ def skip_metric(metric_id):
         print('Skipping: ' + metric_id + ' because it is considered a bad metric currently')
         return True
 
+    if metric_id.startswith('func:slo.errorBudget') or metric_id.startswith('func:slo.normalizedErrorBudget'):
+        print('Skipping: ' + metric_id + ' to focus on base SLO metrics')
+        return True
+
     # These metrics (.NET) seem to work fine now (it affected only aaaaaaaa-bbbb-cccc-dddd-000000000009 before it was fixed.
     # if '#' in metric_id or '%' in metric_id:
     #     print('Skipping: ' + metric_id + ' because it contains an invalid character (#, or %)')
@@ -382,6 +386,8 @@ def generate_new_metric_tile(top, left, metric_id, tile_dictionary, mode):
         agg = tile_dictionary['aggregation']
         if agg == 'NONE':
             agg = 'AVG'
+        if metric_id.startswith('func:slo'):
+            agg = 'AUTO'
         tile['queries'][0]['spaceAggregation'] = agg
     #tile['filterConfig']['chartConfig']['series'][0]['type'] = tile_dictionary['type']
 
@@ -418,13 +424,16 @@ def generate_new_metric_tile(top, left, metric_id, tile_dictionary, mode):
 
     if mode == "build":
         tile['queries'][0]['splitBy'] = []
-        if dimension_definition != 'dt.entity.none':
+        if dimension_definition != 'dt.entity.none' and not metric_id.startswith('func:slo'):
             tile['queries'][0]['splitBy'].append(dimension_definition)
     else:
         metric_selector = data_explorer_template['queries'][0]['metricSelector']
         metric_selector = metric_selector.replace('$$METRIC$$', metric_id)
         metric_selector = metric_selector.replace('$$SPLIT$$', dimension_definition)
         tile['queries'][0]['metricSelector'] = metric_selector
+
+    # if metric_id.startswith('func:slo'):
+
 
     return tile
 

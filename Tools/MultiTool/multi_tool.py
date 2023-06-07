@@ -21,8 +21,9 @@ save_content = ''
 
 supported_environments = {
     'Prod': ('PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN'),
-    'Prep': ('PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN'),
-    'Dev': ('DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN'),
+    'NonProd': ('NONPROD_TENANT', 'ROBOT_ADMIN_NONPROD_TOKEN'),
+    # 'Prep': ('PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN'),
+    # 'Dev': ('DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN'),
     'Personal': ('PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN'),
     'FreeTrial1': ('FREETRIAL1_TENANT', 'ROBOT_ADMIN_FREETRIAL1_TOKEN'),
 }
@@ -332,17 +333,18 @@ def list_objects_at_environment_scope(env, token, filtering):
     endpoint = '/api/v2/settings/objects'
     raw_params = 'scopes=environment&fields=schemaId,value&pageSize=500'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    settings_object = dynatrace_api.get(env, token, endpoint, params)[0]
-    items = settings_object.get('items')
-    for item in items:
-        schema_id = item.get('schemaId')
-        value = str(item.get('value'))
-        value = value.replace('{', '')
-        value = value.replace('}', '')
-        value = value.replace("'", "")
-        line = f'{schema_id}:{value}'
-        if not filtering or filtering in line:
-            print(line)
+    settings_object_list = dynatrace_api.get(env, token, endpoint, params)
+    for settings_object in settings_object_list:
+        items = settings_object.get('items')
+        for item in items:
+            schema_id = item.get('schemaId')
+            value = str(item.get('value'))
+            value = value.replace('{', '')
+            value = value.replace('}', '')
+            value = value.replace("'", "")
+            line = f'{schema_id}:{value}'
+            if not filtering or filtering in line:
+                print(line)
 
 
 def list_objects_of_schema(env, token, schema_id, filtering):
@@ -351,19 +353,26 @@ def list_objects_of_schema(env, token, schema_id, filtering):
     raw_params = f'schemaIds={schema_id}&fields=scope,objectId,value&pageSize=500'
     params = urllib.parse.quote(raw_params, safe='/,&=')
     settings_object = dynatrace_api.get(env, token, endpoint, params)[0]
-    print(settings_object)
-
-    items = settings_object.get('items')
-    for item in items:
-        scope = item.get('scope')
-        object_id = item.get('objectId')
-        value = str(item.get('value'))
-        value = value.replace('{', '')
-        value = value.replace('}', '')
-        value = value.replace("'", "")
-        line = f'{object_id}, scope: {scope}, {value}'
-        if not filtering or filtering in line:
-            print(line)
+    error_code = settings_object.get('error', {}).get('code', None)
+    if error_code:
+        if error_code == 404:
+            print('Schema type not found')
+        else:
+            print('Something went wrong when getting the schema')
+    else:
+        items = settings_object.get('items')
+        for item in items:
+            print(item)
+            scope = item.get('scope')
+            object_id = item.get('objectId')
+            update_token = item.get('updateToken')
+            value = str(item.get('value'))
+            value = value.replace('{', '')
+            value = value.replace('}', '')
+            value = value.replace("'", "")
+            line = f'{object_id}, {update_token}, scope: {scope}, {value}'
+            # if not filtering or filtering in line:
+            #     print(line)
 
 
 def list_metrics(env, token, filtering):

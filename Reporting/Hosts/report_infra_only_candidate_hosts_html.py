@@ -20,6 +20,8 @@ def get_hosts(env, token):
 
 def write_infra_only_candidate_hosts_file(env_name, env, token):
     output_lines = []
+    total_hosts = 0
+    total_estimated_host_units = 0
     # tenant_id = env.replace('https://', '').replace('.live.dynatrace.com', '')
     file_name = PATH + '/' + env_name + '_list_infra_only_candidate_hosts.html'
     with open(file_name, 'w', encoding='UTF-8') as file:
@@ -61,6 +63,8 @@ def write_infra_only_candidate_hosts_file(env_name, env, token):
                                             estimated_host_units = .5
                                         else:
                                             estimated_host_units = math.ceil(physical_memory_gb / 16)
+                                total_hosts += 1
+                                total_estimated_host_units += estimated_host_units
                                 estimated_host_units_details = f'{physical_memory} bytes => {physical_memory_gb} GB => {estimated_host_units} estimated host units'
                                 print(f'{display_name} ({entity_id} {monitoring_mode} {state} {estimated_host_units_details})')
                                 # html_output = '<a href="' + env + '/#newhosts/hostdetails;id=' + entity_id + '"> ' + entity_id + '</a> ' + display_name + " " + monitoring_mode + " " + state + '<br>\n'
@@ -71,6 +75,10 @@ def write_infra_only_candidate_hosts_file(env_name, env, token):
 
                                 # file.write(html_output)
                                 output_lines.append(html_output)
+
+        print('')
+        print(f'Total estimated host units that could be saved by switching {total_hosts} to infrastructure-only mode: {total_estimated_host_units} ')
+        print('')
 
         file.write(f'<h1>Candidates for infrastructure-only monitoring for {env_name}</h1>')
         for html in sorted(output_lines):
@@ -95,9 +103,10 @@ def process(env_name, env, token):
 
 def run():
     # env_name, env, token = environment.get_environment('Prod')
+    env_name, env, token = environment.get_environment('NonProd')
     # env_name, env, token = environment.get_environment('Prep')
     # env_name, env, token = environment.get_environment('Dev')
-    env_name, env, token = environment.get_environment('Personal')
+    # env_name, env, token = environment.get_environment('Personal')
     # env_name, env, token = environment.get_environment('FreeTrial1')
 
     process(env_name, env, token)

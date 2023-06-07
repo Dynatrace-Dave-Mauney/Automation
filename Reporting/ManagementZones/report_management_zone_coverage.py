@@ -5,12 +5,63 @@ from Reuse import dynatrace_api
 from Reuse import environment
 from Reuse import report_writer
 
+# Current customer list.
+# Amend as needed from 'monitored_entity_filters', which was obtained by running 'dump_monitored_entity_filters()'
+# in 'Tools/APISpecs/dump_config_v1_spec_details_of_interest.py'
+# NOTE: DATABASE_SERVICE is "made up" to capture coverage of databases specifically.
+entity_types_of_interest = [
+    'APPLICATION',
+    # 'AZURE_API_MANAGEMENT_SERVICE',
+    'AZURE_APPLICATION_GATEWAY',
+    'AZURE_COSMOS_DB',
+    # 'AZURE_CREDENTIALS',
+    # 'AZURE_EVENT_HUB',
+    'AZURE_EVENT_HUB_NAMESPACE',
+    'AZURE_FUNCTION_APP',
+    # 'AZURE_IOT_HUB',
+    'AZURE_LOAD_BALANCER',
+    # 'AZURE_MGMT_GROUP',
+    'AZURE_REDIS_CACHE',
+    # 'AZURE_REGION',
+    'AZURE_SERVICE_BUS_NAMESPACE',
+    # 'AZURE_SERVICE_BUS_QUEUE',
+    # 'AZURE_SERVICE_BUS_TOPIC',
+    # 'AZURE_SQL_DATABASE',
+    'AZURE_SQL_ELASTIC_POOL',
+    'AZURE_SQL_SERVER',
+    # 'AZURE_STORAGE_ACCOUNT',
+    # 'AZURE_SUBSCRIPTION',
+    # 'AZURE_TENANT',
+    'AZURE_VM',
+    'AZURE_VM_SCALE_SET',
+    'AZURE_WEB_APP',
+    'CLOUD_APPLICATION',
+    'CLOUD_APPLICATION_INSTANCE',
+    'CLOUD_APPLICATION_NAMESPACE',
+    'CONTAINER_GROUP',
+    'CUSTOM_DEVICE',
+    'DATABASE_SERVICE',
+    # 'DOCKER_CONTAINER_GROUP',
+    'HOST',
+    'HTTP_CHECK',
+    'KUBERNETES_CLUSTER',
+    'KUBERNETES_NODE',
+    'KUBERNETES_SERVICE',
+    'MOBILE_APPLICATION',
+    'PROCESS_GROUP',
+    # 'QUEUE',
+    'SERVICE',
+    'SYNTHETIC_TEST',
+    # 'VIRTUALMACHINE',
+    # 'VMWARE_DATACENTER',
+]
+
 # Typical AWS customer list.
 # Amend as needed from 'monitored_entity_filters', which was obtained by running 'dump_monitored_entity_filters()'
 # in 'Tools/APISpecs/dump_config_v1_spec_details_of_interest.py'
 # NOTE: DATABASE_SERVICE is "made up" to capture coverage of databases specifically.
 # NOTE: Some entities below are commented out only because they are not used at my current customer.
-entity_types_of_interest = [
+entity_types_of_interest_aws = [
     'APPLICATION',
     'AUTO_SCALING_GROUP',
     'AWS_APPLICATION_LOAD_BALANCER',
@@ -243,14 +294,17 @@ def main():
     # env_name, env, token = environment.get_environment('Prod')
     # process(env_name, env, token)
 
+    env_name, env, token = environment.get_environment('NonProd')
+    process(env_name, env, token)
+
     # env_name, env, token = environment.get_environment('Prep')
     # process(env_name, env, token)
 
     # env_name, env, token = environment.get_environment('Dev')
     # process(env_name, env, token)
 
-    env_name, env, token = environment.get_environment('Personal')
-    process(env_name, env, token)
+    # env_name, env, token = environment.get_environment('Personal')
+    # process(env_name, env, token)
 
     # env_name, env, token = environment.get_environment('FreeTrial1')
     # process(env_name, env, token)

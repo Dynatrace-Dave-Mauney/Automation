@@ -6,8 +6,11 @@ from Reuse import environment
 # env_name, env, token = environment.get_environment_for_function('Prod', 'TokenManagement')
 # env_name, env, token = environment.get_environment_for_function('Prep', 'TokenManagement')
 # env_name, env, token = environment.get_environment_for_function('Dev', 'TokenManagement')
-# env_name, env, token = environment.get_environment_for_function('Personal', 'TokenManagement')
-env_name, env, token = environment.get_environment_for_function('FreeTrial1', 'TokenManagement')
+env_name, env, token = environment.get_environment_for_function('Personal', 'TokenManagement')
+# env_name, env, token = environment.get_environment_for_function('FreeTrial1', 'TokenManagement')
+
+# env_name, env, token = environment.get_environment_for_function('NonProd', 'TokenManagement')
+# env_name, env, token = environment.get_environment_for_function('Prod', 'TokenManagement')
 
 endpoint = '/api/v2/apiTokens'
 
@@ -129,11 +132,10 @@ def process():
 		print('Env or Token Environment Variable Not Set!')
 		exit(1)
 
-	print(get_token('dt0c01.ASYRB73EEJXVKIYHDYSZL6IG'))
 	post_robot_admin_token()
 
 	# Run a test
-	test()
+	# test()
 
 	# See "test()" method for common examples
 

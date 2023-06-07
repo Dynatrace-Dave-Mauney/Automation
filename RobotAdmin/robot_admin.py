@@ -12,10 +12,11 @@ from Reuse import dynatrace_api
 from Reuse import environment
 
 # env_name, env, token = environment.get_environment('Prod')
+# env_name, env, token = environment.get_environment('NonProd')
 # env_name, env, token = environment.get_environment('Prep')
 # env_name, env, token = environment.get_environment('Dev')
-# env_name, env, token = environment.get_environment('Personal')
-env_name, env, token = environment.get_environment('FreeTrial1')
+env_name, env, token = environment.get_environment('Personal')
+# env_name, env, token = environment.get_environment('FreeTrial1')
 
 offline = False
 confirmation_required = True
@@ -35,6 +36,9 @@ fixed_auto_tag_ids = {
 	'Asp Dot Net Core Application Path': 'aaaaaaaa-bbbb-cccc-dddd-000000000011',
 	'AWS Availability Zone': 'aaaaaaaa-bbbb-cccc-dddd-000000000012',
 	'AWS Region': 'aaaaaaaa-bbbb-cccc-dddd-000000000013',
+	'Azure Region': 'aaaaaaaa-bbbb-cccc-dddd-000000000116',
+	'Azure Scale Set': 'aaaaaaaa-bbbb-cccc-dddd-000000000117',
+	'Azure Site Name': 'aaaaaaaa-bbbb-cccc-dddd-000000000118',
 	'Cassandra Cluster Name': 'aaaaaaaa-bbbb-cccc-dddd-000000000014',
 	'Catalina Base': 'aaaaaaaa-bbbb-cccc-dddd-000000000015',
 	'Catalina Home': 'aaaaaaaa-bbbb-cccc-dddd-000000000016',
@@ -206,6 +210,13 @@ def process():
 	# post_web_application('Test Web App')
 	# dump_json('/api/config/v1/autoTags', 'aaaaaaaa-bbbb-cccc-dddd-000000000001')
 	# add_database_relationship_entity_selector_to_tag('aaaaaaaa-bbbb-cccc-dddd-000000000077', 'OS', 'Tag')
+
+	# Customer2-specific process
+	# process_auto_tags_kubernetes()
+	process_auto_tags_azure()
+
+	# Random Personal processes
+	# process_all_request_attributes()
 
 	# Safety Exit
 	print('Safety Exit!')
@@ -470,6 +481,12 @@ def process_auto_tags_aws():
 	put_auto_tag_typical_process_group_dynamic_key('Amazon Lambda Function Name', 'AMAZON_LAMBDA_FUNCTION_NAME', '{ProcessGroup:AmazonLambdaFunctionName}')
 	# TODO: Cannot use lambda region, region placeholder not working, use AWS AZ exists and regex extract maybe (later)
 	# put_auto_tag_typical_process_group_dynamic_key('Amazon Region', 'AMAZON_REGION', '{ProcessGroup:AmazonRegion}')
+
+
+def process_auto_tags_azure():
+	put_auto_tag('Azure Region', 'AZURE_REGION_NAME', 'EXISTS', '{AzureRegion:Name}', 'PROCESS_GROUP')
+	put_auto_tag('Azure Site Name', 'PROCESS_GROUP_AZURE_SITE_NAME', 'EXISTS', '{ProcessGroup:AzureSiteName}', 'PROCESS_GROUP')
+	put_auto_tag('Azure Scale Set', 'AZURE_SCALE_SET_NAME', 'EXISTS', '{AzureScaleSet:Name}', 'PROCESS_GROUP')
 
 
 def process_auto_tags_kubernetes():

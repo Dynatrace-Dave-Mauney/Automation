@@ -27,6 +27,14 @@ def process(env_name, env, token):
 			# if owner.startswith('Dynatrace') and dashboard_id.startswith('aaaaaaaa-bbbb-cccc-eeee-0000000000'):
 			# 	delete_list.append(dashboard_id + ': ' + name + ': ' + owner)
 
+			# Clean of 'Prod' environment
+			if owner == 'dave.mauney@dynatrace.com':
+				# print(name)
+				# if dashboard_id.startswith('aaaaaaaa'):
+				if name.endswith('-PROD SLOs'):
+				# if not name.startswith('Prod:') and not name.startswith('TEMP:'):
+					delete_list.append(dashboard_id + ': ' + name + ': ' + owner)
+
 			# Full clean of 'Personal' environment
 			# if 'TagReferenceCheck' in name or 'Dynatrace Resources' in name:
 			# 	pass
@@ -85,10 +93,10 @@ def process(env_name, env, token):
 
 
 def run():
-	# env_name, env, token = environment.get_environment('Prod')
+	env_name, env, token = environment.get_environment('Prod')
 	# env_name, env, token = environment.get_environment('Prep')
 	# env_name, env, token = environment.get_environment('Dev')
-	env_name, env, token = environment.get_environment('Personal')
+	# env_name, env, token = environment.get_environment('Personal')
 	# env_name, env, token = environment.get_environment('FreeTrial1')
 	process(env_name, env, token)
 

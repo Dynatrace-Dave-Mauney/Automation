@@ -118,9 +118,12 @@ def post(env, token, endpoint: str, payload: str) -> Response:
             error_filename = '$post_error_payload.json'
             with open(error_filename, 'w') as file:
                 file.write(formatted_payload)
-                name = json_data.get('name')
-                if name:
-                    print('Name: ' + name)
+                try:
+                    name = json_data.get('name')
+                    if name:
+                        print('Name: ' + name)
+                except AttributeError:
+                    print(formatted_payload)
                 print('Error in "dynatrace_api.post(env, token, endpoint: str, payload: str)" method')
                 print('Exit code shown below is the source code line number of the exit statement invoked')
                 print('See ' + error_filename + ' for more details')
@@ -138,6 +141,10 @@ def put(env, token, endpoint, object_id, payload):
     try:
         r: Response = requests.put(url, json_data.encode('utf-8'), headers={'Authorization': 'Api-Token ' + token, 'Content-Type': 'application/json; charset=utf-8'})
         if r.status_code not in [200, 201, 204]:
+            print('Status Code: %d' % r.status_code)
+            print('Reason: %s' % r.reason)
+            if len(r.text) > 0:
+                print(r.text)
             error_filename = '$put_error_payload.json'
             with open(error_filename, 'w') as file:
                 file.write(json_data)
@@ -175,24 +182,6 @@ def get_line_number():
     return cf.f_back.f_lineno
 
 
-def postv1(env, token, endpoint, payload):
-    url = env + endpoint
-    print('POST: ' + url)
-    print('payload: ' + payload)
-    try:
-        r = requests.post(url, payload.encode('utf-8'),
-                          headers={'Authorization': 'Api-Token ' + token,
-                                   'Content-Type': 'application/json; charset=utf-8'})
-        print('Status Code: %d' % r.status_code)
-        print('Reason: %s' % r.reason)
-        if len(r.text) > 0:
-            print(r.text)
-        if r.status_code not in [200, 201, 204]:
-            exit()
-    except ssl.SSLError:
-        print('SSL Error')
-
-
 def post_plain_text(env, token, endpoint, payload):
     url = env + endpoint
     print('POST: ' + url)
@@ -204,24 +193,6 @@ def post_plain_text(env, token, endpoint, payload):
         if len(r.text) > 0:
             print(r.text)
         if r.status_code not in [200, 201, 202, 204]:
-            exit()
-    except ssl.SSLError:
-        print('SSL Error')
-
-
-def putv1(env, token, endpoint, object_id, payload):
-    url = env + endpoint + '/' + object_id
-    print('PUT: ' + url)
-    print('payload: ' + payload)
-    try:
-        r = requests.put(url, payload.encode('utf-8'),
-                         headers={'Authorization': 'Api-Token ' + token,
-                                  'Content-Type': 'application/json; charset=utf-8'})
-        print('Status Code: %d' % r.status_code)
-        print('Reason: %s' % r.reason)
-        if len(r.text) > 0:
-            print(r.text)
-        if r.status_code not in [200, 201, 204]:
             exit()
     except ssl.SSLError:
         print('SSL Error')

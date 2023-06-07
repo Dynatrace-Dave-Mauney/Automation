@@ -110,8 +110,12 @@ def clean_dashboard(filename):
             if fixes:
                 print(f'{dashboard_name}|{dashboard_id}|{dashboard_owner}| has bad {fixes}')
 
-            # Insure the ID is used for the dashboard file name
-            output_filename = f'{DASHBOARD_OUTPUT_PATH}/{dashboard_id}.json'
+            # Now that different flavors are used, this cannot be done!
+            # # Insure the ID is used for the dashboard file name
+            # output_filename = f'{DASHBOARD_OUTPUT_PATH}/{dashboard_id}.json'
+
+            output_filename = f'{DASHBOARD_OUTPUT_PATH}/{os.path.basename(filename)}'
+
             with open(output_filename, 'w', encoding='utf-8') as outfile:
                 outfile.write(json.dumps(dashboard_json, indent=4, sort_keys=False))
         except JSONDecodeError:
