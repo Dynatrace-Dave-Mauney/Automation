@@ -50,11 +50,12 @@ def get_environment_for_function_print_control(env_name, friendly_function_name,
     else:
         if print_mode:
             print('Error in environment.get_environment_for_function(env_name, friendly_function_name)')
-            print('Tenant and/or Token environment variable not be populated correctly')
+            print('Tenant and/or Token environment variable not populated correctly')
             print(f'Environment Name: {env_name}')
             print(f'Token Function:   {friendly_function_name}')
         if tenant and print_mode:
             print(f'Tenant:           {tenant}')
         if token and print_mode:
             print(f'Token[0:20]:      {token[0:20]}')
-        return env_name, None, None
+        # return env_name, None, None
+        exit(1)

@@ -149,11 +149,62 @@ settings.read
 settings.write
 slo.read
 syntheticExecutions.read
-syntheticLocations.read```
+syntheticLocations.read
+```
+
+## Command Line Configuration
+
+1. Set up a virtual environment
+
+Adjust path as needed.
+
+cd \Dynatrace\github\Automation
+py -m venv .venv
+.venv\Scripts\activate.bat
+Watch for prompt to change to "(.venv)"
+
+Each time going forward you will need to run "activate.bat" to get back into the virtual environment.
+
+2. Install requirements
+
+pip install -r requirements.txt
+
+3. Allow imports from the "Reuse" directory
+
+From the Automation root directory:
+
+pip install --editable .
+
+4.  Try running MultiTool per instructions above
+
+Edit the "Tools\MultiTool\mult_tool.py" module to default to one of your tenants.
+
+From the Automation root directory:
+
+py Tools\MultiTool\mult_tool.py
 
 ## Troubleshooting
 
-- "Unable to get local issuer certificate" errors
+## Self-signed certificate in certificate chain  
+
+If you get a message like "self signed certificate in certificate chain" (Example: "requests.exceptions.SSLError: HTTPSConnectionPool(host='SOMETENANT.live.dynatrace.com', port=443): Max retries exceeded with url: /api/some/api (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self signed certificate in certificate chain (_ssl.c:1129)')))"):
+
+Use either "Tools/certificate/certificate_chain_pem_file.py" to create a "crt" file with the certificate chain, or access the tenant in your browser and use the "lock" icon to export the chain to a file. 
+
+Then set the following environment variables to allow trust:
+ 
+Windows   
+setx SSL_CERT_FILE \path\to\cert\file.crt
+setx REQUESTS_CA_BUNDLE \path\to\cert\file.crt
+
+Linux  
+export SSL_CERT_FILE /path/to/cert/file.crt
+export REQUESTS_CA_BUNDLE /path/to/cert/file.crt
+
+Reference  
+https://stackoverflow.com/questions/30405867/how-to-get-python-requests-to-trust-a-self-signed-ssl-certificate
+
+# "Unable to get local issuer certificate" errors
 
 This issue may occur on some Windows installs of Python when using "requests" (which is used for all API calls).
 
@@ -165,6 +216,3 @@ pip install --upgrade certifi
 pip install python-certifi-win32
 
 Then try rerunning the module that failed.
-
-
-
