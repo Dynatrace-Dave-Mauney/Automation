@@ -4,60 +4,65 @@ import requests
 
 # Reporting for: https://api.dynatrace.com/spec/
 
+account_id = os.getenv('ACCOUNTID')
+client_secret = os.getenv('CLIENT_SECRET')
+client_id = os.getenv('CLIENT_ID')
 
-def get_groups(oauth_bearer_token, account_id):
-    r = get_account_management_api(oauth_bearer_token, account_id, 'groups')
+
+def get_groups():
+    r = get_account_management_api('groups')
     return json.loads(r.text)
 
 
-def get_permissions_for_group(oauth_bearer_token, account_id, group_uuid):
+def get_permissions_for_group(group_uuid):
     api_type = f'groups/{group_uuid}/permissions'
-    r = get_account_management_api(oauth_bearer_token, account_id, api_type)
+    r = get_account_management_api(api_type)
     return json.loads(r.text)
 
 
-def get_users_in_group(oauth_bearer_token, account_id, group_uuid):
+def get_users_in_group(group_uuid):
     api_type = f'groups/{group_uuid}/users'
-    r = get_account_management_api(oauth_bearer_token, account_id, api_type)
+    r = get_account_management_api(api_type)
     return json.loads(r.text)
 
 
-def get_users(oauth_bearer_token, account_id):
-    r = get_account_management_api(oauth_bearer_token, account_id, 'users')
+def get_users():
+    r = get_account_management_api('users')
     return json.loads(r.text)
 
 
-def get_service_users(oauth_bearer_token, account_id):
-    r = get_account_management_api(oauth_bearer_token, account_id, 'service-users')
+def get_service_users():
+    r = get_account_management_api('service-users')
     return json.loads(r.text)
 
 
-def get_environments(oauth_bearer_token, account_id):
-    r = get_account_management_api(oauth_bearer_token, account_id, 'environments')
+def get_environments():
+    r = get_account_management_api('environments')
     return json.loads(r.text)
 
 
-def get_subscriptions(oauth_bearer_token, account_id):
-    r = get_account_management_api(oauth_bearer_token, account_id, 'subscriptions')
+def get_subscriptions():
+    r = get_account_management_api('subscriptions')
     return json.loads(r.text)
 
 
-def get_time_zones(oauth_bearer_token, account_id):
-    r = get_account_management_api(oauth_bearer_token, account_id, 'time-zones')
+def get_time_zones():
+    r = get_account_management_api('time-zones')
     return json.loads(r.text)
 
 
-def get_regions(oauth_bearer_token, account_id):
-    r = get_account_management_api(oauth_bearer_token, account_id, 'regions')
+def get_regions():
+    r = get_account_management_api('regions')
     return json.loads(r.text)
 
 
-def get_permissions(oauth_bearer_token, account_id):
-    r = get_account_management_api(oauth_bearer_token, account_id, 'permissions')
+def get_permissions():
+    r = get_account_management_api('permissions')
     return json.loads(r.text)
 
 
-def get_account_management_api(oauth_bearer_token, account_id, api_type):
+def get_account_management_api(api_type):
+    oauth_bearer_token = get_oauth_bearer_token()
     url = f'https://api.dynatrace.com/iam/v1/accounts/{account_id}/{api_type}'
     if api_type in ['environments', 'subscriptions']:
         url = f'https://api.dynatrace.com/env/v1/accounts/{account_id}/{api_type}'
@@ -65,7 +70,6 @@ def get_account_management_api(oauth_bearer_token, account_id, api_type):
         url = f'https://api.dynatrace.com/ref/v1/{api_type}'
     if api_type == 'permissions':
         url = 'https://api.dynatrace.com/ref/v1/account/permissions'
-
 
     headers = {'accept': 'application/json', 'Authorization': 'Bearer ' + str(oauth_bearer_token)}
     r = requests.get(url, headers=headers)
@@ -81,7 +85,7 @@ def get_account_management_api(oauth_bearer_token, account_id, api_type):
         exit(1)
 
 
-def get_oauth_bearer_token(client_id, client_secret, account_id):
+def get_oauth_bearer_token():
     headers = {'Content-type': 'application/x-www-form-urlencoded'}
     r = requests.post(f'https://sso.dynatrace.com/sso/oauth2/token?grant_type=client_credentials&client_id={client_id}&client_secret={client_secret}&scope=account-idm-read account-idm-write&resource=urn:dtaccount:{account_id}', headers=headers)
     if r.status_code == 200:
@@ -96,8 +100,8 @@ def get_oauth_bearer_token(client_id, client_secret, account_id):
         exit(1)
 
 
-def report_groups(oauth_bearer_token, account_id):
-    groups_object = get_groups(oauth_bearer_token, account_id)
+def report_groups():
+    groups_object = get_groups()
     groups = groups_object.get('items')
     print('group_name|group_federated_attribute_values|group_uuid|group_owner|group_description|group_hidden|group_created_at|group_updated_at')
     lines = []
@@ -116,8 +120,8 @@ def report_groups(oauth_bearer_token, account_id):
         print(line)
 
 
-def report_permissions_for_groups(oauth_bearer_token, account_id, only_show_missing_permissions):
-    groups_object = get_groups(oauth_bearer_token, account_id)
+def report_permissions_for_groups(only_show_missing_permissions):
+    groups_object = get_groups()
     groups = groups_object.get('items')
     sorted_groups = sorted(groups, key=lambda x: x['name'])
 
@@ -131,7 +135,7 @@ def report_permissions_for_groups(oauth_bearer_token, account_id, only_show_miss
             group_uuid = group.get('uuid')
             group_name = group.get('name')
             # print(f'Processing group name: {group_name} with count of {group_count}')
-            permissions_object = get_permissions_for_group(oauth_bearer_token, account_id, group_uuid)
+            permissions_object = get_permissions_for_group(group_uuid)
             permissions = permissions_object.get('permissions')
             # Want to report only groups with permissions?  Comment out the section below...
             if not permissions:
@@ -149,8 +153,8 @@ def report_permissions_for_groups(oauth_bearer_token, account_id, only_show_miss
                 print(line)
 
 
-def report_users_in_groups(oauth_bearer_token, account_id, only_show_missing_users):
-    groups_object = get_groups(oauth_bearer_token, account_id)
+def report_users_in_groups(only_show_missing_users):
+    groups_object = get_groups()
     groups = groups_object.get('items')
     sorted_groups = sorted(groups, key=lambda x: x['name'])
     print('group_name|group_uuid|user_id|user_email|user_name|user_surname|user_emergency_contact|user_status')
@@ -163,7 +167,7 @@ def report_users_in_groups(oauth_bearer_token, account_id, only_show_missing_use
             group_uuid = group.get('uuid')
             group_name = group.get('name')
             # print(f'Processing group name: {group_name} with count of {group_count}')
-            users_object = get_users_in_group(oauth_bearer_token, account_id, group_uuid)
+            users_object = get_users_in_group(group_uuid)
             users = users_object.get('items')
             # Want to report only groups with users?  Comment out the section below...
             if not users:
@@ -182,8 +186,8 @@ def report_users_in_groups(oauth_bearer_token, account_id, only_show_missing_use
                 print(line)
 
 
-def report_users(oauth_bearer_token, account_id):
-    users_object = get_users(oauth_bearer_token, account_id)
+def report_users():
+    users_object = get_users()
     users = users_object.get('items')
     print('uid|email|name|surname|emergencyContact|userStatus|successfulLoginCounter|failedLoginCounter|lastSuccessfulLogin|lastFailedLogin|resetPasswordTokenSentAt|lastSuccessfulBasicAuthentication|createdAt|updatedAt')
     lines = []
@@ -214,8 +218,8 @@ def report_users(oauth_bearer_token, account_id):
         print(line)
 
 
-def report_user_logins(oauth_bearer_token, account_id):
-    users_object = get_users(oauth_bearer_token, account_id)
+def report_user_logins():
+    users_object = get_users()
     users = users_object.get('items')
     print('successfulLoginCounter|email|name|surname')
     lines = []
@@ -236,9 +240,9 @@ def report_user_logins(oauth_bearer_token, account_id):
         print(line)
 
 
-def report_user_logins_by_name(oauth_bearer_token, account_id):
+def report_user_logins_by_name():
     user_logins_by_name = {}
-    users_object = get_users(oauth_bearer_token, account_id)
+    users_object = get_users()
     users = users_object.get('items')
     print('logins|full name|email(s)')
     lines = []
@@ -276,8 +280,8 @@ def report_user_logins_by_name(oauth_bearer_token, account_id):
         print(line)
 
 
-def report_service_users(oauth_bearer_token, account_id):
-    service_users_object = get_service_users(oauth_bearer_token, account_id)
+def report_service_users():
+    service_users_object = get_service_users()
     service_users = service_users_object.get('items')
     print('uid|email|name|surname|emergencyContact|userStatus|successfulLoginCounter|failedLoginCounter|lastSuccessfulLogin|lastFailedLogin|resetPasswordTokenSentAt|lastSuccessfulBasicAuthentication|createdAt|updatedAt')
     lines = []
@@ -307,8 +311,9 @@ def report_service_users(oauth_bearer_token, account_id):
     for line in sorted(lines):
         print(line)
 
-def report_subscriptions(oauth_bearer_token, account_id):
-    subscriptions_object = get_subscriptions(oauth_bearer_token, account_id)
+
+def report_subscriptions():
+    subscriptions_object = get_subscriptions()
     subscriptions = subscriptions_object.get('tenantResources')
     print('name|id')
     lines = []
@@ -321,8 +326,8 @@ def report_subscriptions(oauth_bearer_token, account_id):
         print(line)
 
     
-def report_management_zones_in_environments(oauth_bearer_token, account_id):
-    environments_object = get_environments(oauth_bearer_token, account_id)
+def report_management_zones_in_environments():
+    environments_object = get_environments()
     management_zones = environments_object.get('managementZoneResources')
     print('name|id|parent')
     lines = []
@@ -336,8 +341,8 @@ def report_management_zones_in_environments(oauth_bearer_token, account_id):
         print(line)
 
 
-def report_environments(oauth_bearer_token, account_id):
-    environments_object = get_environments(oauth_bearer_token, account_id)
+def report_environments():
+    environments_object = get_environments()
     environments = environments_object.get('tenantResources')
     print('name|id')
     lines = []
@@ -350,8 +355,8 @@ def report_environments(oauth_bearer_token, account_id):
         print(line)
 
 
-def report_time_zones(oauth_bearer_token, account_id):
-    time_zones = get_time_zones(oauth_bearer_token, account_id)
+def report_time_zones():
+    time_zones = get_time_zones()
     print('displayName|name')
     lines = []
     for time_zone in time_zones:
@@ -363,8 +368,8 @@ def report_time_zones(oauth_bearer_token, account_id):
         print(line)
 
 
-def report_regions(oauth_bearer_token, account_id):
-    regions = get_regions(oauth_bearer_token, account_id)
+def report_regions():
+    regions = get_regions()
     print('name')
     lines = []
     for region in regions:
@@ -375,8 +380,8 @@ def report_regions(oauth_bearer_token, account_id):
         print(line)
 
 
-def report_permissions(oauth_bearer_token, account_id):
-    permissions = get_permissions(oauth_bearer_token, account_id)
+def report_permissions():
+    permissions = get_permissions()
     print('id|description')
     lines = []
     for permission in permissions:
@@ -389,27 +394,21 @@ def report_permissions(oauth_bearer_token, account_id):
 
 
 def process():
-    account_id = os.getenv('ACCOUNTID')
-    client_secret = os.getenv('CLIENT_SECRET')
-    client_id = os.getenv('CLIENT_ID')
-
-    oauth_bearer_token = get_oauth_bearer_token(client_id, client_secret, account_id)
-
-    # report_groups(oauth_bearer_token, account_id)
-    # report_users(oauth_bearer_token, account_id)
-    # report_user_logins(oauth_bearer_token, account_id)
-    # report_user_logins_by_name(oauth_bearer_token, account_id)
-    report_permissions_for_groups(oauth_bearer_token, account_id, only_show_missing_permissions=True)
-    # report_users_in_groups(oauth_bearer_token, account_id, only_show_missing_users=True)
-    # report_environments(oauth_bearer_token, account_id)
-    # report_management_zones_in_environments(oauth_bearer_token, account_id)
-    # report_time_zones(oauth_bearer_token, account_id)
-    # report_regions(oauth_bearer_token, account_id)
-    # report_permissions(oauth_bearer_token, account_id)
+    # report_groups()
+    # report_users()
+    # report_user_logins()
+    # report_user_logins_by_name()
+    report_permissions_for_groups(only_show_missing_permissions=True)
+    report_users_in_groups(only_show_missing_users=True)
+    # report_environments()
+    # report_management_zones_in_environments()
+    # report_time_zones()
+    # report_regions()
+    # report_permissions()
 
     # These calls currently return 403-Forbidden
-    # report_service_users(oauth_bearer_token, account_id)
-    # report_subscriptions(oauth_bearer_token, account_id)
+    # report_service_users()
+    # report_subscriptions()
 
 
 if __name__ == '__main__':
