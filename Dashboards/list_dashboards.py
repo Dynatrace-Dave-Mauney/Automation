@@ -17,18 +17,19 @@ def list_dashboards(env, token):
 		dashboard_id = entry.get('id')
 		dashboard_owner = entry.get('owner')
 		# if dashboard_owner == 'Dynatrace':
-		if dashboard_owner == 'dave.mauney@dynatrace.com' and \
-				not dashboard_id.startswith('aaaaaaaa-bbbb-cccc-dddd-00000000'):
+		# if dashboard_owner == 'dave.mauney@dynatrace.com' and \
+		# 		not dashboard_id.startswith('aaaaaaaa-bbbb-cccc-dddd-00000000'):
+		if dashboard_id.startswith('FF'):
 			lines.append(f'{dashboard_name}|{dashboard_id}|{dashboard_owner}')
 	for line in sorted(lines):
 		print(line)
 
 
 def run():
-	# env_name, env, token = environment.get_environment('Prod')
+	env_name, env, token = environment.get_environment('Prod')
 	# env_name, env, token = environment.get_environment('Prep')
 	# env_name, env, token = environment.get_environment('Dev')
-	env_name, env, token = environment.get_environment('Personal')
+	# env_name, env, token = environment.get_environment('Personal')
 	# env_name, env, token = environment.get_environment('FreeTrial1')
 
 	list_dashboards(env, token)
