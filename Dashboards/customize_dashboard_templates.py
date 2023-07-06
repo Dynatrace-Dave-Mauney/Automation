@@ -11,10 +11,11 @@ from inspect import currentframe
 OWNER = 'dave.mauney@dynatrace.com'
 SHARED = True
 PRESET = False
+MENU_PRESET = True
 
 # PREFIX = 'DEMO:'
-PREFIX = 'NonProd:'
-# PREFIX = 'Prod:'
+# PREFIX = 'NonProd:'
+PREFIX = 'Prod:'
 
 # Customer1/Customer2
 DASHBOARD_TEMPLATE_PATH = 'Templates/Overview'
@@ -26,8 +27,8 @@ DASHBOARD_TEMPLATE_PATH = 'Templates/Overview'
 # DASHBOARD_TEMPLATE_PATH = 'Templates/Overview-Customer2-Prod'
 
 # DASHBOARD_CUSTOM_PATH = 'Custom/Overview'
-DASHBOARD_CUSTOM_PATH = 'Custom/Overview-Customer2-NonProd (With Prod Tags)'
-# DASHBOARD_CUSTOM_PATH = 'Custom/Overview-Customer2-Prod'
+# DASHBOARD_CUSTOM_PATH = 'Custom/Overview-Customer2-NonProd (With Prod Tags)'
+DASHBOARD_CUSTOM_PATH = 'Custom/Overview-Customer2-Prod'
 
 # Typical Names
 # WEB_APPLICATION_TAGS = ['Environment', 'Application', 'Web Application Name']
@@ -243,6 +244,7 @@ def customize_dashboards():
     print(f'prefix: "{PREFIX}"')
     print(f'shared: {SHARED}')
     print(f'preset: {PRESET}')
+    print(f'menu preset: {MENU_PRESET}')
 
     confirm('Customize dashboards from ' + DASHBOARD_TEMPLATE_PATH + ' to ' + DASHBOARD_CUSTOM_PATH)
     initialize()
@@ -338,7 +340,11 @@ def customize_dashboard(dashboard):
     new_dashboard_json['dashboardMetadata']['name'] = name
     new_dashboard_json['dashboardMetadata']['owner'] = OWNER
     new_dashboard_json['dashboardMetadata']['shared'] = SHARED
-    new_dashboard_json['dashboardMetadata']['preset'] = PRESET
+
+    if '00000000-dddd-bbbb-ffff-000000000001' in new_dashboard_json['id']:
+        new_dashboard_json['dashboardMetadata']['preset'] = MENU_PRESET
+    else:
+        new_dashboard_json['dashboardMetadata']['preset'] = PRESET
 
     return new_dashboard_json
 

@@ -96,10 +96,10 @@ def sort_and_stringify_dictionary_items(any_dict):
 
 
 def main():
-    # env_name, env, token = environment.get_environment('Prod')
+    env_name, env, token = environment.get_environment('Prod')
     # env_name, env, token = environment.get_environment('Prep')
     # env_name, env, token = environment.get_environment('Dev')
-    env_name, env, token = environment.get_environment('Personal')
+    # env_name, env, token = environment.get_environment('Personal')
     # env_name, env, token = environment.get_environment('FreeTrial1')
 
     process(env, token, True)

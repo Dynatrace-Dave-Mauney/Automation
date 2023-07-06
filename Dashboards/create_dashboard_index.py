@@ -20,9 +20,11 @@ def index_dashboards(path, index_by_id_file, index_by_name_file):
         with codecs.open(filename, encoding='utf-8') as f:
             dashboard = json.loads(f.read())
             dashboard_id = dashboard.get('id')
-            dashboard_name = dashboard.get('dashboardMetadata').get('name')
-            lines_by_id.append(f'{dashboard_id}|{dashboard_name}')
-            lines_by_name.append(f'{dashboard_name}|{dashboard_id}')
+            dashboard_metadata = dashboard.get('dashboardMetadata')
+            if dashboard_metadata:
+                dashboard_name = dashboard_metadata.get('name')
+                lines_by_id.append(f'{dashboard_id}|{dashboard_name}')
+                lines_by_name.append(f'{dashboard_name}|{dashboard_id}')
 
     if index_by_id_file:
         index_by_id_outfile = codecs.open(str(index_by_id_file), 'w', encoding='utf-8')

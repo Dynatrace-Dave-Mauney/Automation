@@ -23,6 +23,8 @@ pip install --editable .
 This keeps the code using the package simple, and it works for PyCharm (which handles relative imports easily anyhow) and the command line (which does not handle relative imports).
 It allows you to run a script from the current folder rather than forcing you to always run from the project root folder, which is somewhat burdensome.
 
+For PyCharm, in the project tree, right click on the folder above "Reuse", select "Mark Directory as" and select "Sources root".
+
 A second approach, that is not recommended, is to add a path in the module doing the relative import like:
 
 sys.path.append("../..")

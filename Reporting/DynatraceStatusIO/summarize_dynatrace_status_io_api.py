@@ -63,6 +63,28 @@ def summarize_status_io_api():
                     print(f'  {container_name}: {container_status}')
 
 
+    # Report any incidents
+    incident_list = result.get('incidents')
+    if incident_list:
+        print('')
+        print('Incidents:')
+        incident_count = len(incident_list)
+        if incident_count > 1:
+            print(f'There are {len(incident_list)} incidents being reported currently')
+        else:
+            print(f'There is {len(incident_list)} incident being reported currently')
+
+        for incident in incident_list:
+            incident_name = incident.get('name')
+            incident_open_time = incident.get('datetime_open')
+            print(f'"{incident_name}" incident opened {incident_open_time}')
+            incident_messages = incident.get('messages')
+            if incident_messages:
+                print('Incident Details')
+                for incident_message in incident_messages:
+                    print(incident_message.get('details'))
+
+
 def main():
     print('Dynatrace Status IO API Summary')
     summarize_status_io_api()

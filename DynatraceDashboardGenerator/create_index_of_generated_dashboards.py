@@ -21,9 +21,11 @@ def index_dashboards():
     for filename in glob.glob(path):
         # print(filename)
         with open(filename, 'r') as f:
-            dashboard_id = filename.replace('.json', '').replace('.\\', '')
-            print(dashboard_id + ':' + json.loads(f.read())['dashboardMetadata']['name'], file=outfile)
-
+            try:
+                dashboard_id = filename.replace('.json', '').replace('.\\', '')
+                print(dashboard_id + ':' + json.loads(f.read())['dashboardMetadata']['name'], file=outfile)
+            except KeyError:
+                print(f'Skipping {dashboard_id} due to missing "dashboardMetadata"')
 
 def main() -> object:
    index_dashboards()

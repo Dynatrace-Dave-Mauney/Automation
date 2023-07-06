@@ -3,11 +3,11 @@
         "configurationVersions": [
             3
         ],
-        "clusterVersion": "1.266.100.20230510-201314"
+        "clusterVersion": "1.270.86.20230630-121930"
     },
     "id": "aaaaaaaa-bbbb-cccc-dddd-000000000028",
     "dashboardMetadata": {
-        "name": "Queue",
+        "name": "Processes2",
         "shared": false,
         "owner": "nobody@example.com",
         "sharingDetails": {
@@ -24,7 +24,7 @@
     },
     "tiles": [
         {
-            "name": "Incoming messages",
+            "name": "Process traffic in",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -34,15 +34,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Incoming messages",
+            "customName": "Process traffic in",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:queue.incoming_requests",
+                    "metric": "builtin:process.bytesReceived",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.service"
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -95,7 +95,7 @@
             }
         },
         {
-            "name": "Outgoing messages",
+            "name": "Process traffic out",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -105,15 +105,157 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Outgoing messages",
+            "customName": "Process traffic out",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:queue.outgoing_requests",
+                    "metric": "builtin:process.bytesSent",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.service"
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Process average CPU",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 608,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Process average CPU",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:process.cpu",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Process memory",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 912,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Process memory",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:process.memory",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",

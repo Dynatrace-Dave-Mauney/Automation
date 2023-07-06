@@ -28,10 +28,12 @@ def process(env_name, env, token):
 			# 	delete_list.append(dashboard_id + ': ' + name + ': ' + owner)
 
 			# Clean of 'Prod' environment
-			if owner == 'dave.mauney@dynatrace.com':
+			# if owner == 'dave.mauney@dynatrace.com':
+			if 'mauney' in owner.lower():
 				# print(name)
 				# if dashboard_id.startswith('aaaaaaaa'):
-				if name.endswith('-PROD SLOs'):
+				# if name.endswith('-PROD SLOs'):
+				if 'SQL Server' in name and not dashboard_id.startswith('00000000-dddd-bbbb-ffff-0000000000'):
 				# if not name.startswith('Prod:') and not name.startswith('TEMP:'):
 					delete_list.append(dashboard_id + ': ' + name + ': ' + owner)
 

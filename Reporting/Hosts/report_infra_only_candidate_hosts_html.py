@@ -102,8 +102,8 @@ def process(env_name, env, token):
 
 
 def run():
-    # env_name, env, token = environment.get_environment('Prod')
-    env_name, env, token = environment.get_environment('NonProd')
+    env_name, env, token = environment.get_environment('Prod')
+    # env_name, env, token = environment.get_environment('NonProd')
     # env_name, env, token = environment.get_environment('Prep')
     # env_name, env, token = environment.get_environment('Dev')
     # env_name, env, token = environment.get_environment('Personal')

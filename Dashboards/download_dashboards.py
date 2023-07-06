@@ -31,7 +31,8 @@ def save_dashboards(env, token, path):
 		# if dashboard_owner == 'nobody@example.com':
 		# if dashboard_owner == 'Dynatrace':
 		# if True:
-		if dashboard_owner == 'dave.mauney@dynatrace.com' and 'SLO' in dashboard_name:
+		# if dashboard_owner == 'dave.mauney@dynatrace.com' and 'SLO' in dashboard_name:
+		if 'TEMPLATE: Oracle' in dashboard_name:
 			dashboard = dynatrace_api.get_by_object_id(env, token, endpoint='/api/config/v1/dashboards', object_id=dashboard_id)
 			dashboard_metadata = dashboard.get('dashboardMetadata')
 			dashboard_preset = dashboard_metadata.get('preset')
