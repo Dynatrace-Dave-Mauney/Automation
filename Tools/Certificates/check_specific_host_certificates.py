@@ -1,6 +1,7 @@
 import ipaddress
 import socket
 import ssl_expiry
+import sys
 import yaml
 import list_hosts_referenced_by_synthetics
 import list_hosts_monitored_by_oneagent
@@ -31,6 +32,7 @@ def process(env, token):
     host_names_to_exclude = config.get('host_names_to_exclude', [])
 
     print(f'Default Domain Name:    {default_domain_name}')
+    print(f'Host Include List Size: {len(host_name_list)}')
     print(f'Host Exclude List Size: {len(host_names_to_exclude)}')
 
     for host_name in host_name_list:
@@ -122,11 +124,16 @@ def get_config():
 
 
 def main():
-    # env_name, env, token = environment.get_environment('Prod')
-    # env_name, env, token = environment.get_environment('Prep')
-    # env_name, env, token = environment.get_environment('Dev')
-    env_name, env, token = environment.get_environment('Personal')
-    # env_name, env, token = environment.get_environment('FreeTrial1')
+    supported_environments = ['Prod', 'NonProd', 'Prep', 'Dev', 'Personal', 'FreeTrial1']
+    args = sys.argv[1:]
+    if args and args[0] in supported_environments:
+        env_name, env, token = environment.get_environment('Prod')
+    else:
+        # env_name, env, token = environment.get_environment('Prod')
+        # env_name, env, token = environment.get_environment('Prep')
+        # env_name, env, token = environment.get_environment('Dev')
+        env_name, env, token = environment.get_environment('Personal')
+        # env_name, env, token = environment.get_environment('FreeTrial1')
 
     print('Check Certificates')
 
