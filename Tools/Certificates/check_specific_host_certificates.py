@@ -26,8 +26,6 @@ def process(env, token):
     config = get_config()
 
     host_name_list = config.get('host_names_to_check')
-    print(host_name_list)
-    exit(1)
 
     default_domain_name = config.get('default_domain_name', 'example.com')
     host_names_to_exclude = config.get('host_names_to_exclude', [])
