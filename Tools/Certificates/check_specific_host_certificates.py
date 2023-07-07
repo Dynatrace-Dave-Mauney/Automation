@@ -52,9 +52,9 @@ def process(env, token):
 
         test_count += 1
         try:
-            # print(f'Checking: "{host_name}"')
+            print(f'Checking: "{host_name}"')
             message = ssl_expiry.test_host(host_name)
-            # print(message)
+            print(message)
             if 'is fine' in message:
                 pass_count += 1
             else:
@@ -64,10 +64,10 @@ def process(env, token):
                 else:
                     fail_connect_count += 1
         except socket.gaierror:
-            # print(f'{host_name} socket get address information error')
+            print(f'{host_name} socket get address information error')
             fail_connect_count += 1
         except ConnectionRefusedError:
-            # print(f'{host_name} No connection could be made because the target machine actively refused it')
+            print(f'{host_name} No connection could be made because the target machine actively refused it')
             fail_connect_count += 1
 
     pass_rate = round((pass_count / test_count) * 100, 2)
