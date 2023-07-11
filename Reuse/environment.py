@@ -1,4 +1,5 @@
 import os
+import sys
 
 # Default name when "get_environment(env_name)" is used
 default_friendly_function_name = 'RobotAdmin'
@@ -6,9 +7,31 @@ default_friendly_function_name = 'RobotAdmin'
 # Support friendly names for frequently used functions.
 # Names not found in the list will be handled generically (convert to uppercase and add "_TOKEN")
 supported_friendly_function_names = {
+    'Dynatrace Automation Reporting': 'DYNATRACE_AUTOMATION_REPORTING',
     'RobotAdmin': 'ROBOT_ADMIN',
     'TokenManagement': 'TOKEN_MANAGEMENT',
 }
+
+
+def get_env_name(function_name):
+    supported_environments = ['Prod', 'NonProd', 'Prep', 'Dev', 'Personal', 'FreeTrial1']
+    args = sys.argv[1:]
+    if args and args[0] in supported_environments:
+        print(f'Environment name "{args[0]}" was obtained from a command line argument')
+        return(args[0])
+    else:
+        if function_name:
+            function_name = function_name.upper().replace(' ', '_')
+        else:
+            function_name = ''
+        environment_variable_key = f'{function_name.upper()}_ENV_NAME'
+        env_name = os.getenv(environment_variable_key)
+        if env_name:
+            print(f'Environment name "{env_name}" was obtained from the environment variable "{environment_variable_key}"')
+            return env_name
+        else:
+            print(f'CAUTION: Environment name not supplied via command line argument or environment variable "{environment_variable_key}", so "Default" is being used!')
+            return 'Default'
 
 
 def get_environment(env_name):
@@ -53,6 +76,7 @@ def get_environment_for_function_print_control(env_name, friendly_function_name,
             print('Tenant and/or Token environment variable not populated correctly')
             print(f'Environment Name: {env_name}')
             print(f'Token Function:   {friendly_function_name}')
+            print(f'Token Key:        {token_key}')
         if tenant and print_mode:
             print(f'Tenant:           {tenant}')
         if token and print_mode:
