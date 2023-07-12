@@ -42,6 +42,7 @@ def process():
         post_default_http_check_availability_slo(target_env_name=target_env_name, monitor_name=asn)
         # post_default_service_slos(target_env_name=target_env_name, asn=asn)
 
+
 def post_default_service_slos(target_env_name, asn):
     author = 'Dynatrace support user #262974423'
     slo_filter = f'type(SERVICE), mzName({asn})'
@@ -81,7 +82,7 @@ def post_slo(target_env_name, summary, author, metric_name, metric_expression, s
 
     slo_list = [slo]
 
-    env_name, env, token = environment.get_environment_for_function_print_control(target_env_name, friendly_function_name='RobotAdmin', print_mode=False)
+    env_name, env, token = environment.get_environment_for_function_print_control(target_env_name, friendly_function_name='Dynatrace Automation Tools', print_mode=False)
 
     endpoint = '/api/v2/settings/objects'
     formatted_slo = json.dumps(slo_list, indent=4, sort_keys=False)

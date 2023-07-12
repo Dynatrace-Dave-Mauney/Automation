@@ -13,7 +13,10 @@ from Reuse import environment
 
 
 lookups = {}
-slo_dashboard_prefix = '00000001-0000-0000-0000-'
+slo_dashboard_prefix = 'FF000001-0000-0000-0000-'
+
+friendly_function_name = 'Dynatrace Automation Tools'
+
 
 
 def process():
@@ -61,7 +64,7 @@ def load_lookups(target_env_name):
 def load_lookup_management_zones(target_env_name):
     global lookups
 
-    env_name, env, token = environment.get_environment_for_function_print_control(target_env_name, 'RobotAdmin', False)
+    env_name, env, token = environment.get_environment_for_function_print_control(target_env_name, friendly_function_name, False)
 
     endpoint = '/api/config/v1/managementZones'
     params = ''
@@ -77,7 +80,7 @@ def load_lookup_management_zones(target_env_name):
 def load_lookup_metrics(target_env_name):
     global lookups
 
-    env_name, env, token = environment.get_environment_for_function_print_control(target_env_name, 'RobotAdmin', False)
+    env_name, env, token = environment.get_environment_for_function_print_control(target_env_name, friendly_function_name, False)
 
     endpoint = '/api/v2/metrics'
     params = 'text=func:slo'
@@ -94,7 +97,7 @@ def load_lookup_metrics(target_env_name):
 def load_lookup_slos(target_env_name):
     global lookups
 
-    env_name, env, token = environment.get_environment_for_function_print_control(target_env_name, 'RobotAdmin', False)
+    env_name, env, token = environment.get_environment_for_function_print_control(target_env_name, friendly_function_name, False)
 
     endpoint = '/api/v2/settings/objects'
     raw_params = 'schemaIds=builtin:monitoring.slo'
@@ -194,7 +197,7 @@ def convert_asn_to_numbers(asn):
 
 
 def put_http_check_availability_slo_dashboard(target_env_name, monitor_name, owner):
-    env_name, env, token = environment.get_environment_for_function_print_control(target_env_name, 'RobotAdmin', False)
+    env_name, env, token = environment.get_environment_for_function_print_control(target_env_name, friendly_function_name, False)
 
     dash_index = monitor_name.find('-')
 
@@ -263,7 +266,7 @@ def put_http_check_availability_slo_dashboard(target_env_name, monitor_name, own
 
 
 def put_service_slo_dashboard(target_env_name, asn, owner):
-    env_name, env, token = environment.get_environment_for_function_print_control(target_env_name, 'RobotAdmin', False)
+    env_name, env, token = environment.get_environment_for_function_print_control(target_env_name, friendly_function_name, False)
 
     dash_index = asn.find('-')
 

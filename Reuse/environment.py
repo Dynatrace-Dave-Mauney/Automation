@@ -2,21 +2,22 @@ import os
 import sys
 
 # Default name when "get_environment(env_name)" is used
-# default_friendly_function_name = 'RobotAdmin'
 default_friendly_function_name = 'DYNATRACE_AUTOMATION'
 
 # Support friendly names for frequently used functions.
-# Names not found in the list will be handled generically
-# (convert to uppercase, replace spaces with underscores, and add "_TOKEN")
+# Names not found in the list will be handled generically by
+#   converting to uppercase
+#   replacing spaces with underscores
+#   appending "_TOKEN")
 # The below should be considered deprecated:
 # In the future use "Dynatrace Automation" for generic token for all Automation,
 # or "Dynatrace Automation <SubProject>" for a more specific token:
 # Examples:
 # Dynatrace Automation Reporting
 # Dynatrace Automation Tools
+# Dynatrace Automation Token Management
 supported_friendly_function_names = {
     'RobotAdmin': 'ROBOT_ADMIN',
-    'TokenManagement': 'TOKEN_MANAGEMENT',
 }
 
 
@@ -28,7 +29,10 @@ def get_env_name(function_name):
         return(args[0])
     else:
         if function_name:
-            function_name = function_name.upper().replace(' ', '_')
+            if function_name not in supported_friendly_function_names:
+                function_name = function_name.upper().replace(' ', '_')
+            else:
+                function_name = supported_friendly_function_names.get(function_name)
         else:
             function_name = ''
         environment_variable_key = f'{function_name.upper()}_ENV_NAME'

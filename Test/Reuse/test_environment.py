@@ -8,7 +8,7 @@ from Reuse import environment
 
 def test_environment():
     print('Test get_environment(env_name)')
-    env_name, env, token = environment.get_environment('Dev')
+    env_name, env, token = environment.get_environment('NonProd')
     if token:
         masked_token = token.split('.')[0] + '.' + token.split('.')[1] + '.* (Masked)'
     else:
@@ -16,8 +16,8 @@ def test_environment():
     print(f'Returned values: {env_name}, {env}, {masked_token}')
     print('')
 
-    print('Test get_environment_for_function(env_name, friendly_function_name) - RobotAdmin')
-    env_name, env, token = environment.get_environment_for_function('Dev', 'RobotAdmin')
+    print('Test get_environment_for_function(env_name, friendly_function_name) - Dynatrace Automation')
+    env_name, env, token = environment.get_environment_for_function('NonProd', 'Dynatrace Automation')
     if token:
         masked_token = token.split('.')[0] + '.' + token.split('.')[1] + '.* (Masked)'
     else:
@@ -26,8 +26,8 @@ def test_environment():
     print(f'Returned values: {env_name}, {env}, {masked_token}')
     print('')
 
-    print('Test get_environment_for_function(env_name, friendly_function_name) - TokenManagement')
-    env_name, env, token = environment.get_environment_for_function('Dev', 'TokenManagement')
+    print('Test get_environment_for_function(env_name, friendly_function_name) - Dynatrace Automation Token Management')
+    env_name, env, token = environment.get_environment_for_function('NonProd', 'Dynatrace Automation Token Management')
     if token:
         masked_token = token.split('.')[0] + '.' + token.split('.')[1] + '.* (Masked)'
     else:
@@ -37,7 +37,7 @@ def test_environment():
     print('')
 
     print('Test get_environment_for_function(env_name, friendly_function_name) - Arbitrary (Environment Variables Exist)')
-    env_name, env, token = environment.get_environment_for_function('Dev', 'Robot_Admin')
+    env_name, env, token = environment.get_environment_for_function('NonProd', 'Dynatrace Automation')
     if token:
         masked_token = token.split('.')[0] + '.' + token.split('.')[1] + '.* (Masked)'
     else:
