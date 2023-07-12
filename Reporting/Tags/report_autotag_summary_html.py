@@ -134,7 +134,7 @@ def all_equal(iterable):
 
 
 def main():
-    env_name_list = ['Prod', 'Prep', 'Dev']
+    env_name_list = ['Prod', 'NonProd']
 
     all_env_name_data = {}
 

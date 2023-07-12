@@ -2,12 +2,19 @@ import os
 import sys
 
 # Default name when "get_environment(env_name)" is used
-default_friendly_function_name = 'RobotAdmin'
+# default_friendly_function_name = 'RobotAdmin'
+default_friendly_function_name = 'DYNATRACE_AUTOMATION'
 
 # Support friendly names for frequently used functions.
-# Names not found in the list will be handled generically (convert to uppercase and add "_TOKEN")
+# Names not found in the list will be handled generically
+# (convert to uppercase, replace spaces with underscores, and add "_TOKEN")
+# The below should be considered deprecated:
+# In the future use "Dynatrace Automation" for generic token for all Automation,
+# or "Dynatrace Automation <SubProject>" for a more specific token:
+# Examples:
+# Dynatrace Automation Reporting
+# Dynatrace Automation Tools
 supported_friendly_function_names = {
-    'Dynatrace Automation Reporting': 'DYNATRACE_AUTOMATION_REPORTING',
     'RobotAdmin': 'ROBOT_ADMIN',
     'TokenManagement': 'TOKEN_MANAGEMENT',
 }
@@ -44,7 +51,8 @@ def get_environment_for_function(env_name, friendly_function_name):
 
 def get_environment_for_function_print_control(env_name, friendly_function_name, print_mode):
     # Use this method for control over print statements.
-    # The norm is to call "get_environment(env_name)" for maximum convenience and with print on.
+    # The norm is to call "get_environment_for_function(env_name, friendly_function_name)" or
+    # "get_environment(env_name)" for maximum convenience and with print on.
     # But when print needs to be off, use this method directly.
 
     tenant_key = f'{env_name.upper()}_TENANT'
@@ -54,7 +62,7 @@ def get_environment_for_function_print_control(env_name, friendly_function_name,
     if friendly_function_name in supported_friendly_function_names:
         token_key = f'{supported_friendly_function_names.get(friendly_function_name)}_{env_name.upper()}_TOKEN'
     else:
-        token_key = f'{friendly_function_name.upper()}_{env_name.upper()}_TOKEN'
+        token_key = f'{friendly_function_name.upper().replace(" ", "_")}_{env_name.upper()}_TOKEN'
 
     tenant = os.environ.get(tenant_key)
     token = os.environ.get(token_key)

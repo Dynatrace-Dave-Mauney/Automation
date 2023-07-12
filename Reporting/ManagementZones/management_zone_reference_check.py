@@ -5,11 +5,16 @@ from inspect import currentframe
 from Reuse import dynatrace_api
 from Reuse import environment
 
-# env_name, env, token = environment.get_environment('Prod')
-# env_name, env, token = environment.get_environment('Prep')
-# env_name, env, token = environment.get_environment('Dev')
-env_name, env, token = environment.get_environment('Personal')
-# env_name, env, token = environment.get_environment('FreeTrial1')
+friendly_function_name = 'Dynatrace Automation Reporting'
+env_name_supplied = environment.get_env_name(friendly_function_name)
+# For easy control from IDE
+# env_name_supplied = 'Prod'
+# env_name_supplied = 'NonProd'
+# env_name_supplied = 'Prep'
+# env_name_supplied = 'Dev'
+# env_name_supplied = 'Personal'
+# env_name_supplied = 'FreeTrial1'
+env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 
 
 def get_line_number():
@@ -50,8 +55,8 @@ def process():
     #         name = inner_management_zones_json.get('name')
     #         management_zone_list.append(name)
 
-    # management_zone_list = ['TagReferenceCheck']
     management_zone_list = []
+    # management_zone_list = ['Readonly']
 
     if not management_zone_list:
         print('Please provide a list of management zone names to check for references in dashboards, alerting profiles, metric events and maintenance windows')

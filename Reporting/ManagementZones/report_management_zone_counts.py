@@ -29,12 +29,7 @@ def main():
     print(env_name + ' ' + str(total))
     grand_total = total
 
-    env_name, env, token = environment.get_environment('Prep')
-    total = process(env, token)
-    print(env_name + ' ' + str(total))
-    grand_total += total
-
-    env_name, env, token = environment.get_environment('Dev')
+    env_name, env, token = environment.get_environment('NonProd')
     total = process(env, token)
     print(env_name + ' ' + str(total))
     grand_total += total

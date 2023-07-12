@@ -6,41 +6,51 @@ Use MultiTool to make API calls to the config, environment v1/v2, events, metric
 Modify the supported environments as needed: 
 
 ```  
-supported_environments = {
-    'Prod': ('PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN'),
-    'Prep': ('PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN'),
-    'Dev': ('DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN'),
-    'Personal': ('PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN'),
-    'FreeTrial1': ('FREETRIAL1_TENANT', 'ROBOT_ADMIN_FREETRIAL1_TOKEN'),
-}
+supported_environments = ['Prod', 'NonProd']
 ```
 
 Modify the default environments as needed: 
 
 ```
-    # Set Environment
-    env_name, env, token = get_environment('Prod')
-    # env_name, env, token = get_environment('Prep')
-    # env_name, env, token = get_environment('Dev')
-    # env_name, env, token = get_environment('Personal')
-    # env_name, env, token = get_environment('FreeTrial1')
+    friendly_function_name = 'Dynatrace Automation Tools'
+    env_name_supplied = environment.get_env_name(friendly_function_name)
+    # For easy control from IDE
+    # env_name_supplied = 'Prod'
+    # env_name_supplied = 'NonProd'
+    env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
+```
+
+Set environment variables needed: 
+
+```
+    PROD_TENANT
+    NONPROD_TENANT
+    DYNATRACE_AUTOMATION_TOOLS_PROD_TOKEN
+    DYNATRACE_AUTOMATION_TOOLS_NONPROD_TOKEN
 ```
 
 Next, invoke [multi_tool.py](https://github.com/Dynatrace-Dave-Mauney/Automation/blob/main/Tools/MultiTool/multi_tool.py) and read the help text to get an overview of what's possible:
 
 ```
-Environment Name: FreeTrial1
-Environment:      https://lqo53405.live.dynatrace.com
-Token:            dt0c01.*.* (Masked)
+Environment name "Prod" was obtained from the environment variable "DYNATRACE_AUTOMATION_TOOLS_ENV_NAME"
+Tenant Key: PROD_TENANT
+Environment Name: Prod
+Tenant Key:       PROD_TENANT
+Environment URL:  https://pey66649.live.dynatrace.com
+Token:            dt0c01.7W5UM66626UEL3NKCX5HJ7F3.* (Masked)
+Token Function:   Dynatrace Automation Tools
+Token Key:        DYNATRACE_AUTOMATION_TOOLS_PROD_TOKEN
 
-Enter "e Prod|Prep|Dev|Personal|FreeTrial1" to change the environment. "e" without a parameter shows the current environment.
+Enter "e Prod|NonProd" to change the environment. "e" without a parameter shows the current environment.
 Enter "m configs|entities|entities_v1|events|metrics|settings20" to change the mode. "m" without a parameter shows the current mode.
 Enter "a <api>" to set/change an api (in configs mode). "a" without a parameter shows the current api.
 Enter "l to list items
 Enter "la" to list apis (in configs mode)
-Enter "lf <filter string>" to list items and filter for content (supports a single string with no spaces as the filter)
+Enter "lf <filtering string>" to list items and filtering for content (supports a single string with no spaces as the filtering)
 Enter "mq" to query a metric selector (in metrics mode)
 Enter "post" to post JSON from a file path specified to a config endpoint (in configs mode)
+Enter "put" to put JSON from a file path specified to a config endpoint (in configs mode)
+Enter "delete <id>" to delete the specified id from a config endpoint (in configs mode)
 Enter just an ID to get the JSON
 Enter "s" to save JSON just viewed
 Enter "q" to quit

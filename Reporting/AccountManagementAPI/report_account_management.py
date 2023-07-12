@@ -394,17 +394,49 @@ def report_permissions():
 
 
 def process():
-    # report_groups()
-    # report_users()
-    # report_user_logins()
-    # report_user_logins_by_name()
+    print('Groups')
+    report_groups()
+    print('')
+
+    print('Users')
+    report_users()
+    print('')
+
+    print('User Logins')
+    report_user_logins()
+    print('')
+
+    print('User Logins by Name')
+    report_user_logins_by_name()
+    print('')
+
+    print('Permissions for Groups (missing only)')
     report_permissions_for_groups(only_show_missing_permissions=True)
+    print('')
+
+    print('Users in Groups (missing only)')
     report_users_in_groups(only_show_missing_users=True)
-    # report_environments()
-    # report_management_zones_in_environments()
-    # report_time_zones()
-    # report_regions()
-    # report_permissions()
+    print('')
+
+    print('Environments')
+    report_environments()
+    print('')
+
+    print('Management Zones in Environments')
+    report_management_zones_in_environments()
+    print('')
+
+    print('Time Zones')
+    report_time_zones()
+    print('')
+
+    print('Regions')
+    report_regions()
+    print('')
+
+    print('Permissions')
+    report_permissions()
+    print('')
 
     # These calls currently return 403-Forbidden
     # report_service_users()

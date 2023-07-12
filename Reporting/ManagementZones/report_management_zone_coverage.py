@@ -291,23 +291,17 @@ def increment_mz_coverage_dict_counts(entity_type, management_zone_list, mz_cove
 
 
 def main():
-    # env_name, env, token = environment.get_environment('Prod')
-    # process(env_name, env, token)
-
-    env_name, env, token = environment.get_environment('NonProd')
+    friendly_function_name = 'Dynatrace Automation Reporting'
+    env_name_supplied = environment.get_env_name(friendly_function_name)
+    # For easy control from IDE
+    # env_name_supplied = 'Prod'
+    # env_name_supplied = 'NonProd'
+    # env_name_supplied = 'Prep'
+    # env_name_supplied = 'Dev'
+    # env_name_supplied = 'Personal'
+    # env_name_supplied = 'FreeTrial1'
+    env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
     process(env_name, env, token)
-
-    # env_name, env, token = environment.get_environment('Prep')
-    # process(env_name, env, token)
-
-    # env_name, env, token = environment.get_environment('Dev')
-    # process(env_name, env, token)
-
-    # env_name, env, token = environment.get_environment('Personal')
-    # process(env_name, env, token)
-
-    # env_name, env, token = environment.get_environment('FreeTrial1')
-    # process(env_name, env, token)
 
 
 if __name__ == '__main__':

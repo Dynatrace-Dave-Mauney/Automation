@@ -4,7 +4,7 @@ import xlsxwriter
 from Reuse import dynatrace_api
 from Reuse import environment
 
-env_name_list = ['Prod', 'Prep', 'Dev']
+env_name_list = ['Prod', 'NonProd']
 
 xlsx_file_name = '../../$Output/Reporting/Settings20/OneAgentFeaturesTenantComparison.xlsx'
 

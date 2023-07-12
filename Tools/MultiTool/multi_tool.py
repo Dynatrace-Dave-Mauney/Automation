@@ -19,14 +19,17 @@ save_id = ''
 save_content = ''
 
 
-supported_environments = {
-    'Prod': ('PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN'),
-    'NonProd': ('NONPROD_TENANT', 'ROBOT_ADMIN_NONPROD_TOKEN'),
-    # 'Prep': ('PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN'),
-    # 'Dev': ('DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN'),
-    'Personal': ('PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN'),
-    'FreeTrial1': ('FREETRIAL1_TENANT', 'ROBOT_ADMIN_FREETRIAL1_TOKEN'),
-}
+# supported_environments = {
+#     'Prod': ('PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN'),
+#     'NonProd': ('NONPROD_TENANT', 'ROBOT_ADMIN_NONPROD_TOKEN'),
+#     # 'Prep': ('PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN'),
+#     # 'Dev': ('DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN'),
+#     'Personal': ('PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN'),
+#     'FreeTrial1': ('FREETRIAL1_TENANT', 'ROBOT_ADMIN_FREETRIAL1_TOKEN'),
+# }
+
+# supported_environments = ['Prod', 'NonProd', 'Prep', 'Dev', 'Personal', 'FreeTrial1']
+supported_environments = ['Prod', 'NonProd']
 
 supported_modes = ['configs', 'entities', 'entities_v1', 'events', 'metrics', 'settings20']
 
@@ -638,7 +641,10 @@ def change_environment(new_env):
         print('Invalid Environment Name...')
         return new_env, 'INVALID', 'NA'
 
-    return environment.get_environment(new_env)
+    friendly_function_name = 'Dynatrace Automation Tools'
+    return environment.get_environment_for_function(new_env, friendly_function_name)
+    # return environment.get_environment(new_env)
+
 
 
 def run():
@@ -648,11 +654,16 @@ def run():
     global save_content
 
     # Set Environment
-    # env_name, env, token = environment.get_environment('Prod')
-    # env_name, env, token = environment.get_environment('Prep')
-    # env_name, env, token = environment.get_environment('Dev')
-    # env_name, env, token = environment.get_environment('Personal')
-    env_name, env, token = environment.get_environment('FreeTrial1')
+    friendly_function_name = 'Dynatrace Automation Tools'
+    env_name_supplied = environment.get_env_name(friendly_function_name)
+    # For easy control from IDE
+    # env_name_supplied = 'Prod'
+    # env_name_supplied = 'NonProd'
+    # env_name_supplied = 'Prep'
+    # env_name_supplied = 'Dev'
+    # env_name_supplied = 'Personal'
+    # env_name_supplied = 'FreeTrial1'
+    env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 
     print_help()
 
@@ -880,7 +891,8 @@ def run():
 
 
 def print_help():
-    supported_environment_options = str(supported_environments.keys()).replace("dict_keys(['", '').replace("', '", '|').replace("'])", '')
+    # supported_environment_options = str(supported_environments.keys()).replace("dict_keys(['", '').replace("', '", '|').replace("'])", '')
+    supported_environment_options = str(supported_environments).replace("['", '').replace("', '", '|').replace("']", '')
     print('')
     print(f'Enter "e {supported_environment_options}" to change the environment. "e" without a parameter shows the current environment.')
     print(f'Enter "m configs|entities|entities_v1|events|metrics|settings20" to change the mode. "m" without a parameter shows the current mode.')

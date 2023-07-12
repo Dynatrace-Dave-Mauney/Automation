@@ -61,11 +61,16 @@ def remove_duplicates(any_list):
 
 
 def main():
-    # env_name, env, token = environment.get_environment('Prod')
-    # env_name, env, token = environment.get_environment('Prep')
-    # env_name, env, token = environment.get_environment('Dev')
-    env_name, env, token = environment.get_environment('Personal')
-    # env_name, env, token = environment.get_environment('FreeTrial1')
+    friendly_function_name = 'Dynatrace Automation Tools'
+    env_name_supplied = environment.get_env_name(friendly_function_name)
+    # For easy control from IDE
+    # env_name_supplied = 'Prod'
+    # env_name_supplied = 'NonProd'
+    # env_name_supplied = 'Prep'
+    # env_name_supplied = 'Dev'
+    # env_name_supplied = 'Personal'
+    # env_name_supplied = 'FreeTrial1'
+    env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 
     print('Hosts referenced by Synthetics')
     process(env, token, True)
