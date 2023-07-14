@@ -50,7 +50,8 @@ def post_read_metrics_token():
 
 
 def post_reporting_token():
-	return post_token('Reporting', ["activeGates.read", "activeGateTokenManagement.read", "apiTokens.read", "auditLogs.read", "entities.read", "events.read", "extensionConfigurations.read", "extensionEnvironment.read", "extensions.read", "metrics.read", "networkZones.read", "problems.read", "releases.read", "settings.read", "slo.read", "syntheticLocations.read", "credentialVault.read", "DataExport", "DssFileManagement", "ReadConfig", "ReadSyntheticData"])
+	# return post_token('Reporting', ["activeGates.read", "activeGateTokenManagement.read", "apiTokens.read", "auditLogs.read", "entities.read", "events.read", "extensionConfigurations.read", "extensionEnvironment.read", "extensions.read", "metrics.read", "networkZones.read", "problems.read", "releases.read", "settings.read", "slo.read", "syntheticLocations.read", "credentialVault.read", "DataExport", "DssFileManagement", "ReadConfig", "ReadSyntheticData"])
+	return post_token('Reporting Pipeline', ["activeGates.read", "activeGateTokenManagement.read", "apiTokens.read", "auditLogs.read", "entities.read", "events.read", "extensionConfigurations.read", "extensionEnvironment.read", "extensions.read", "metrics.read", "networkZones.read", "problems.read", "releases.read", "settings.read", "slo.read", "syntheticLocations.read", "credentialVault.read", "DataExport", "DssFileManagement", "ReadConfig", "ReadSyntheticData"])
 
 
 def post_robot_admin_token():
@@ -77,7 +78,9 @@ def post_test_token():
 def post_token(token_name, token_scopes):
 	payload = json.dumps({"name": token_name, "scopes": token_scopes})
 	token_posted = json.loads(dynatrace_api.post(env, token, endpoint, payload).text)
-	print(f'Created token named {token_name} with scopes {token_scopes}: {token_posted.get("token")}')
+	print(f'Created token named "{token_name}" with scopes: {token_scopes}: {token_posted.get("token")}')
+	print(f'Be sure to save the token displayed below in your password keeper/secrets manager/vault!')
+	print(f'{token_posted.get("token")}')
 
 	# return a full token object rather than skimpy one returned from POST
 	return get_token(token_posted.get('id'))
@@ -127,6 +130,7 @@ def list_tokens():
 
 	for formatted_token_detail in sorted(formatted_token_details):
 		# if formatted_token_detail[0] != '|' and 'mauney' in formatted_token_detail.lower():
+		if True:
 			print(formatted_token_detail)
 
 
@@ -136,9 +140,10 @@ def process():
 		exit(1)
 
 	list_tokens()
+	# post_reporting_token()
 	# post_robot_admin_token()
 
-	# Run a test
+	# Run test
 	# test()
 
 	# See "test()" method for common examples
