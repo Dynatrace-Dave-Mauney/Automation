@@ -27,7 +27,7 @@ def get_env_name(function_name):
     args = sys.argv[1:]
     if args and args[0] in supported_environments:
         print(f'Environment name "{args[0]}" was obtained from a command line argument')
-        return(args[0])
+        return args[0]
     else:
         if function_name:
             if function_name not in supported_friendly_function_names:
@@ -97,11 +97,12 @@ def get_environment_for_function_print_control(env_name, friendly_function_name,
         # return env_name, None, None
         exit(1)
 
-def get_output_directory_name():
+
+def get_output_directory_name(default_output_directory):
     args = sys.argv[1:]
     if args and args[0] in supported_environments and args[1]:
-        return(args[1])
+        return args[1]
     else:
         print('Command lines args do not contain a supported environment and output directory name')
-        print('Returning default output directory name of "."')
-        return '.'
+        print(f'Returning default output directory name of "{default_output_directory}"')
+        return default_output_directory

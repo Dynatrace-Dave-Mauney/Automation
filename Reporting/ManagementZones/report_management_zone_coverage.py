@@ -210,7 +210,9 @@ monitored_entity_filters = [
 
 
 def process(env_name, env, token):
-    file_name = f'../../$Output/Reporting/ManagementZones/Management_Zone_Coverage_{env_name}.xlsx'
+    default_output_directory = '../../$Output/Reporting/ManagementZones'
+    output_directory = environment.get_output_directory_name(default_output_directory)
+    file_name = f'{output_directory}/Management_Zone_Coverage_{env_name}.xlsx'
 
     mz_coverage_dict = {}
 
