@@ -95,11 +95,7 @@ def write_markdown_menus(dashboard_lookup):
     menu_item_list_v2 = [
         '.NET',
         'Administration',
-        'Application Overview (HTTP Monitors and Services)',
-        'Application Overview (Services)',
-        'Application Overview (Synthetics and Services)',
-        'Application Overview (Web, HTTP Monitors, and Services)',
-        'Application Overview (Web, Synthetics, and Services)',
+        'Application Overview - Home',
         'Azure - Home',
         'Backend Overview',
         'Containers',

@@ -10,7 +10,7 @@ import pathlib
 def index_dashboards(path, index_by_id_file, index_by_name_file):
     print(f'index_dashboards({path}, {index_by_id_file}, {index_by_name_file})')
     if not index_by_id_file and not index_by_name_file:
-        print('Nohting to do!  Specify at least one file name!')
+        print('Nothing to do!  Specify at least one file name!')
         exit()
 
     lines_by_id = []

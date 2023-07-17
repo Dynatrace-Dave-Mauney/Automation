@@ -10,12 +10,12 @@ from inspect import currentframe
 # OWNER = 'nobody@example.com'
 OWNER = 'dave.mauney@dynatrace.com'
 SHARED = True
-PRESET = False
+PRESET = True
 MENU_PRESET = True
 
-# PREFIX = 'DEMO:'
-# PREFIX = 'NonProd:'
 PREFIX = 'Prod:'
+# PREFIX = 'NonProd:'
+# PREFIX = 'DEMO:'
 
 # Customer1/Customer2
 DASHBOARD_TEMPLATE_PATH = 'Templates/Overview'
@@ -26,9 +26,9 @@ DASHBOARD_TEMPLATE_PATH = 'Templates/Overview'
 # DASHBOARD_TEMPLATE_PATH = 'Templates/Overview-Customer2-NonProd'
 # DASHBOARD_TEMPLATE_PATH = 'Templates/Overview-Customer2-Prod'
 
-# DASHBOARD_CUSTOM_PATH = 'Custom/Overview'
-# DASHBOARD_CUSTOM_PATH = 'Custom/Overview-Customer2-NonProd (With Prod Tags)'
 DASHBOARD_CUSTOM_PATH = 'Custom/Overview-Customer2-Prod'
+# DASHBOARD_CUSTOM_PATH = 'Custom/Overview-Customer2-NonProd (With Prod Tags)'
+# DASHBOARD_CUSTOM_PATH = 'Custom/Overview'
 
 # Typical Names
 # WEB_APPLICATION_TAGS = ['Environment', 'Application', 'Web Application Name']
@@ -250,7 +250,7 @@ def customize_dashboards():
     initialize()
 
     for filename in glob.glob(DASHBOARD_TEMPLATE_PATH + '/00000000-*'):
-        # print(filename)
+        print(filename)
         with open(filename, 'r', encoding='utf-8') as f:
             dashboard = f.read()
             new_dashboard = customize_dashboard(dashboard)
@@ -265,8 +265,9 @@ def customize_dashboards():
 def customize_dashboard(dashboard):
     dashboard_json = json.loads(dashboard)
     new_dashboard_json = copy.deepcopy(dashboard_json)
+    dashboard_id = dashboard_json.get('id')
     name = dashboard_json.get('dashboardMetadata').get('name')
-    # print(name)
+    print(dashboard_id, name)
 
     filters = []
     if ': Overview' in name:
