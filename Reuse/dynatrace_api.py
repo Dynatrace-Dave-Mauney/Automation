@@ -79,6 +79,20 @@ def get_object_list(env, token, endpoint):
         exit(get_line_number())
 
 
+def get_plain_text_list(env, token, endpoint):
+    url = env + endpoint
+    try:
+        r = requests.get(url, params='', headers={'Authorization': 'Api-Token ' + token})
+        if r.status_code not in [200]:
+            print(r.status_code)
+            print(r.reason)
+            exit(get_line_number())
+        return r.text
+    except ssl.SSLError:
+        print('SSL Error')
+        exit(get_line_number())
+
+
 def get_by_object_id(env, token, endpoint, object_id):
     url = env + endpoint + '/' + object_id
     try:
