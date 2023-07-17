@@ -10,7 +10,7 @@ def test_environment():
     # Cheesy way to test:  use IDE configuration to set args as needed or leave them off entirely.
     # This method is tested first because the last test causes an exit, so it makes sense here
     print('Test get_output_directory()')
-    output_directory = environment.get_output_directory_name()
+    output_directory = environment.get_output_directory_name('/tmp')
     print(f'Returned output directory value: {output_directory}')
     print('')
 
