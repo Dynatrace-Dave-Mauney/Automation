@@ -2,14 +2,15 @@ from Reuse import dynatrace_api
 from Reuse import environment
 
 
-def process(env, token, print_mode):
-    # process_connectivity_info(env, token, print_mode)
-    # process_versions(env, token, print_mode)
-    # process_latest_version(env, token, print_mode)
-    process_active_gate_endpoints(env, token, print_mode)
+def process(env, token):
+    process_connectivity_info(env, token)
+    process_versions(env, token)
+    process_latest_version(env, token)
+    process_active_gate_endpoints(env, token)
 
 
-def process_connectivity_info(env, token, print_mode):
+def process_connectivity_info(env, token):
+    print('Connectivity Info:')
     endpoint = '/api/v1/deployment/installer/agent/connectioninfo'
     params = ''
     connectivity_info_json_list = dynatrace_api.get(env, token, endpoint, params)
@@ -17,28 +18,24 @@ def process_connectivity_info(env, token, print_mode):
     for connectivity_info_json in connectivity_info_json_list:
         tenant_uuid = connectivity_info_json.get('tenantUUID')
         tenant_token = connectivity_info_json.get('tenantToken')
-        if print_mode:
-            print(f'Tenant UUID: {tenant_uuid}')
-            print(f'Tenant Token: {tenant_token}')
+        print(f'Tenant UUID: {tenant_uuid}')
+        print(f'Tenant Token: {tenant_token}')
 
         communication_endpoints = connectivity_info_json.get('communicationEndpoints')
 
         for communication_endpoint in communication_endpoints:
-            if print_mode:
-                print(communication_endpoint)
+            print(communication_endpoint)
 
 
-def process_active_gate_endpoints(env, token, print_mode):
+def process_active_gate_endpoints(env, token):
     endpoint = '/api/v1/deployment/installer/agent/connectioninfo/endpoints'
-    params = ''
     active_gate_endpoints = dynatrace_api.get_plain_text_list(env, token, endpoint)
-    if print_mode:
-        print('ActiveGate Endpoints:')
-        print(active_gate_endpoints)
+    print('ActiveGate Endpoints:')
+    print(active_gate_endpoints)
 
 
-
-def process_versions(env, token, print_mode):
+def process_versions(env, token):
+    print('Available OneAgent Versions:')
     os_type_list = ['windows', 'unix', 'aix', 'solaris', 'zos']
     installer_type_list = ['default', 'default-unattended', 'mainframe', 'paas', 'paas-sh']
 
@@ -50,15 +47,15 @@ def process_versions(env, token, print_mode):
             for agent_version_json in agent_version_json_list:
                 available_versions = agent_version_json.get('availableVersions')
                 if available_versions:
-                    if print_mode:
-                        print(f'OS Type: {os_type}')
-                        print(f'Installer Type: {installer_type}')
-                        print('Available Versions')
-                        for available_version in available_versions:
-                            print(available_version)
+                    print(f'OS Type: {os_type}')
+                    print(f'Installer Type: {installer_type}')
+                    print('Available Versions')
+                    for available_version in available_versions:
+                        print(available_version)
 
 
-def process_latest_version(env, token, print_mode):
+def process_latest_version(env, token):
+    print('Latest OneAgent Versions:')
     os_type_list = ['windows', 'unix', 'aix', 'solaris', 'zos']
     installer_type_list = ['default', 'default-unattended', 'mainframe', 'paas', 'paas-sh']
 
@@ -70,8 +67,7 @@ def process_latest_version(env, token, print_mode):
             for agent_version_json in agent_version_json_list:
                 latest_version = agent_version_json.get('latestAgentVersion')
                 if latest_version:
-                    if print_mode:
-                        print(f'Latest Agent Version for OS Type: {os_type} and Installer Type: {installer_type}: {latest_version}')
+                    print(f'Latest Agent Version for OS Type: {os_type} and Installer Type: {installer_type}: {latest_version}')
 
 
 def main():
@@ -85,7 +81,7 @@ def main():
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'FreeTrial1'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
-    process(env, token, True)
+    process(env, token)
 
 
 if __name__ == '__main__':

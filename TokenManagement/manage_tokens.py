@@ -34,7 +34,11 @@ def post_logs_ingest_token():
 
 
 def post_monaco_token():
-	return post_token('Monaco', ["slo.read", "credentialVault.read", "DataExport", "ReadConfig", "ReadSyntheticData", "WriteConfig", "CaptureRequestData"])
+	return post_token('Monaco', ["entities.read", "settings.read", "settings.write", "slo.read", "credentialVault.read", "DataExport", "ReadConfig", "ReadSyntheticData", "WriteConfig", "CaptureRequestData"])
+
+
+def post_installer_download_token():
+	return post_token('InstallerDownload', ["InstallerDownload"])
 
 
 def post_mute_tenable_token():
@@ -139,7 +143,10 @@ def process():
 		print('Env or Token Environment Variable Not Set!')
 		exit(1)
 
-	list_tokens()
+	post_monaco_token()
+	# post_installer_download_token()
+
+	# list_tokens()
 	# post_reporting_token()
 	# post_robot_admin_token()
 
