@@ -14,6 +14,7 @@ def process(env, token, print_mode):
     count_total = 0
     count_full_stack = 0
     count_infra_only = 0
+    count_paas = 0
 
     counts_os = {}
     counts_state = {}
@@ -25,7 +26,7 @@ def process(env, token, print_mode):
     params = urllib.parse.quote(raw_params, safe='/,&=?')
     entities_json_list = dynatrace_api.get(env, token, endpoint, params)
     if print_mode:
-        print('entityId' + '|' + 'displayName' + '|' + 'monitoringMode' + '|' + 'logicalCpuCores' + '|' + 'cpuCores' + '|' + 'memoryTotal' + '|' + 'osType' + '|' + 'state' + '|' + 'networkZone' + '|' + 'hypervisorType' + '|' + 'cloudType' + '|' + 'k8sCluster' + '|' + 'environment' + '|' + 'dataCenter')
+        print('entityId' + '|' + 'displayName' + '|' + 'monitoringMode' + '|' + 'paasVendorType' + '|' + 'logicalCpuCores' + '|' + 'cpuCores' + '|' + 'memoryTotal' + '|' + 'osType' + '|' + 'state' + '|' + 'networkZone' + '|' + 'hypervisorType' + '|' + 'cloudType' + '|' + 'k8sCluster' + '|' + 'environment' + '|' + 'dataCenter')
         # print('entityId' + '|' + 'displayName' + '|' + 'tags')
     for entities_json in entities_json_list:
         inner_entities_json_list = entities_json.get('entities')
@@ -41,8 +42,11 @@ def process(env, token, print_mode):
             memory_total = str(properties.get('memoryTotal', ''))
             os_type = properties.get('osType', '')
             state = properties.get('state', 'NONE')
+
             network_zone = properties.get('networkZone', 'NONE')
             hypervisor_type = properties.get('hypervisorType', 'NONE')
+            paas_vendor_type = properties.get('paasVendorType', 'NONE')
+
             cloud_type = properties.get('cloudType', 'On Premise')
             tags = inner_entities_json.get('tags', [])
             k8s_cluster = ''
@@ -58,7 +62,8 @@ def process(env, token, print_mode):
                     data_center = tag.get('value', '')
 
             if print_mode:
-                print(entity_id + '|' + display_name + '|' + monitoring_mode + '|' + logical_cpu_cores + '|' +
+                # print(inner_entities_json)
+                print(entity_id + '|' + display_name + '|' + monitoring_mode + '|' + paas_vendor_type + '|' + logical_cpu_cores + '|' +
                       cpu_cores + '|' + memory_total + '|' + os_type + '|' + state + '|' + network_zone + '|' +
                       hypervisor_type + '|' + cloud_type + '|' + k8s_cluster + '|' + environment + '|' + data_center)
                 # Temp code: for listing hosts and their host groups only
@@ -77,6 +82,8 @@ def process(env, token, print_mode):
                 count_full_stack += 1
             if monitoring_mode == 'INFRASTRUCTURE':
                 count_infra_only += 1
+            if paas_vendor_type != 'NONE':
+                count_paas += 1
 
             counts_os[os_type] = counts_os.get(os_type, 0) + 1
             counts_state[state] = counts_state.get(state, 0) + 1
@@ -97,6 +104,7 @@ def process(env, token, print_mode):
         print('Total Hosts:            ' + str(count_total))
         print('Full Stack:             ' + str(count_full_stack))
         print('Infra Only:             ' + str(count_infra_only))
+        print('PaaS:                   ' + str(count_paas))
         print('OS Counts:              ' + counts_os_str)
         print('Hypervisor Type Counts: ' + counts_hypervisor_type_str)
         print('Network Zone Counts:    ' + counts_network_zone_str)
@@ -106,6 +114,7 @@ def process(env, token, print_mode):
     if count_total > 0:
         summary.append(str(count_full_stack) + ' hosts are being monitored in full stack mode and ' +
             str(count_infra_only) + ' hosts are being monitored in infrastructure only mode. ' +
+            str(count_paas) + ' hosts are being monitored in PaaS mode. ' +
             'The operating systems breakdown is ' + counts_os_str + '.  ' +
             'The Hypervisor breakdown is ' + counts_hypervisor_type_str + '.  ' +
             'The Network Zone breakdown is ' + counts_network_zone_str + '.  ' +
@@ -148,6 +157,7 @@ def main():
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'FreeTrial1'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
+
     process(env, token, True)
     
     
