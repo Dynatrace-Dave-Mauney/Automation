@@ -23,6 +23,11 @@ account_id = os.getenv('ACCOUNTID')
 client_secret = os.getenv('CLIENT_SECRET')
 client_id = os.getenv('CLIENT_ID')
 
+print('Masked environment variables:')
+print(f'account_id: {account_id[:10]}*')
+print(f'client_secret: {client_secret[:5]}*{client_secret[70:]}')
+print(f'client_id {client_id[:10]}*')
+
 def get_groups():
     r = get_account_management_api('groups')
     return json.loads(r.text)
