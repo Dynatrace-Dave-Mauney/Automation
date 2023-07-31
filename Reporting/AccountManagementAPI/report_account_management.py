@@ -5,19 +5,20 @@ import requests
 # Reporting for: https://api.dynatrace.com/spec/
 
 # Creating an OAuth Client:
-# Access Account Settings/Identity & access management/OAuth clients
-# https://myaccount.dynatrace.com/account/iam/api?account-uuid=**********
-# Click "Create client" link at bottom of page
-
-# Permissions Needed: All Under Account
+# Old UI: Person Icon > Account Settings > Pick Account if needed > Identity & access management > OAuth Clients > "Create client" button
+# New UI: Person Icon > Account Management > Pick Account if needed > Identity & access management > OAuth Clients > "Create client" button
+# Assign all permissions under the Account section:
 # account-idm-read, account-idm-write, account-env-read, account-env-write, account-uac-read, account-uac-write,
 # iam-policies-management, iam:policies:write, iam:policies:read, iam:bindings:write, iam:bindings:read,
 # iam:effective-permissions:read
 
-# https://www.dynatrace.com/support/help/shortlink/account-api#api-explorer
+# Accessing the Account Management API
+# Navigate here: https://api.dynatrace.com/spec/
+# Or:
 # Open the User menu and select Account settings (in latest Dynatrace, Account Management).
 # On the top navigation bar, go to Identity & access management > OAuth clients.
 # In the upper-right corner of the page, select Account Management API.
+
 
 account_id = os.getenv('ACCOUNTID')
 client_secret = os.getenv('CLIENT_SECRET')
