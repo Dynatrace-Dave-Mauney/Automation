@@ -33,11 +33,13 @@ def process_oneagent_features(env_name, env, token, all_env_name_data):
             value = item.get('value')
             summary = item.get('summary').replace('\\', '')
             enabled = value.get('enabled')
-            lines.append(f'{summary}:{enabled}')
+            cryptic_key = value.get('key')
+            feature_name = f'{summary} ({cryptic_key})'
+            lines.append(f'{feature_name}:{enabled}')
 
-            feature_dict = all_env_name_data.get(summary, {})
+            feature_dict = all_env_name_data.get(feature_name, {})
             feature_dict[env_name] = enabled
-            all_env_name_data[summary] = feature_dict
+            all_env_name_data[feature_name] = feature_dict
 
         return all_env_name_data
 

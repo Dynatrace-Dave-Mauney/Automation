@@ -220,12 +220,15 @@ def run():
     # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000087.json', 'Prod', owner)
     # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000088.json', 'Prod', owner)
     # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000089.json', 'Prod', owner)
-    put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000090.json', 'Prod', owner)
-    put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000097.json', 'Prod', owner)
+    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000090.json', 'Prod', owner)
+    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000097.json', 'Prod', owner)
+
+    put_dashboards('Prod', '/Users/dave.mauney/PycharmProjects/Automation/$Output/Dashboards/Downloads/TMP/*.json', None, None)
+
 
 def put_dashboards(env_name, path, prefix, owner):
     print('Prefix: ' + str(prefix))
-    print('Owner:  ' + owner)
+    print('Owner:  ' + str(owner))
     for filename in glob.glob(path):
         with codecs.open(filename, encoding='utf-8') as f:
             dashboard = f.read()
@@ -233,24 +236,27 @@ def put_dashboards(env_name, path, prefix, owner):
             dashboard_id = dashboard_json.get('id')
             dashboard_name = dashboard_json.get('dashboardMetadata').get('name')
 
-            # Replace well-known placeholder prefixes or add a prefix, as needed
-            new_prefix = ''
-            if prefix and prefix != '':
-                new_prefix = f'{prefix}: '
-            if dashboard_name.startswith('TEMPLATE:'):
-                dashboard_name = dashboard_name.replace('TEMPLATE: ', new_prefix)
-            else:
-                if dashboard_name.startswith('BETA:'):
-                    dashboard_name = dashboard_name.replace('BETA: ', new_prefix)
+            if prefix:
+                # Replace well-known placeholder prefixes or add a prefix, as needed
+                new_prefix = ''
+                if prefix and prefix != '':
+                    new_prefix = f'{prefix}: '
+                if dashboard_name.startswith('TEMPLATE:'):
+                    dashboard_name = dashboard_name.replace('TEMPLATE: ', new_prefix)
                 else:
-                    dashboard_name = f'{new_prefix}{dashboard_name}'
+                    if dashboard_name.startswith('BETA:'):
+                        dashboard_name = dashboard_name.replace('BETA: ', new_prefix)
+                    else:
+                        dashboard_name = f'{new_prefix}{dashboard_name}'
 
-            dashboard_owner = dashboard_json.get('dashboardMetadata').get('owner')
-            dashboard_owner = dashboard_owner.replace('nobody@example.com', owner)
-            dashboard_owner = dashboard_owner.replace('Dynatrace', owner)
+                dashboard_json['dashboardMetadata']['name'] = dashboard_name
+
+            if owner:
+                dashboard_owner = dashboard_json.get('dashboardMetadata').get('owner')
+                dashboard_owner = dashboard_owner.replace('nobody@example.com', owner)
+                dashboard_owner = dashboard_owner.replace('Dynatrace', owner)
+                dashboard_json['dashboardMetadata']['owner'] = dashboard_owner
             print(filename + ': ' + dashboard_id + ': ' + dashboard_name)
-            dashboard_json['dashboardMetadata']['name'] = dashboard_name
-            dashboard_json['dashboardMetadata']['owner'] = dashboard_owner
 
             # Enable "preset" for Dashboard Overview Framework
             if dashboard_id.startswith('00000000-dddd-bbbb-ffff'):

@@ -1,6 +1,6 @@
 """
 Save Dynatrace settings to individual JSON files and to a single YAML file that can be used to PUT, POST, or DELETE settings later.
-Note:  the PUT/POST module is not posted on Github as it is extremely "dangerous".
+Note:  the PUT/POST module is not posted on GitHub as it is extremely "dangerous".
 If you have an urgent need for a "restore" capability, contact the author.
 
 Covers:
@@ -30,10 +30,12 @@ from Reuse import environment
 # env_name, env, token = environment.get_environment('Prod')
 # env_name, env, token = environment.get_environment('Prep')
 # env_name, env, token = environment.get_environment('Dev')
-env_name, env, token = environment.get_environment('Personal')
+# env_name, env, token = environment.get_environment('Personal')
 # env_name, env, token = environment.get_environment('FreeTrial1')
 
-backup_directory_path = f'../$Output/DynatraceSettingsBackup/{env_name}'
+# backup_directory_path = f'../$Output/DynatraceSettingsBackup/{env_name}'
+# To help with file names that are too long, use a very short directory name
+backup_directory_path = f'/tmp'
 
 settings20_yaml_file_name = 'settings20.yaml'
 config_yaml_file_name = 'config.yaml'
@@ -134,6 +136,19 @@ supported_config_endpoints = [
 # supported_config_endpoints = [
 #     '/alertingProfiles',
 #     '/technologies',
+# ]
+
+# supported_config_endpoints = [
+#     # '/applications/mobile',
+#     # '/applications/mobile/{applicationId}/keyUserActions',
+#     # '/applications/mobile/{applicationId}/userActionAndSessionProperties',
+#     '/applications/web',
+#     '/applications/web/dataPrivacy',
+#     '/applications/web/default',
+#     '/applications/web/default/dataPrivacy',
+#     '/applications/web/{id}/dataPrivacy',
+#     '/applications/web/{id}/errorRules',
+#     '/applications/web/{id}/keyUserActions',
 # ]
 
 endpoint_child_keys = {
@@ -341,6 +356,14 @@ def save_config(endpoint, json_file_name, payload, config_list):
         json_file_name = json_file_name.replace('/', '_')
         json_file_name = json_file_name.replace('.', '_')
         json_file_name = json_file_name.replace(':', '_')
+        # some file names with these patterns are too long...
+        json_file_name = json_file_name.replace('_json', '')
+        json_file_name = json_file_name.replace('dynatrace_jmx_', '')
+        json_file_name = json_file_name.replace('kafka_kafka', 'kafka')
+
+    # Avoid duplicate names for entities that need subdirectories
+    if 'APPLICATION' in json_file_name or 'AWS_CREDENTIALS' in json_file_name:
+        json_file_name = f'{json_file_name}.json'
 
     write_json(directory_path, json_file_name, json_payload)
 

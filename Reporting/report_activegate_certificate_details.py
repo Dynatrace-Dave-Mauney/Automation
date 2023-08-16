@@ -1,19 +1,25 @@
+# This module is only partially complete and has not even been tested due to connectivity issues
+
 from Reuse import dynatrace_api
-from Reuse import environment
 
 
 def summarize(env, token):
     return process(env, token, False)
 
 
-def process(env, token, print_mode):
+def process(token, print_mode):
     summary = []
 
     count_total = 0
 
-    endpoint = '/api/v2/activeGates'
+    # curl https://{address of ActiveGate}:{port}/e/{environment ID}/api/v1/certificate/{certificate file name} -H"Authorization: Api-Token {token}" -H"X-Password: {password}" -T {path to certificate file}
+    # https://www.dynatrace.com/support/help/shortlink/activegate-configuration-ssl#managing-certificates-via-rest-api
+    # List:
+    # https://myActiveGate:9999/e/myEnvironmentId/api/v1/certificate/list
+    endpoint = 'https://localhost:9999/e/xxxxxxxx/api/v1/certificate/list'
     params = ''
-    activegates_json_list = dynatrace_api.get(env, token, endpoint, params)
+    activegates_json_list = dynatrace_api.get(endpoint, token, endpoint, params)
+    print(activegates_json_list)
 
     # if print_mode:
     #     print('id' + '|' + 'osType' + '|' + 'version' + '|' + 'type' + '|' + 'hostname' + '|' + 'environments' + '|' + 'autoUpdateSettings' + '|' + 'networkZone' + '|' + 'modules')
@@ -49,7 +55,7 @@ def process(env, token, print_mode):
 
             # if print_mode:
             #     print(hostname + '|' + os_type + '|' + version + '|' + entity_type + '|' + hostname + '|' + environments_str + '|' + auto_update_settings_str + '|' + network_zone + '|' + enabled_modules_str)
-            if 'ONE_AGENT_ROUTING' and print_mode and not 'aks' in hostname and not 'SYNTHETIC' in enabled_modules_str:
+            if 'ONE_AGENT_ROUTING' and print_mode and 'aks' not in hostname and 'SYNTHETIC' not in enabled_modules_str:
                 # print(inner_activegates_json)
                 print(hostname + '|' + os_type + '|' + version + '|' + network_zone + '|' + stringify_list(network_addresses))
 
@@ -91,8 +97,8 @@ def stringify_list(any_list):
 
 
 def main():
-    friendly_function_name = 'Dynatrace Automation Reporting'
-    env_name_supplied = environment.get_env_name(friendly_function_name)
+    # friendly_function_name = 'Dynatrace Automation Reporting'
+    # env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
     # env_name_supplied = 'Prod'
     # env_name_supplied = 'NonProd'
@@ -100,8 +106,9 @@ def main():
     # env_name_supplied = 'Dev'
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'FreeTrial1'
-    env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
-    process(env, token, True)
+    # env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
+    token = 'masked'
+    process(token, True)
 
 
 if __name__ == '__main__':

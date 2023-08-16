@@ -9,10 +9,22 @@ from requests import Response
 
 
 def get(url, token, endpoint, params):
+    # token_string = token.split('.')[0] + '.' + token.split('.')[1]
+    # print(token_string)
     # print(f'get({url}, {endpoint}, {params})')
-    full_url = url + endpoint
+    # Allow for rare cases of passing the complete endpoint as a URL, or the much more common case
+    # of just passing the relative path of the endpoint
+    # For the very special case of calling ActiveGate endpoints over port 9999, do not validate certificate
+    verify = True
+    if endpoint.startswith('https://'):
+        full_url = endpoint
+        if ':9999' in endpoint:
+            verify = False
+    else:
+        full_url = url + endpoint
+
     try:
-        resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token}, timeout=60.0)
+        resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token}, timeout=60.0, verify=verify)
     except (ConnectionError, TimeoutError):
         print('Sleeping 30 seconds before retrying due to connection or timeout error...')
         time.sleep(30)
@@ -224,6 +236,7 @@ def delete(env, token, endpoint, object_id):
             exit()
     except ssl.SSLError:
         print('SSL Error')
+
 
 def delete_with_response(env, token, endpoint, object_id):
     url = f'{env}{endpoint}/{object_id}'

@@ -41,6 +41,10 @@ def post_installer_download_token():
 	return post_token('InstallerDownload', ["InstallerDownload"])
 
 
+def post_active_gate_certificate_management_token():
+	return post_token('ActiveGate Certificate Management', ["ActiveGateCertManagement"])
+
+
 def post_mute_tenable_token():
 	return post_token('Mute Tenable', ["entities.read", "settings.read", "settings.write"])
 
@@ -143,7 +147,8 @@ def process():
 		print('Env or Token Environment Variable Not Set!')
 		exit(1)
 
-	post_monaco_token()
+	# post_active_gate_certificate_management_token()
+	# post_monaco_token()
 	# post_installer_download_token()
 
 	# list_tokens()
