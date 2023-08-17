@@ -18,6 +18,13 @@ def process(env, token):
         inner_metrics_json_list = metrics_json.get('metrics')
         for inner_metrics_json in inner_metrics_json_list:
             metric_id = inner_metrics_json.get('metricId')
+
+            # To report specific metric types
+            # if 'calc:service' not in metric_id:
+            #    continue
+
+            # print(inner_metrics_json)
+
             display_name = inner_metrics_json.get('displayName')
             created = inner_metrics_json.get('created')
             # https://www.epochconverter.com/
@@ -79,4 +86,3 @@ def main(arguments):
 
 if __name__ == '__main__':
     main(sys.argv)
-

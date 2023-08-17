@@ -36,6 +36,11 @@ def process(env, token, print_mode):
 
             log_id = inner_auditlog_json.get('logId')
             event_type = inner_auditlog_json.get('eventType')
+
+            # Usually we want to ignore logins and logouts
+            # if 'LOGIN' in event_type or 'LOGOUT' in event_type:
+            #    continue
+
             category = inner_auditlog_json.get('category')
             entity_id = inner_auditlog_json.get('entityId')
             environment_id = inner_auditlog_json.get('environmentId')

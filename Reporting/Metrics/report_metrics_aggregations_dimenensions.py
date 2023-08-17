@@ -15,6 +15,11 @@ def process(env, token):
         inner_metrics_json_list = metrics_json.get('metrics')
         for inner_metrics_json in inner_metrics_json_list:
             metric_id = inner_metrics_json.get('metricId')
+
+            # To report specific metric types
+            # if 'calc:service' not in metric_id:
+            #    continue
+
             display_name = inner_metrics_json.get('displayName')
             description = inner_metrics_json.get('description')
             name_or_desc = format_name_or_desc(display_name, description)
@@ -23,9 +28,10 @@ def process(env, token):
             print(f'{metric_id}|{name_or_desc}|{str(aggregation_types)}|{str(dimension_definitions)}')
     print('Done!')
 
-def format_name_or_desc(displayName, description):
-    if displayName and displayName > '':
-        return displayName
+
+def format_name_or_desc(display_name, description):
+    if display_name and display_name > '':
+        return display_name
     else:
         return description
 
