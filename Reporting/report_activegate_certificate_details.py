@@ -5,7 +5,7 @@ from Reuse import environment
 
 
 def summarize(env, token):
-    return process(env, token, False)
+    return process(env, token)
 
 
 def process(token, print_mode):
@@ -33,24 +33,24 @@ def process(token, print_mode):
         inner_activegates_json_list = activegates_json.get('activeGates')
         for inner_activegates_json in inner_activegates_json_list:
             # print(inner_activegates_json)
-            entity_id = inner_activegates_json.get('id')
+            # entity_id = inner_activegates_json.get('id')
             os_type = inner_activegates_json.get('osType')
             version = inner_activegates_json.get('version')
-            entity_type = inner_activegates_json.get('type')
+            # entity_type = inner_activegates_json.get('type')
             hostname = inner_activegates_json.get('hostname')
-            environments = inner_activegates_json.get('environments')
-            auto_update_settings = inner_activegates_json.get('autoUpdateSettings')
+            # environments = inner_activegates_json.get('environments')
+            # auto_update_settings = inner_activegates_json.get('autoUpdateSettings')
             network_zone = inner_activegates_json.get('networkZone')
             network_addresses = inner_activegates_json.get('networkAddresses')
-            load_balancer_addresses = inner_activegates_json.get('loadBalancerAddresses')
+            # load_balancer_addresses = inner_activegates_json.get('loadBalancerAddresses')
             enabled_modules = []
             modules_list = inner_activegates_json.get('modules')
             for module in modules_list:
                 if module.get("enabled"):
                     enabled_modules.append(module.get("type"))
 
-            environments_str = stringify_list(environments)
-            auto_update_settings_str = stringify_list(auto_update_settings)
+            # environments_str = stringify_list(environments)
+            # auto_update_settings_str = stringify_list(auto_update_settings)
 
             enabled_modules_str = str(enabled_modules).replace('[', '')
             enabled_modules_str = enabled_modules_str.replace(']', '')
