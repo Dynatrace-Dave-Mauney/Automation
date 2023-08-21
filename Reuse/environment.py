@@ -1,9 +1,11 @@
 import argparse
 import os
-# import sys
+import yaml
 
 # Default name when "get_environment(env_name)" is used
 default_friendly_function_name = 'DYNATRACE_AUTOMATION'
+
+default_secret_file = '../$Input/Secrets/secrets.yaml'
 
 # Support friendly names for frequently used functions.
 # Names not found in the list will be handled generically by
@@ -121,16 +123,34 @@ def get_environment_for_function_print_control(env_name, friendly_function_name,
 
 
 def get_output_directory_name(default_output_directory):
-    # args = sys.argv[1:]
     args = args_parser()
 
-    # if args and args[0] in supported_environments and args[1]:
     if args.output_directory:
         return args.output_directory
     else:
-        print('Command lines args do not contain a supported environment and output directory name')
+        print('Command lines args do not contain an output directory name')
         print(f'Returning default output directory name of "{default_output_directory}"')
         return default_output_directory
+
+
+def get_secret(secret_key):
+    secret_file = default_secret_file
+    args = args_parser()
+    if args.secret_file:
+        secret_file = args.secret_file
+    else:
+        print('Command lines args do not contain a secret file name')
+        print(f'Using default secret file name of "{default_secret_file}"')
+
+    yaml_data = read_yaml(secret_file)
+    yaml_value = yaml_data.get(secret_key)
+
+    return yaml_value
+
+
+def read_yaml(yaml_file):
+    with open(yaml_file, 'r') as file:
+        return yaml.safe_load(file)
 
 
 def args_parser():
@@ -141,6 +161,7 @@ def args_parser():
     arg_parser.add_argument("-t", "--token", help="API Token")
     arg_parser.add_argument("-od", "--output_directory", help="Output directory (rarely used)")
     arg_parser.add_argument("-of", "--output_file", help="Output file (reserved for future use)")
+    arg_parser.add_argument("-sf", "--secret_file", help="Secret file name.  Used to override the default secret file name, if needed. (rarely used)")
 
     args = arg_parser.parse_args()
 
