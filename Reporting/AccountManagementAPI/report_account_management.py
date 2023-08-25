@@ -2,6 +2,8 @@ import json
 import os
 import requests
 
+from Reuse import report_writer
+
 # Reporting for: https://api.dynatrace.com/spec/
 
 # Creating an OAuth Client:
@@ -47,13 +49,13 @@ def get_users_in_group(group_uuid):
     return json.loads(r.text)
 
 
-def get_users():
-    r = get_account_management_api('users')
+def get_permissions():
+    r = get_account_management_api('permissions')
     return json.loads(r.text)
 
 
-def get_service_users():
-    r = get_account_management_api('service-users')
+def get_users():
+    r = get_account_management_api('users')
     return json.loads(r.text)
 
 
@@ -62,8 +64,8 @@ def get_environments():
     return json.loads(r.text)
 
 
-def get_subscriptions():
-    r = get_account_management_api('subscriptions')
+def get_regions():
+    r = get_account_management_api('regions')
     return json.loads(r.text)
 
 
@@ -72,13 +74,13 @@ def get_time_zones():
     return json.loads(r.text)
 
 
-def get_regions():
-    r = get_account_management_api('regions')
+def get_service_users():
+    r = get_account_management_api('service-users')
     return json.loads(r.text)
 
 
-def get_permissions():
-    r = get_account_management_api('permissions')
+def get_subscriptions():
+    r = get_account_management_api('subscriptions')
     return json.loads(r.text)
 
 
@@ -124,94 +126,86 @@ def get_oauth_bearer_token():
 def report_groups():
     groups_object = get_groups()
     groups = groups_object.get('items')
-    print('group_name|group_federated_attribute_values|group_uuid|group_owner|group_description|group_hidden|group_created_at|group_updated_at')
-    lines = []
+    headers = ['Group Name', 'Federated Attribute Values', 'UUID', 'Owner', 'Description', 'Hidden', 'Created', 'Updated']
+    rows = []
     for group in groups:
-        group_uuid = group.get('uuid')
-        group_name = group.get('name')
-        group_owner = group.get('owner')
-        group_description = group.get('description')
-        group_federated_attribute_values = group.get('federatedAttributeValues')
-        group_hidden = group.get('hidden')
-        group_created_at = group.get('createdAt')
-        group_updated_at = group.get('updatedAt')
-        lines.append(f'{group_name}|{group_federated_attribute_values}|{group_uuid}|{group_owner}|{group_description}|{group_hidden}|{group_created_at}|{group_updated_at}')
+        group_uuid = str(group.get('uuid'))
+        group_name = str(group.get('name'))
+        group_owner = str(group.get('owner'))
+        group_description = str(group.get('description'))
+        group_federated_attribute_values = str(group.get('federatedAttributeValues'))
+        group_hidden = str(group.get('hidden'))
+        group_created_at = str(group.get('createdAt'))
+        group_updated_at = str(group.get('updatedAt'))
+        rows.append((group_name, group_federated_attribute_values, group_uuid, group_owner, group_description, group_hidden, group_created_at, group_updated_at))
 
-    for line in sorted(lines):
-        print(line)
+    sorted_rows = sorted(rows, key=lambda row: str(row[0]).lower())
+
+    return headers, sorted_rows
 
 
 def report_permissions_for_groups(only_show_missing_permissions):
     groups_object = get_groups()
     groups = groups_object.get('items')
     sorted_groups = sorted(groups, key=lambda x: x['name'])
-
-    print('group_name|group_uuid|permission_name|permission_scope|permission_scope_type|permission_created_at|permission_updated_at')
-    group_count = 0
+    headers = ('Group Name', 'UUID', 'Permission Name', 'Permission Scope', 'Permission Scope Type', 'Permission Created', 'Permission Updated')
+    rows = []
     for group in sorted_groups:
-        lines = []
-        group_count += 1
-        # Modify limit for testing...
-        if group_count < 999999:
-            group_uuid = group.get('uuid')
-            group_name = group.get('name')
-            # print(f'Processing group name: {group_name} with count of {group_count}')
-            permissions_object = get_permissions_for_group(group_uuid)
-            permissions = permissions_object.get('permissions')
-            # Want to report only groups with permissions?  Comment out the section below...
-            if not permissions:
-                lines.append(f'{group_name}|{group_uuid}|No Permissions!')
-            if not only_show_missing_permissions:
-                for permission in permissions:
-                    permission_name = permission.get('permissionName')
-                    permission_scope = permission.get('scope')
-                    permission_scope_type = permission.get('scopeType')
-                    permission_created_at = permission.get('createdAt')
-                    permission_updated_at = permission.get('updatedAt')
-                    lines.append(f'{group_name}|{group_uuid}|{permission_name}|{permission_scope}|{permission_scope_type}|{permission_created_at}|{permission_updated_at}')
+        group_uuid = group.get('uuid')
+        group_name = group.get('name')
+        permissions_object = get_permissions_for_group(group_uuid)
+        permissions = permissions_object.get('permissions')
+        # Want to report only groups with permissions?  Comment out the section below...
+        if not permissions:
+            rows.append((group_name, group_uuid, 'No Permissions!'))
+        if not only_show_missing_permissions:
+            for permission in permissions:
+                permission_name = permission.get('permissionName')
+                permission_scope = permission.get('scope')
+                permission_scope_type = permission.get('scopeType')
+                permission_created_at = permission.get('createdAt')
+                permission_updated_at = permission.get('updatedAt')
+                rows.append((group_name, group_uuid, permission_name, permission_scope, permission_scope_type, permission_created_at, permission_updated_at))
 
-            for line in sorted(lines):
-                print(line)
+    sorted_rows = sorted(rows, key=lambda row: str(row[0]).lower())
+
+    return headers, sorted_rows
 
 
 def report_users_in_groups(only_show_missing_users):
     groups_object = get_groups()
     groups = groups_object.get('items')
     sorted_groups = sorted(groups, key=lambda x: x['name'])
-    print('group_name|group_uuid|user_id|user_email|user_name|user_surname|user_emergency_contact|user_status')
-    group_count = 0
+    headers = ['Group Name', 'UUID', 'User ID', 'User Email', 'User Name', 'User Surname', 'User Emergency Contact', 'User Status']
+    rows = []
     for group in sorted_groups:
-        lines = []
-        group_count += 1
-        # Modify limit for testing...
-        if group_count <= 999999999:
-            group_uuid = group.get('uuid')
-            group_name = group.get('name')
-            # print(f'Processing group name: {group_name} with count of {group_count}')
-            users_object = get_users_in_group(group_uuid)
-            users = users_object.get('items')
-            # Want to report only groups with users?  Comment out the section below...
-            if not users:
-                lines.append(f'{group_name}|{group_uuid}|No users!')
-            if not only_show_missing_users:
-                for user in users:
-                    user_id = user.get('uid')
-                    user_email = user.get('email')
-                    user_name = user.get('name')
-                    user_surname = user.get('surname')
-                    user_emergency_contact = user.get('emergencyContact')
-                    user_status = user.get('userStatus')
-                    lines.append(f'{group_name}|{group_uuid}|{user_id}|{user_email}|{user_name}|{user_surname}|{user_emergency_contact}|{user_status}')
+        group_uuid = group.get('uuid')
+        group_name = group.get('name')
+        users_object = get_users_in_group(group_uuid)
+        users = users_object.get('items')
+        # Want to report only groups with users?  Comment out the section below...
+        if not users:
+            rows.append((group_name, group_uuid, 'No users!'))
+        if not only_show_missing_users:
+            for user in users:
+                user_id = user.get('uid')
+                user_email = user.get('email')
+                user_name = user.get('name')
+                user_surname = user.get('surname')
+                user_emergency_contact = user.get('emergencyContact')
+                user_status = user.get('userStatus')
+                rows.append((group_name, group_uuid, user_id, user_email, user_name, user_surname, user_emergency_contact, user_status))
 
-            for line in sorted(lines):
-                print(line)
+    sorted_rows = sorted(rows, key=lambda row: str(row[0]).lower())
+
+    return headers, sorted_rows
 
 
 def report_users():
     users_object = get_users()
     users = users_object.get('items')
-    print('uid|email|name|surname|emergencyContact|userStatus|successfulLoginCounter|failedLoginCounter|lastSuccessfulLogin|lastFailedLogin|resetPasswordTokenSentAt|lastSuccessfulBasicAuthentication|createdAt|updatedAt')
-    lines = []
+    headers = ('User ID', 'Email', 'Name', 'Surname', 'Emergency Contact', 'Status', 'Successful Login Counter', 'Failed Login Counter', 'Last Successful Login', 'Last Failed Login', 'Reset Password Token Sent', 'Last Successful Basic Authentication', 'Created', 'Updated')
+    rows = []
     for user in users:
         user_uid = user.get('uid')
         user_email = user.get('email')
@@ -229,21 +223,20 @@ def report_users():
             user_last_successful_basic_authentication = user_login_metadata.get('lastSuccessfulBasicAuthentication')
             user_created_at = user_login_metadata.get('createdAt')
             user_updated_at = user_login_metadata.get('updatedAt')
-            formatted_user_login_metadata = f'{user_successful_login_counter}|{user_failed_login_counter}|{user_last_successful_login}|{user_last_failed_login}|{user_reset_password_token_sent_at}|{user_last_successful_basic_authentication}|{user_created_at}|{user_updated_at}'
+            rows.append((user_uid, user_email, user_name, user_surname, user_emergency_contact, user_status, user_successful_login_counter, user_failed_login_counter, user_last_successful_login, user_last_failed_login, user_reset_password_token_sent_at, user_last_successful_basic_authentication, user_created_at, user_updated_at))
         else:
-            formatted_user_login_metadata = ''
+            rows.append((user_uid, user_email, user_name, user_surname, user_emergency_contact, user_status))
 
-        lines.append(f'{user_uid}|{user_email}|{user_name}|{user_surname}|{user_emergency_contact}|{user_status}|{formatted_user_login_metadata}')
+    sorted_rows = sorted(rows, key=lambda row: str(row[0]).lower())
 
-    for line in sorted(lines):
-        print(line)
+    return headers, sorted_rows
 
 
 def report_user_logins():
     users_object = get_users()
     users = users_object.get('items')
-    print('successfulLoginCounter|email|name|surname')
-    lines = []
+    headers = ('Successful Logins', 'Email', 'Name', 'Surname')
+    rows = []
     for user in users:
         user_email = user.get('email')
         user_name = user.get('name')
@@ -255,18 +248,19 @@ def report_user_logins():
         else:
             formatted_user_login_metadata = '0000000000'
 
-        lines.append(f'{formatted_user_login_metadata}|{user_email}|{user_name}|{user_surname}')
+        rows.append((formatted_user_login_metadata, user_email, user_name, user_surname))
 
-    for line in sorted(lines, reverse=True):
-        print(line)
+    sorted_rows = sorted(rows, key=lambda row: str(row[0]).lower(), reverse=True)
+
+    return headers, sorted_rows
 
 
 def report_user_logins_by_name():
     user_logins_by_name = {}
     users_object = get_users()
     users = users_object.get('items')
-    print('logins|full name|email(s)')
-    lines = []
+    headers = ('Full Name', 'Email(s)', 'Logins')
+    rows = []
     for user in users:
         user_email = user.get('email')
         user_name = user.get('name')
@@ -295,17 +289,90 @@ def report_user_logins_by_name():
         user_info = user_logins_by_name.get(user)
         logins = user_info.get('logins')
         emails = str(user_info.get('emails')).replace("'", "").replace('[', '').replace(']', '')
-        lines.append(f"{logins: 6}|{user}|{emails}")
+        rows.append((user, emails, logins))
 
-    for line in sorted(lines, reverse=True):
-        print(line)
+    sorted_rows = sorted(rows, key=lambda row: str(row[0]).lower())
+
+    return headers, sorted_rows
+
+
+def report_environments():
+    environments_object = get_environments()
+    environments = environments_object.get('tenantResources')
+    headers = ['Name', 'ID']
+    rows = []
+    for environment in environments:
+        environment_name = environment.get('name')
+        environment_id = environment.get('id')
+        rows.append((environment_name, environment_id))
+
+    sorted_rows = sorted(rows, key=lambda row: str(row[0]).lower())
+
+    return headers, sorted_rows
+
+
+def report_management_zones_in_environments():
+    environments_object = get_environments()
+    management_zones = environments_object.get('managementZoneResources')
+    headers = ('Management Zone Name', 'ID', 'Tenant')
+    rows = []
+    for management_zone in management_zones:
+        management_zone_name = management_zone.get('name')
+        management_zone_id = management_zone.get('id')
+        management_zone_parent = management_zone.get('parent')
+        rows.append((management_zone_name, management_zone_id, management_zone_parent))
+
+    sorted_rows = sorted(rows, key=lambda row: str(row[0]).lower())
+
+    return headers, sorted_rows
+
+
+def report_permissions():
+    permissions = get_permissions()
+    headers = ['Permission ID', 'Description']
+    rows = []
+    for permission in permissions:
+        permission_id = permission.get('id')
+        permission_description = permission.get('description')
+        rows.append((permission_id, permission_description))
+
+    sorted_rows = sorted(rows, key=lambda row: str(row[0]).lower())
+
+    return headers, sorted_rows
+
+
+def report_regions():
+    regions = get_regions()
+    headers = ['Region Name']
+    rows = []
+    for region in regions:
+        region_name = region.get('name')
+        rows.append([region_name])
+
+    sorted_rows = sorted(rows, key=lambda row: str(row[0]).lower())
+
+    return headers, sorted_rows
+
+
+def report_time_zones():
+    time_zones = get_time_zones()
+    headers = ('Time Zone', 'Name')
+    rows = []
+    for time_zone in time_zones:
+        time_zone_display_name = time_zone.get('displayName')
+        time_zone_name = time_zone.get('name')
+        rows.append((time_zone_display_name, time_zone_name))
+
+    sorted_rows = sorted(rows, key=lambda row: str(row[0]).lower())
+
+    return headers, sorted_rows
 
 
 def report_service_users():
     service_users_object = get_service_users()
-    service_users = service_users_object.get('items')
-    print('uid|email|name|surname|emergencyContact|userStatus|successfulLoginCounter|failedLoginCounter|lastSuccessfulLogin|lastFailedLogin|resetPasswordTokenSentAt|lastSuccessfulBasicAuthentication|createdAt|updatedAt')
-    lines = []
+    service_users = service_users_object.get('results')
+    headers = ('User ID', 'Email', 'Name', 'Surname', 'Emergency Contact', 'Status', 'Successful Logins', 'Failed Logins', 'Last Successful Login', 'Last Failed Login', 'Reset Password Token Sent', 'Last Successful Basic Authentication', 'Created', 'Updated')
+    rows = []
     for service_user in service_users:
         service_user_uid = service_user.get('uid')
         service_user_email = service_user.get('email')
@@ -327,145 +394,108 @@ def report_service_users():
         else:
             formatted_service_user_login_metadata = ''
 
-        lines.append(f'{service_user_uid}|{service_user_email}|{service_user_name}|{service_user_surname}|{service_user_emergency_contact}|{service_user_status}|{formatted_service_user_login_metadata}')
+        rows.append((service_user_uid, service_user_email, service_user_name, service_user_surname, service_user_emergency_contact, service_user_status, formatted_service_user_login_metadata))
 
-    for line in sorted(lines):
-        print(line)
+    sorted_rows = sorted(rows, key=lambda row: str(row[0]).lower())
+
+    return headers, sorted_rows
 
 
 def report_subscriptions():
     subscriptions_object = get_subscriptions()
     subscriptions = subscriptions_object.get('tenantResources')
-    print('name|id')
-    lines = []
+    headers = ('Name', 'Subscription ID')
+    rows = []
     for subscription in subscriptions:
         subscription_name = subscription.get('name')
         subscription_id = subscription.get('id')
-        lines.append(f'{subscription_name}|{subscription_id}')
+        rows.append((subscription_name, subscription_id))
 
-    for line in sorted(lines):
-        print(line)
+    sorted_rows = sorted(rows, key=lambda row: str(row[0]).lower())
 
-    
-def report_management_zones_in_environments():
-    environments_object = get_environments()
-    management_zones = environments_object.get('managementZoneResources')
-    print('name|id|parent')
-    lines = []
-    for management_zone in management_zones:
-        management_zone_name = management_zone.get('name')
-        management_zone_id = management_zone.get('id')
-        management_zone_parent = management_zone.get('parent')
-        lines.append(f'{management_zone_name}|{management_zone_id}|{management_zone_parent}')
-
-    for line in sorted(lines):
-        print(line)
-
-
-def report_environments():
-    environments_object = get_environments()
-    environments = environments_object.get('tenantResources')
-    print('name|id')
-    lines = []
-    for environment in environments:
-        environment_name = environment.get('name')
-        environment_id = environment.get('id')
-        lines.append(f'{environment_name}|{environment_id}')
-
-    for line in sorted(lines):
-        print(line)
-
-
-def report_time_zones():
-    time_zones = get_time_zones()
-    print('displayName|name')
-    lines = []
-    for time_zone in time_zones:
-        time_zone_display_name = time_zone.get('displayName')
-        time_zone_name = time_zone.get('name')
-        lines.append(f'{time_zone_display_name}|{time_zone_name}')
-
-    for line in sorted(lines):
-        print(line)
-
-
-def report_regions():
-    regions = get_regions()
-    print('name')
-    lines = []
-    for region in regions:
-        region_name = region.get('name')
-        lines.append(f'{region_name}')
-
-    for line in sorted(lines):
-        print(line)
-
-
-def report_permissions():
-    permissions = get_permissions()
-    print('id|description')
-    lines = []
-    for permission in permissions:
-        permission_id = permission.get('id')
-        permission_description = permission.get('description')
-        lines.append(f'{permission_id}|{permission_description}')
-
-    for line in sorted(lines):
-        print(line)
+    return headers, sorted_rows
 
 
 def process():
-    print('Groups')
-    report_groups()
-    print('')
+    console_tuple_list = []
+    worksheet_tuple_list = []
+    html_tuple_list = []
 
-    print('Users')
-    report_users()
-    print('')
+    headers, rows = report_groups()
+    console_tuple_list.append(('Groups', headers, rows, '|'))
+    worksheet_tuple_list.append(('Groups', headers, rows, None, None))
+    html_tuple_list.append(('Groups', headers, rows))
 
-    print('User Logins')
-    report_user_logins()
-    print('')
+    headers, rows = report_permissions()
+    console_tuple_list.append(('Permissions', headers, rows, '|'))
+    worksheet_tuple_list.append(('Permissions', headers, rows, None, None))
+    html_tuple_list.append(('Permissions', headers, rows))
 
-    print('User Logins by Name')
-    report_user_logins_by_name()
-    print('')
+    headers, rows = report_users()
+    console_tuple_list.append(('Users', headers, rows, '|'))
+    worksheet_tuple_list.append(('Users', headers, rows, None, None))
+    html_tuple_list.append(('Users', headers, rows))
 
-    # print('Permissions for Groups (missing only)')
-    # report_permissions_for_groups(only_show_missing_permissions=True)
-    print('Permissions for Groups')
-    report_permissions_for_groups(only_show_missing_permissions=False)
-    print('')
+    # SLOW ONE!
+    headers, rows = report_permissions_for_groups(only_show_missing_permissions=False)
+    console_tuple_list.append(('Permissions for Groups', headers, rows, '|'))
+    worksheet_tuple_list.append(('Permissions for Groups', headers, rows, None, None))
+    html_tuple_list.append(('Permissions for Groups', headers, rows))
 
-    # print('Users in Groups (missing only)')
-    # report_users_in_groups(only_show_missing_users=True)
-    print('Users in Groups')
-    report_users_in_groups(only_show_missing_users=False)
-    print('')
+    # SLOW ONE!
+    headers, rows = report_users_in_groups(only_show_missing_users=False)
+    console_tuple_list.append(('Users for Groups', headers, rows, '|'))
+    worksheet_tuple_list.append(('Users for Groups', headers, rows, None, None))
+    html_tuple_list.append(('Users for Groups', headers, rows))
 
-    print('Environments')
-    report_environments()
-    print('')
+    headers, rows = report_user_logins()
+    console_tuple_list.append(('User Logins', headers, rows, '|'))
+    worksheet_tuple_list.append(('User Logins', headers, rows, None, None))
+    html_tuple_list.append(('User Logins', headers, rows))
 
-    print('Management Zones in Environments')
-    report_management_zones_in_environments()
-    print('')
+    headers, rows = report_user_logins_by_name()
+    console_tuple_list.append(('User Logins By Name', headers, rows, '|'))
+    worksheet_tuple_list.append(('User Logins By Name', headers, rows, None, None))
+    html_tuple_list.append(('User Logins By Name', headers, rows))
 
-    print('Time Zones')
-    report_time_zones()
-    print('')
+    headers, rows = report_management_zones_in_environments()
+    console_tuple_list.append(('Management Zones', headers, rows, '|'))
+    worksheet_tuple_list.append(('Management Zones', headers, rows, None, None))
+    html_tuple_list.append(('Management Zones', headers, rows))
 
-    print('Regions')
-    report_regions()
-    print('')
+    headers, rows = report_environments()
+    console_tuple_list.append(('Environments', headers, rows, '|'))
+    worksheet_tuple_list.append(('Environments', headers, rows, None, None))
+    html_tuple_list.append(('Environments', headers, rows))
 
-    print('Permissions')
-    report_permissions()
-    print('')
+    headers, rows = report_regions()
+    console_tuple_list.append(('Regions', headers, rows, '|'))
+    worksheet_tuple_list.append(('Regions', headers, rows, None, None))
+    html_tuple_list.append(('Regions', headers, rows))
 
-    # These calls currently return 403-Forbidden
-    # report_service_users()
-    # report_subscriptions()
+    headers, rows = report_time_zones()
+    console_tuple_list.append(('Time Zones', headers, rows, '|'))
+    worksheet_tuple_list.append(('Time Zones', headers, rows, None, None))
+    html_tuple_list.append(('Time Zones', headers, rows))
+
+    # These calls currently do nothing useful
+    # Always empty results
+    # headers, rows = report_service_users()
+    # report_writer.write_console('Service Users', headers, rows, '|')
+    # console_tuple_list.append(('Service Users', headers, rows, '|'))
+    # worksheet_tuple_list.append(('Service Users', headers, rows, None, None))
+    # html_tuple_list.append(('Service Users', headers, rows))
+    # Endpoint results in 404
+    # headers, rows = report_subscriptions()
+    # report_writer.write_console('Subscriptions', headers, rows, '|')
+    # console_tuple_list.append(('Subscriptions', headers, rows, '|'))
+    # worksheet_tuple_list.append(('Subscriptions', headers, rows, None, None))
+    # html_tuple_list.append(('Subscriptions', headers, rows))
+
+    # Write Excel Workbook
+    report_writer.write_console_group(console_tuple_list)
+    report_writer.write_xlsx_worksheets('AccountManagementAPI.xlsx', worksheet_tuple_list)
+    report_writer.write_html_group('AccountManagementAPI.html', html_tuple_list)
 
 
 if __name__ == '__main__':

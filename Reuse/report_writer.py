@@ -1,28 +1,37 @@
 import xlsxwriter
 
+
 def write_console(title, headers, rows, delimiter):
-    print(title)
+    console_tuple_list = [(title, headers, rows, delimiter)]
+    write_console_group(console_tuple_list)
 
-    max_column_index = len(headers) - 1
 
-    column_index = 0
-    output = ''
-    for header in headers:
-        output += header
-        if column_index < max_column_index:
-            output += delimiter
-        column_index += 1
-    print(output)
+def write_console_group(console_tuple_list):
+    for console_tuple in console_tuple_list:
+        title, headers, rows, delimiter = console_tuple
 
-    for row in rows:
+        print(title)
+
+        max_column_index = len(headers) - 1
+
         column_index = 0
         output = ''
-        for column in row:
-            output += str(column)
+        for header in headers:
+            output += header
             if column_index < max_column_index:
                 output += delimiter
             column_index += 1
         print(output)
+
+        for row in rows:
+            column_index = 0
+            output = ''
+            for column in row:
+                output += str(column)
+                if column_index < max_column_index:
+                    output += delimiter
+                column_index += 1
+            print(output)
 
 
 def write_xlsx(file_name, worksheet_name, headers, rows, header_format, auto_filter):
@@ -80,6 +89,13 @@ def write_xlsx_worksheets(file_name, worksheet_tuple_list):
 
 
 def write_html(file_name, page_heading, table_headers, rows):
+    # Write one html report to file
+    html_tuple_list = [(page_heading, table_headers, rows)]
+    write_html_group(file_name, html_tuple_list)
+
+
+def write_html_group(file_name, html_tuple_list):
+
     html_top = '''<html>
     <body>
         <head>
@@ -97,7 +113,9 @@ def write_html(file_name, page_heading, table_headers, rows):
             </style>
         </head>'''
 
-    html_bottom = '''       </table>
+    table_end = '       </table>'
+
+    html_bottom = '''
     </body>
 </html>'''
 
@@ -107,31 +125,37 @@ def write_html(file_name, page_heading, table_headers, rows):
     col_end = '</td>\n'
 
     with open(file_name, 'w', encoding='utf8') as file:
-        # Initialize headers
-        table_header_html = '        <table>\n'
-        table_header_html += '            <tr>\n'
-        for table_header in table_headers:
-            table_header_html += f'                <th>{table_header}</th>\n'
-        table_header_html += '            </tr>'
-        
         # Begin HTML formatting
         write_line(file, html_top)
 
-        # Write the tag summary header
-        write_h1_heading(file, page_heading)
+        for html_tuple in html_tuple_list:
+            page_heading, table_headers, rows = html_tuple
 
-        # Write Table Header
-        write_line(file, table_header_html)
+            # Write Page/Group Header
+            write_h1_heading(file, page_heading)
 
-        # Write Table Rows
-        for row in rows:
-            output = row_start
-            for column in row:
-                output += col_start
-                output += str(column)
-                output += col_end
-            output += row_end
-            write_line(file, output)
+            # Initialize Table Headers
+            table_header_html = '        <table>\n'
+            table_header_html += '            <tr>\n'
+
+            for table_header in table_headers:
+                table_header_html += f'                <th>{table_header}</th>\n'
+            table_header_html += '            </tr>'
+
+            # Write Table Header
+            write_line(file, table_header_html)
+
+            # Write Table Rows
+            for row in rows:
+                output = row_start
+                for column in row:
+                    output += col_start
+                    output += str(column)
+                    output += col_end
+                output += row_end
+                write_line(file, output)
+
+            write_line(file, table_end)
 
         # Finish the HTML formatting
         write_line(file, html_bottom)
