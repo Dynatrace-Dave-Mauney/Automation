@@ -2,6 +2,7 @@ import json
 import os
 import requests
 
+from Reuse import environment
 from Reuse import report_writer
 
 # Reporting for: https://api.dynatrace.com/spec/
@@ -416,83 +417,70 @@ def report_subscriptions():
     return headers, sorted_rows
 
 
+def append_report(report_name, headers, rows, tuple_lists):
+    console_tuple_list, worksheet_tuple_list, html_tuple_list = tuple_lists
+    console_tuple_list.append((report_name, headers, rows, '|'))
+    worksheet_tuple_list.append((report_name, headers, rows, None, None))
+    html_tuple_list.append((report_name, headers, rows))
+
+
 def process():
     console_tuple_list = []
     worksheet_tuple_list = []
     html_tuple_list = []
+    tuple_lists = [console_tuple_list, worksheet_tuple_list, html_tuple_list]
 
     headers, rows = report_groups()
-    console_tuple_list.append(('Groups', headers, rows, '|'))
-    worksheet_tuple_list.append(('Groups', headers, rows, None, None))
-    html_tuple_list.append(('Groups', headers, rows))
+    append_report('Groups', headers, rows, tuple_lists)
 
     headers, rows = report_permissions()
-    console_tuple_list.append(('Permissions', headers, rows, '|'))
-    worksheet_tuple_list.append(('Permissions', headers, rows, None, None))
-    html_tuple_list.append(('Permissions', headers, rows))
+    append_report('Permissions', headers, rows, tuple_lists)
 
     headers, rows = report_users()
-    console_tuple_list.append(('Users', headers, rows, '|'))
-    worksheet_tuple_list.append(('Users', headers, rows, None, None))
-    html_tuple_list.append(('Users', headers, rows))
+    append_report('Users', headers, rows, tuple_lists)
 
     # SLOW ONE!
     headers, rows = report_permissions_for_groups(only_show_missing_permissions=False)
-    console_tuple_list.append(('Permissions for Groups', headers, rows, '|'))
-    worksheet_tuple_list.append(('Permissions for Groups', headers, rows, None, None))
-    html_tuple_list.append(('Permissions for Groups', headers, rows))
+    append_report('Permissions for Groups', headers, rows, tuple_lists)
 
     # SLOW ONE!
     headers, rows = report_users_in_groups(only_show_missing_users=False)
-    console_tuple_list.append(('Users for Groups', headers, rows, '|'))
-    worksheet_tuple_list.append(('Users for Groups', headers, rows, None, None))
-    html_tuple_list.append(('Users for Groups', headers, rows))
+    append_report('Users for Groups', headers, rows, tuple_lists)
 
     headers, rows = report_user_logins()
-    console_tuple_list.append(('User Logins', headers, rows, '|'))
-    worksheet_tuple_list.append(('User Logins', headers, rows, None, None))
-    html_tuple_list.append(('User Logins', headers, rows))
+    append_report('User Logins', headers, rows, tuple_lists)
 
     headers, rows = report_user_logins_by_name()
-    console_tuple_list.append(('User Logins By Name', headers, rows, '|'))
-    worksheet_tuple_list.append(('User Logins By Name', headers, rows, None, None))
-    html_tuple_list.append(('User Logins By Name', headers, rows))
+    append_report('User Logins By Name', headers, rows, tuple_lists)
 
     headers, rows = report_management_zones_in_environments()
-    console_tuple_list.append(('Management Zones', headers, rows, '|'))
-    worksheet_tuple_list.append(('Management Zones', headers, rows, None, None))
-    html_tuple_list.append(('Management Zones', headers, rows))
+    append_report('Management Zones', headers, rows, tuple_lists)
 
     headers, rows = report_environments()
-    console_tuple_list.append(('Environments', headers, rows, '|'))
-    worksheet_tuple_list.append(('Environments', headers, rows, None, None))
-    html_tuple_list.append(('Environments', headers, rows))
+    append_report('Environments', headers, rows, tuple_lists)
 
     headers, rows = report_regions()
-    console_tuple_list.append(('Regions', headers, rows, '|'))
-    worksheet_tuple_list.append(('Regions', headers, rows, None, None))
-    html_tuple_list.append(('Regions', headers, rows))
+    append_report('Regions', headers, rows, tuple_lists)
 
     headers, rows = report_time_zones()
-    console_tuple_list.append(('Time Zones', headers, rows, '|'))
-    worksheet_tuple_list.append(('Time Zones', headers, rows, None, None))
-    html_tuple_list.append(('Time Zones', headers, rows))
+    append_report('Time Zones', headers, rows, tuple_lists)
 
     # These calls currently do nothing useful
     # Always empty results
     # headers, rows = report_service_users()
-    # report_writer.write_console('Service Users', headers, rows, '|')
-    # console_tuple_list.append(('Service Users', headers, rows, '|'))
-    # worksheet_tuple_list.append(('Service Users', headers, rows, None, None))
-    # html_tuple_list.append(('Service Users', headers, rows))
+    # append_report('Service Users', headers, rows, tuple_lists)
     # Endpoint results in 404
     # headers, rows = report_subscriptions()
-    # report_writer.write_console('Subscriptions', headers, rows, '|')
-    # console_tuple_list.append(('Subscriptions', headers, rows, '|'))
-    # worksheet_tuple_list.append(('Subscriptions', headers, rows, None, None))
-    # html_tuple_list.append(('Subscriptions', headers, rows))
+    # append_report('Subscriptions', headers, rows, tuple_lists)
 
-    # Write Excel Workbook
+    default_output_directory = '.'
+    output_directory = environment.get_output_directory_name(default_output_directory)
+    xlsx_file_name = f'{output_directory}/AccountManagementAPI.xlsx'
+    html_file_name = f'{output_directory}/AccountManagementAPI.html'
+
+
+
+    # Write Reports
     report_writer.write_console_group(console_tuple_list)
     report_writer.write_xlsx_worksheets('AccountManagementAPI.xlsx', worksheet_tuple_list)
     report_writer.write_html_group('AccountManagementAPI.html', html_tuple_list)

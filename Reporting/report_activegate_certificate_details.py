@@ -13,7 +13,7 @@ def process(token, print_mode):
 
     count_total = 0
 
-    tenant = environment.get_secret('report_activegate_certificate_details.temp_tenant')
+    tenant = environment.get_configuration('report_activegate_certificate_details.temp_tenant')
 
     # curl https://{address of ActiveGate}:{port}/e/{environment ID}/api/v1/certificate/{certificate file name} -H"Authorization: Api-Token {token}" -H"X-Password: {password}" -T {path to certificate file}
     # https://www.dynatrace.com/support/help/shortlink/activegate-configuration-ssl#managing-certificates-via-rest-api
@@ -110,7 +110,7 @@ def main():
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'FreeTrial1'
     # env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
-    token = environment.get_secret('report_activegate_certificate_details.temp_token')
+    token = environment.get_configuration('report_activegate_certificate_details.temp_token')
     print(token)
     process(token, True)
 

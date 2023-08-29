@@ -5,7 +5,7 @@ import yaml
 # Default name when "get_environment(env_name)" is used
 default_friendly_function_name = 'DYNATRACE_AUTOMATION'
 
-default_secret_file = '../$Input/Secrets/secrets.yaml'
+default_configuration_file = '../$Input/Configurations/configurations.yaml'
 
 # Support friendly names for frequently used functions.
 # Names not found in the list will be handled generically by
@@ -133,17 +133,17 @@ def get_output_directory_name(default_output_directory):
         return default_output_directory
 
 
-def get_secret(secret_key):
-    secret_file = default_secret_file
+def get_configuration(configuration_key):
+    configuration_file = default_configuration_file
     args = args_parser()
-    if args.secret_file:
-        secret_file = args.secret_file
+    if args.configuration_file:
+        configuration_file = args.configuration_file
     else:
-        print('Command lines args do not contain a secret file name')
-        print(f'Using default secret file name of "{default_secret_file}"')
+        print('Command lines args do not contain a configuration file name')
+        print(f'Using default configuration file name of "{default_configuration_file}"')
 
-    yaml_data = read_yaml(secret_file)
-    yaml_value = yaml_data.get(secret_key)
+    yaml_data = read_yaml(configuration_file)
+    yaml_value = yaml_data.get(configuration_key)
 
     return yaml_value
 
@@ -160,8 +160,8 @@ def args_parser():
     arg_parser.add_argument("-e", "--environment", help="Tenant (such as 'abcd1234' in 'https://abcd1234.live.dynatrace.com")
     arg_parser.add_argument("-t", "--token", help="API Token")
     arg_parser.add_argument("-od", "--output_directory", help="Output directory (rarely used)")
+    arg_parser.add_argument("-cf", "--configuration_file", help="Configuration file name.  Used to override the default configuration file name, if needed. (rarely used)")
     arg_parser.add_argument("-of", "--output_file", help="Output file (reserved for future use)")
-    arg_parser.add_argument("-sf", "--secret_file", help="Secret file name.  Used to override the default secret file name, if needed. (rarely used)")
 
     args = arg_parser.parse_args()
 

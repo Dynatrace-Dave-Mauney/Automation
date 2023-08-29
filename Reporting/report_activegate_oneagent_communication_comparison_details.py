@@ -1,9 +1,9 @@
 from Reuse import dynatrace_api
 from Reuse import environment
 
-oneagent_communication_list = environment.get_secret('report_activegate_oneagent_communication_comparison_details.oneagent_communication_list')
+oneagent_communication_list = environment.get_configuration('report_activegate_oneagent_communication_comparison_details.oneagent_communication_list')
 """
-secrets.yaml example:
+configurations.yaml example:
 report_activegate_oneagent_communication_comparison_details.oneagent_communication_list: [
     '10.1.2.3',
     'example.com',
