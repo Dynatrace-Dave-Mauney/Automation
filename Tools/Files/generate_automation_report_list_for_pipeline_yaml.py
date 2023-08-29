@@ -28,7 +28,7 @@ def find_matching_py_files():
         with open(filename, 'r', encoding='utf-8') as f:
             report_name = filename.replace('../../Reporting\\', '').replace('\\', '/')
             if report_name not in ignore_list:
-                print(f'  - {report_name},')
+                print(f'  - {report_name}')
 
 def main():
     find_matching_py_files()
