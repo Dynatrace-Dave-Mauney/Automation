@@ -4,6 +4,7 @@ import requests
 
 from Reuse import environment
 from Reuse import report_writer
+from Reuse import directories_and_files
 
 # Reporting for: https://api.dynatrace.com/spec/
 
@@ -26,11 +27,13 @@ from Reuse import report_writer
 account_id = os.getenv('ACCOUNTID')
 client_secret = os.getenv('CLIENT_SECRET')
 client_id = os.getenv('CLIENT_ID')
+skip_slow_api_calls = environment.get_boolean_environment_variable('SKIP_SLOW_API_CALLS', 'True')
 
 print('Masked environment variables:')
 print(f'account_id: {account_id[:10]}*')
 print(f'client_secret: {client_secret[:5]}*{client_secret[70:]}')
-print(f'client_id {client_id[:10]}*')
+print(f'client_id: {client_id[:10]}*')
+print(f'skip_slow_api_calls: {skip_slow_api_calls}')
 
 
 def get_groups():
@@ -439,13 +442,11 @@ def process():
     headers, rows = report_users()
     append_report('Users', headers, rows, tuple_lists)
 
-    # SLOW ONE!
-    headers, rows = report_permissions_for_groups(only_show_missing_permissions=False)
-    append_report('Permissions for Groups', headers, rows, tuple_lists)
-
-    # SLOW ONE!
-    headers, rows = report_users_in_groups(only_show_missing_users=False)
-    append_report('Users for Groups', headers, rows, tuple_lists)
+    if not skip_slow_api_calls:
+        headers, rows = report_permissions_for_groups(only_show_missing_permissions=False)
+        append_report('Permissions for Groups', headers, rows, tuple_lists)
+        headers, rows = report_users_in_groups(only_show_missing_users=False)
+        append_report('Users for Groups', headers, rows, tuple_lists)
 
     headers, rows = report_user_logins()
     append_report('User Logins', headers, rows, tuple_lists)
@@ -475,15 +476,18 @@ def process():
 
     default_output_directory = '.'
     output_directory = environment.get_output_directory_name(default_output_directory)
+    print(f'Current working directory: {os.getcwd()}')
+    print(f'Output directory: {output_directory}')
+    if not os.path.isdir(output_directory):
+        directories_and_files.make_directory(output_directory)
+
     xlsx_file_name = f'{output_directory}/AccountManagementAPI.xlsx'
     html_file_name = f'{output_directory}/AccountManagementAPI.html'
 
-
-
     # Write Reports
     report_writer.write_console_group(console_tuple_list)
-    report_writer.write_xlsx_worksheets('AccountManagementAPI.xlsx', worksheet_tuple_list)
-    report_writer.write_html_group('AccountManagementAPI.html', html_tuple_list)
+    report_writer.write_xlsx_worksheets(xlsx_file_name, worksheet_tuple_list)
+    report_writer.write_html_group(html_file_name, html_tuple_list)
 
 
 if __name__ == '__main__':
