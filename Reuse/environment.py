@@ -133,6 +133,16 @@ def get_output_directory_name(default_output_directory):
         return default_output_directory
 
 
+def get_boolean_environment_variable(key, default_value):
+    environment_variable_value = os.getenv(key, default_value)
+    if environment_variable_value.lower() in ['true', 'yes', 'on']:
+        # print(f'get_boolean_environment_variable({key},{default_value}): True')
+        return True
+    else:
+        # print(f'get_boolean_environment_variable({key},{default_value}): False')
+        return False
+
+
 def get_configuration(configuration_key):
     configuration_file = default_configuration_file
     args = args_parser()
