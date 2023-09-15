@@ -1,5 +1,6 @@
 # TODO: Report Upgrade
 
+import os
 import urllib.parse
 import xlsxwriter
 
@@ -7,8 +8,6 @@ from Reuse import dynatrace_api
 from Reuse import environment
 
 env_name_list = ['Prod', 'NonProd']
-
-xlsx_file_name = '../../$Output/Reporting/Settings20/OneAgentFeaturesTenantComparison.xlsx'
 
 SETTING_NOT_FOUND = '⛔'
 SETTING_ENABLED = '✔'
@@ -47,6 +46,9 @@ def process_oneagent_features(env_name, env, token, all_env_name_data):
 
 
 def write_xlsx(all_env_name_data):
+    output_directory = environment.get_output_directory_name('.')
+    xlsx_file_name = os.path.join(output_directory, 'OneAgentFeaturesTenantComparison.xlsx')
+
     workbook = xlsxwriter.Workbook(xlsx_file_name)
     header_format = workbook.add_format({'bold': True, 'bg_color': '#B7C9E2'})
 
@@ -148,6 +150,8 @@ def write_xlsx(all_env_name_data):
 
     workbook.close()
 
+    print(f'Output written to {xlsx_file_name}')
+
 
 def get_feature_indicator(feature_by_env):
     if feature_by_env is None:
@@ -181,8 +185,6 @@ def main():
     #     print(key, str(all_env_name_data.get(key)))
 
     write_xlsx(all_env_name_data)
-
-    print(f'Output written to {xlsx_file_name}')
 
 
 if __name__ == '__main__':

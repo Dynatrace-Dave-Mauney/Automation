@@ -1,16 +1,14 @@
 # TODO: Report Upgrade
 
 import difflib
+import os
 import urllib.parse
 import xlsxwriter
 
 from Reuse import dynatrace_api
 from Reuse import environment
 
-env_name_list = ['Prod', 'Exactuals']
-
-xlsx_file_name = '../../$Output/Reporting/Settings20/Settings20EnvironmentScopeTenantComparison.xlsx'
-diff_file_name = '../../$Output/Reporting/Settings20/Settings20EnvironmentScopeTenantDiffs.txt'
+env_name_list = ['Prod', 'NonProd']
 
 SETTING_NOT_FOUND = '⛔'
 SETTING_ENABLED = '✔'
@@ -57,6 +55,8 @@ def process_settings(env_name, env, token, all_env_name_data):
 
 
 def write_xlsx(all_env_name_data):
+    output_directory = environment.get_output_directory_name('.')
+    xlsx_file_name = os.path.join(output_directory, 'Settings20EnvironmentScopeTenantComparison.xlsx')
     workbook = xlsxwriter.Workbook(xlsx_file_name)
     header_format = workbook.add_format({'bold': True, 'bg_color': '#B7C9E2'})
 
@@ -81,6 +81,8 @@ def write_xlsx(all_env_name_data):
     row_index += 1
     column_index = 0
 
+    output_directory = environment.get_output_directory_name('.')
+    diff_file_name = os.path.join(output_directory, 'Settings20EnvironmentScopeTenantDiffs.txt')
     with open(diff_file_name, 'w', encoding='utf8') as diff_file:
         diff_file.write('Differences:\n')
 
@@ -193,6 +195,9 @@ def write_xlsx(all_env_name_data):
 
     workbook.close()
 
+    print(f'Excel Output written to {xlsx_file_name}')
+    print(f'Diff  Output written to {diff_file_name}')
+
 
 def get_setting_indicator(setting_by_env):
     if setting_by_env is None:
@@ -229,9 +234,6 @@ def main():
     #     print(key, str(all_env_name_data.get(key)))
 
     write_xlsx(all_env_name_data)
-
-    print(f'Output written to {xlsx_file_name}')
-
 
 if __name__ == '__main__':
     main()
