@@ -1,12 +1,18 @@
 from Reuse import dynatrace_api
 from Reuse import environment
+from Reuse import report_writer
 
 
 def summarize(env, token):
-    return process(env, token, False)
+    return process_report(env, token, True)
 
 
-def process(env, token, print_mode):
+def process(env, token):
+    return process_report(env, token, False)
+
+
+def process_report(env, token, summary_mode):
+    rows = []
     summary = []
 
     endpoint = '/api/config/v1/anomalyDetection/vmware'
@@ -41,16 +47,15 @@ def process(env, token, print_mode):
     # dropped_packets_detection = False
     # low_datastore_space_detection = False
 
-    if print_mode:
-        print('VMWare Anomaly Detection Settings:')
-        print('esxiHighCpuSaturation:        ' + str(esxi_high_cpu_saturation))
-        print('guestCpuLimitReached:         ' + str(guest_cpu_limit_reached))
-        print('esxiHighMemoryDetection:      ' + str(esxi_high_memory_detection))
-        print('overloadedStorageDetection:   ' + str(overloaded_storage_detection))
-        print('undersizedStorageDetection:   ' + str(undersized_storage_detection))
-        print('slowPhysicalStorageDetection: ' + str(slow_physical_storage_detection))
-        print('droppedPacketsDetection:      ' + str(dropped_packets_detection))
-        print('lowDatastoreSpaceDetection:   ' + str(low_datastore_space_detection))
+    if not summary_mode:
+        rows.append(('esxiHighCpuSaturation', str(esxi_high_cpu_saturation)))
+        rows.append(('guestCpuLimitReached', str(guest_cpu_limit_reached)))
+        rows.append(('esxiHighMemoryDetection', str(esxi_high_memory_detection)))
+        rows.append(('overloadedStorageDetection', str(overloaded_storage_detection)))
+        rows.append(('undersizedStorageDetection', str(undersized_storage_detection)))
+        rows.append(('slowPhysicalStorageDetection', str(slow_physical_storage_detection)))
+        rows.append(('droppedPacketsDetection', str(dropped_packets_detection)))
+        rows.append(('lowDatastoreSpaceDetection', str(low_datastore_space_detection)))
 
     if esxi_high_cpu_saturation == default_esxi_high_cpu_saturation and \
         guest_cpu_limit_reached == default_guest_cpu_limit_reached and \
@@ -81,17 +86,22 @@ def process(env, token, print_mode):
         if low_datastore_space_detection != default_low_datastore_space_detection:
             summary.append('lowDatastoreSpaceDetection:   ' + str(low_datastore_space_detection) + ' (vs. default of ' + str(default_low_datastore_space_detection) + ')')
 
-    if print_mode:
-        print_list(summary)
-        print('Done!')
+    if not summary_mode:
+        report_name = 'VMWare Anomaly Detection'
+        report_writer.initialize_text_file(None)
+        report_headers = ['Setting', 'Value']
+        report_writer.write_console(report_name, report_headers, rows, delimiter=': ')
+        report_writer.write_text(None, report_name, report_headers, rows, delimiter=': ')
+        write_strings(summary)
+        report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
+        report_writer.write_html(None, report_name, report_headers, rows)
 
     return summary
 
 
-def print_list(any_list):
-    for line in any_list:
-        line = line.replace('are 0', 'are no')
-        print(line)
+def write_strings(string_list):
+    report_writer.write_console_plain_text(string_list)
+    report_writer.write_plain_text(None, string_list)
 
 
 def convert_boolean(boolean):
@@ -112,7 +122,7 @@ def main():
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'FreeTrial1'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
-    process(env, token, True)
+    process(env, token)
     
     
 if __name__ == '__main__':

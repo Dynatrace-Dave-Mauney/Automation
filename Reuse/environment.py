@@ -66,7 +66,8 @@ def get_environment_for_function_print_control(env_name, friendly_function_name,
     # "get_environment(env_name)" for maximum convenience and with print on.
     # But when print needs to be off, use this method directly.
 
-    tenant = tenant_key = tenant_source = token = token_key = token_source = None
+    # tenant = tenant_key = tenant_source = token = token_key = token_source = None
+    tenant_key = token_key = None
 
     args = args_parser()
 
@@ -75,8 +76,6 @@ def get_environment_for_function_print_control(env_name, friendly_function_name,
         tenant_source = 'Command Line Argument "-e" or "--environment"'
     else:
         tenant_key = f'{env_name.upper()}_TENANT'
-        # if print_mode:
-        #     print(f'Tenant Key: {tenant_key} (from {tenant_source}')
         tenant = os.environ.get(tenant_key)
         tenant_source = f'Environment Variable "{tenant_key}"'
 
@@ -118,7 +117,6 @@ def get_environment_for_function_print_control(env_name, friendly_function_name,
                 print(f'Tenant Key:       {tenant_key}')
             if token_key:
                 print(f'Token Key:        {token_key}')
-        # return env_name, None, None
         exit(1)
 
 
@@ -126,20 +124,18 @@ def get_output_directory_name(default_output_directory):
     args = args_parser()
 
     if args.output_directory:
-        return args.output_directory
+        return os.path.abspath(args.output_directory)
     else:
-        print('Command lines args do not contain an output directory name')
-        print(f'Returning default output directory name of "{default_output_directory}"')
-        return default_output_directory
+        # print('Command lines args do not contain an output directory name')
+        # print(f'Returning default output directory name of "{default_output_directory}"')
+        return os.path.abspath(default_output_directory)
 
 
 def get_boolean_environment_variable(key, default_value):
     environment_variable_value = os.getenv(key, default_value)
     if environment_variable_value.lower() in ['true', 'yes', 'on']:
-        # print(f'get_boolean_environment_variable({key},{default_value}): True')
         return True
     else:
-        # print(f'get_boolean_environment_variable({key},{default_value}): False')
         return False
 
 
@@ -174,12 +170,5 @@ def args_parser():
     arg_parser.add_argument("-of", "--output_file", help="Output file (reserved for future use)")
 
     args = arg_parser.parse_args()
-
-    # print("args=%s" % args)
-    # print("args.environment_name=%s" % args.environment_name)
-    # print("args.environment%s" % args.environment)
-    # print("args.token=%s" % args.token)
-    # print("args.output_directory=%s" % args.output_directory)
-    # print("args.output_file=%s" % args.output_file)
 
     return args

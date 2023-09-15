@@ -50,6 +50,7 @@ def process_type(env, token, print_mode, entity_type):
         for inner_rum_json in inner_rum_json_list:
             entity_id = inner_rum_json.get('id')
             name = inner_rum_json.get('name')
+            print(inner_rum_json)
 
             if print_mode:
                 print(entity_id + '|' + name)

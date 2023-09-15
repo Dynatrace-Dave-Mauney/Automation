@@ -4,36 +4,37 @@ import urllib.parse
 
 from Reuse import dynatrace_api
 from Reuse import environment
+from Reuse import report_writer
 
 
 def summarize(env, token):
-    return process(env, token, False)
+    return process_report(env, token, True)
 
 
-def process(env, token, print_mode):
-    # Skipping for now: 'ESXi', 'AWS', 'Azure scale set', 'Custom device', 'Custom device group'
-    taggable_entity_list = [('APPLICATION', 'Applications'), ('SYNTHETIC_TEST', 'Browser Monitors'), ('HTTP_CHECK', 'Http Monitors'), ('SERVICE', 'Services'), ('HOST', 'Hosts'), ('PROCESS_GROUP', 'Process groups'), ('PROCESS_GROUP_INSTANCE', 'Processes')]
+def process(env, token):
+    return process_report(env, token, False)
 
+
+def process_report(env, token, summary_mode):
+    rows = []
     summary = []
+
+    count_total = 0
+    count_key_only = 0
+    count_key_value = 0
 
     endpoint = '/api/v2/tags'
     
-    for taggable_entity in taggable_entity_list:
-        count_total = 0
-        count_key_only = 0
-        count_key_value = 0
+    # Skipping for now: 'ESXi', 'AWS', 'Azure scale set', 'Custom device', 'Custom device group'
+    taggable_entity_list = [('APPLICATION', 'Applications'), ('SYNTHETIC_TEST', 'Browser Monitors'), ('HTTP_CHECK', 'Http Monitors'), ('SERVICE', 'Services'), ('HOST', 'Hosts'), ('PROCESS_GROUP', 'Process groups'), ('PROCESS_GROUP_INSTANCE', 'Processes')]
 
+    for taggable_entity in taggable_entity_list:
         entity_type = taggable_entity[0]
         entity_name = taggable_entity[1]
-        
-        print('Tags for ' + entity_name)
         
         raw_params = f'entitySelector=type({entity_type})'
         params = urllib.parse.quote(raw_params, safe='/,&=')
         manual_tags_json_list = dynatrace_api.get(env, token, endpoint, params)
-    
-        if print_mode:
-            print('key' + '|' + 'value' + '|' + 'stringRepresentation')
     
         for manual_tags_json in manual_tags_json_list:
             inner_manual_tags_json_list = manual_tags_json.get('tags')
@@ -42,8 +43,8 @@ def process(env, token, print_mode):
                 value = inner_manual_tags_json.get('value', '')
                 string_representation = inner_manual_tags_json.get('stringRepresentation', '')
     
-                if print_mode:
-                    print(key + '|' + value + '|' + string_representation)
+                if not summary_mode:
+                    rows.append((key, value, string_representation, entity_name, entity_type))
     
                 count_total += 1
     
@@ -52,28 +53,29 @@ def process(env, token, print_mode):
                 else:
                     count_key_value += 1
     
-        if print_mode:
-            print('Total Manual Tags: ' + str(count_total))
-            print('Key Only:          ' + str(count_key_only))
-            print('Key/Value Pairs:   ' + str(count_key_value))
-    
         summary.append('There are ' + str(count_total) + ' manual tags currently defined for ' + entity_name + '.  ' +
                        str(count_key_only) + ' are key only and ' + str(count_key_value) + ' are key/value pairs.')
 
-    if print_mode:
-        print_list(summary)
-        print('Done!')
-    
+    if not summary_mode:
+        report_name = 'Custom Tags'
+        report_writer.initialize_text_file(None)
+        report_headers = ('Key', 'Value', 'String Representation', 'Entity Tagged', 'Entity Type')
+        report_writer.write_console(report_name, report_headers, rows, delimiter='|')
+        report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
+        write_strings(['Total Manual Tags: ' + str(count_total)])
+        write_strings(['Total Key Only Manual Tags: ' + str(count_key_only)])
+        write_strings(['Total Key/Value Manual Tags: ' + str(count_key_value)])
+        write_strings(summary)
+        report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
+        report_writer.write_html(None, report_name, report_headers, rows)
+
     return summary
 
 
-def print_list(any_list):
-    for line in any_list:
-        line = line.replace('are 0', 'are no')
-        line = line.replace('.  0 are', '.  None are')
-        line = line.replace(' 0 are', ' none are')
-        print(line)
-        
+def write_strings(string_list):
+    report_writer.write_console_plain_text(string_list)
+    report_writer.write_plain_text(None, string_list)
+
 
 def main():
     friendly_function_name = 'Dynatrace Automation Reporting'
@@ -86,7 +88,7 @@ def main():
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'FreeTrial1'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
-    process(env, token, True)
+    process(env, token)
     
     
 if __name__ == '__main__':

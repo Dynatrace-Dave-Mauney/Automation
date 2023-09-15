@@ -2,10 +2,41 @@ import urllib.parse
 
 from Reuse import dynatrace_api
 from Reuse import environment
+from Reuse import report_writer
 
 
 def summarize(env, token):
-	return process(env, token, False)
+	return process_report(env, token, True)
+
+
+def process(env, token):
+	return process_report(env, token, False)
+
+
+def process_report(env, token, summary_mode):
+	rows = []
+	summary = []
+	hosts_dicts = get_hosts(env, token)
+	for hosts_dict in hosts_dicts:
+		entity_id = hosts_dict.get('id')
+		name = hosts_dict.get('name')
+		# DEBUG: only process one host
+		# if 'TEMPLATE' in name:
+		# if entity_id == 'APPLICATION-245DD7C386F6725E':
+		summary.extend(process_host(env, token, summary_mode, entity_id, name, rows))
+
+	if not summary_mode:
+		rows = sorted(rows)
+		report_name = 'Host Settings 2.0'
+		report_writer.initialize_text_file(None)
+		report_headers = ('Host Name', 'Entity ID', 'Schema ID', 'Value')
+		report_writer.write_console(report_name, report_headers, rows, delimiter='|')
+		report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
+		write_strings(summary)
+		report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
+		report_writer.write_html(None, report_name, report_headers, rows)
+
+	return summary
 
 
 def get_hosts(env, token):
@@ -22,9 +53,8 @@ def get_hosts(env, token):
 	return hosts
 
 
-def process_host(entity_id, name, env, token, print_mode):
+def process_host(env, token, summary_mode, entity_id, name, rows):
 	summary = []
-	findings = []
 
 	endpoint = '/api/v2/settings/objects'
 	# To filter schemas...
@@ -37,104 +67,38 @@ def process_host(entity_id, name, env, token, print_mode):
 	settings_object = dynatrace_api.get(env, token, endpoint, params)[0]
 	items = settings_object.get('items', [])
 
-	if items:
-		if print_mode:
-			print('host: ' + name)
-
-		for item in items:
-			schema_id = item.get('schemaId')
-			value = str(item.get('value'))
-			value = value.replace('{', '')
-			value = value.replace('}', '')
-			value = value.replace("'", "")
-			if print_mode:
-				print(schema_id + ': ' + value)
-			add_findings(findings, schema_id, item)
+	for item in items:
+		schema_id = item.get('schemaId')
+		value = str(item.get('value'))
+		value = value.replace('{', '')
+		value = value.replace('}', '')
+		value = value.replace("'", "")
+		if not summary_mode:
+			rows.append((name, entity_id, schema_id, value))
 
 	summary = sorted(summary)
 
-	if len(items) > 0:
-		if len(findings) > 0:
-			summary.append('host "' + name + '" findings:')
-			summary.extend(findings)
-		else:
-			summary.append('host "' + name + '" has no findings')
-
-	if print_mode:
-		# print('Total Schemas: ' + str(count_total))
-		# print('')
-		print_list(summary)
-
 	return summary
 
 
-def add_findings(findings, schema_id, item):
-	value = item.get('value')
-
-	if schema_id == 'builtin:rum.web.request-errors':
-		if value.get('ignoreRequestErrorsInApdexCalculation') != 'True':
-			findings.append('Ignore Request Errors In Apdex Calculation is off.')
-	else:
-		if schema_id == 'builtin:rum.web.enablement':
-			if value.get('rum').get('enabled') is not True:
-				findings.append('RUM is disabled.')
-			else:
-				if value.get('rum').get('costAndTrafficControl') > 75:
-					findings.append('RUM is set to capture more than 75% of sessions.')
-			if value.get('sessionReplay').get('enabled') is not True:
-				findings.append('Session Replay is disabled.')
-			else:
-				if value.get('sessionReplay').get('costAndTrafficControl') > 75:
-					findings.append('Session Replay is set to capture more than 75% of sessions.')
-		else:
-			if schema_id == 'builtin:preferences.privacy':
-				if value.get('masking').get('ipAddressMaskingEnabled') is not False:
-					findings.append('IP masking is enabled.')
-			else:
-				if schema_id == 'builtin:anomaly-detection.rum-web':
-					if value.get('responseTime').get('enabled') is not True:
-						findings.append('Anomaly detection for response time is disabled.')
-					if value.get('errorRate').get('enabled') is not True:
-						findings.append('Anomaly detection for error rate is disabled.')
-					if value.get('trafficDrops').get('enabled') is not True:
-						findings.append('Anomaly detection for traffic drops is disabled.')
-					if value.get('trafficSpikes').get('enabled') is not True:
-						findings.append('Anomaly detection for traffic spikes is disabled.')
-
-
-def process(env, token, print_mode):
-	summary = []
-	hosts_dicts = get_hosts(env, token)
-	for hosts_dict in hosts_dicts:
-		entity_id = hosts_dict.get('id')
-		name = hosts_dict.get('name')
-		# DEBUG: only process one host
-		# if 'TEMPLATE' in name:
-		# if entity_id == 'APPLICATION-245DD7C386F6725E':
-		summary.extend(process_host(entity_id, name, env, token, print_mode))
-
-	return summary
-
-
-def print_list(any_list):
-	for line in any_list:
-		line = line.replace('are 0', 'are no')
-		print(line)
+def write_strings(string_list):
+	report_writer.write_console_plain_text(string_list)
+	report_writer.write_plain_text(None, string_list)
 
 
 def main():
-    friendly_function_name = 'Dynatrace Automation Reporting'
-    env_name_supplied = environment.get_env_name(friendly_function_name)
-    # For easy control from IDE
-    # env_name_supplied = 'Prod'
-    # env_name_supplied = 'NonProd'
-    # env_name_supplied = 'Prep'
-    # env_name_supplied = 'Dev'
-    # env_name_supplied = 'Personal'
-    # env_name_supplied = 'FreeTrial1'
-    env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
-    process(env, token, True)
-    
-    
+	friendly_function_name = 'Dynatrace Automation Reporting'
+	env_name_supplied = environment.get_env_name(friendly_function_name)
+	# For easy control from IDE
+	# env_name_supplied = 'Prod'
+	# env_name_supplied = 'NonProd'
+	# env_name_supplied = 'Prep'
+	# env_name_supplied = 'Dev'
+	# env_name_supplied = 'Personal'
+	# env_name_supplied = 'FreeTrial1'
+	env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
+	process(env, token)
+
+
 if __name__ == '__main__':
 	main()

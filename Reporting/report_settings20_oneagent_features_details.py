@@ -2,79 +2,38 @@ import urllib.parse
 
 from Reuse import dynatrace_api
 from Reuse import environment
+from Reuse import report_writer
 
 
-def summarize(env, token):
-	return process(env, token, False)
+def process(env, token):
+    rows = []
+
+    endpoint = '/api/v2/settings/objects'
+    schema_ids = 'builtin:oneagent.features'
+    schema_ids_param = f'schemaIds={schema_ids}'
+    raw_params = schema_ids_param + '&scopes=environment&fields=schemaId,value,Summary&pageSize=500'
+    params = urllib.parse.quote(raw_params, safe='/,&=')
+    settings_object = dynatrace_api.get(env, token, endpoint, params)[0]
+    items = settings_object.get('items', [])
+    for item in items:
+        value = item.get('value')
+        summary = item.get('summary').replace('\\', '')
+        enabled = value.get('enabled')
+        rows.append((summary, enabled))
+
+    rows = sorted(rows)
+    report_name = 'OneAgent Features'
+    report_writer.initialize_text_file(None)
+    report_headers = ('Summary', 'Enabled')
+    report_writer.write_console(report_name, report_headers, rows, delimiter='|')
+    report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
+    report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
+    report_writer.write_html(None, report_name, report_headers, rows)
 
 
-def process_oneagent_features(env, token, print_mode):
-	summary = []
-	# findings = []
-
-	endpoint = '/api/v2/settings/objects'
-	schema_ids = 'builtin:oneagent.features'
-	schema_ids_param = f'schemaIds={schema_ids}'
-	raw_params = schema_ids_param + '&scopes=environment&fields=schemaId,value,Summary&pageSize=500'
-	params = urllib.parse.quote(raw_params, safe='/,&=')
-	settings_object = dynatrace_api.get(env, token, endpoint, params)[0]
-	items = settings_object.get('items', [])
-
-	lines = []
-
-	if items:
-		for item in items:
-			value = item.get('value')
-			summary = item.get('summary')
-			enabled = value.get('enabled')
-
-			# schema_id = item.get('schemaId')
-			# instrumentation = value.get('instrumentation', 'False')
-			# key = value.get('key')
-			# value_string = str(value)
-			# value_string = value_string.replace('{', '')
-			# value_string = value_string.replace('}', '')
-			# value_string = value_string.replace("'", "")
-
-			# if enabled == 'False':
-			if True:
-				# lines.append(str(key) + ': ' + str(instrumentation))
-				# lines.append(str(key))
-				lines.append(f'{summary}:{enabled}')
-
-	# if print_mode:
-				# print(schemaId + ': ' + value_string)
-
-			# add_findings(findings, schema_id, item, env, name)
-
-	if print_mode:
-		print_list(sorted(lines))
-
-	summary = sorted(summary)
-
-	# if len(findings) > 0:
-	# 	summary.append('Web Application "' + name + '" findings:')
-	# 	summary.extend(findings)
-	# else:
-	# 	summary.append('Web Application "' + name + '" has no findings')
-
-	if print_mode:
-		pass
-		# print('Total Schemas: ' + str(count_total))
-		# print('')
-		# print_list(summary)
-
-	return summary
-
-
-def process(env, token, print_mode):
-	return process_oneagent_features(env, token, print_mode)
-
-
-def print_list(any_list):
-	for line in any_list:
-		line = line.replace('are 0', 'are no')
-		print(line)
+def write_strings(string_list):
+    report_writer.write_console_plain_text(string_list)
+    report_writer.write_plain_text(None, string_list)
 
 
 def main():
@@ -88,8 +47,8 @@ def main():
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'FreeTrial1'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
-    process(env, token, True)
+    process(env, token)
     
     
 if __name__ == '__main__':
-	main()
+    main()

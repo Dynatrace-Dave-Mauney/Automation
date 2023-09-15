@@ -1,19 +1,22 @@
 from Reuse import dynatrace_api
 from Reuse import environment
+from Reuse import report_writer
 
 
 def summarize(env, token):
-    return process(env, token, False)
+    return process_report(env, token, True)
 
 
-def process(env, token, print_mode):
+def process(env, token):
+    return process_report(env, token, False)
+
+
+def process_report(env, token, summary_mode):
+    rows = []
     summary = []
     endpoint = '/api/config/v1/anomalyDetection/applications'
     params = ''
     anomaly_json = dynatrace_api.get(env, token, endpoint, params)[0]
-
-    # DEBUG
-    # print(anomaly_json)
 
     default_response_time_degradation_detection_mode = 'DETECT_AUTOMATICALLY'
     default_response_time_degradation_milliseconds = 100
@@ -53,6 +56,14 @@ def process(env, token, print_mode):
         slowest_response_time_degradation_milliseconds = response_time_degradation_automatic_detection.get('slowestResponseTimeDegradationMilliseconds')
         slowest_response_time_degradation_percent = response_time_degradation_automatic_detection.get('slowestResponseTimeDegradationPercent')
         response_time_degradation_load_threshold = response_time_degradation_automatic_detection.get('loadThreshold')
+        response_time_degradation_or_threshold_milliseconds = response_time_degradation_milliseconds
+        response_time_degradation_or_threshold_percent = response_time_degradation_percent
+        slowest_response_time_degradation_or_threshold_milliseconds = slowest_response_time_degradation_milliseconds
+        slowest_response_time_degradation_or_threshold_percent = slowest_response_time_degradation_percent
+        response_time_degradation_or_threshold_milliseconds_label = 'Response Time Degradation Milliseconds'
+        response_time_degradation_or_threshold_percent_label = 'Response Time Degradation Percent'
+        slowest_response_time_degradation_or_threshold_milliseconds_label = 'Slowest Response Time Degradation Milliseconds'
+        slowest_response_time_degradation_or_threshold_percent_label = 'Slowest Response Time Degradation Percent'
     else:
         response_time_degradation_thresholds_detection = response_time_degradation.get('thresholds')
         response_time_threshold_milliseconds = response_time_degradation_thresholds_detection.get('responseTimeThresholdMilliseconds')
@@ -60,6 +71,14 @@ def process(env, token, print_mode):
         slowest_response_time_threshold_milliseconds = response_time_degradation_thresholds_detection.get('slowestResponseTimeThresholdMilliseconds')
         slowest_response_time_threshold_percent = response_time_degradation_thresholds_detection.get('slowestResponseTimeThresholdPercent')
         response_time_degradation_load_threshold = response_time_degradation_thresholds_detection.get('loadThreshold')
+        response_time_degradation_or_threshold_milliseconds = response_time_threshold_milliseconds
+        response_time_degradation_or_threshold_percent = response_time_threshold_percent
+        slowest_response_time_degradation_or_threshold_milliseconds = slowest_response_time_threshold_milliseconds
+        slowest_response_time_degradation_or_threshold_percent = slowest_response_time_threshold_percent
+        response_time_degradation_or_threshold_milliseconds_label = 'Response Time Threshold Milliseconds'
+        response_time_degradation_or_threshold_percent_label = 'Response Time Threshold Percent'
+        slowest_response_time_degradation_or_threshold_milliseconds_label = 'Slowest Response Time Threshold Milliseconds'
+        slowest_response_time_degradation_or_threshold_percent_label = 'Slowest Response Time Threshold Percent'
 
     traffic_drop_enabled = traffic_drop.get('enabled')
     traffic_drop_percent = traffic_drop.get('trafficDropPercent')
@@ -87,39 +106,26 @@ def process(env, token, print_mode):
     # failing_service_call_percentage_increase_absolute = 9
     # failing_service_call_percentage_increase_relative = 99
 
-    if print_mode:
-        print('Response Time Degradation Settings:')
-        print('detectionMode:                                ' + response_time_degradation_detection_mode)
-        if response_time_degradation_detection_mode == 'DETECT_AUTOMATICALLY':
-            print('responseTimeDegradationMilliseconds:          ' + str(response_time_degradation_milliseconds))
-            print('responseTimeDegradationPercent:               ' + str(response_time_degradation_percent))
-            print('slowestResponseTimeDegradationMilliseconds:   ' + str(slowest_response_time_degradation_milliseconds))
-            print('slowestResponseTimeDegradationPercent:        ' + str(slowest_response_time_degradation_percent))
-        if response_time_degradation_detection_mode == 'DETECT_USING_FIXED_THRESHOLDS':
-            print('responseTimeThresholdMilliseconds:            ' + str(response_time_threshold_milliseconds))
-            print('responseTimeThresholdPercent:                 ' + str(response_time_threshold_percent))
-            print('slowestResponseTimeThresholdMilliseconds:     ' + str(slowest_response_time_threshold_milliseconds))
-            print('slowestResponseTimeThresholdPercent:          ' + str(slowest_response_time_threshold_percent))
-        print('loadThreshold:                                ' + response_time_degradation_load_threshold)
-
-        print('Traffic Drop Settings:')
-        print('Traffic Drop enabled:                         ' + str(traffic_drop_enabled))
-        print('trafficDropPercent:                           ' + str(traffic_drop_percent))
-
-        print('Traffic Spike Settings:')
-        print('Traffic Spike enabled:                        ' + str(traffic_spike_enabled))
-        print('trafficSpikePercent:                          ' + str(traffic_spike_percent))
-
-        print('Failure Rate Increase Settings:')
-        print('detectionMode:                                ' + failure_rate_increase_detection_mode)
-        print('failingServiceCallPercentageIncreaseAbsolute: ' + str(failing_service_call_percentage_increase_absolute))
-        print('failingServiceCallPercentageIncreaseRelative: ' + str(failing_service_call_percentage_increase_relative))
+    if not summary_mode:
+        rows.append(('Response Time Degradation Detection Mode', response_time_degradation_detection_mode))
+        rows.append((response_time_degradation_or_threshold_milliseconds_label, response_time_degradation_or_threshold_milliseconds))
+        rows.append((response_time_degradation_or_threshold_percent_label, response_time_degradation_or_threshold_percent))
+        rows.append((slowest_response_time_degradation_or_threshold_milliseconds_label, slowest_response_time_degradation_or_threshold_milliseconds))
+        rows.append((slowest_response_time_degradation_or_threshold_percent_label, slowest_response_time_degradation_or_threshold_percent))
+        rows.append(('Response Time Degradation Load Threshold', response_time_degradation_load_threshold))
+        rows.append(('Traffic Drop Enabled', str(traffic_drop_enabled)))
+        rows.append(('Traffic Drop Percent', traffic_drop_percent))
+        rows.append(('Traffic Spike Enabled', str(traffic_spike_enabled)))
+        rows.append(('Traffic Spike Percent', traffic_spike_percent))
+        rows.append(('Failure Rate Increase Detection Mode', failure_rate_increase_detection_mode))
+        rows.append(('Failing Service Call Percentage Increase Absolute', failing_service_call_percentage_increase_absolute))
+        rows.append(('Failing Service Call Percentage Increase Relative', failing_service_call_percentage_increase_relative))
 
     if response_time_degradation_detection_mode == default_response_time_degradation_detection_mode and \
-        response_time_degradation_milliseconds == default_response_time_degradation_milliseconds and \
-        response_time_degradation_percent == default_response_time_degradation_percent and \
-        slowest_response_time_degradation_milliseconds == default_slowest_response_time_degradation_milliseconds and \
-        slowest_response_time_degradation_percent == default_slowest_response_time_degradation_percent and \
+        response_time_degradation_or_threshold_milliseconds == default_response_time_degradation_milliseconds and \
+        response_time_degradation_or_threshold_percent == default_response_time_degradation_percent and \
+        slowest_response_time_degradation_or_threshold_milliseconds == default_slowest_response_time_degradation_milliseconds and \
+        slowest_response_time_degradation_or_threshold_percent == default_slowest_response_time_degradation_percent and \
         response_time_degradation_load_threshold == default_response_time_degradation_load_threshold and \
         traffic_drop_enabled == default_traffic_drop_enabled and \
         traffic_drop_percent == default_traffic_drop_percent and \
@@ -135,23 +141,23 @@ def process(env, token, print_mode):
         if response_time_degradation_detection_mode != default_response_time_degradation_detection_mode:
             summary.append('detectionMode:                                ' + response_time_degradation_detection_mode + ' (vs. default of ' + default_response_time_degradation_detection_mode + ')')
         if response_time_degradation_detection_mode == 'DETECT_AUTOMATICALLY':
-            if response_time_degradation_milliseconds != default_response_time_degradation_milliseconds:
-                summary.append('responseTimeDegradationMilliseconds:          ' + str(response_time_degradation_milliseconds) + ' (vs. default of ' + str(default_response_time_degradation_milliseconds) + ')')
-            if response_time_degradation_percent != default_response_time_degradation_percent:
-                summary.append('responseTimeDegradationPercent:               ' + str(response_time_degradation_percent) + ' (vs. default of ' + str(default_response_time_degradation_percent) + ')')
-            if slowest_response_time_degradation_milliseconds != default_slowest_response_time_degradation_milliseconds:
-                summary.append('slowestResponseTimeDegradationMilliseconds:   ' + str(slowest_response_time_degradation_milliseconds) + ' (vs. default of ' + str(default_slowest_response_time_degradation_milliseconds) + ')')
-            if slowest_response_time_degradation_percent != default_slowest_response_time_degradation_percent:
-                summary.append('slowestResponseTimeDegradationPercent:        ' + str(slowest_response_time_degradation_percent) + ' (vs. default of ' + str(default_slowest_response_time_degradation_percent) + ')')
+            if response_time_degradation_or_threshold_milliseconds != default_response_time_degradation_milliseconds:
+                summary.append('responseTimeDegradationMilliseconds:          ' + str(response_time_degradation_or_threshold_milliseconds) + ' (vs. default of ' + str(default_response_time_degradation_milliseconds) + ')')
+            if response_time_degradation_or_threshold_percent != default_response_time_degradation_percent:
+                summary.append('responseTimeDegradationPercent:               ' + str(response_time_degradation_or_threshold_percent) + ' (vs. default of ' + str(default_response_time_degradation_percent) + ')')
+            if slowest_response_time_degradation_or_threshold_milliseconds != default_slowest_response_time_degradation_milliseconds:
+                summary.append('slowestResponseTimeDegradationMilliseconds:   ' + str(slowest_response_time_degradation_or_threshold_milliseconds) + ' (vs. default of ' + str(default_slowest_response_time_degradation_milliseconds) + ')')
+            if slowest_response_time_degradation_or_threshold_percent != default_slowest_response_time_degradation_percent:
+                summary.append('slowestResponseTimeDegradationPercent:        ' + str(slowest_response_time_degradation_or_threshold_percent) + ' (vs. default of ' + str(default_slowest_response_time_degradation_percent) + ')')
         if response_time_degradation_detection_mode == 'DETECT_USING_FIXED_THRESHOLDS':
-            if response_time_threshold_milliseconds != default_response_time_threshold_milliseconds:
-                summary.append('responseTimeThresholdMilliseconds:            ' + str(response_time_threshold_milliseconds) + ' (vs. default of ' + str(default_response_time_threshold_milliseconds) + ')')
-            if response_time_threshold_percent != default_response_time_threshold_percent:
-                summary.append('responseTimeDegradationPercent:               ' + str(response_time_threshold_percent) + ' (vs. default of ' + str(default_response_time_threshold_percent) + ')')
-            if slowest_response_time_threshold_milliseconds != default_slowest_response_time_threshold_milliseconds:
-                summary.append('slowestResponseTimeDegradationMilliseconds:   ' + str(slowest_response_time_threshold_milliseconds) + ' (vs. default of ' + str(default_slowest_response_time_threshold_milliseconds) + ')')
-            if slowest_response_time_threshold_percent != default_slowest_response_time_threshold_percent:
-                summary.append('slowestResponseTimeDegradationPercent:        ' + str(slowest_response_time_threshold_percent) + ' (vs. default of ' + str(default_slowest_response_time_threshold_percent) + ')')
+            if response_time_degradation_or_threshold_milliseconds != default_response_time_threshold_milliseconds:
+                summary.append('responseTimeThresholdMilliseconds:            ' + str(response_time_degradation_or_threshold_milliseconds) + ' (vs. default of ' + str(default_response_time_threshold_milliseconds) + ')')
+            if response_time_degradation_or_threshold_percent != default_response_time_threshold_percent:
+                summary.append('responseTimeDegradationPercent:               ' + str(response_time_degradation_or_threshold_percent) + ' (vs. default of ' + str(default_response_time_threshold_percent) + ')')
+            if slowest_response_time_degradation_or_threshold_milliseconds != default_slowest_response_time_threshold_milliseconds:
+                summary.append('slowestResponseTimeDegradationMilliseconds:   ' + str(slowest_response_time_degradation_or_threshold_milliseconds) + ' (vs. default of ' + str(default_slowest_response_time_threshold_milliseconds) + ')')
+            if slowest_response_time_degradation_or_threshold_percent != default_slowest_response_time_threshold_percent:
+                summary.append('slowestResponseTimeDegradationPercent:        ' + str(slowest_response_time_degradation_or_threshold_percent) + ' (vs. default of ' + str(default_slowest_response_time_threshold_percent) + ')')
         if response_time_degradation_load_threshold != default_response_time_degradation_load_threshold:
             summary.append('loadThreshold:                                ' + response_time_degradation_load_threshold + ' (vs. default of ' + str(default_response_time_degradation_load_threshold) + ')')
         if traffic_drop_enabled != default_traffic_drop_enabled:
@@ -169,17 +175,17 @@ def process(env, token, print_mode):
         if failing_service_call_percentage_increase_relative != default_failing_service_call_percentage_increase_relative:
             summary.append('failingServiceCallPercentageIncreaseRelative: ' + str(failing_service_call_percentage_increase_relative) + ' (vs. default of ' + str(default_failing_service_call_percentage_increase_relative) + ')')
 
-    if print_mode:
-        print_list(summary)
-        print('Done!')
+    if not summary_mode:
+        report_name = 'Applications Anomaly Detection'
+        report_writer.initialize_text_file(None)
+        report_headers = ['Setting', 'Value']
+        report_writer.write_console(report_name, report_headers, rows, delimiter=': ')
+        report_writer.write_text(None, report_name, report_headers, rows, delimiter=': ')
+        write_strings(summary)
+        report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
+        report_writer.write_html(None, report_name, report_headers, rows)
 
     return summary
-
-
-def print_list(any_list):
-    for line in any_list:
-        line = line.replace('are 0', 'are no')
-        print(line)
 
 
 def convert_boolean(boolean):
@@ -188,6 +194,11 @@ def convert_boolean(boolean):
     else:
         return'off'
         
+
+def write_strings(string_list):
+    report_writer.write_console_plain_text(string_list)
+    report_writer.write_plain_text(None, string_list)
+
 
 def main():
     friendly_function_name = 'Dynatrace Automation Reporting'
@@ -200,7 +211,7 @@ def main():
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'FreeTrial1'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
-    process(env, token, True)
+    process(env, token)
     
     
 if __name__ == '__main__':

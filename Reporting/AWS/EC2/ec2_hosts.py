@@ -1,3 +1,6 @@
+# TODO: Report Upgrade
+#       Cannot test currently
+
 import json
 import urllib.parse
 
@@ -29,7 +32,7 @@ def process():
 	pass
 
 	formatted_line_list = []
-	raw_endpoint = '/api/v2/entities?pageSize=4000&entitySelector=type(EC2_INSTANCE)&fields=fromRelationships.isAccessibleBy'
+	raw_endpoint = '/api/v2/entities?pageSize=4000&from=now-5y&entitySelector=type(EC2_INSTANCE)&fields=fromRelationships.isAccessibleBy'
 	endpoint = urllib.parse.quote(raw_endpoint, safe='/,&=?')
 	r = dynatrace_api.get_object_list(env, token, endpoint)
 	ec2_instance_json = json.loads(r.text)

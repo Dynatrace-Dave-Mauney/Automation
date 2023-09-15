@@ -1,12 +1,18 @@
 from Reuse import dynatrace_api
 from Reuse import environment
+from Reuse import report_writer
 
 
 def summarize(env, token):
-    return process(env, token, False)
+    return process_report(env, token, True)
 
 
-def process(env, token, print_mode):
+def process(env, token):
+    return process_report(env, token, False)
+
+
+def process_report(env, token, summary_mode):
+    rows = []
     summary = []
 
     count_total = 0
@@ -17,10 +23,6 @@ def process(env, token, print_mode):
     endpoint = '/api/config/v1/dashboards'
     params = ''
     dashboards_json_list = dynatrace_api.get(env, token, endpoint, params)
-    # print(dashboards_json_list)
-
-    if print_mode:
-        print('id' + '|' + 'name' + '|' + 'owner' + '|' + 'shared' + '|' + 'preset')
 
     for dashboards_json in dashboards_json_list:
         inner_dashboards_json_list = dashboards_json.get('dashboards')
@@ -36,8 +38,8 @@ def process(env, token, print_mode):
             shared = dashboard_metadata.get('shared', False)
             preset = dashboard_metadata.get('preset', False)
 
-            if print_mode:
-                print(entity_id + '|' + name + '|' + owner + '|' + str(shared) + '|' + str(preset))
+            if not summary_mode:
+                rows.append((name, entity_id, owner, str(shared), str(preset)))
 
             count_total += 1
             if shared:
@@ -47,26 +49,30 @@ def process(env, token, print_mode):
             if owner == 'Dynatrace':
                 count_dynatrace_owned += 1
 
-    if print_mode:
-        print('Total Dashboards:   ' + str(count_total))
-        print('Shared:             ' + str(count_shared))
-        print('Preset:             ' + str(count_preset))
-        print('Dynatrace Created:  ' + str(count_dynatrace_owned))
-
     summary.append('There are ' + str(count_total) + ' dashboards currently defined.  ' +
                    str(count_shared) + ' are currently shared. ' + str(count_preset) + ' are defined as preset. ' + str(count_dynatrace_owned) + ' were created by Dynatrace.')
 
-    if print_mode:
-        print_list(summary)
-        print('Done!')
+    if not summary_mode:
+        rows = sorted_rows()
+        report_name = 'Dashboards (Extended Details)'
+        report_writer.initialize_text_file(None)
+        report_headers = ('name', 'id', 'owner', 'shared', 'preset')
+        report_writer.write_console(report_name, report_headers, rows, delimiter='|')
+        report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
+        write_strings(['Total Dashboards: ' + str(count_total)])
+        write_strings(['Shared Dashboards: ' + str(count_shared)])
+        write_strings(['Shared Dashboards: ' + str(count_preset)])
+        write_strings(['Dynatrace Created Dashboards: ' + str(count_dynatrace_owned)])
+        write_strings(summary)
+        report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
+        report_writer.write_html(None, report_name, report_headers, rows)
 
     return summary
 
 
-def print_list(any_list):
-    for line in any_list:
-        line = line.replace('are 0', 'are no')
-        print(line)
+def write_strings(string_list):
+    report_writer.write_console_plain_text(string_list)
+    report_writer.write_plain_text(None, string_list)
 
 
 def main():
@@ -80,7 +86,7 @@ def main():
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'FreeTrial1'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
-    process(env, token, True)
+    process(env, token)
     
     
 if __name__ == '__main__':

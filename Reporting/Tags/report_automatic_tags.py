@@ -1,13 +1,8 @@
 import urllib.parse
-from datetime import date
 
 from Reuse import dynatrace_api
 from Reuse import environment
 from Reuse import report_writer
-
-env_name = ''
-
-html_file_path = '../../$Output/Reporting'
 
 
 def process(env, token):
@@ -18,8 +13,6 @@ def process(env, token):
 
     rows = []
 
-    html_file_name = f'{html_file_path}/TagSummary_For_{env_name}.html'
-
     for auto_tags_json in auto_tags_json_list:
         inner_auto_tags_json_list = auto_tags_json.get('values')
         for inner_auto_tags_json in inner_auto_tags_json_list:
@@ -27,32 +20,16 @@ def process(env, token):
             description = inner_auto_tags_json.get('description', '')
             rows.append((name, description))
 
-    write_console(sorted(rows))
-    write_html(html_file_name, sorted(rows))
-
-    print(f'Output written to {html_file_name}')
-
-
-def write_console(rows):
-    today = date.today()
-    run_date = str(today.month) + '/' + str(today.day) + '/' + str(today.year)
-    title = f'Dynatrace Tag Summary for {env_name} As Of {run_date}'
-    headers = ('Tag Name', 'Tag Description')
-    delimiter = '|'
-    report_writer.write_console(title, headers, rows, delimiter)
-
-
-def write_html(html_file_name, rows):
-    today = date.today()
-    run_date = str(today.month) + '/' + str(today.day) + '/' + str(today.year)
-    page_heading = f'Dynatrace Tag Summary for {env_name} As Of {run_date}'
-    table_headers = ('Tag Name', 'Tag Description')
-    report_writer.write_html(html_file_name, page_heading, table_headers, rows)
+    report_name = 'Automatic Tags'
+    report_writer.initialize_text_file(None)
+    report_headers = ('name', 'description')
+    report_writer.write_console(report_name, report_headers, rows, delimiter='|')
+    report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
+    report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
+    report_writer.write_html(None, report_name, report_headers, rows)
 
 
 def main():
-    global env_name
-
     friendly_function_name = 'Dynatrace Automation Reporting'
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE

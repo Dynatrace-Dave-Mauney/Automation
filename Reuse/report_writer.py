@@ -1,9 +1,19 @@
+import os
+import sys
 import xlsxwriter
+
+from Reuse import directories_and_files
+from Reuse import environment
 
 
 def write_console(title, headers, rows, delimiter):
     console_tuple_list = [(title, headers, rows, delimiter)]
     write_console_group(console_tuple_list)
+
+
+def write_console_plain_text(rows):
+    for row in rows:
+        print(row)
 
 
 def write_console_group(console_tuple_list):
@@ -41,6 +51,11 @@ def write_xlsx(file_name, worksheet_name, headers, rows, header_format, auto_fil
 
 
 def write_xlsx_worksheets(file_name, worksheet_tuple_list):
+    if not file_name:
+        file_name = prepare_output_file('xlsx')
+
+    # print(f'XLSX Output File: {file_name}')
+
     # Write one or more worksheets to an Excel workbook file
     workbook = xlsxwriter.Workbook(file_name)
 
@@ -95,6 +110,10 @@ def write_html(file_name, page_heading, table_headers, rows):
 
 
 def write_html_group(file_name, html_tuple_list):
+    if not file_name:
+        file_name = prepare_output_file('html')
+
+    # print(f'HTML Output File: {file_name}')
 
     html_top = '''<html>
     <body>
@@ -166,6 +185,88 @@ def write_h1_heading(outfile, heading):
     outfile.write('\n')
 
 
+def initialize_text_file(file_name):
+    if not file_name:
+        file_name = prepare_output_file('txt')
+
+    # print(f'Text Output File Initialized: {file_name}')
+    with open(file_name, 'w', encoding='utf8') as file:
+        file.write('')
+
+
+def write_text(file_name, title, headers, rows, delimiter):
+    text_tuple_list = [(title, headers, rows, delimiter)]
+    write_text_group(file_name, text_tuple_list)
+
+
+def write_plain_text(file_name, rows):
+    if not file_name:
+        file_name = prepare_output_file('txt')
+
+    # print(f'Text Output File Appended (Strings): {file_name}')
+    with open(file_name, 'a', encoding='utf8') as file:
+        for row in rows:
+            write_line(file, row)
+
+
+def write_text_group(file_name, text_tuple_list):
+    if not file_name:
+        file_name = prepare_output_file('txt')
+
+    # print(f'Text Output File Appended (Tuples): {file_name}')
+    with open(file_name, 'a', encoding='utf8') as file:
+        for text_tuple in text_tuple_list:
+            title, headers, rows, delimiter = text_tuple
+
+            write_line(file, title)
+
+            max_column_index = len(headers) - 1
+
+            column_index = 0
+            output = ''
+            for header in headers:
+                output += header
+                if column_index < max_column_index:
+                    output += delimiter
+                column_index += 1
+            write_line(file, output)
+
+            for row in rows:
+                column_index = 0
+                output = ''
+                for column in row:
+                    output += str(column)
+                    if column_index < max_column_index:
+                        output += delimiter
+                    column_index += 1
+                write_line(file, output)
+
+
 def write_line(outfile, content):
     outfile.write(content)
     outfile.write('\n')
+
+
+def prepare_output_file(file_extension):
+    # Create output directory, if needed
+    # Return a generated output file name based on the Python module name, using the file extension specified
+    default_output_directory = '.'
+    output_directory = environment.get_output_directory_name(default_output_directory)
+    current_working_directory = os.getcwd()
+    # print(f'Current working directory: {current_working_directory}')
+    if not os.path.isdir(output_directory):
+        directories_and_files.make_directory(output_directory)
+        # print(f'Output directory created: {output_directory}')
+    # else:
+    #     print(f'Output directory already exists: {output_directory}')
+
+    calling_module = sys.argv[0]
+    # print(type(calling_module))
+    # print(calling_module)
+    base_module_name = calling_module.replace(current_working_directory, '').replace('\\', '').replace('/', '')
+    base_file_name = base_module_name.replace('.py', f'.{file_extension}')
+    # full_file_name = f'{output_directory}/{base_file_name}'
+    full_file_name = os.path.join(output_directory, base_file_name)
+    # print(f'full_file_name: {full_file_name}')
+
+    return full_file_name

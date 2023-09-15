@@ -1,19 +1,17 @@
-import sys
+import datetime
 import urllib
 
 from Reuse import dynatrace_api
 from Reuse import environment
+from Reuse import report_writer
 
 
 def process(env, token):
+    rows = []
     endpoint = '/api/v2/metrics'
     raw_params = 'pageSize=500&fields=+created'
-    # raw_params = 'pageSize=500'
     params = urllib.parse.quote(raw_params, safe='/,&=')
     metrics_json_list = dynatrace_api.get(env, token, endpoint, params)
-    print('metric_id' + '|' + 'displayName' + '|' + 'created')
-    # print('metric_id' + '|' + 'displayName')
-    # print('metricId')
     for metrics_json in metrics_json_list:
         inner_metrics_json_list = metrics_json.get('metrics')
         for inner_metrics_json in inner_metrics_json_list:
@@ -23,22 +21,31 @@ def process(env, token):
             # if 'calc:service' not in metric_id:
             #    continue
 
-            # print(inner_metrics_json)
-
             display_name = inner_metrics_json.get('displayName')
             created = inner_metrics_json.get('created')
             # https://www.epochconverter.com/
             # Use Epoch timestamp in milliseconds format
             # if created and created > 1668574800000:
-            #     print(metric_id + '|' + display_name + '|' + str(created))
-            # if created and created > 1000000000000:
-            print(metric_id + '|' + display_name + '|' + str(created))
-            # print(metric_id + '|' + display_name)
-            # print(metric_id)
-    print('Done!')
+            rows.append((metric_id, display_name, convert_epoch_in_milliseconds_to_local(created)))
+
+    rows = sorted(rows)
+    report_name = 'Metrics'
+    report_writer.initialize_text_file(None)
+    report_headers = ('ID', 'Display Name', 'Created')
+    report_writer.write_console(report_name, report_headers, rows, delimiter='|')
+    report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
+    report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
+    report_writer.write_html(None, report_name, report_headers, rows)
 
 
-def run():
+def convert_epoch_in_milliseconds_to_local(epoch):
+    if epoch is None or epoch == -1 or epoch == 0:
+        return ''
+    else:
+        return datetime.datetime.fromtimestamp(epoch / 1000).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+
+
+def main():
     friendly_function_name = 'Dynatrace Automation Reporting'
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
@@ -53,36 +60,5 @@ def run():
     process(env, token)
 
 
-def main(arguments):
-    usage = '''
-    metrics_report.py: Report Metrics 
-
-    Usage:    metrics_report.py <tenant/environment URL> <token>
-    Examples: metrics_report.py https://<TENANT>.live.dynatrace.com ABCD123ABCD123
-              metrics_report.py https://<TENANT>.dynatrace-managed.com/e/<ENV>> ABCD123ABCD123
-    '''
-
-    # print('args' + str(arguments))
-    if len(arguments) == 1:
-        run()
-        exit()
-    if len(arguments) < 2:
-        print(usage)
-        raise ValueError('Too few arguments!')
-    if len(arguments) > 3:
-        print(help)
-        raise ValueError('Too many arguments!')
-    if arguments[1] in ['-h', '--help']:
-        print(help)
-    elif arguments[1] in ['-v', '--version']:
-        print('1.0')
-    else:
-        if len(arguments) == 3:
-            process(arguments[1], arguments[2])
-        else:
-            print(usage)
-            raise ValueError('Incorrect arguments!')
-
-
 if __name__ == '__main__':
-    main(sys.argv)
+    main()

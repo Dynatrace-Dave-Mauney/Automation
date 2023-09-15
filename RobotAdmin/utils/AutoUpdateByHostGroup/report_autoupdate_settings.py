@@ -46,7 +46,6 @@ def get_host_group_auto_update_setting(host_group_id):
 
 
 def process():
-    xlsx_file_name = 'autoupdate.xlsx'
     rows = []
     global host_group_lookup
     load_host_group_lookup()
@@ -89,30 +88,25 @@ def process():
 
             rows.append((host_group, host_name, installer_version, host_group_id, host_id))
 
-    write_console(sorted(rows, key=lambda row: row[0].lower()))
-    write_xlsx(xlsx_file_name, sorted(rows, key=lambda row: row[0].lower()))
+    sorted_rows = sorted(rows, key=lambda row: row[0].lower())
 
+    report_name = 'Host Group Auto Update Details'
+    report_headers = ('Host Group Name', 'Host Name', 'Installer Version', 'Host Group ID', 'Host ID', 'Scope', 'Setting')
 
-def write_console(rows):
-    title = 'Host Group Auto Update Details'
-    headers = ('Host Group Name', 'Host Name', 'Installer Version', 'Host Group ID', 'Host ID', 'Scope', 'Setting')
-    delimiter = '|'
-    report_writer.write_console(title, headers, rows, delimiter)
-
-
-def write_xlsx(xlsx_file_name, rows):
-    worksheet_name = 'Host Group Auto Update Details'
-    headers = ('Host Group Name', 'Host Name', 'Installer Version', 'Host Group ID', 'Host ID', 'Scope', 'Setting')
-    header_format = None
-    auto_filter = (0, len(headers))
-    report_writer.write_xlsx(xlsx_file_name, worksheet_name, headers, rows, header_format, auto_filter)
+    report_writer.write_console(report_name, report_headers, sorted_rows, delimiter='|')
+    report_writer.write_xlsx(None, report_name, report_headers, sorted_rows, header_format=None, auto_filter=(0, len(report_headers)))
 
 
 if __name__ == '__main__':
-    # env_name, env, token = environment.get_environment('Prod')
-    # env_name, env, token = environment.get_environment('Prep')
-    # env_name, env, token = environment.get_environment('Dev')
-    env_name, env, token = environment.get_environment('Personal')
-    # env_name, env, token = environment.get_environment('FreeTrial1')
+    friendly_function_name = 'Dynatrace Automation Reporting'
+    env_name_supplied = environment.get_env_name(friendly_function_name)
+    # For easy control from IDE
+    # env_name_supplied = 'Prod'
+    # env_name_supplied = 'NonProd'
+    # env_name_supplied = 'Prep'
+    # env_name_supplied = 'Dev'
+    # env_name_supplied = 'Personal'
+    # env_name_supplied = 'FreeTrial1'
+    env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 
     process()

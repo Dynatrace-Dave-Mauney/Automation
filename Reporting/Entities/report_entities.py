@@ -2,9 +2,11 @@ import urllib.parse
 
 from Reuse import dynatrace_api
 from Reuse import environment
+from Reuse import report_writer
 
 
-def report_all_entity_types(env, token):
+def process(env, token):
+    rows = []
     entity_type_list = []
 
     endpoint = '/api/v2/entityTypes'
@@ -18,24 +20,32 @@ def report_all_entity_types(env, token):
             entity_type_list.append(entity_type)
 
     for entity_type in entity_type_list:
-        report_entity_type(env, token, entity_type)
+        rows.extend(process_entity_type(env, token, entity_type))
+
+    report_name = 'Entities'
+    report_writer.initialize_text_file(None)
+    report_headers = ('entityId', 'displayName')
+    report_writer.write_console(report_name, report_headers, rows, delimiter='|')
+    report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
+    report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
+    report_writer.write_html(None, report_name, report_headers, rows)
 
 
-def report_entity_type(env, token, entity_type):
+def process_entity_type(env, token, entity_type):
+    rows = []
     endpoint = '/api/v2/entities'
     entity_selector = 'type(' + entity_type + ')'
     params = '&entitySelector=' + urllib.parse.quote(entity_selector)
     entities_json_list = dynatrace_api.get(env, token, endpoint, params)
-    # print(entities_json_list)
 
     for entities_json in entities_json_list:
         inner_entities_json_list = entities_json.get('entities')
         for inner_entities_json in inner_entities_json_list:
-            # print(inner_entities_json)
             entity_id = inner_entities_json.get('entityId')
-            # entity_type = inner_entities_json.get('type')
             display_name = inner_entities_json.get('displayName')
-            print(entity_id + '|' + display_name)
+            rows.append((entity_id, display_name))
+
+    return rows
 
 
 def main():
@@ -50,16 +60,12 @@ def main():
     # env_name_supplied = 'FreeTrial1'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
     
-    print('entityId' + '|' + 'displayName')
-
-    report_all_entity_types(env, token)
-    exit()
+    process(env, token)
 
     # More selective techniques
-
-    # report_entity_type(env, token, 'PROCESS_GROUP')
-    # report_entity_type(env, token, 'SERVICE')
-    # report_entity_type(env, token, 'HOST')
+    # process_entity_type(env, token, 'PROCESS_GROUP')
+    # process_entity_type(env, token, 'SERVICE')
+    # process_entity_type(env, token, 'HOST')
 
     # entity_types_to_report = [
     #     'APPLICATION',
@@ -118,7 +124,7 @@ def main():
     # ]
     #
     # for entity_type in entity_types_to_report:
-    #     report_entity_type(env, token, entity_type)
+    #     process_entity_type(env, token, entity_type)
 
 
 if __name__ == '__main__':

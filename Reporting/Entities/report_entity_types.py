@@ -1,12 +1,18 @@
 from Reuse import dynatrace_api
 from Reuse import environment
+from Reuse import report_writer
 
 
 def summarize(env, token):
-    return process(env, token, False)
+    return process_report(env, token, True)
 
 
-def process(env, token, print_mode):
+def process(env, token):
+    return process_report(env, token, False)
+
+
+def process_report(env, token, summary_mode):
+    rows = []
     summary = []
 
     count_total = 0
@@ -15,37 +21,37 @@ def process(env, token, print_mode):
     params = ''
     entities_json_list = dynatrace_api.get(env, token, endpoint, params)
 
-    if print_mode:
-        print('id' + '|' + 'name')
-
     for entities_json in entities_json_list:
         inner_entities_json_list = entities_json.get('types')
         for inner_entities_json in inner_entities_json_list:
-            # print(inner_entities_json)
             entity_type = inner_entities_json.get('type')
             display_name = inner_entities_json.get('displayName')
-            if print_mode:
-                print(entity_type + '|' + display_name)
+            if not summary_mode:
+                rows.append((entity_type, display_name))
 
             count_total += 1
 
-    if print_mode:
-        print('Total entities: ' + str(count_total))
+    summary.append('There are ' + str(count_total) + ' entity types currently defined.')
 
-    summary.append('There are ' + str(count_total) + ' entities currently defined.')
-
-    if print_mode:
-        print_list(summary)
-        print('Done!')
+    if not summary_mode:
+        rows = sorted(rows)
+        report_name = 'Entity Types'
+        report_writer.initialize_text_file(None)
+        report_headers = ('id', 'name')
+        report_writer.write_console(report_name, report_headers, rows, delimiter='|')
+        report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
+        write_strings(['Total Entity Types: ' + str(count_total)])
+        write_strings(summary)
+        report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
+        report_writer.write_html(None, report_name, report_headers, rows)
 
     return summary
 
 
-def print_list(any_list):
-    for line in any_list:
-        line = line.replace('are 0', 'are no')
-        print(line)
-        
+def write_strings(string_list):
+    report_writer.write_console_plain_text(string_list)
+    report_writer.write_plain_text(None, string_list)
+
 
 def main():
     friendly_function_name = 'Dynatrace Automation Reporting'
@@ -59,7 +65,7 @@ def main():
     # env_name_supplied = 'FreeTrial1'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 
-    process(env, token, True)
+    process(env, token)
 
 
 if __name__ == '__main__':

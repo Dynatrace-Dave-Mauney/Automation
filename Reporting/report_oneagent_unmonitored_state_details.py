@@ -1,18 +1,9 @@
-# import json
-
 from Reuse import dynatrace_api
 from Reuse import environment
 from Reuse import report_writer
 
-report_name = 'Unmonitored OneAgents'
-report_headers = ['Host Name', 'ID', 'Monitoring State', 'Detailed Monitoring State', 'Monitoring Enabled Setting']
-xlsx_file_name = 'UnmonitoredOneAgents.xlsx'
-html_file_name = 'UnmonitoredOneAgents.html'
-
 
 def process(env, token):
-    print(f'XLSX File: {xlsx_file_name}')
-    print(f'HTML File: {html_file_name}')
     rows = []
 
     endpoint = '/api/v1/oneagents'
@@ -34,24 +25,12 @@ def process(env, token):
 
     sorted_rows = sorted(rows)
 
-    write_console(sorted_rows)
-    write_xlsx(sorted_rows)
-    write_html(sorted_rows)
+    report_name = 'Unmonitored OneAgents'
+    report_headers = ['Host Name', 'ID', 'Monitoring State', 'Detailed Monitoring State', 'Monitoring Enabled Setting']
 
-
-def write_console(rows):
-    delimiter = '|'
-    report_writer.write_console(report_name, report_headers, rows, delimiter)
-
-
-def write_xlsx(rows):
-    header_format = None
-    auto_filter = (2, 2)
-    report_writer.write_xlsx(xlsx_file_name, report_name, report_headers, rows, header_format, auto_filter)
-
-
-def write_html(rows):
-    report_writer.write_html(html_file_name, report_name, report_headers, rows)
+    report_writer.write_console(report_name, report_headers, sorted_rows, delimiter='|')
+    report_writer.write_xlsx(None, report_name, report_headers, sorted_rows, header_format=None, auto_filter=(2, 2))
+    report_writer.write_html(None, report_name, report_headers, sorted_rows)
 
 
 def main():

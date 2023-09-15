@@ -1,5 +1,6 @@
 from Reuse import dynatrace_api
 from Reuse import environment
+from Reuse import report_writer
 
 
 filter_by_owner = False
@@ -10,27 +11,18 @@ id_starts_with_list = ['00000000-dddd-bbbb-ffff']
 
 filter_by_id_not_starts_with = False
 id_not_starts_with_list = []
-# id_not_starts_with_list = [
-#     '00000000-dddd-bbbb-aaaa', # Curated/Sandbox/Alpha [VETTED]
-#     '00000000-dddd-bbbb-eeee', # AWS Supporting Services (Dynatrace Owner) [VETTED]
-#     'aaaaaaaa-0001', # Licensing Overview and Children [VETTED]
-#     'aaaaaaaa-0002', # 3rd Party XHR Detection [VETTED]
-#     'aaaaaaaa-bbbb-cccc-aaaa', # Billing, Host Health Breakdown [VETTED]
-#     'aaaaaaaa-bbbb-cccc-dddd-1', # Dynatrace Dashboard Generator [VETTED]
-#     'aaaaaaaa-bbbb-cccc-eeee-f', # AWS Supporting Services (Improved) [VETTED]
-#     'aaaaaaaa-bbbb-cccc-ffff', # Curated/Kafka [MERGED]
-#     'aaaaaaaa-ffff-ffff-ffff', # Dynatrace Self-Monitoring [VETTED]
-#     # Customer-specific manually created dashboards
-#     '64350c11-5cc5-46d9-b0ec-4a8b7dd78ac0',  # Amazon Connect Details (copy: 00000000-dddd-bbbb-aaaa-000000000006)
-#     '98d1533a-9d05-4d06-b207-fdb15d55a54d',  # Contact Center (copy: 00000000-dddd-bbbb-aaaa-000000000007)
-#     'bc9a70df-31fc-49af-9953-badf3f9b82ca', # User Engagement
-# ]
+
 
 def summarize(env, token):
-    return process(env, token, False)
+    return process_report(env, token, True)
 
 
-def process(env, token, print_mode):
+def process(env, token):
+    return process_report(env, token, False)
+
+
+def process_report(env, token, summary_mode):
+    rows = []
     summary = []
 
     count_total = 0
@@ -40,11 +32,6 @@ def process(env, token, print_mode):
     params = ''
     dashboards_json_list = dynatrace_api.get(env, token, endpoint, params)
 
-    if print_mode:
-        print('id|name|owner')
-
-    lines = []
-
     for dashboards_json in dashboards_json_list:
         inner_dashboards_json_list = dashboards_json.get('dashboards')
         for inner_dashboards_json in inner_dashboards_json_list:
@@ -52,11 +39,11 @@ def process(env, token, print_mode):
             name = inner_dashboards_json.get('name')
             owner = inner_dashboards_json.get('owner')
 
-            if print_mode:
+            if not summary_mode:
                 if not filter_by_owner or (filter_by_owner and target_owner in owner):
                     if not filter_by_id_starts_with or (filter_by_id_starts_with and id_starts_with_match(dashboard_id)):
                         if not filter_by_id_not_starts_with or (filter_by_id_not_starts_with and id_not_starts_with_match(dashboard_id)):
-                            lines.append(f'{dashboard_id}|{name}|{owner}')
+                            rows.append((name, dashboard_id, owner))
 
             if not filter_by_owner or (filter_by_owner and target_owner in owner):
                 if not filter_by_id_starts_with or (filter_by_id_starts_with and id_starts_with_match(dashboard_id)):
@@ -66,11 +53,7 @@ def process(env, token, print_mode):
             if not filter_by_owner and not filter_by_id_starts_with and not filter_by_id_not_starts_with and owner == 'Dynatrace':
                 count_dynatrace_owned += 1
 
-    if print_mode:
-        for line in sorted(lines):
-            print(line)
-
-    if print_mode:
+    if not summary_mode:
         print('Total Dashboards:   ' + str(count_total))
         if not filter_by_owner:
             print('Dynatrace Created:  ' + str(count_dynatrace_owned))
@@ -78,9 +61,18 @@ def process(env, token, print_mode):
         else:
             summary.append('There are ' + str(count_total) + ' dashboards currently defined owned by ' + target_owner)
 
-    if print_mode:
-        print_list(summary)
-        print('Done!')
+    if not summary_mode:
+        rows = sorted(rows)
+        report_name = 'Dashboards'
+        report_writer.initialize_text_file(None)
+        report_headers = ('name', 'id', 'owner')
+        report_writer.write_console(report_name, report_headers, rows, delimiter='|')
+        report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
+        write_strings(['Total Dashboards: ' + str(count_total)])
+        write_strings(['Dynatrace Created Dashboards: ' + str(count_dynatrace_owned)])
+        write_strings(summary)
+        report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
+        report_writer.write_html(None, report_name, report_headers, rows)
 
     return summary
 
@@ -103,10 +95,9 @@ def id_not_starts_with_match(dashboard_id):
     return True
 
 
-def print_list(any_list):
-    for line in any_list:
-        line = line.replace('are 0', 'are no')
-        print(line)
+def write_strings(string_list):
+    report_writer.write_console_plain_text(string_list)
+    report_writer.write_plain_text(None, string_list)
 
 
 def main():
@@ -120,7 +111,7 @@ def main():
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'FreeTrial1'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
-    process(env, token, True)
+    process(env, token)
     
     
 if __name__ == '__main__':

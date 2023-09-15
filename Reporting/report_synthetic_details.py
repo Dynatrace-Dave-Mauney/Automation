@@ -2,13 +2,19 @@ import urllib.parse
 
 from Reuse import dynatrace_api
 from Reuse import environment
+from Reuse import report_writer
 
 
 def summarize(env, token):
-    return process(env, token, False)
+    return process_report(env, token, True)
 
 
-def process(env, token, print_mode):
+def process(env, token):
+    return process_report(env, token, False)
+
+
+def process_report(env, token, summary_mode):
+    rows = []
     summary = []
 
     count_total = 0
@@ -17,14 +23,11 @@ def process(env, token, print_mode):
     raw_params = 'pageSize=4000&entitySelector=type(SYNTHETIC_TEST)&fields=+properties,+toRelationships&to=-5m'
     params = urllib.parse.quote(raw_params, safe='/,&=?')
     entities_json_list = dynatrace_api.get(env, token, endpoint, params)
-    if print_mode:
-        print('entityId' + '|' + 'displayName' + '|' + 'detectedName' + '|' + 'Number of Steps')
     for entities_json in entities_json_list:
         inner_entities_json_list = entities_json.get('entities')
         for inner_entities_json in inner_entities_json_list:
             entity_id = inner_entities_json.get('entityId')
             display_name = inner_entities_json.get('displayName')
-
             properties = inner_entities_json.get('properties')
             number_of_steps = "0"
             detected_name = properties.get('detectedName', '')
@@ -32,28 +35,32 @@ def process(env, token, print_mode):
             if to_relationships:
                 number_of_steps = str(len(to_relationships.get('isStepOf')))
 
-            if print_mode:
-                print(entity_id + '|' + display_name + '|' + detected_name + '|' + number_of_steps)
+            if not summary_mode:
+                rows.append((display_name, detected_name, entity_id, number_of_steps))
 
             count_total += 1
 
-    if print_mode:
-        print('Total Synthetic Tests (Browser): ' + str(count_total))
-
     summary.append('There are ' + str(count_total) + ' browser synthetic tests currently defined and reporting data.')
 
-    if print_mode:
-        print_list(summary)
-        print('Done!')
+    if not summary_mode:
+        rows = sorted(rows)
+        report_name = 'Synthetic Browser Tests'
+        report_writer.initialize_text_file(None)
+        report_headers = ('displayName', 'detectedName', 'entityId', 'Number of Steps')
+        report_writer.write_console(report_name, report_headers, rows, delimiter='|')
+        report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
+        write_strings(['Total Synthetic Browser Tests: ' + str(count_total)])
+        write_strings(summary)
+        report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
+        report_writer.write_html(None, report_name, report_headers, rows)
 
     return summary
 
 
-def print_list(any_list):
-    for line in any_list:
-        line = line.replace('are 0', 'are no')
-        print(line)
-        
+def write_strings(string_list):
+    report_writer.write_console_plain_text(string_list)
+    report_writer.write_plain_text(None, string_list)
+
 
 def main():
     friendly_function_name = 'Dynatrace Automation Reporting'
@@ -66,7 +73,7 @@ def main():
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'FreeTrial1'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
-    process(env, token, True)
+    process(env, token)
     
     
 if __name__ == '__main__':

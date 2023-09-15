@@ -1,11 +1,18 @@
 from Reuse import dynatrace_api
 from Reuse import environment
+from Reuse import report_writer
+
 
 def summarize(env, token):
-    return process(env, token, False)
+    return process_report(env, token, True)
 
 
-def process(env, token, print_mode):
+def process(env, token):
+    return process_report(env, token, False)
+
+
+def process_report(env, token, summary_mode):
+    rows = []
     summary = []
 
     endpoint = '/api/config/v1/anomalyDetection/hosts'
@@ -25,7 +32,7 @@ def process(env, token, print_mode):
     default_network_tcp_problems_detection = False
     default_network_high_retransmission_detection = False
     default_disk_low_space_detection = True
-    default_disk_slow_writes_and_reads_detection = False
+    default_disk_slow_writes_and_reads_detection = True
     default_disk_low_inodes_detection = True
 
     connection_lost_detection = anomaly_json.get('connectionLostDetection').get('enabled')
@@ -61,22 +68,22 @@ def process(env, token, print_mode):
     # disk_slow_writes_and_reads_detection = False
     # disk_low_inodes_detection = False
 
-    if print_mode:
-        print('connectionLostDetection:                      ' + str(connection_lost_detection))
-        print('connectionLostDetectionOnGracefulShutdowns:   ' + str(connection_lost_detection_on_graceful_shutdowns))
-        print('highCpuSaturationDetection:                   ' + str(high_cpu_saturation_detection))
-        print('highMemoryDetection:                          ' + str(high_memory_detection))
-        print('highGcActivityDetection:                      ' + str(high_gc_activity_detection))
-        print('outOfMemoryDetection:                         ' + str(out_of_memory_detection))
-        print('outOfThreadsDetection:                        ' + str(out_of_threads_detection))
-        print('networkDroppedPacketsDetection:               ' + str(network_dropped_packets_detection))
-        print('networkErrorsDetection:                       ' + str(network_errors_detection))
-        print('highNetworkDetection:                         ' + str(high_network_detection))
-        print('networkTcpProblemsDetection:                  ' + str(network_tcp_problems_detection))
-        print('networkHighRetransmissionDetection:           ' + str(network_high_retransmission_detection))
-        print('diskLowSpaceDetection:                        ' + str(disk_low_space_detection))
-        print('diskSlowWritesAndReadsDetection:              ' + str(disk_slow_writes_and_reads_detection))
-        print('diskLowInodesDetection:                       ' + str(disk_low_inodes_detection))
+    if not summary_mode:
+        rows.append(('Connection Lost Detection', str(connection_lost_detection)))
+        rows.append(('Connection Lost Detection on Graceful Shutdowns', str(connection_lost_detection_on_graceful_shutdowns)))
+        rows.append(('High Cpu Saturation Detection', str(high_cpu_saturation_detection)))
+        rows.append(('High Memory Detection', str(high_memory_detection)))
+        rows.append(('High Garbage Collection Activity Detection', str(high_gc_activity_detection)))
+        rows.append(('Out of Memory Detection', str(out_of_memory_detection)))
+        rows.append(('Out of Threads Detection', str(out_of_threads_detection)))
+        rows.append(('Network Dropped Packets Detection', str(network_dropped_packets_detection)))
+        rows.append(('Network Errors Detection', str(network_errors_detection)))
+        rows.append(('High Network Detection', str(high_network_detection)))
+        rows.append(('Network TCP Problems Detection', str(network_tcp_problems_detection)))
+        rows.append(('Network High Retransmission Detection', str(network_high_retransmission_detection)))
+        rows.append(('Disk Low Space Detection', str(disk_low_space_detection)))
+        rows.append(('Disk Slow Writes and Reads Detection', str(disk_slow_writes_and_reads_detection)))
+        rows.append(('Disk Low Inodes Detection', str(disk_low_inodes_detection)))
 
     if connection_lost_detection == default_connection_lost_detection and \
         connection_lost_detection_on_graceful_shutdowns == default_connection_lost_detection_on_graceful_shutdowns and \
@@ -128,17 +135,17 @@ def process(env, token, print_mode):
         if disk_low_inodes_detection != default_disk_low_inodes_detection:
             summary.append('diskLowInodesDetection:                     ' + str(disk_low_inodes_detection) + ' (vs. default of ' + str(default_disk_low_inodes_detection) + ')')
 
-    if print_mode:
-        print_list(summary)
-        print('Done!')
+    if not summary_mode:
+        report_name = 'Host Anomaly Detection'
+        report_writer.initialize_text_file(None)
+        report_headers = ['Setting', 'Value']
+        report_writer.write_console(report_name, report_headers, rows, delimiter=': ')
+        report_writer.write_text(None, report_name, report_headers, rows, delimiter=': ')
+        write_strings(summary)
+        report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
+        report_writer.write_html(None, report_name, report_headers, rows)
 
     return summary
-
-
-def print_list(any_list):
-    for line in any_list:
-        line = line.replace('are 0', 'are no')
-        print(line)
 
 
 def convert_boolean(boolean):
@@ -147,6 +154,11 @@ def convert_boolean(boolean):
     else:
         return'off'
         
+
+def write_strings(string_list):
+    report_writer.write_console_plain_text(string_list)
+    report_writer.write_plain_text(None, string_list)
+
 
 def main():
     friendly_function_name = 'Dynatrace Automation Reporting'
@@ -159,7 +171,7 @@ def main():
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'FreeTrial1'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
-    process(env, token, True)
+    process(env, token)
     
     
 if __name__ == '__main__':

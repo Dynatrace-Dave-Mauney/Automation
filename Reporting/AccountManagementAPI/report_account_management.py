@@ -4,7 +4,7 @@ import requests
 
 from Reuse import environment
 from Reuse import report_writer
-from Reuse import directories_and_files
+# from Reuse import directories_and_files
 
 # Reporting for: https://api.dynatrace.com/spec/
 
@@ -305,9 +305,9 @@ def report_environments():
     environments = environments_object.get('tenantResources')
     headers = ['Name', 'ID']
     rows = []
-    for environment in environments:
-        environment_name = environment.get('name')
-        environment_id = environment.get('id')
+    for env in environments:
+        environment_name = env.get('name')
+        environment_id = env.get('id')
         rows.append((environment_name, environment_id))
 
     sorted_rows = sorted(rows, key=lambda row: str(row[0]).lower())
@@ -474,20 +474,12 @@ def process():
     # headers, rows = report_subscriptions()
     # append_report('Subscriptions', headers, rows, tuple_lists)
 
-    default_output_directory = '.'
-    output_directory = environment.get_output_directory_name(default_output_directory)
-    print(f'Current working directory: {os.getcwd()}')
-    print(f'Output directory: {output_directory}')
-    if not os.path.isdir(output_directory):
-        directories_and_files.make_directory(output_directory)
-
-    xlsx_file_name = f'{output_directory}/AccountManagementAPI.xlsx'
-    html_file_name = f'{output_directory}/AccountManagementAPI.html'
-
     # Write Reports
+    report_writer.initialize_text_file(None)
     report_writer.write_console_group(console_tuple_list)
-    report_writer.write_xlsx_worksheets(xlsx_file_name, worksheet_tuple_list)
-    report_writer.write_html_group(html_file_name, html_tuple_list)
+    report_writer.write_text_group(None, console_tuple_list)
+    report_writer.write_xlsx_worksheets(None, worksheet_tuple_list)
+    report_writer.write_html_group(None, html_tuple_list)
 
 
 if __name__ == '__main__':

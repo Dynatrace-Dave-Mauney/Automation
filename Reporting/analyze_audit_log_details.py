@@ -3,17 +3,23 @@
 import re
 from Reuse import dynatrace_api
 from Reuse import environment
+from Reuse import report_writer
 
 
 def summarize(env, token):
-    return process(env, token, False)
+    return process_report(env, token, True)
 
 
-def process(env, token, print_mode):
+def process(env, token):
+    return process_report(env, token, False)
+
+
+def process_report(env, token, summary_mode):
     timeframe = 'now-30d'
     # timeframe = 'now-5d'
     # timeframe = 'now-1h'
 
+    rows = []
     summary = []
 
     count_total = 0
@@ -26,14 +32,9 @@ def process(env, token, print_mode):
     params = 'pageSize=5000&from=' + timeframe
     auditlog_json_list = dynatrace_api.get(env, token, endpoint, params)
 
-    if print_mode:
-        print('eventType' + '|' + 'category' + '|' + 'entityId' + '|' + 'patch')
-
     for auditlog_json in auditlog_json_list:
-        # print(auditlog_json)
         inner_auditlog_json_list = auditlog_json.get('auditLogs')
         for inner_auditlog_json in inner_auditlog_json_list:
-            # print(inner_auditlog_json)
 
             event_type = inner_auditlog_json.get('eventType')
             category = inner_auditlog_json.get('category')
@@ -47,8 +48,8 @@ def process(env, token, print_mode):
                 if combo not in combo_list:
                     combo_list.append(combo)
 
-                if print_mode:
-                    print(event_type + '|' + category + '|' + entity_id + '|' + str(patch))
+                if not summary_mode:
+                    rows.append((event_type, category, entity_id, str(patch)))
 
             count_total += 1
 
@@ -61,9 +62,6 @@ def process(env, token, print_mode):
     timeframe_string = timeframe_string.replace('w', ' weeks')
     timeframe_string = timeframe_string.replace('M', ' months')
     timeframe_string = timeframe_string.replace('-', 'for the last ')
-
-    if print_mode:
-        print('Total audit log entries: ' + str(count_total) + ' (' + timeframe_string + ')')
 
     counts_event_type_str = sort_and_stringify_dictionary_items(counts_event_type)
 
@@ -78,17 +76,23 @@ def process(env, token, print_mode):
     for combo in combo_list:
         summary.append(combo)
 
-    if print_mode:
-        print_list(summary)
-        print('Done!')
+    if not summary_mode:
+        report_name = 'Audit Logs'
+        report_headers = ('eventType', 'category', 'entityId', 'patch')
+        report_writer.initialize_text_file(None)
+        report_writer.write_console(report_name, report_headers, rows, delimiter='|')
+        report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
+        write_strings(['Total audit log entries: ' + str(count_total) + ' (' + timeframe_string + ')'])
+        write_strings(summary)
+        report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
+        report_writer.write_html(None, report_name, report_headers, rows)
 
     return summary
 
 
-def print_list(any_list):
-    for line in any_list:
-        # line = line.replace('are 0', 'are no')
-        print(line)
+def write_strings(string_list):
+    report_writer.write_console_plain_text(string_list)
+    report_writer.write_plain_text(None, string_list)
 
 
 def sort_and_stringify_dictionary_items(any_dict):
@@ -105,7 +109,6 @@ def sort_and_stringify_dictionary_items(any_dict):
 
 
 def main():
-    print('Audit Log Analysis')
     friendly_function_name = 'Dynatrace Automation Reporting'
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
@@ -116,7 +119,7 @@ def main():
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'FreeTrial1'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
-    process(env, token, True)
+    process(env, token)
     
     
 if __name__ == '__main__':

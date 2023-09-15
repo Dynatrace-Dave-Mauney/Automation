@@ -15,7 +15,7 @@ def process():
 	inherited_setting_host_list = []
 	inherited_setting_host_group_list = []
 
-	path = 'autoupdate.xlsx'
+	path = 'report_autoupdate_settings.xlsx'
 	wb_obj = openpyxl.load_workbook(path)
 	sheet_obj = wb_obj.active
 

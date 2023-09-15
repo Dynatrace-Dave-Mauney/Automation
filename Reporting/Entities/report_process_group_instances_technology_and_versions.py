@@ -5,6 +5,7 @@ from Reuse import environment
 from Reuse import report_writer
 
 
+# Use when possible to run much faster
 target_management_zones = [
     'HostGroup:Laptops',
 ]
@@ -15,40 +16,33 @@ def process(env, token, entity_type):
     entity_selector = 'type(' + entity_type + ')'
     params = '&entitySelector=' + urllib.parse.quote(entity_selector) + '&fields=' + urllib.parse.quote('properties.SOFTWARETECHNOLOGIES')
     entities_json_list = dynatrace_api.get(env, token, endpoint, params)
-    # print(entities_json_list)
-    # exit(1234)
-
-    headers = ('Process Name', 'Technology Type', 'Technology Edition', 'Technology Version')
-    # print('displayName')
 
     rows = []
 
     for entities_json in entities_json_list:
         inner_entities_json_list = entities_json.get('entities')
         for inner_entities_json in inner_entities_json_list:
-            # print(inner_entities_json)
-            # entity_id = inner_entities_json.get('entityId')
-            # entity_type = inner_entities_json.get('type')
             display_name = inner_entities_json.get('displayName')
             properties = inner_entities_json.get('properties')
-            # print(properties)
-            # exit(1234)
             if properties:
                 software_technology_list = properties.get('softwareTechnologies')
-                # print(software_technology_list)
                 if software_technology_list:
                     for software_technology in software_technology_list:
                         software_technology_type = software_technology.get('type')
                         software_technology_edition = software_technology.get('edition')
                         software_technology_version = software_technology.get('version')
                         if software_technology_type and software_technology_edition and software_technology_version:
-                            # print(entity_id + '|' + display_name + '|' + software_technology_type + '|' + software_technology_edition + '|' + software_technology_version)
                             rows.append((display_name, software_technology_type, software_technology_edition, software_technology_version))
 
     sorted_rows = remove_duplicates(sorted(rows, key=lambda row: str(row[0]).lower()))
 
-    report_writer.write_console('Process Technologies', headers, sorted_rows, '|')
-    report_writer.write_xlsx('process_tech.xlsx', 'Process Technologies', headers, sorted_rows, None, None)
+    report_name = 'Process Technologies'
+    report_headers = ('Process Name', 'Technology Type', 'Technology Edition', 'Technology Version')
+
+    report_writer.write_console(report_name, report_headers, sorted_rows, '|')
+    report_writer.write_text(None, report_name, report_headers, sorted_rows, delimiter='|')
+    report_writer.write_xlsx(None, report_name, report_headers, sorted_rows, None, None)
+    report_writer.write_html(None, report_name, report_headers, sorted_rows)
 
 
 def remove_duplicates(any_list):

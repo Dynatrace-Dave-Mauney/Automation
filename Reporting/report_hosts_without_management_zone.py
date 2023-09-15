@@ -2,15 +2,15 @@ import urllib.parse
 
 from Reuse import dynatrace_api
 from Reuse import environment
+from Reuse import report_writer
 
 
 def process(env, token):
-    print('Hosts with no management zone')
+    rows = []
     endpoint = '/api/v2/entities'
     raw_params = 'pageSize=4000&entitySelector=type(HOST)&to=-5m&fields=properties,managementZones'
     params = urllib.parse.quote(raw_params, safe='/,&=?')
     entities_json_list = dynatrace_api.get(env, token, endpoint, params)
-    print('entityId' + '|' + 'displayName')
     for entities_json in entities_json_list:
         inner_entities_json_list = entities_json.get('entities')
         for inner_entities_json in inner_entities_json_list:
@@ -21,7 +21,20 @@ def process(env, token):
                 if not is_monitoring_candidate:
                     entity_id = inner_entities_json.get('entityId', '')
                     display_name = inner_entities_json.get('displayName', '')
-                    print(entity_id + '|' + display_name)
+                    rows.append((display_name, entity_id))
+
+        rows = sorted(rows)
+
+
+    report_name = 'Hosts with no management zone'
+    report_writer.initialize_text_file(None)
+    report_headers = ('displayName', 'id')
+    report_writer.write_console(report_name, report_headers, rows, delimiter='|')
+    report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
+    report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
+    report_writer.write_html(None, report_name, report_headers, rows)
+
+
 def main():
     friendly_function_name = 'Dynatrace Automation Reporting'
     env_name_supplied = environment.get_env_name(friendly_function_name)

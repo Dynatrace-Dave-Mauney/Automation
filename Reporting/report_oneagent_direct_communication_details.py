@@ -1,12 +1,18 @@
 from Reuse import dynatrace_api
 from Reuse import environment
+from Reuse import report_writer
 
 
 def summarize(env, token):
-    return process(env, token, False)
+    return process_report(env, token, True)
 
 
-def process(env, token, print_mode):
+def process(env, token):
+    return process_report(env, token, False)
+
+
+def process_report(env, token, summary_mode):
+    rows = []
     summary = []
 
     count_total = 0
@@ -14,9 +20,6 @@ def process(env, token, print_mode):
     endpoint = '/api/v1/oneagents'
     params = 'activeGateId=DIRECT_COMMUNICATION&relativeTime=2hours'
     oneagents_json_list = dynatrace_api.get(env, token, endpoint, params)
-
-    if print_mode:
-        print('entityId' + '|' + 'displayName' + '|' + 'discoveredName')
 
     for oneagents_json in oneagents_json_list:
         inner_oneagents_json_list = oneagents_json.get('hosts')
@@ -26,27 +29,34 @@ def process(env, token, print_mode):
             display_name = host_info.get('displayName')
             discovered_name = host_info.get('discoveredName')
 
-            if print_mode:
-                print(str(entity_id) + '|' + str(display_name) + '|' + str(discovered_name))
+            if not summary_mode:
+                rows.append((str(display_name), str(discovered_name), str(entity_id)))
 
             count_total += 1
 
-    if print_mode:
+    if not summary_mode:
         print('Total oneagents in direct communication with the Dynatrace cluster: ' + str(count_total))
 
     summary.append('There are ' + str(count_total) + ' oneagents in direct communication with the Dynatrace cluster.')
 
-    if print_mode:
-        print_list(summary)
-        print('Done!')
+    if not summary_mode:
+        rows = sorted(rows)
+        report_name = 'OneAgent Direct Communication'
+        report_writer.initialize_text_file(None)
+        report_headers = ('displayName', 'discoveredName', 'entityId')
+        report_writer.write_console(report_name, report_headers, rows, delimiter='|')
+        report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
+        write_strings(['Total OneAgents in direct communication with the Dynatrace cluster: ' + str(count_total)])
+        write_strings(summary)
+        report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
+        report_writer.write_html(None, report_name, report_headers, rows)
 
     return summary
 
 
-def print_list(any_list):
-    for line in any_list:
-        line = line.replace('are 0', 'are no')
-        print(line)
+def write_strings(string_list):
+    report_writer.write_console_plain_text(string_list)
+    report_writer.write_plain_text(None, string_list)
 
 
 def main():
@@ -60,7 +70,7 @@ def main():
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'FreeTrial1'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
-    process(env, token, True)
+    process(env, token)
     
     
 if __name__ == '__main__':

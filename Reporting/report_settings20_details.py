@@ -2,6 +2,7 @@ import urllib.parse
 
 from Reuse import dynatrace_api
 from Reuse import environment
+from Reuse import report_writer
 
 
 expected_rum_host_headers = ['Host', 'X-Forwarded-Host', 'X-Host']
@@ -43,14 +44,17 @@ ignore_list = [
 
 
 def summarize(env, token):
-    return process(env, token, False)
+    return process_report(env, token, True)
 
 
-def process_environment_scope(env, token, print_mode):
+def process(env, token):
+    return process_report(env, token, False)
+
+
+def process_report(env, token, summary_mode):
+    rows = []
     summary = []
     findings = []
-
-    # summary.append('Interesting Settings 2.0 schemas with objects defined:')
 
     endpoint = '/api/v2/settings/objects'
     raw_params = 'scopes=environment&fields=schemaId,value&pageSize=500'
@@ -63,9 +67,9 @@ def process_environment_scope(env, token, print_mode):
         value = value.replace('{', '')
         value = value.replace('}', '')
         value = value.replace("'", "")
-        if print_mode:
+        if not summary_mode:
             if schema_id not in ignore_list:
-                print(schema_id + ': ' + value)
+                rows.append((schema_id, value))
 
         add_findings(findings, schema_id, item)
 
@@ -81,11 +85,22 @@ def process_environment_scope(env, token, print_mode):
     else:
         summary.append('Environment has no findings')
 
-    if print_mode:
-        print_list(summary)
-        print('Environment Scope Done!')
+    if not summary_mode:
+        report_name = 'Settings 2.0'
+        report_writer.initialize_text_file(None)
+        report_headers = ('Schema ID', 'Formatted Values')
+        report_writer.write_console(report_name, report_headers, rows, delimiter='|')
+        report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
+        write_strings(summary)
+        report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
+        report_writer.write_html(None, report_name, report_headers, rows)
 
     return summary
+
+
+def write_strings(string_list):
+    report_writer.write_console_plain_text(string_list)
+    report_writer.write_plain_text(None, string_list)
 
 
 def add_findings(findings, schema_id, item):
@@ -103,8 +118,8 @@ def add_findings(findings, schema_id, item):
 
     if schema_id == 'builtin:anomaly-detection.frequent-issues':
         if value.get('detectFrequentIssuesInApplications') and \
-            value.get('detectFrequentIssuesInTransactionsAndServices') and \
-            value.get('detectFrequentIssuesInInfrastructure'):
+                value.get('detectFrequentIssuesInTransactionsAndServices') and \
+                value.get('detectFrequentIssuesInInfrastructure'):
             pass
         else:
             findings.append('Frequent issue detection has been modified.')
@@ -152,16 +167,6 @@ def add_findings_based_on_booleans(findings):
         findings.append('RUM IP mappings have been added.')
 
 
-def process(env, token, print_mode):
-    return process_environment_scope(env, token, print_mode)
-
-
-def print_list(any_list):
-    for line in any_list:
-        line = line.replace('are 0', 'are no')
-        print(line)
-
-
 def main():
     friendly_function_name = 'Dynatrace Automation Reporting'
     env_name_supplied = environment.get_env_name(friendly_function_name)
@@ -173,7 +178,7 @@ def main():
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'FreeTrial1'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
-    process(env, token, True)
+    process(env, token)
     
     
 if __name__ == '__main__':

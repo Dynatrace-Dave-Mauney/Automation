@@ -1,33 +1,55 @@
 from Reuse import dynatrace_api
 from Reuse import environment
+from Reuse import report_writer
 
-friendly_type_name = {'processGroup': 'process groups', 'host': 'hosts', 'service': 'services'}
+
+friendly_type_name = {'processGroup': 'Process Groups', 'host': 'Hosts', 'service': 'Services'}
 
 
 def summarize(env, token):
-    return process(env, token, False)
+    return process_report(env, token, True)
 
 
-def process(env, token, print_mode):
+def process(env, token):
+    return process_report(env, token, False)
+
+
+def process_report(env, token, summary_mode):
+    rows = []
     summary = []
+    count_total = 0 
 
-    if print_mode:
-        print('id' + '|' + 'name')
+    type_rows, type_summary, type_count = process_type(env, token, summary_mode, 'processGroup')
+    rows.extend(type_rows)
+    summary.extend(type_summary)
+    count_total += type_count
+    type_rows, type_summary, type_count = process_type(env, token, summary_mode, 'host')
+    rows.extend(type_rows)
+    summary.extend(type_summary)
+    count_total += type_count
+    type_rows, type_summary, type_count = process_type(env, token, summary_mode, 'service')
+    rows.extend(type_rows)
+    summary.extend(type_summary)
+    count_total += type_count
 
-    summary.append(process_type(env, token, print_mode, 'processGroup')[0])
-    summary.append(process_type(env, token, print_mode, 'host')[0])
-    summary.append(process_type(env, token, print_mode, 'service')[0])
-
-    if print_mode:
-        print_list(summary)
-        print('Done!')
+    if not summary_mode:
+        rows = sorted(rows)
+        report_name = 'Conditional Naming Rules'
+        report_writer.initialize_text_file(None)
+        report_headers = ('name', 'id', 'type')
+        report_writer.write_console(report_name, report_headers, rows, delimiter='|')
+        report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
+        write_strings(['Total Conditional Naming Rules: ' + str(count_total)])
+        write_strings(summary)
+        report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
+        report_writer.write_html(None, report_name, report_headers, rows)
 
     return summary
 
 
-def process_type(env, token, print_mode, entity_type):
+def process_type(env, token, summary_mode, entity_type):
     summary = []
-
+    rows = []
     count_total = 0
 
     endpoint = '/api/config/v1/conditionalNaming/' + entity_type
@@ -40,24 +62,20 @@ def process_type(env, token, print_mode, entity_type):
             entity_id = inner_conditional_naming_json.get('id')
             name = inner_conditional_naming_json.get('name')
 
-            if print_mode:
-                print(entity_id + '|' + name)
+            if not summary_mode:
+                rows.append((name, entity_id, friendly_type_name[entity_type]))
 
             count_total += 1
 
-    if print_mode:
-        print('Total Conditional Naming Rules - ' + friendly_type_name[entity_type] + ': ' + str(count_total))
-
     summary.append('There are ' + str(count_total) + ' conditional naming rules for ' + friendly_type_name[entity_type] + ' currently defined.')
 
-    return summary
+    return rows, summary, count_total
 
 
-def print_list(any_list):
-    for line in any_list:
-        line = line.replace('are 0', 'are no')
-        print(line)
-        
+def write_strings(string_list):
+    report_writer.write_console_plain_text(string_list)
+    report_writer.write_plain_text(None, string_list)
+
 
 def main():
     friendly_function_name = 'Dynatrace Automation Reporting'
@@ -70,7 +88,7 @@ def main():
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'FreeTrial1'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
-    process(env, token, True)
+    process(env, token)
     
     
 if __name__ == '__main__':

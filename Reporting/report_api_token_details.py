@@ -1,12 +1,18 @@
 from Reuse import dynatrace_api
 from Reuse import environment
+from Reuse import report_writer
 
 
 def summarize(env, token):
-    return process(env, token, False)
+    return process_report(env, token, True)
 
 
-def process(env, token, print_mode):
+def process(env, token):
+    return process_report(env, token, False)
+
+
+def process_report(env, token, summary_mode):
+    rows = []
     summary = []
 
     count_total = 0
@@ -14,9 +20,6 @@ def process(env, token, print_mode):
     endpoint = '/api/v2/apiTokens'
     params = ''
     activegates_json_list = dynatrace_api.get(env, token, endpoint, params)
-
-    if print_mode:
-        print('id' + '|' + 'name' + '|' + 'enabled' + '|' + 'owner' + '|' + 'creationDate')
 
     for activegates_json in activegates_json_list:
         inner_activegates_json_list = activegates_json.get('apiTokens')
@@ -27,28 +30,32 @@ def process(env, token, print_mode):
             owner = inner_activegates_json.get('owner')
             creation_date = inner_activegates_json.get('creationDate')
 
-            if print_mode:
-                print(entity_id + '|' + name + '|' + str(enabled) + '|' + owner + '|' + creation_date)
+            if not summary_mode:
+                rows.append((name, entity_id, str(enabled), owner, creation_date))
 
             count_total += 1
 
-    if print_mode:
-        print('Total API Tokens: ' + str(count_total))
-
     summary.append('There are ' + str(count_total) + ' API tokens currently available.')
 
-    if print_mode:
-        print_list(summary)
-        print('Done!')
+    if not summary_mode:
+        rows = sorted(rows)
+        report_name = ''
+        report_writer.initialize_text_file(None)
+        report_headers = ('name', 'id', 'enabled', 'owner', 'creationDate')
+        report_writer.write_console(report_name, report_headers, rows, delimiter='|')
+        report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
+        write_strings(['Total API Tokens: ' + str(count_total)])
+        write_strings(summary)
+        report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
+        report_writer.write_html(None, report_name, report_headers, rows)
 
     return summary
 
 
-def print_list(any_list):
-    for line in any_list:
-        line = line.replace('are 0', 'are no')
-        print(line)
-        
+def write_strings(string_list):
+    report_writer.write_console_plain_text(string_list)
+    report_writer.write_plain_text(None, string_list)
+
 
 def main():
     friendly_function_name = 'Dynatrace Automation Reporting'
@@ -61,7 +68,7 @@ def main():
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'FreeTrial1'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
-    process(env, token, True)
+    process(env, token)
     
     
 if __name__ == '__main__':

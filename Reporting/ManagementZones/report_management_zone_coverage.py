@@ -209,11 +209,7 @@ monitored_entity_filters = [
 ]
 
 
-def process(env_name, env, token):
-    default_output_directory = '../../$Output/Reporting/ManagementZones'
-    output_directory = environment.get_output_directory_name(default_output_directory)
-    file_name = f'{output_directory}/Management_Zone_Coverage_{env_name}.xlsx'
-
+def process(env, token):
     mz_coverage_dict = {}
 
     counts_by_entity_type_template = {}
@@ -240,27 +236,13 @@ def process(env_name, env, token):
             row.append(mz_coverage_dict.get(key).get(entity_type))
         rows.append(row)
 
-    # write_xlsx(env_name, mz_coverage_dict)
-    write_console(rows)
-    write_xlsx(file_name, rows)
-
-
-def write_console(rows):
-    title = 'Management Zone Coverage'
-    headers = ['Management Zone']
-    headers.extend(entity_types_of_interest)
-    delimiter = '|'
-    report_writer.write_console(title, headers, rows, delimiter)
-
-
-def write_xlsx(xlsx_file_name, rows):
-    worksheet_name = 'Management Zone Coverage'
-    headers = ['Management Zone']
-    headers.extend(entity_types_of_interest)
-    header_format = None
-    auto_filter = (0, len(headers))
-    report_writer.write_xlsx(xlsx_file_name, worksheet_name, headers, rows, header_format, auto_filter)
-    print(f'Output written to {xlsx_file_name}')
+    report_name = 'Management Zone Coverage'
+    report_headers = ['Management Zone']
+    report_headers.extend(entity_types_of_interest)
+    report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
+    report_writer.write_console(report_name, report_headers, rows, delimiter='|')
+    report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=(0, len(report_headers)))
+    report_writer.write_html(None, report_name, report_headers, rows)
 
 
 def get_mz_coverage_for_entity_type(env, token, entity_type, mz_coverage_dict):
@@ -302,8 +284,8 @@ def main():
     # env_name_supplied = 'Dev'
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'FreeTrial1'
-    env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
-    process(env_name, env, token)
+    _, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
+    process(env, token)
 
 
 if __name__ == '__main__':

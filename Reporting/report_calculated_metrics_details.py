@@ -1,34 +1,69 @@
 from Reuse import dynatrace_api
 from Reuse import environment
+from Reuse import report_writer
 
-friendly_type_name = {'log': 'log monitoring', 'mobile': 'mobile and custom applications', 'service': 'services', 'synthetic': 'synthetics', 'rum': 'web applications'}
+
+friendly_type_name = {'log': 'Log Monitoring', 'mobile': 'Mobile/Custom Applications', 'service': 'Services', 'synthetic': 'Synthetics', 'rum': 'Web Applications'}
 
 
 def summarize(env, token):
-    return process(env, token, False)
+    return process_report(env, token, True)
 
 
-def process(env, token, print_mode):
+def process(env, token):
+    return process_report(env, token, False)
+
+
+def process_report(env, token, summary_mode):
+    rows = []
     summary = []
+    count_total = 0
 
-    if print_mode:
-        print('id' + '|' + 'name')
+    type_rows, type_summary, type_total = process_type(env, token, summary_mode, 'mobile')
+    rows.extend(type_rows)
+    summary.extend(type_summary)
+    count_total += type_total
+
+    type_rows, type_summary, type_total = process_type(env, token, summary_mode, 'service')
+    rows.extend(type_rows)
+    summary.extend(type_summary)
+    count_total += type_total
+
+    type_rows, type_summary, type_total = process_type(env, token, summary_mode, 'synthetic')
+    rows.extend(type_rows)
+    summary.extend(type_summary)
+    count_total += type_total
+
+    type_rows, type_summary, type_total = process_type(env, token, summary_mode, 'rum')
+    rows.extend(type_rows)
+    summary.extend(type_summary)
+    count_total += type_total
 
     # This one does not work when log v2 is enabled...
-    # summary.append(process_type(env, token, print_mode, 'log'))
-    summary.append(process_type(env, token, print_mode, 'mobile')[0])
-    summary.append(process_type(env, token, print_mode, 'service')[0])
-    summary.append(process_type(env, token, print_mode, 'synthetic')[0])
-    summary.append(process_type(env, token, print_mode, 'rum')[0])
+    # type_rows, type_summary, type_total = process_type(env, token, summary_mode, 'log')
+    # rows.extend(type_rows)
+    # summary.extend(type_summary)
+    # count_total += type_total
 
-    if print_mode:
-        print_list(summary)
-        print('Done!')
+    summary.append('There are ' + str(count_total) + ' calcualated metrics currently defined.')
+
+    if not summary_mode:
+        rows = sorted(rows)
+        report_name = 'Calculated Metrics'
+        report_writer.initialize_text_file(None)
+        report_headers = ('name', 'entityId', 'type')
+        report_writer.write_console(report_name, report_headers, rows, delimiter='|')
+        report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
+        write_strings(['Total Calculated Metrics: ' + str(count_total)])
+        write_strings(summary)
+        report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
+        report_writer.write_html(None, report_name, report_headers, rows)
 
     return summary
 
 
-def process_type(env, token, print_mode, entity_type):
+def process_type(env, token, summary_mode, entity_type):
+    rows = []
     summary = []
 
     count_total = 0
@@ -43,24 +78,23 @@ def process_type(env, token, print_mode, entity_type):
             entity_id = inner_calculated_metrics_json.get('id')
             name = inner_calculated_metrics_json.get('name')
 
-            if print_mode:
-                print(entity_id + '|' + name)
+            if not summary_mode:
+                rows.append((name, entity_id, friendly_type_name[entity_type]))
 
             count_total += 1
 
-    if print_mode:
-        print('Total Calculated Metrics - ' + friendly_type_name[entity_type] + ': ' + str(count_total))
+    # if not summary_mode:
+    #     print('Total Calculated Metrics - ' + friendly_type_name[entity_type] + ': ' + str(count_total))
 
     summary.append('There are ' + str(count_total) + ' calculated metrics for ' + friendly_type_name[entity_type] + ' currently defined.')
 
-    return summary
+    return rows, summary, count_total
 
 
-def print_list(any_list):
-    for line in any_list:
-        line = line.replace('are 0', 'are no')
-        print(line)
-        
+def write_strings(string_list):
+    report_writer.write_console_plain_text(string_list)
+    report_writer.write_plain_text(None, string_list)
+
 
 def main():
     friendly_function_name = 'Dynatrace Automation Reporting'
@@ -73,9 +107,8 @@ def main():
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'FreeTrial1'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
-    process(env, token, True)
+    process(env, token)
     
     
 if __name__ == '__main__':
     main()
-

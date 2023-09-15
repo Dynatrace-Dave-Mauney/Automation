@@ -4,27 +4,11 @@ from Reuse import dynatrace_api
 from Reuse import environment
 from Reuse import report_writer
 
-xlsx_file_name = '../../$Output/Reporting/Dashboards/DashboardViews.xlsx'
-html_file_name = '../../$Output/Reporting/Dashboards/DashboardViews.html'
 
-friendly_function_name = 'Dynatrace Automation Reporting'
-env_name_supplied = environment.get_env_name(friendly_function_name)
-# For easy control from IDE
-# env_name_supplied = 'Prod'
-# env_name_supplied = 'NonProd'
-# env_name_supplied = 'Prep'
-# env_name_supplied = 'Dev'
-# env_name_supplied = 'Personal'
-# env_name_supplied = 'FreeTrial1'
-env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
-
-
-def process():
-    print(f'XLSX File: {xlsx_file_name}')
-    print(f'HTML File: {html_file_name}')
+def process(env, token):
     rows = []
 
-    dashboard_details = load_dashboard_details()
+    dashboard_details = load_dashboard_details(env, token)
 
     endpoint = '/api/v2/metrics/query'
     metric_schema_id = 'builtin:dashboards.viewCount'
@@ -46,7 +30,7 @@ def process():
                 else:
                     # If user is not in "dynatrace.com", then they will get this for all "dynatrace.com" owners.
                     # So, we will double-check any missing ID by attempting to get it directly from the API
-                    dashboard = get_dashboard(dashboard_id)
+                    dashboard = get_dashboard(env, token, dashboard_id)
                     if dashboard:
                         dashboard_name = dashboard.get('dashboardMetadata').get('name', '')
                         dashboard_owner = dashboard.get('dashboardMetadata').get('owner', '')
@@ -56,12 +40,15 @@ def process():
 
                 rows.append((dashboard_name, dashboard_id, dashboard_owner, datapoint_value))
 
-    write_console(rows)
-    write_xlsx(rows)
-    write_html(rows)
+    report_name = 'Dashboard Views'
+    report_headers = ['Dashboard Name', 'Dashboard ID', 'Owner', 'Views']
+    report_writer.write_console(report_name, report_headers, rows, delimiter='|')
+    report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
+    report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=(2, 2))
+    report_writer.write_html(None, report_name, report_headers, rows)
 
 
-def load_dashboard_details():
+def load_dashboard_details(env, token):
     dashboard_details = {}
 
     endpoint = '/api/config/v1/dashboards'
@@ -79,7 +66,7 @@ def load_dashboard_details():
     return dashboard_details
 
 
-def get_dashboard(dashboard_id):
+def get_dashboard(env, token, dashboard_id):
     endpoint = f'/api/config/v1/dashboards/{dashboard_id}'
     params = ''
     dashboard_json_list = dynatrace_api.get(env, token, endpoint, params)
@@ -92,26 +79,20 @@ def get_dashboard(dashboard_id):
     return None
 
 
-def write_console(rows):
-    title = 'Dashboard Views'
-    headers = ['Dashboard Name', 'Dashboard ID', 'Owner', 'Views']
-    delimiter = '|'
-    report_writer.write_console(title, headers, rows, delimiter)
+def main():
+    friendly_function_name = 'Dynatrace Automation Reporting'
+    env_name_supplied = environment.get_env_name(friendly_function_name)
+    # For easy control from IDE
+    # env_name_supplied = 'Prod'
+    # env_name_supplied = 'NonProd'
+    # env_name_supplied = 'Prep'
+    # env_name_supplied = 'Dev'
+    # env_name_supplied = 'Personal'
+    # env_name_supplied = 'FreeTrial1'
+    env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 
-
-def write_xlsx(rows):
-    worksheet_name = 'Dashboard Views'
-    headers = ['Dashboard Name', 'Dashboard ID', 'Owner', 'Views']
-    header_format = None
-    auto_filter = (2, 2)
-    report_writer.write_xlsx(xlsx_file_name, worksheet_name, headers, rows, header_format, auto_filter)
-
-
-def write_html(rows):
-    page_heading = 'Dashboard Views'
-    table_headers = ['Dashboard Name', 'Dashboard ID', 'Owner', 'Views']
-    report_writer.write_html(html_file_name, page_heading, table_headers, rows)
+    process(env, token)
 
 
 if __name__ == '__main__':
-    process()
+    main()

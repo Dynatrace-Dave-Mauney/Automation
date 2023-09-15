@@ -1,31 +1,53 @@
 from Reuse import dynatrace_api
 from Reuse import environment
+from Reuse import report_writer
 
 friendly_type_name = {'CERTIFICATE': 'certificate', 'TOKEN': 'token', 'USERNAME_PASSWORD': 'username/password'}
 
 
 def summarize(env, token):
-    return process(env, token, False)
+    return process_report(env, token, True)
 
 
-def process(env, token, print_mode):
+def process(env, token):
+    return process_report(env, token, False)
+
+
+def process_report(env, token, summary_mode):
+    rows = []
     summary = []
+    count_total = 0
 
-    if print_mode:
-        print('name' + '|' + 'id' + '|' + 'type' + '|' + 'description' + '|' + 'owner' + '|' + 'ownerAccessOnly' + '|' + 'scope' + '|' + 'externalVault' + '|' + 'credentialUsageSummary')
+    type_rows, type_summary, type_count = process_type(env, token, summary_mode, 'CERTIFICATE')
+    rows.extend(type_rows)
+    summary.extend(type_summary)
+    count_total += type_count
+    type_rows, type_summary, type_count = process_type(env, token, summary_mode, 'TOKEN')
+    rows.extend(type_rows)
+    summary.extend(type_summary)
+    count_total += type_count
+    type_rows, type_summary, type_count = process_type(env, token, summary_mode, 'USERNAME_PASSWORD')
+    rows.extend(type_rows)
+    summary.extend(type_summary)
+    count_total += type_count
 
-    summary.append(process_type(env, token, print_mode, 'CERTIFICATE')[0])
-    summary.append(process_type(env, token, print_mode, 'TOKEN')[0])
-    summary.append(process_type(env, token, print_mode, 'USERNAME_PASSWORD')[0])
-
-    if print_mode:
-        print_list(summary)
-        print('Done!')
+    if not summary_mode:
+        rows = sorted(rows)
+        report_name = 'Credential Vault Entries'
+        report_writer.initialize_text_file(None)
+        report_headers = ('name', 'id', 'type', 'description', 'owner', 'ownerAccessOnly', 'scope', 'externalVault', 'credentialUsageSummary')
+        report_writer.write_console(report_name, report_headers, rows, delimiter='|')
+        report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
+        write_strings(['Total Credential Vault Entries: ' + str(count_total)])
+        write_strings(summary)
+        report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
+        report_writer.write_html(None, report_name, report_headers, rows)
 
     return summary
 
 
-def process_type(env, token, print_mode, entity_type):
+def process_type(env, token, summary_mode, entity_type):
+    rows = []
     summary = []
 
     count_total = 0
@@ -54,24 +76,20 @@ def process_type(env, token, print_mode, entity_type):
             credential_usage_summary_str = credential_usage_summary_str.replace("'type': '", "")
             credential_usage_summary_str = credential_usage_summary_str.replace("', 'count'", "")
 
-            if print_mode:
-                print(name + '|' + entity_id + '|' + entity_type + '|' + description + '|' + owner + '|' + str(owner_access_only) + '|' + scope + '|' + str(external_vault) + '|' + credential_usage_summary_str)
+            if not summary_mode:
+                rows.append((name, entity_id, entity_type, description, owner, str(owner_access_only), scope, str(external_vault), credential_usage_summary_str))
 
             count_total += 1
 
-    if print_mode:
-        print('Total Credential Vault Entries - ' + friendly_type_name[entity_type] + ': ' + str(count_total))
-
     summary.append('There are ' + str(count_total) + ' credential value entries of the ' + friendly_type_name[entity_type] + ' type currently defined.')
 
-    return summary
+    return rows, summary, count_total
 
 
-def print_list(any_list):
-    for line in any_list:
-        line = line.replace('are 0', 'are no')
-        print(line)
-        
+def write_strings(string_list):
+    report_writer.write_console_plain_text(string_list)
+    report_writer.write_plain_text(None, string_list)
+
 
 def main():
     friendly_function_name = 'Dynatrace Automation Reporting'
@@ -84,7 +102,7 @@ def main():
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'FreeTrial1'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
-    process(env, token, True)
+    process(env, token)
     
     
 if __name__ == '__main__':

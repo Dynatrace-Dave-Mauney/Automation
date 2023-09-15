@@ -1,4 +1,6 @@
-# This module is only partially complete and has not even been tested due to connectivity issues
+# TODO: Test: This module is only partially complete and has not yet
+#               been tested due to empty result list with personal tenant
+# TODO: Report Upgrade
 
 from Reuse import dynatrace_api
 from Reuse import environment
@@ -19,6 +21,7 @@ def process(token, print_mode):
     # https://www.dynatrace.com/support/help/shortlink/activegate-configuration-ssl#managing-certificates-via-rest-api
     # List:
     # https://myActiveGate:9999/e/myEnvironmentId/api/v1/certificate/list
+    # endpoint = f'https://localhost:9999/e/{tenant}/api/v1/certificate/list'
     endpoint = f'https://localhost:9999/e/{tenant}/api/v1/certificate/list'
     params = ''
     activegates_json_list = dynatrace_api.get(endpoint, token, endpoint, params)
@@ -32,7 +35,7 @@ def process(token, print_mode):
     for activegates_json in activegates_json_list:
         inner_activegates_json_list = activegates_json.get('activeGates')
         for inner_activegates_json in inner_activegates_json_list:
-            # print(inner_activegates_json)
+            print(inner_activegates_json)
             # entity_id = inner_activegates_json.get('id')
             os_type = inner_activegates_json.get('osType')
             version = inner_activegates_json.get('version')
@@ -100,14 +103,14 @@ def stringify_list(any_list):
 
 
 def main():
-    # friendly_function_name = 'Dynatrace Automation Reporting'
-    # env_name_supplied = environment.get_env_name(friendly_function_name)
+    friendly_function_name = 'Dynatrace Automation Reporting'
+    env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
     # env_name_supplied = 'Prod'
     # env_name_supplied = 'NonProd'
     # env_name_supplied = 'Prep'
     # env_name_supplied = 'Dev'
-    # env_name_supplied = 'Personal'
+    env_name_supplied = 'Personal'
     # env_name_supplied = 'FreeTrial1'
     # env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
     token = environment.get_configuration('report_activegate_certificate_details.temp_token')
