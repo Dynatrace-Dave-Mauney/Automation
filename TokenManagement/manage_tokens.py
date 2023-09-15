@@ -41,7 +41,11 @@ def post_fargate_paas_token():
 	# https://www.dynatrace.com/support/help/shortlink/aws-fargate#prerequisites
 	# Access problem and event feed, metrics, and topology (API v1)
 	# PaaS integration - Installer download
-	return post_token('Fargate PaaS', ["DataExport", "InstallerDownload"])
+	return post_token('Fargate PaaS with Jenkins', ["DataExport", "InstallerDownload"])
+
+
+def post_fargate_paas_plus_token():
+	return post_token('Fargate PaaS Plus', ["DataExport", "InstallerDownload", "events.ingest", "RumJavaScriptTagManagement", "ReadConfig"])
 
 
 def post_installer_download_token():
@@ -154,7 +158,8 @@ def process():
 		print('Env or Token Environment Variable Not Set!')
 		exit(1)
 
-	post_fargate_paas_token()
+	# post_fargate_paas_token()
+	# post_fargate_paas_plus_token()
 	# post_active_gate_certificate_management_token()
 	# post_monaco_token()
 	# post_installer_download_token()
