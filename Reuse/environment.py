@@ -5,7 +5,8 @@ import yaml
 # Default name when "get_environment(env_name)" is used
 default_friendly_function_name = 'DYNATRACE_AUTOMATION'
 
-default_configuration_file = '../$Input/Configurations/configurations.yaml'
+# default_configuration_file = '../$Input/Configurations/configurations.yaml'
+default_configuration_file = 'C:\\Users\\dave.mauney\\PycharmProjects\\Automation\\$Input\\Configurations\\configurations.yaml'
 
 # Support friendly names for frequently used functions.
 # Names not found in the list will be handled generically by
