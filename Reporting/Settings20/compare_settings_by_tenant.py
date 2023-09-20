@@ -1,5 +1,3 @@
-# TODO: Report Upgrade
-
 import difflib
 import os
 import urllib.parse

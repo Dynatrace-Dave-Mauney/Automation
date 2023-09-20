@@ -1,5 +1,3 @@
-# TODO: Report Upgrade
-
 import os
 import urllib.parse
 import xlsxwriter
