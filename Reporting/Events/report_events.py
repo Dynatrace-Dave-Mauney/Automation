@@ -33,8 +33,8 @@ def process_report(env, token, summary_mode):
             event_title = inner_events_json.get('title')
             start_time = inner_events_json.get('startTime')
             end_time = inner_events_json.get('endTime')
-            start_date_time = convert_epoch_in_milliseconds_to_local(start_time)
-            end_date_time = convert_epoch_in_milliseconds_to_local(end_time)
+            start_date_time = report_writer.convert_epoch_in_milliseconds_to_local(start_time)
+            end_date_time = report_writer.convert_epoch_in_milliseconds_to_local(end_time)
             formatted_duration = format_time_duration(start_time, end_time)
 
             if not summary_mode:
@@ -82,13 +82,6 @@ def format_time_duration(start_time, end_time):
             duration -= minutes * 60
         formatted_time_duration = f'{days}:{hours:02d}:{minutes:02d}:{duration:02d}.{millis}'
         return formatted_time_duration
-
-
-def convert_epoch_in_milliseconds_to_local(epoch):
-    if epoch == -1:
-        return ''
-    else:
-        return datetime.datetime.fromtimestamp(epoch / 1000).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
 
 
 def main():

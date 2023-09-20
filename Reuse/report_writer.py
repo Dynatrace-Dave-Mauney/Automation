@@ -1,3 +1,4 @@
+import datetime
 import os
 import sys
 import xlsxwriter
@@ -270,3 +271,18 @@ def prepare_output_file(file_extension):
     # print(f'full_file_name: {full_file_name}')
 
     return full_file_name
+
+
+def stringify_list(any_list):
+    any_list_string = str(any_list)
+    any_list_string = any_list_string.replace('[', '')
+    any_list_string = any_list_string.replace(']', '')
+    any_list_string = any_list_string.replace("'", "")
+    return any_list_string
+
+
+def convert_epoch_in_milliseconds_to_local(epoch):
+    if epoch is None or epoch == -1 or epoch == 0:
+        return ''
+    else:
+        return datetime.datetime.fromtimestamp(epoch / 1000).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]

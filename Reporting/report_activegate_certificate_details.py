@@ -4,7 +4,7 @@
 
 from Reuse import dynatrace_api
 from Reuse import environment
-
+from Reuse import report_writer
 
 def summarize(env, token):
     return process(env, token)
@@ -52,8 +52,8 @@ def process(token, print_mode):
                 if module.get("enabled"):
                     enabled_modules.append(module.get("type"))
 
-            # environments_str = stringify_list(environments)
-            # auto_update_settings_str = stringify_list(auto_update_settings)
+            # environments_str = report_writer.stringify_list(environments)
+            # auto_update_settings_str = report_writer.stringify_list(auto_update_settings)
 
             enabled_modules_str = str(enabled_modules).replace('[', '')
             enabled_modules_str = enabled_modules_str.replace(']', '')
@@ -63,7 +63,7 @@ def process(token, print_mode):
             #     print(hostname + '|' + os_type + '|' + version + '|' + entity_type + '|' + hostname + '|' + environments_str + '|' + auto_update_settings_str + '|' + network_zone + '|' + enabled_modules_str)
             if 'ONE_AGENT_ROUTING' and print_mode and 'aks' not in hostname and 'SYNTHETIC' not in enabled_modules_str:
                 # print(inner_activegates_json)
-                print(hostname + '|' + os_type + '|' + version + '|' + network_zone + '|' + stringify_list(network_addresses))
+                print(hostname + '|' + os_type + '|' + version + '|' + network_zone + '|' + report_writer.stringify_list(network_addresses))
 
             if 'ONE_AGENT_ROUTING' in enabled_modules and \
                     ('AWS' in enabled_modules or
@@ -92,14 +92,6 @@ def print_list(any_list):
     for line in any_list:
         line = line.replace('are 0', 'are no')
         print(line)
-
-
-def stringify_list(any_list):
-    any_list_string = str(any_list)
-    any_list_string = any_list_string.replace('[', '')
-    any_list_string = any_list_string.replace(']', '')
-    any_list_string = any_list_string.replace("'", "")
-    return any_list_string
 
 
 def main():

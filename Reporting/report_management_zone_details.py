@@ -161,7 +161,7 @@ def format_propagation_types(propagation_types):
         propagation_type_readable = re.sub('.*_TO_', '', propagation_type).lower()
         propagation_type_readable_list.append(propagation_type_readable)
 
-    propagation_type_readable_list_string = stringify_list(propagation_type_readable_list)
+    propagation_type_readable_list_string = report_writer.stringify_list(propagation_type_readable_list)
     propagation_type_readable_list_string = propagation_type_readable_list_string.replace('_like', '')
     propagation_type_readable_list_string = propagation_type_readable_list_string.replace('_', ' ')
     propagation_type_string = f' (with propagation to {str(propagation_type_readable_list_string)})'
@@ -220,14 +220,6 @@ def format_dimensional_rules(dimensional_rules):
         formatted_dimensional_rules = formatted_dimensional_rules[0]
 
     return str(formatted_dimensional_rules)
-
-
-def stringify_list(any_list):
-    any_list_string = str(any_list)
-    any_list_string = any_list_string.replace('[', '')
-    any_list_string = any_list_string.replace(']', '')
-    any_list_string = any_list_string.replace("'", "")
-    return any_list_string
 
 
 def main():

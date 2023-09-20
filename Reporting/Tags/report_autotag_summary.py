@@ -43,7 +43,7 @@ def process(env_name_list, all_env_name_data):
             else:
                 finding = 'Not defined identically in all environments'
 
-        rows.append((autotag_name, autotag_description, stringify_list(autotag_env_name_list), finding))
+        rows.append((autotag_name, autotag_description, report_writer.stringify_list(autotag_env_name_list), finding))
 
         report_name = 'Auto Tag Summary'
         report_writer.initialize_text_file(None)
@@ -69,14 +69,6 @@ def add_or_update(env_name, env_name_data, all_env_name_data):
 def all_equal(iterable):
     g = groupby(iterable)
     return next(g, True) and not next(g, False)
-
-
-def stringify_list(any_list):
-    any_list_string = str(any_list)
-    any_list_string = any_list_string.replace('[', '')
-    any_list_string = any_list_string.replace(']', '')
-    any_list_string = any_list_string.replace("'", "")
-    return any_list_string
 
 
 def main():

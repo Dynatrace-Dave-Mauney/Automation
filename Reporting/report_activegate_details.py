@@ -37,19 +37,19 @@ def process_report(env, token, summary_mode):
                 if module.get("enabled"):
                     enabled_modules.append(module.get("type"))
 
-            environments_str = stringify_list(environments)
-            auto_update_settings_str = stringify_list(auto_update_settings)
+            environments_str = report_writer.stringify_list(environments)
+            auto_update_settings_str = report_writer.stringify_list(auto_update_settings)
 
             enabled_modules_str = str(enabled_modules).replace('[', '')
             enabled_modules_str = enabled_modules_str.replace(']', '')
             enabled_modules_str = enabled_modules_str.replace("'", "")
 
             if not summary_mode:
-                rows.append((hostname, entity_id, os_type, version, network_zone, stringify_list(network_addresses), stringify_list(load_balancer_addresses), entity_type,  environments_str, auto_update_settings_str, enabled_modules_str))
+                rows.append((hostname, entity_id, os_type, version, network_zone, report_writer.stringify_list(network_addresses), report_writer.stringify_list(load_balancer_addresses), entity_type,  environments_str, auto_update_settings_str, enabled_modules_str))
 
             # One-off
             # if 'ONE_AGENT_ROUTING' and summary_mode and not 'aks' in hostname and not 'SYNTHETIC' in enabled_modules_str:
-            #     print(hostname + '|' + os_type + '|' + version + '|' + network_zone + '|' + stringify_list(network_addresses))
+            #     print(hostname + '|' + os_type + '|' + version + '|' + network_zone + '|' + report_writer.stringify_list(network_addresses))
 
             if 'ONE_AGENT_ROUTING' in enabled_modules and \
                     ('AWS' in enabled_modules or
@@ -79,14 +79,6 @@ def process_report(env, token, summary_mode):
 def write_strings(string_list):
     report_writer.write_console_plain_text(string_list)
     report_writer.write_plain_text(None, string_list)
-
-
-def stringify_list(any_list):
-    any_list_string = str(any_list)
-    any_list_string = any_list_string.replace('[', '')
-    any_list_string = any_list_string.replace(']', '')
-    any_list_string = any_list_string.replace("'", "")
-    return any_list_string
 
 
 def main():

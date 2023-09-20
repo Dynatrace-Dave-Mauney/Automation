@@ -26,7 +26,7 @@ def process(env, token):
             # https://www.epochconverter.com/
             # Use Epoch timestamp in milliseconds format
             # if created and created > 1668574800000:
-            rows.append((metric_id, display_name, convert_epoch_in_milliseconds_to_local(created)))
+            rows.append((metric_id, display_name, report_writer.convert_epoch_in_milliseconds_to_local(created)))
 
     rows = sorted(rows)
     report_name = 'Metrics'
@@ -36,13 +36,6 @@ def process(env, token):
     report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
     report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
     report_writer.write_html(None, report_name, report_headers, rows)
-
-
-def convert_epoch_in_milliseconds_to_local(epoch):
-    if epoch is None or epoch == -1 or epoch == 0:
-        return ''
-    else:
-        return datetime.datetime.fromtimestamp(epoch / 1000).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
 
 
 def main():
