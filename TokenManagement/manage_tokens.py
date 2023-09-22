@@ -17,6 +17,28 @@ env_name, env, token = environment.get_environment_for_function(env_name_supplie
 endpoint = '/api/v2/apiTokens'
 
 
+def process():
+	if not env or not token:
+		print('Env or Token Environment Variable Not Set!')
+		exit(1)
+
+	post_fargate_paas_plus_token()
+
+	# post_fargate_paas_token()
+	# post_active_gate_certificate_management_token()
+	# post_monaco_token()
+	# post_installer_download_token()
+
+	# list_tokens()
+	# post_reporting_token()
+	# post_robot_admin_token()
+
+	# Run test
+	# test()
+
+	# See "test()" method for common examples
+
+
 def post_api_token():
 	return post_token('API Tokens (Read/Write)', ["apiTokens.read", "apiTokens.write"])
 
@@ -45,7 +67,7 @@ def post_fargate_paas_token():
 
 
 def post_fargate_paas_plus_token():
-	return post_token('Fargate PaaS Plus', ["DataExport", "InstallerDownload", "events.ingest", "RumJavaScriptTagManagement", "ReadConfig"])
+	return post_token('Fargate PaaS Plus', ["DataExport", "InstallerDownload", "events.ingest", "RumJavaScriptTagManagement", "ReadConfig", "WriteConfig"])
 
 
 def post_installer_download_token():
@@ -151,27 +173,6 @@ def list_tokens():
 		# if formatted_token_detail[0] != '|' and 'mauney' in formatted_token_detail.lower():
 		if True:
 			print(formatted_token_detail)
-
-
-def process():
-	if not env or not token:
-		print('Env or Token Environment Variable Not Set!')
-		exit(1)
-
-	# post_fargate_paas_token()
-	# post_fargate_paas_plus_token()
-	# post_active_gate_certificate_management_token()
-	# post_monaco_token()
-	# post_installer_download_token()
-
-	# list_tokens()
-	# post_reporting_token()
-	# post_robot_admin_token()
-
-	# Run test
-	# test()
-
-	# See "test()" method for common examples
 
 
 def test():
