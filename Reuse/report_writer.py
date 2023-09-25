@@ -286,3 +286,21 @@ def convert_epoch_in_milliseconds_to_local(epoch):
         return ''
     else:
         return datetime.datetime.fromtimestamp(epoch / 1000).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+
+
+def print_rows(headers, rows):
+    for header in headers:
+        print_row(header)
+
+    for row in rows:
+        print_row(row)
+
+
+def print_row(row):
+    column_index = 1
+    for column in row:
+        if column_index == len(row):
+            print(column)
+        else:
+            print(column, end='|')
+        column_index += 1
