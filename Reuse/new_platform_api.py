@@ -1,8 +1,6 @@
 import json
-# import os
 import requests
-
-from Reuse import environment
+import ssl
 
 # Creating an OAuth Client:
 # Old UI: Person Icon > Account Settings > Pick Account if needed > Identity & access management > OAuth Clients > "Create client" button
@@ -32,9 +30,9 @@ def get_oauth_bearer_token(client_id, client_secret, scope):
         exit(1)
 
 
-def get_api(oauth_bearer_token, api_url):
+def get(oauth_bearer_token, api_url, params):
     headers = {'accept': 'application/json', 'Authorization': 'Bearer ' + str(oauth_bearer_token)}
-    r = requests.get(api_url, headers=headers)
+    r = requests.get(api_url, headers=headers, params=params)
     if r.status_code == 200:
         # print(r.text)
         return r
@@ -45,6 +43,83 @@ def get_api(oauth_bearer_token, api_url):
         print(f'Response Text:        {r.text}')
         print('Exiting Program')
         exit(1)
+
+
+def post_multipart_form_data(api_url, files, params, headers):
+    try:
+        r = requests.post(api_url, files=files, params=params, headers=headers)
+        if r.status_code not in [200, 201, 204]:
+            print('Status Code: %d' % r.status_code)
+            print('Reason: %s' % r.reason)
+            if len(r.text) > 0:
+                print(r.text)
+                print('Error in "post_multipart_form_data(api_url, files, params, headers)" method')
+            exit(1)
+        return r
+    except ssl.SSLError:
+        print('Error in "post_multipart_form_data(api_url, files, params, headers)" method')
+        raise
+
+
+def delete(oauth_bearer_token, api_url, version):
+    headers = {'accept': 'application/json', 'Authorization': 'Bearer ' + str(oauth_bearer_token)}
+    params = f'optimistic-locking-version={version}'
+    try:
+        r = requests.delete(api_url, headers=headers, params=params)
+        return r
+    except ssl.SSLError:
+        print('Error in "new_platform_api.delete(oauth_bearer_token, api_url, object_id)" method')
+        print('SSL Error')
+
+
+# TODO: Test and finalize
+def post(oauth_bearer_token, api_url, payload):
+    headers = {'accept': 'application/json', 'Authorization': 'Bearer ' + str(oauth_bearer_token)}
+    try:
+        r = requests.post(api_url, payload, headers=headers)
+        if r.status_code not in [200, 201, 204]:
+            print('Status Code: %d' % r.status_code)
+            print('Reason: %s' % r.reason)
+            if len(r.text) > 0:
+                print(r.text)
+            error_filename = '$post_error_payload.json'
+            with open(error_filename, 'w') as file:
+                file.write(payload)
+                try:
+                    name = payload.get('name')
+                    if name:
+                        print('Name: ' + name)
+                except AttributeError:
+                    print(payload)
+                print('Error in "new_platform_api.post(oauth_bearer_token, api_url, payload)" method')
+                print('See ' + error_filename + ' for more details')
+            exit(1)
+        return r
+    except ssl.SSLError:
+        print('Error in "new_platform_api.post(oauth_bearer_token, api_url, payload)" method')
+        raise
+
+
+# TODO: Test and finalize
+def put(oauth_bearer_token, api_url, payload):
+    try:
+        headers = {'accept': 'application/json', 'Authorization': 'Bearer ' + str(oauth_bearer_token)}
+        r = requests.put(api_url, payload, headers=headers)
+        if r.status_code not in [200, 201, 204]:
+            print('Status Code: %d' % r.status_code)
+            print('Reason: %s' % r.reason)
+            if len(r.text) > 0:
+                print(r.text)
+            error_filename = '$put_error_payload.json'
+            with open(error_filename, 'w') as file:
+                file.write(payload)
+                print('Error in "new_platform_api.put(oauth_bearer_token, api_url, payload)" method')
+                print('See ' + error_filename + ' for more details')
+                exit(1)
+        return r
+    except ssl.SSLError:
+        print('SSL Error in "new_platform_api.put(oauth_bearer_token, api_url, payload)" method')
+        raise
 
 
 if __name__ == '__main__':

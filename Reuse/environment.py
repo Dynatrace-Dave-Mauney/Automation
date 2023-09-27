@@ -2,9 +2,6 @@ import argparse
 import os
 import yaml
 
-# Default name when "get_environment(env_name)" is used
-default_friendly_function_name = 'DYNATRACE_AUTOMATION'
-
 # default_configuration_file = '../$Input/Configurations/configurations.yaml'
 default_configuration_file = 'C:\\Users\\dave.mauney\\PycharmProjects\\Automation\\$Input\\Configurations\\configurations.yaml'
 
@@ -53,7 +50,95 @@ def get_env_name(function_name):
             return 'Default'
 
 
+# get_client* methods are for the "new platform"
+def get_client_environment(env_name):
+    default_friendly_function_name = 'DYNATRACE_API_CLIENT'
+    return get_client_environment_for_function(env_name, default_friendly_function_name)
+
+
+def get_client_environment_for_function(env_name, friendly_function_name):
+    return get_client_environment_for_function_print_control(env_name, friendly_function_name, True)
+
+
+def get_client_environment_for_function_print_control(env_name, friendly_function_name, print_mode):
+    # Use this method for control over print statements.
+    # The norm is to call "get_client_environment_for_function(env_name, friendly_function_name)" or
+    # "get_client_environment(env_name)" for maximum convenience and with print on.
+    # But when print needs to be off, use this method directly.
+
+    tenant_key = client_id_key = client_secret_key = None
+
+    args = args_parser()
+
+    if args.environment:
+        tenant = args.environment
+        tenant_source = 'Command Line Argument "-e" or "--environment"'
+    else:
+        tenant_key = f'{env_name.upper()}_TENANT'
+        tenant = os.environ.get(tenant_key)
+        tenant_source = f'Environment Variable "{tenant_key}"'
+
+    if args.client_id:
+        client_id = args.client_id
+        client_id_source = 'Command Line Argument "-ci" or "--client_id"'
+    else:
+        if friendly_function_name in supported_friendly_function_names:
+            client_id_key = f'{supported_friendly_function_names.get(friendly_function_name)}_{env_name.upper()}_CLIENT_ID'
+        else:
+            client_id_key = f'{friendly_function_name.upper().replace(" ", "_")}_{env_name.upper()}_CLIENT_ID'
+        client_id = os.environ.get(client_id_key)
+        client_id_source = f'Environment Variable "{client_id_key}"'
+
+    if args.client_secret:
+        client_secret = args.client_secret
+        client_secret_source = 'Command Line Argument "-cs" or "--client_secret"'
+    else:
+        if friendly_function_name in supported_friendly_function_names:
+            client_secret_key = f'{supported_friendly_function_names.get(friendly_function_name)}_{env_name.upper()}_CLIENT_SECRET'
+        else:
+            client_secret_key = f'{friendly_function_name.upper().replace(" ", "_")}_{env_name.upper()}_CLIENT_SECRET'
+        client_secret = os.environ.get(client_secret_key)
+        client_secret_source = f'Environment Variable "{client_secret_key}"'
+
+    if tenant and client_id and client_secret and '.' in client_id and '.' in client_secret:
+        env = f'https://{tenant}.apps.dynatrace.com'
+        masked_client_secret = f"{client_secret.split('.')[0]}.{client_secret.split('.')[1]}.{client_secret.split('.')[2][0:10]}* (Masked)"
+        if print_mode:
+            print(f'Environment Name:  {env_name}')
+            print(f'Environment URL:   {env} (from {tenant_source})')
+            print(f'Client ID:         {client_id} (from {client_id_source})')
+            print(f'Client Secret:     {masked_client_secret} (from {client_secret_source})')
+            print(f'Function:          {friendly_function_name}')
+            if tenant_key:
+                print(f'Tenant Key:        {tenant_key}')
+            if client_id_key:
+                print(f'Client ID Key:     {client_id_key}')
+            if client_secret_key:
+                print(f'Client Secret Key: {client_secret_key}')
+        return env_name, env, client_id, client_secret
+    else:
+        if print_mode:
+            print('Error in environment.get_client_environment_for_function_print_control(env_name, friendly_function_name, print_mode)')
+            print('Client ID and/or Client Secret variable not populated correctly')
+            print(f'Environment Name: {env_name}')
+            print(f'Function:         {friendly_function_name}')
+            if tenant:
+                print(f'Tenant:              {tenant}')
+            if client_id:
+                print(f'Client ID:           {client_id[0:20]}')
+            if client_secret:
+                print(f'Client Secret[0:20]: {client_id[0:20]}')
+            if tenant_key:
+                print(f'Tenant Key:          {tenant_key}')
+            if client_id_key:
+                print(f'Client ID Key:       {client_id_key}')
+            if client_secret_key:
+                print(f'Client Secret Key:    {client_secret_key}')
+        exit(1)
+
+
 def get_environment(env_name):
+    default_friendly_function_name = 'DYNATRACE_AUTOMATION'
     return get_environment_for_function(env_name, default_friendly_function_name)
 
 
@@ -146,8 +231,11 @@ def get_configuration(configuration_key):
     if args.configuration_file:
         configuration_file = args.configuration_file
     else:
-        print('Command lines args do not contain a configuration file name')
-        print(f'Using default configuration file name of "{default_configuration_file}"')
+        config_file_environment_variable_key = 'DYNATRACE_AUTOMATION_CONFIG_FILE'
+        configuration_file = os.getenv(config_file_environment_variable_key, default_configuration_file)
+        if not configuration_file:
+            print(f'Neither command lines args or environment variable {config_file_environment_variable_key} contain a configuration file name')
+            print(f'Using default configuration file name of "{default_configuration_file}"')
 
     yaml_data = read_yaml(configuration_file)
     yaml_value = yaml_data.get(configuration_key)
@@ -166,6 +254,8 @@ def args_parser():
     arg_parser.add_argument("-n", "--environment_name", help="environment name ('Prod', 'NonProd', etc.")
     arg_parser.add_argument("-e", "--environment", help="Tenant (such as 'abcd1234' in 'https://abcd1234.live.dynatrace.com")
     arg_parser.add_argument("-t", "--token", help="API Token")
+    arg_parser.add_argument("-ci", "--client_id", help="Client ID")
+    arg_parser.add_argument("-cs", "--client_secret", help="Client Secret")
     arg_parser.add_argument("-od", "--output_directory", help="Output directory (rarely used)")
     arg_parser.add_argument("-cf", "--configuration_file", help="Configuration file name.  Used to override the default configuration file name, if needed. (rarely used)")
     arg_parser.add_argument("-of", "--output_file", help="Output file (reserved for future use)")

@@ -1,28 +1,36 @@
 import json
+import os
+import re
 
 from Reuse import environment
 from Reuse import new_platform_api
-from Reuse import report_writer
 
 
 def process(env, client_id, client_secret):
     scope = 'document:documents:read'
 
+    output_directory = environment.get_output_directory_name('Downloads')
+    if not os.path.isdir(output_directory):
+        os.makedirs(output_directory)
+
     oauth_bearer_token = new_platform_api.get_oauth_bearer_token(client_id, client_secret, scope)
     params = {'page-size': 1000}
-    results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents', params)
+    results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents', params=params)
     documents_json = json.loads(results.text)
     document_list = documents_json.get('documents')
-    headers = [['Dashboard Name', 'Dashboard ID']]
-    rows = []
     for document in document_list:
         document_type = document.get('type')
         if document_type == 'dashboard':
             document_id = document.get('id')
             document_name = document.get('name')
-            rows.append([document_name, document_id])
-
-    report_writer.print_rows(headers, sorted(rows))
+            dashboard_results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents/{document_id}/content', None)
+            dashboard_json = json.loads(dashboard_results.text)
+            clean_filename = re.sub(r"[/\\?%*:|\"<>\x7F\x00-\x1F]", "-", f'{document_name}.json')
+            dashboard_file_name = os.path.join(output_directory, clean_filename)
+            formatted_dashboard = json.dumps(dashboard_json, indent=4, sort_keys=False)
+            print(f'Writing file {dashboard_file_name}')
+            with open(dashboard_file_name, 'w', encoding='utf8') as output_file:
+                output_file.write('%s' % formatted_dashboard)
 
 
 def main():
