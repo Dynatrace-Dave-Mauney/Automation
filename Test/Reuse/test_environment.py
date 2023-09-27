@@ -11,8 +11,8 @@ def test_environment():
     print('Test args_parser()')
     print(sys.argv)
     # Examples:
-    # -n Prod -e pey66649 -t xxx -od /output_dir -of outfile.txt
-    # --environment_name Prod --environment pey66649 --token xxx --output_directory /output_dir --output_file outfile.txt
+    # -n Prod -e fake1234 -t xxx -od /output_dir -of outfile.txt
+    # --environment_name Prod --environment fake1234 --token xxx --output_directory /output_dir --output_file outfile.txt
     args = environment.args_parser()
     print("args=%s" % args)
     print("args.environment_name=%s" % args.environment_name)
