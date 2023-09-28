@@ -224,7 +224,8 @@ def run():
     # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000097.json', 'Prod', owner)
 
     # put_dashboards('Prod', '/Users/dave.mauney/PycharmProjects/Automation/$Output/Dashboards/Downloads/TMP/*.json', None, None)
-    put_dashboards('Prod', '../DynatraceDashboardGenerator/aaaaaaaa-aaaa-aaaa-aaaa-00000000000?.json', 'TEMP', owner)
+    # put_dashboards('Prod', '../DynatraceDashboardGenerator/aaaaaaaa-aaaa-aaaa-aaaa-00000000000?.json', 'TEMP', owner)
+    put_dashboards('Personal', '../NewPlatform/Dashboards/new_platform_dashboard.json', None, owner)
 
 
 def put_dashboards(env_name, path, prefix, owner):

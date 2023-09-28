@@ -61,9 +61,8 @@ def post_multipart_form_data(api_url, files, params, headers):
         raise
 
 
-def delete(oauth_bearer_token, api_url, version):
+def delete(oauth_bearer_token, api_url, params):
     headers = {'accept': 'application/json', 'Authorization': 'Bearer ' + str(oauth_bearer_token)}
-    params = f'optimistic-locking-version={version}'
     try:
         r = requests.delete(api_url, headers=headers, params=params)
         return r
@@ -74,7 +73,7 @@ def delete(oauth_bearer_token, api_url, version):
 
 # TODO: Test and finalize
 def post(oauth_bearer_token, api_url, payload):
-    headers = {'accept': 'application/json', 'Authorization': 'Bearer ' + str(oauth_bearer_token)}
+    headers = {'Content-type': 'application/json', 'Authorization': 'Bearer ' + str(oauth_bearer_token)}
     try:
         r = requests.post(api_url, payload, headers=headers)
         if r.status_code not in [200, 201, 204]:
