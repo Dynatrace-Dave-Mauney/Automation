@@ -20,7 +20,7 @@ def main():
     # _, env, token = environment.get_environment('Prep')
     # _, env, token = environment.get_environment('Dev')
     # _, env, token = environment.get_environment('Personal')
-    # _, env, token = environment.get_environment('FreeTrial1')
+    # _, env, token = environment.get_environment('Demo')
 
     database = r'DynatraceDashboardGenerator.db'
     conn = create_metrics_table.create_connection(database)

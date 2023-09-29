@@ -9,7 +9,7 @@ To create an HTML "audit" report, run [perform_summarize_environment_html.py](ht
 Be sure to set up the required environment variables before you run it.
 
 ```commandline
-env_name, tenant_key, token_key = ('FreeTrial1', 'FREETRIAL1_TENANT', 'ROBOT_ADMIN_FREETRIAL1_TOKEN')
+env_name, tenant_key, token_key = ('Demo', 'DEMO_TENANT', 'ROBOT_ADMIN_DEMO_TOKEN')
 ```
 An example HTML audit report can be viewed [here](https://dynatrace-dave-mauney.github.io/Automation/Example_Environment_Summary.html).
 

@@ -113,7 +113,7 @@ if __name__ == '__main__':
     # env_name, env, token = environment.get_environment('Prep')
     # env_name, env, token = environment.get_environment('Dev')
     env_name, env, token = environment.get_environment('Personal')
-    # env_name, env, token = environment.get_environment('FreeTrial1')
+    # env_name, env, token = environment.get_environment('Demo')
 
     print('Updating OneAgent AutoUpdate from YAML')
 

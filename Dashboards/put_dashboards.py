@@ -38,7 +38,7 @@ def run():
     # put_dashboards('Prep', '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json', 'Prep', owner)
     # put_dashboards('Dev', '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json', 'Dev', owner)
     # put_dashboards('Personal', '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json', 'Personal', owner)
-    # put_dashboards('FreeTrial1', '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json', 'FreeTrial1', owner)
+    # put_dashboards('Demo', '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json', 'Demo', owner)
 
     # put_dashboards('Personal', 'Sandbox/00000000-dddd-bbbb-aaaa-???????????1.json', 'Personal', owner)
 

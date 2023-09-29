@@ -25,10 +25,10 @@ save_content = ''
 #     # 'Prep': ('PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN'),
 #     # 'Dev': ('DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN'),
 #     'Personal': ('PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN'),
-#     'FreeTrial1': ('FREETRIAL1_TENANT', 'ROBOT_ADMIN_FREETRIAL1_TOKEN'),
+#     'Demo': ('DEMO_TENANT', 'ROBOT_ADMIN_DEMO_TOKEN'),
 # }
 
-# supported_environments = ['Prod', 'NonProd', 'Prep', 'Dev', 'Personal', 'FreeTrial1']
+# supported_environments = ['Prod', 'NonProd', 'Prep', 'Dev', 'Personal', 'Demo']
 supported_environments = ['Prod', 'NonProd']
 
 supported_modes = ['configs', 'entities', 'entities_v1', 'events', 'metrics', 'settings20']

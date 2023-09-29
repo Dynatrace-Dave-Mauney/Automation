@@ -21,7 +21,7 @@ supported_friendly_function_names = {
     'RobotAdmin': 'ROBOT_ADMIN',
 }
 
-supported_environments = ['Prod', 'NonProd', 'Prep', 'Dev', 'Personal', 'FreeTrial1']
+supported_environments = ['Prod', 'NonProd', 'Prep', 'Dev', 'Personal', 'Demo']
 
 
 def get_env_name(function_name):

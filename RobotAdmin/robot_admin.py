@@ -15,8 +15,8 @@ from Reuse import environment
 # env_name, env, token = environment.get_environment('NonProd')
 # env_name, env, token = environment.get_environment('Prep')
 # env_name, env, token = environment.get_environment('Dev')
-env_name, env, token = environment.get_environment('Personal')
-# env_name, env, token = environment.get_environment('FreeTrial1')
+# env_name, env, token = environment.get_environment('Personal')
+env_name, env, token = environment.get_environment('Demo')
 
 offline = False
 confirmation_required = True
@@ -203,7 +203,7 @@ def process():
 	# For when everything is commented out below...
 	pass
 
-	# Run a sanity test, if pointed to 'Personal' or 'FreeTrial1' environment only
+	# Run a sanity test, if pointed to 'Personal' or 'Demo' environment only
 	# sanity_test()
 
 	# Test other methods not covered by "sanity_test()"
@@ -277,7 +277,7 @@ def process():
 
 def sanity_test():
 	# Safety Check
-	if env_name not in ['Personal', 'FreeTrial1']:
+	if env_name not in ['Personal', 'Demo']:
 		print('Error in "sanity_test()" method')
 		print('Not for use in this environment')
 		print('Env: ' + env)
@@ -2029,7 +2029,7 @@ def delete_all_entities_with_fixed_ids():
 
 def delete_auto_tags_with_fixed_ids():
 	# Safety Check
-	if env_name not in ['Personal', 'FreeTrial1']:
+	if env_name not in ['Personal', 'Demo']:
 		print('Error in "delete_auto_tags_with_fixed_ids()" method')
 		print('Not for use in this environment')
 		print('Env: ' + env)
@@ -2054,7 +2054,7 @@ def delete_auto_tags_with_fixed_ids():
 
 def delete_request_attributes_with_fixed_ids():
 	# Safety Check
-	if env_name not in ['Personal', 'FreeTrial1']:
+	if env_name not in ['Personal', 'Demo']:
 		print('Error in "delete_request_attributes_with_fixed_ids()" method')
 		print('Not for use in this environment')
 		print('Env: ' + env)
@@ -2075,7 +2075,7 @@ def delete_request_attributes_with_fixed_ids():
 
 def delete_request_naming_rules_with_fixed_ids():
 	# Safety Check
-	if env_name not in ['Personal', 'FreeTrial1']:
+	if env_name not in ['Personal', 'Demo']:
 		print('Error in "delete_request_naming_rules_with_fixed_ids()" method')
 		print('Not for use in this environment')
 		print('Env: ' + env)
@@ -2098,7 +2098,7 @@ def delete_request_naming_rules_with_fixed_ids():
 
 def delete_conditional_naming_rules_with_fixed_ids():
 	# Safety Check
-	if env_name not in ['Personal', 'FreeTrial1']:
+	if env_name not in ['Personal', 'Demo']:
 		print('Error in "delete_conditional_naming_rules_with_fixed_ids()" method')
 		print('Not for use in this environment')
 		print('Env: ' + env)
@@ -2120,7 +2120,7 @@ def delete_conditional_naming_rules_with_fixed_ids():
 
 def delete_auto_tags():
 	# Safety Check
-	if env_name not in ['Personal', 'FreeTrial1']:
+	if env_name not in ['Personal', 'Demo']:
 		print('Error in "delete_auto_tags()" method')
 		print('Not for use in this environment')
 		print('Env: ' + env)
@@ -2141,7 +2141,7 @@ def delete_auto_tags():
 
 def delete_beta_auto_tags():
 	# Safety Check
-	if env_name not in ['Personal', 'FreeTrial1']:
+	if env_name not in ['Personal', 'Demo']:
 		print('Error in "delete_beta_auto_tags()" method')
 		print('Not for use in this environment')
 		print('Env: ' + env)
@@ -2162,7 +2162,7 @@ def delete_beta_auto_tags():
 
 def delete_request_attributes():
 	# Safety Check
-	if env_name not in ['Personal', 'FreeTrial1']:
+	if env_name not in ['Personal', 'Demo']:
 		print('Error in "delete_request_attributes()" method')
 		print('Not for use in this environment')
 		print('Env: ' + env)

@@ -124,7 +124,7 @@ def get_config():
 
 
 def main():
-    supported_environments = ['Prod', 'NonProd', 'Prep', 'Dev', 'Personal', 'FreeTrial1']
+    supported_environments = ['Prod', 'NonProd', 'Prep', 'Dev', 'Personal', 'Demo']
     args = sys.argv[1:]
     if args and args[0] in supported_environments:
         env_name, env, token = environment.get_environment('Prod')
@@ -133,7 +133,7 @@ def main():
         # env_name, env, token = environment.get_environment('Prep')
         # env_name, env, token = environment.get_environment('Dev')
         env_name, env, token = environment.get_environment('Personal')
-        # env_name, env, token = environment.get_environment('FreeTrial1')
+        # env_name, env, token = environment.get_environment('Demo')
 
     print('Check Certificates')
 
