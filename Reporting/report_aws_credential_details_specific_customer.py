@@ -1,14 +1,18 @@
-# TODO: Report Upgrade
-
 from Reuse import dynatrace_api
 from Reuse import environment
+from Reuse import report_writer
 
 
 def summarize(env, token):
-    return process(env, token, False)
+    return process_report(env, token, True)
 
 
-def process(env, token, print_mode):
+def process(env, token):
+    return process_report(env, token, False)
+
+
+def process_report(env, token, summary_mode):
+    rows = []
     summary = []
 
     count_total = 0
@@ -21,9 +25,6 @@ def process(env, token, print_mode):
     endpoint = '/api/config/v1/aws/credentials'
     params = ''
     aws_credentials_json_list = dynatrace_api.get(env, token, endpoint, params)
-
-    if print_mode:
-        print('id' + '|' + 'name')
 
     for aws_credentials_json in aws_credentials_json_list:
         entity_id = aws_credentials_json.get('id')
@@ -49,20 +50,13 @@ def process(env, token, print_mode):
         else:
             count_without_supporting_services += 1
 
-        if print_mode:
-            print(entity_id + '|' + name)
+        if not summary_mode:
+            rows.append((name, entity_id))
 
         count_total += 1
 
     counts_supporting_service_str = sort_and_stringify_dictionary_items(counts_supporting_service)
     counts_supporting_service_metric_details_str = sort_and_stringify_dictionary_items(counts_supporting_service_metric_details)
-
-    if print_mode:
-        print('Total AWS Accounts:        ' + str(count_total))
-        print('Accounts with Supporting Service monitoring: ' + str(count_with_supporting_services))
-        print('Accounts without Supporting Service monitoring: ' + str(count_without_supporting_services))
-        print('Supporting Service Counts: ' + counts_supporting_service_str)
-        print('Supporting Service Metric Counts: ' + counts_supporting_service_metric_details_str)
 
     summary.append('There are ' + str(count_total) + ' AWS accounts currently configured.')
     if count_total > 0:
@@ -72,17 +66,27 @@ def process(env, token, print_mode):
         summary.append('The Supporting Service breakdown is ' + counts_supporting_service_str + '.')
         summary.append('The Supporting Service metric breakdown is ' + counts_supporting_service_metric_details_str + '.')
 
-    if print_mode:
-        print_list(summary)
-        print('Done!')
+    if not summary_mode:
+        report_name = 'AWS Credentials Sup Svc Details'
+        report_writer.initialize_text_file(None)
+        report_headers = ('Name', 'ID')
+        report_writer.write_console(report_name, report_headers, rows, delimiter='|')
+        report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
+        write_strings(['Total AWS Accounts:                             ' + str(count_total)])
+        write_strings(['Accounts with Supporting Service monitoring:    ' + str(count_with_supporting_services)])
+        write_strings(['Accounts without Supporting Service monitoring: ' + str(count_without_supporting_services)])
+        write_strings(['Supporting Service Counts:                      ' + str(counts_supporting_service_str)])
+        write_strings(['Supporting Service Metric Counts:               ' + str(counts_supporting_service_metric_details_str)])
+        write_strings(summary)
+        report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
+        report_writer.write_html(None, report_name, report_headers, rows)
 
     return summary
 
 
-def print_list(any_list):
-    for line in any_list:
-        line = line.replace('are 0', 'are no')
-        print(line)
+def write_strings(string_list):
+    report_writer.write_console_plain_text(string_list)
+    report_writer.write_plain_text(None, string_list)
 
 
 def sort_and_stringify_dictionary_items(any_dict):
@@ -116,9 +120,9 @@ def main():
     # env_name_supplied = 'Prep'
     # env_name_supplied = 'Dev'
     # env_name_supplied = 'Personal'
-    # env_name_supplied = 'FreeTrial1'
+    # env_name_supplied = 'Demo'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
-    process(env, token, True)
+    process(env, token)
     
     
 if __name__ == '__main__':
