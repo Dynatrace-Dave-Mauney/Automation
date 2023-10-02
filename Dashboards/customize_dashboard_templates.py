@@ -5,6 +5,13 @@ import os
 import shutil
 from inspect import currentframe
 
+PREFIX = 'Prod:'
+DASHBOARD_CUSTOM_PATH = 'Custom/Overview-Customer2-Prod'
+# PREFIX = 'NonProd:'
+# DASHBOARD_CUSTOM_PATH = 'Custom/Overview-Customer2-NonProd (With Prod Tags)'
+# PREFIX = 'DEMO:'
+# DASHBOARD_CUSTOM_PATH = 'Custom/Overview'
+
 # OWNER = 'nobody@example.com'
 # OWNER = os.environ.get('DASHBOARD_OWNER_EMAIL', 'nobody@example.com')
 # OWNER = 'nobody@example.com'
@@ -12,10 +19,6 @@ OWNER = 'dave.mauney@dynatrace.com'
 SHARED = True
 PRESET = True
 MENU_PRESET = True
-
-PREFIX = 'Prod:'
-# PREFIX = 'NonProd:'
-# PREFIX = 'DEMO:'
 
 # Customer1/Customer2
 DASHBOARD_TEMPLATE_PATH = 'Templates/Overview'
@@ -25,10 +28,6 @@ DASHBOARD_TEMPLATE_PATH = 'Templates/Overview'
 # Used when no API token was available, so ID renames were done
 # DASHBOARD_TEMPLATE_PATH = 'Templates/Overview-Customer2-NonProd'
 # DASHBOARD_TEMPLATE_PATH = 'Templates/Overview-Customer2-Prod'
-
-DASHBOARD_CUSTOM_PATH = 'Custom/Overview-Customer2-Prod'
-# DASHBOARD_CUSTOM_PATH = 'Custom/Overview-Customer2-NonProd (With Prod Tags)'
-# DASHBOARD_CUSTOM_PATH = 'Custom/Overview'
 
 # Typical Names
 # WEB_APPLICATION_TAGS = ['Environment', 'Application', 'Web Application Name']

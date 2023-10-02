@@ -33,8 +33,9 @@ def process(env_name, env, token):
 				# print(name)
 				# if dashboard_id.startswith('aaaaaaaa'):
 				# if name.endswith('-PROD SLOs'):
-				if 'SQL Server' in name and not dashboard_id.startswith('00000000-dddd-bbbb-ffff-0000000000'):
+				# if 'SQL Server' in name and not dashboard_id.startswith('00000000-dddd-bbbb-ffff-0000000000'):
 				# if not name.startswith('Prod:') and not name.startswith('TEMP:'):
+				if dashboard_id.startswith('aaaaaaaa-bbbb-cccc-dddd-'):
 					delete_list.append(dashboard_id + ': ' + name + ': ' + owner)
 
 			# Full clean of 'Personal' environment

@@ -16,6 +16,7 @@ USE_NEW_CHARTS = ['Kafka', 'Dynatrace Self-Monitoring', 'Google Cloud 1', 'Googl
 USE_OLD_CHARTS = []
 USE_CODE_MODE_DATA_EXPLORER = ['Processes']
 
+
 def get_dashboard_controller():
     with open('dashboard_controller.yaml', 'r') as file:
         document = file.read()
@@ -72,7 +73,7 @@ def skip_metric(metric_id):
     # else:
     #     return True
 
-    BAD_METRICS = {
+    bad_metrics = {
                    'builtin:billing.ddu',                                       # Entity Type = NONE
                    'builtin:billing.ddu.metrics.byEntity',                      # Entity Type = APM_AGENT
                    'builtin:billing.ddu.metrics.byEntityRaw',                   # Entity Type = APM_AGENT
@@ -90,10 +91,10 @@ def skip_metric(metric_id):
                    'builtin:tech.cassandra.Write.Latency.95thPercentile'
                    }
 
-    # if metric_id in BAD_METRICS or \
+    # if metric_id in bad_metrics or \
     #   metric_id.startswith('builtin:billing'):
 
-    if metric_id in BAD_METRICS:
+    if metric_id in bad_metrics:
         print('Skipping: ' + metric_id + ' because it is considered a bad metric currently')
         return True
 
@@ -101,7 +102,7 @@ def skip_metric(metric_id):
         print('Skipping: ' + metric_id + ' to focus on base SLO metrics')
         return True
 
-    # These metrics (.NET) seem to work fine now (it affected only aaaaaaaa-bbbb-cccc-dddd-000000000009 before it was fixed.
+    # These metrics (.NET) seem to work fine now (it affected only aaaaaaaa-bbbb-cccc-dddd-000000000009 before it was fixed).
     # if '#' in metric_id or '%' in metric_id:
     #     print('Skipping: ' + metric_id + ' because it contains an invalid character (#, or %)')
     #     return True
@@ -115,7 +116,7 @@ def skip_metric(metric_id):
 #     BAD_ENTITIES = {}
 #
 #     if entity_type in BAD_ENTITIES:
-#         print('Skipping: ' + metric_id + ' because it has a bad entity: ' + entity_type)
+#         print(f'Skipping: {metric_id} because it has a bad entity: {entity_type}')
 #         return True
 #
 #     return False
@@ -182,7 +183,7 @@ def convert_entity_type_and_dimension_definition(metric_id, entity_type):
        metric_id == 'builtin:billing.apps.custom.sessionsWithoutReplayByApplication':
         entity_type = 'CUSTOM_APPLICATION'
 
-    GLOBAL_BACKGROUND_ACTIVITY = {
+    global_background_activity = {
         'builtin:tech.generic.count',
         'builtin:tech.generic.cpu.groupSuspensionTime',
         'builtin:tech.generic.cpu.groupTotalTime',
@@ -277,7 +278,7 @@ def convert_entity_type_and_dimension_definition(metric_id, entity_type):
     }
 
     # metric_id.startswith('builtin:tech.jvm.spark') or \
-    if metric_id in GLOBAL_BACKGROUND_ACTIVITY or \
+    if metric_id in global_background_activity or \
        'shards' in metric_id or \
        'indices.count' in metric_id or \
        'indices.docs' in metric_id or \
@@ -285,7 +286,7 @@ def convert_entity_type_and_dimension_definition(metric_id, entity_type):
        metric_id.startswith('builtin:tech.couchbase') or \
        metric_id.startswith('builtin:tech.rabbitmq.topN') or \
        metric_id.startswith('builtin:tech.rabbitmq.cluster'):
-        entity_type = 'GLOBAL_BACKGROUND_ACTIVITY'
+        entity_type = 'global_background_activity'
         dimension_definition = 'dt.entity.process_group'
     if metric_id.startswith('builtin:tech.jvm.spark.worker.cores') or \
        metric_id == 'builtin:tech.jvm.spark.worker.executors' or \
@@ -359,7 +360,7 @@ def generate_new_metric_tile(top, left, metric_id, tile_dictionary, mode):
     if skip_metric(metric_id):
         return None
 
-    metric_selector = ''
+    # metric_selector = ''
 
     if mode == "code":
         data_explorer_template = get_tile_template('DATA_EXPLORER_CODE')
@@ -386,10 +387,12 @@ def generate_new_metric_tile(top, left, metric_id, tile_dictionary, mode):
         agg = tile_dictionary['aggregation']
         if agg == 'NONE':
             agg = 'AVG'
+        if agg == 'PERCENTILE':
+            agg = 'MEDIAN'
         if metric_id.startswith('func:slo'):
             agg = 'AUTO'
         tile['queries'][0]['spaceAggregation'] = agg
-    #tile['filterConfig']['chartConfig']['series'][0]['type'] = tile_dictionary['type']
+    # tile['filterConfig']['chartConfig']['series'][0]['type'] = tile_dictionary['type']
 
     metric_dict = select_metric_by_id(metric_id)
     entity_type = 'NONE'
@@ -406,8 +409,8 @@ def generate_new_metric_tile(top, left, metric_id, tile_dictionary, mode):
             entity_type = 'MONITORED_ENTITY˟DEVICE_APPLICATION'
 
     entity_type, dimension_definition = convert_entity_type_and_dimension_definition(metric_id, entity_type)
-    #tile['queries'][0]['splitBy'] = entity_type
-    #dimension_dict = {'id': '0', 'name': dimension_definition, 'values': [], 'entityDimension': True}
+    # tile['queries'][0]['splitBy'] = entity_type
+    # dimension_dict = {'id': '0', 'name': dimension_definition, 'values': [], 'entityDimension': True}
     # print(tile['queries'][0])
     # print(tile['queries'][0]['splitBy'])
     # print(type(tile['queries'][0]['splitBy']))
@@ -434,7 +437,6 @@ def generate_new_metric_tile(top, left, metric_id, tile_dictionary, mode):
 
     # if metric_id.startswith('func:slo'):
 
-
     return tile
 
 
@@ -453,13 +455,13 @@ def convert_entity_type_to_template_id(entity_type, entity_id):
 def generate_entity_tile(top, left, entity_id, tile_dictionary):
     entity_type = entity_id.split('-', 1)[0]
 
-    SUPPORTED_ENTITY_TYPES = {'SERVICE'}
+    supported_entity_types = {'SERVICE'}
 
     # SERVICE_VERSATILE|{"name": "", "tileType": "", "configured": false,
     # "bounds": {"top": 0, "left": 0, "width": 0, "height": 0}, "tileFilter": {"timeframe": null, "managementZone": null},
     # "assignedEntities": []}
 
-    if entity_type in SUPPORTED_ENTITY_TYPES:
+    if entity_type in supported_entity_types:
         template_id = convert_entity_type_to_template_id(entity_type, entity_id)
         entity_template = get_tile_template(template_id)
         tile = copy.deepcopy(entity_template)
@@ -491,7 +493,14 @@ def main():
         if dashboard_dictionary['process'] and dashboard_dictionary['tiles']:
             pass
         else:
-            print(f'Skipping {dashboard_dictionary}')
+            dashboard_id = dashboard_dictionary.get('id')
+            dashboard_name = dashboard_dictionary.get('name')
+            dashboard_tiles = dashboard_dictionary.get('tiles')
+            if not dashboard_tiles:
+                reason = 'No Tiles'
+            else:
+                reason = 'Process False'
+            print(f'Skipping {dashboard_name} ({dashboard_id}): {reason}')
             continue
 
         dashboard = copy.deepcopy(dashboard_template)
@@ -536,7 +545,7 @@ def main():
                 break
 
             if metric_id:
-                tile = ''
+                # tile = ''
                 if dashboard_name in USE_OLD_CHARTS:
                     tile = generate_metric_tile(top, left, metric_id, tile_dictionary)
                 else:
