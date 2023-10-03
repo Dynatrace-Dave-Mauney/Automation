@@ -5,12 +5,16 @@ import urllib.parse
 from Reuse import dynatrace_api
 from Reuse import environment
 
-
-# env_name, env, token = environment.get_environment('Prod')
-# env_name, env, token = environment.get_environment('Prep')
-# env_name, env, token = environment.get_environment('Dev')
-env_name, env, token = environment.get_environment('Personal')
-# env_name, env, token = environment.get_environment('Demo')
+friendly_function_name = 'Dynatrace Automation'
+env_name_supplied = environment.get_env_name(friendly_function_name)
+# For easy control from IDE
+# env_name_supplied = 'Prod'
+# env_name_supplied = 'NonProd'
+# env_name_supplied = 'Prep'
+# env_name_supplied = 'Dev'
+env_name_supplied = 'Personal'
+# env_name_supplied = 'Demo'
+env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 
 # For simple case where MZ=HG
 management_zone_host_group_of_same_name_updates = ['Test MZ']

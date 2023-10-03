@@ -40,8 +40,8 @@ def process(source_env, source_token, target_env, target_token):
 
 
 def main():
-    source_env_name = 'Personal'
-    target_env_name = 'Demo'
+    source_env_name = 'Demo'
+    target_env_name = 'Personal'
     env_name, source_env, source_token = environment.get_environment(source_env_name)
     env_name, target_env, target_token = environment.get_environment(target_env_name)
     process(source_env, source_token, target_env, target_token)

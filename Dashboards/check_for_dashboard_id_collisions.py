@@ -1,5 +1,5 @@
 #
-# Check the directory containing dashboards against the specified tenant for any dashboard id collisions
+# Check the directory containing dashboards against the specified tenant list for any dashboard id collisions
 #
 
 import os
@@ -28,13 +28,14 @@ known_collisions = [
     'c704bd72-92e9-452a-b40e-73e6f4df9f08',
 ]
 
+
 def main():
     dashboard_id_list = []
 
     tenant_dict = load_tenants(['Prod', 'NonProd'])
 
     try:
-        input_glob_pattern = f'../$Output/Dashboards/Downloads/Exactuals/**'
+        input_glob_pattern = f'../$Input/Dashboards/CollisionCheck/**'
 
         for file_name in glob.glob(input_glob_pattern, recursive=True):
             if os.path.isfile(file_name) and file_name.endswith('.json'):
@@ -72,8 +73,6 @@ def load_tenants(env_name_list):
             inner_dashboards_json_list = dashboards_json.get('dashboards')
             for inner_dashboards_json in inner_dashboards_json_list:
                 dashboard_id = inner_dashboards_json.get('id')
-                # name = inner_dashboards_json.get('name')
-                # owner = inner_dashboards_json.get('owner')
                 tenant_list.append(dashboard_id)
 
         tenant_list = sorted(tenant_list)

@@ -127,13 +127,18 @@ def main():
     supported_environments = ['Prod', 'NonProd', 'Prep', 'Dev', 'Personal', 'Demo']
     args = sys.argv[1:]
     if args and args[0] in supported_environments:
-        env_name, env, token = environment.get_environment('Prod')
+        env_name, env, token = environment.get_environment(args[0])
     else:
-        # env_name, env, token = environment.get_environment('Prod')
-        # env_name, env, token = environment.get_environment('Prep')
-        # env_name, env, token = environment.get_environment('Dev')
-        env_name, env, token = environment.get_environment('Personal')
-        # env_name, env, token = environment.get_environment('Demo')
+        friendly_function_name = 'Dynatrace Automation Reporting'
+        env_name_supplied = environment.get_env_name(friendly_function_name)
+        # For easy control from IDE
+        # env_name_supplied = 'Prod'
+        # env_name_supplied = 'NonProd'
+        # env_name_supplied = 'Prep'
+        # env_name_supplied = 'Dev'
+        # env_name_supplied = 'Personal'
+        # env_name_supplied = 'Demo'
+        env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 
     print('Check Certificates')
 

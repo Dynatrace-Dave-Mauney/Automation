@@ -12,11 +12,6 @@ from Reuse import environment
 path_prefix = 'downloads'
 
 
-def run():
-    # pass
-    download_auto_tags('Dev')
-
-
 def save_auto_tag(path, file, content):
     if not os.path.isdir(path):
         os.makedirs(path)
@@ -24,15 +19,13 @@ def save_auto_tag(path, file, content):
         text_file.write("%s" % json.dumps(content, indent=4))
 
 
-def download_auto_tags(env_name):
+def process(env_name, env, token):
     path = f'{path_prefix}/{env_name}'
     print(f'Downloading auto_tags for {env_name} to {path}')
 
-    _, env, token = environment.get_environment(env_name)
-
     download_count = 0
     endpoint = '/api/config/v1/autoTags'
-    res = json.loads(dynatrace_api.get_object_list(env,token, endpoint).text)
+    res = json.loads(dynatrace_api.get_object_list(env, token, endpoint).text)
 
     for entry in res['values']:
         auto_tag_name = entry.get('name')
@@ -46,5 +39,19 @@ def download_auto_tags(env_name):
     print(f'Downloaded {download_count} auto_tags to {path}')
 
 
+def main():
+    friendly_function_name = 'Dynatrace Automation'
+    env_name_supplied = environment.get_env_name(friendly_function_name)
+    # For easy control from IDE
+    # env_name_supplied = 'Prod'
+    # env_name_supplied = 'NonProd'
+    # env_name_supplied = 'Prep'
+    # env_name_supplied = 'Dev'
+    # env_name_supplied = 'Personal'
+    # env_name_supplied = 'Demo'
+    env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
+    process(env_name, env, token)
+
+
 if __name__ == '__main__':
-    run()
+    main()

@@ -6,10 +6,8 @@ from Reuse import dynatrace_api
 from Reuse import environment
 
 
-def list_dashboards(env, token):
-	print('name|id|owner')
+def process(env, token):
 	lines = []
-	headers = {'Authorization': 'Api-Token ' + token}
 	r = dynatrace_api.get_object_list(env, token, endpoint='/api/config/v1/dashboards')
 	res = r.json()
 	for entry in res['dashboards']:
@@ -19,20 +17,28 @@ def list_dashboards(env, token):
 		# if dashboard_owner == 'Dynatrace':
 		# if dashboard_owner == 'dave.mauney@dynatrace.com' and \
 		# 		not dashboard_id.startswith('aaaaaaaa-bbbb-cccc-dddd-00000000'):
-		if dashboard_id.startswith('FF'):
+		# if dashboard_id.startswith('FF'):
+		if True:
 			lines.append(f'{dashboard_name}|{dashboard_id}|{dashboard_owner}')
-	for line in sorted(lines):
-		print(line)
+
+	if lines:
+		print('name|id|owner')
+		for line in sorted(lines):
+			print(line)
 
 
 def run():
-	env_name, env, token = environment.get_environment('Prod')
-	# env_name, env, token = environment.get_environment('Prep')
-	# env_name, env, token = environment.get_environment('Dev')
-	# env_name, env, token = environment.get_environment('Personal')
-	# env_name, env, token = environment.get_environment('Demo')
-
-	list_dashboards(env, token)
+	friendly_function_name = 'Dynatrace Automation Reporting'
+	env_name_supplied = environment.get_env_name(friendly_function_name)
+	# For easy control from IDE
+	# env_name_supplied = 'Prod'
+	# env_name_supplied = 'NonProd'
+	# env_name_supplied = 'Prep'
+	# env_name_supplied = 'Dev'
+	# env_name_supplied = 'Personal'
+	# env_name_supplied = 'Demo'
+	env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
+	process(env, token)
 
 
 if __name__ == '__main__':

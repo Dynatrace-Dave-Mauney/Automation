@@ -10,23 +10,24 @@ from Reuse import dynatrace_api
 from Reuse import environment
 
 known_collisions = [
-    '22471a3e-4bb3-11ed-bdc3-0242ac120002',
-    '3b9c20e2-dc58-4a91-8dcb-f6217dc869ac',
-    '6b38732e-609c-44e2-b34d-0286717ecdab',
-    '6b38732e-8c5c-4b32-80a1-7053ec8f37e1',
-    '6b38732e-d26b-45c7-b107-ed85e87ff288',
-    'b6fc0160-9332-454f-a7bc-7217b2ae540c',
-    'c15f39a8-7d74-4b97-af28-0b17a20dc711',
-    'c704bd72-92e9-452a-b40e-73e6f4df9f08',
-    '22471a3e-4bb3-11ed-bdc3-0242ac120002',
-    '3b9c20e2-dc58-4a91-8dcb-f6217dc869ac',
-    '6b38732e-609c-44e2-b34d-0286717ecdab',
-    '6b38732e-8c5c-4b32-80a1-7053ec8f37e1',
-    '6b38732e-d26b-45c7-b107-ed85e87ff288',
-    'b6fc0160-9332-454f-a7bc-7217b2ae540c',
-    'c15f39a8-7d74-4b97-af28-0b17a20dc711',
-    'c704bd72-92e9-452a-b40e-73e6f4df9f08',
+	'22471a3e-4bb3-11ed-bdc3-0242ac120002',
+	'3b9c20e2-dc58-4a91-8dcb-f6217dc869ac',
+	'6b38732e-609c-44e2-b34d-0286717ecdab',
+	'6b38732e-8c5c-4b32-80a1-7053ec8f37e1',
+	'6b38732e-d26b-45c7-b107-ed85e87ff288',
+	'b6fc0160-9332-454f-a7bc-7217b2ae540c',
+	'c15f39a8-7d74-4b97-af28-0b17a20dc711',
+	'c704bd72-92e9-452a-b40e-73e6f4df9f08',
+	'22471a3e-4bb3-11ed-bdc3-0242ac120002',
+	'3b9c20e2-dc58-4a91-8dcb-f6217dc869ac',
+	'6b38732e-609c-44e2-b34d-0286717ecdab',
+	'6b38732e-8c5c-4b32-80a1-7053ec8f37e1',
+	'6b38732e-d26b-45c7-b107-ed85e87ff288',
+	'b6fc0160-9332-454f-a7bc-7217b2ae540c',
+	'c15f39a8-7d74-4b97-af28-0b17a20dc711',
+	'c704bd72-92e9-452a-b40e-73e6f4df9f08',
 ]
+
 
 def save(path, file, content):
 	if not os.path.isdir(path):
@@ -87,12 +88,16 @@ def main(arguments):
 	print('args' + str(arguments))
 	print(os.getcwd())
 
-	# env_name, env, token = environment.get_environment('Prod')
-	# env_name, env, token = environment.get_environment('Prep')
-	# env_name, env, token = environment.get_environment('Dev')
-	# env_name, env, token = environment.get_environment('Personal')
-	# env_name, env, token = environment.get_environment('Demo')
-	# env_name, env, token = environment.get_environment('TMP')
+	friendly_function_name = 'Dynatrace Automation'
+	env_name_supplied = environment.get_env_name(friendly_function_name)
+	# For easy control from IDE
+	# env_name_supplied = 'Prod'
+	# env_name_supplied = 'NonProd'
+	# env_name_supplied = 'Prep'
+	# env_name_supplied = 'Dev'
+	# env_name_supplied = 'Personal'
+	# env_name_supplied = 'Demo'
+	env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 
 	path = f'../$Output/Dashboards/Downloads/{env_name}'
 

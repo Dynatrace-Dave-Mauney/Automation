@@ -11,14 +11,20 @@ from Reuse import environment
 
 
 def main(arguments):
-    env_name, env, token = environment.get_environment('Prod')
-    # env_name, env, token = environment.get_environment('NonProd')
-    # env_name, env, token = environment.get_environment('Prep')
-    # env_name, env, token = environment.get_environment('Dev')
-    # env_name, env, token = environment.get_environment('Personal')
-    # env_name, env, token = environment.get_environment('Demo')
-
-    arguments = '', env, token
+    if len(arguments) != 4:
+        friendly_function_name = 'Dynatrace Automation'
+        env_name_supplied = environment.get_env_name(friendly_function_name)
+        # For easy control from IDE
+        # env_name_supplied = 'Prod'
+        # env_name_supplied = 'NonProd'
+        # env_name_supplied = 'Prep'
+        # env_name_supplied = 'Dev'
+        # env_name_supplied = 'Personal'
+        # env_name_supplied = 'Demo'
+        env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
+        arguments = '', env, token
+    else:
+        print(f'Arguments: {arguments}')
 
     # Create "metrics.json" file used to generate metrics dashboards
     print('creating metrics.json file')
@@ -70,5 +76,6 @@ def main(arguments):
 
 
 if __name__ == '__main__':
-    # Specify the tenant and token in arguments
+    # Specify the tenant, token and environment name in arguments or
+    # in the "main" method inline
     main(sys.argv)

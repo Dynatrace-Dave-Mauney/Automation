@@ -226,7 +226,7 @@ def get_boolean_environment_variable(key, default_value):
 
 
 def get_configuration(configuration_key):
-    configuration_file = default_configuration_file
+    # configuration_file = default_configuration_file
     args = args_parser()
     if args.configuration_file:
         configuration_file = args.configuration_file

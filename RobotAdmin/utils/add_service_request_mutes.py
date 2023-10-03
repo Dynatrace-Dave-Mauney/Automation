@@ -6,11 +6,16 @@ from Reuse import environment
 
 
 def process():
-    # env_name, env, token = environment.get_environment('Prod')
-    # env_name, env, token = environment.get_environment('Prep')
-    env_name, env, token = environment.get_environment('Dev')
-    # env_name, env, token = environment.get_environment('Personal')
-    # env_name, env, token = environment.get_environment('Demo')
+    friendly_function_name = 'Dynatrace Automation'
+    env_name_supplied = environment.get_env_name(friendly_function_name)
+    # For easy control from IDE
+    # env_name_supplied = 'Prod'
+    # env_name_supplied = 'NonProd'
+    # env_name_supplied = 'Prep'
+    # env_name_supplied = 'Dev'
+    env_name_supplied = 'Personal'
+    # env_name_supplied = 'Demo'
+    env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 
     tenable_request_already_muted_service_list = []
     tenable_request_needs_muted_service_list = []
@@ -56,9 +61,10 @@ def process():
         # print(service)
         if service_type == 'WEB_REQUEST_SERVICE' or service_type == 'WEB_SERVICE':
             if service_id not in tenable_request_already_muted_service_list:
-                # service_display_name = service.get('displayName')
-                # print(service_id + ':' + service_display_name)
-                tenable_request_needs_muted_service_list.append(service_id)
+                service_display_name = service.get('displayName')
+                if not service_display_name.startswith('Requests to'):
+                    # print(service_id + ':' + service_display_name)
+                    tenable_request_needs_muted_service_list.append(service_id)
 
     # print(tenable_request_needs_muted_service_list)
 

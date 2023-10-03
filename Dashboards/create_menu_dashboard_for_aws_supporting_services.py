@@ -50,7 +50,7 @@ menu_dashboard_template = {
 }
 
 
-def index_dashboards(env, token):
+def process(env, token):
     endpoint = '/api/config/v1/dashboards'
     dashboard_kvp_tuple_list = []
     res = json.loads(dynatrace_api.get_object_list(env, token, endpoint).text)
@@ -83,12 +83,18 @@ def put_dashboard(env, token, dashboard_id, payload):
 
 
 def main():
-    # env_name, env, tenant, token = get_environment('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
-    # env_name, env, tenant, token = get_environment('Prep', 'PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN')
-    env_name, env, token = environment.get_environment('Dev')
-    index_dashboards(env, token)
+    friendly_function_name = 'Dynatrace Automation Reporting'
+    env_name_supplied = environment.get_env_name(friendly_function_name)
+    # For easy control from IDE
+    # env_name_supplied = 'Prod'
+    # env_name_supplied = 'NonProd'
+    # env_name_supplied = 'Prep'
+    # env_name_supplied = 'Dev'
+    # env_name_supplied = 'Personal'
+    # env_name_supplied = 'Demo'
+    env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
+    process(env, token)
 
 
 if __name__ == '__main__':
     main()
-

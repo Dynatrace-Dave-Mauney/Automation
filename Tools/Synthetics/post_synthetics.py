@@ -38,7 +38,17 @@ def load_http_check_template():
 
 
 def post_http_check(target_env_name, monitor_name, monitor_urls):
-    env_name, env, token = environment.get_environment(target_env_name)
+    friendly_function_name = 'Dynatrace Automation'
+    env_name_supplied = environment.get_env_name(friendly_function_name)
+    # For easy control from IDE
+    # env_name_supplied = 'Prod'
+    # env_name_supplied = 'NonProd'
+    # env_name_supplied = 'Prep'
+    # env_name_supplied = 'Dev'
+    # env_name_supplied = 'Personal'
+    env_name_supplied = 'Demo'
+    env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
+
     endpoint = '/api/v1/synthetic/monitors'
 
     monitor = load_http_check_template()

@@ -156,12 +156,16 @@ target_hosts = [
     'HOST-25D8A6D8727DBAC8',  # https://lcq01751.live.dynatrace.com/ui/settings/HOST-25D8A6D8727DBAC8/builtin:host.monitoring?gtf=-2h&gf=all
 ]
 
-# env_name, env, token = environment.get_environment('Prod')
-# env_name, env, token = environment.get_environment('NonProd')
-# env_name, env, token = environment.get_environment('Prep')
-# env_name, env, token = environment.get_environment('Dev')
-env_name, env, token = environment.get_environment('Personal')
-# env_name, env, token = environment.get_environment('Demo')
+friendly_function_name = 'Dynatrace Automation'
+env_name_supplied = environment.get_env_name(friendly_function_name)
+# For easy control from IDE
+# env_name_supplied = 'Prod'
+# env_name_supplied = 'NonProd'
+# env_name_supplied = 'Prep'
+# env_name_supplied = 'Dev'
+# env_name_supplied = 'Personal'
+env_name_supplied = 'Demo'
+env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 
 
 def process():

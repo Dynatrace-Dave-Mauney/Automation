@@ -643,7 +643,6 @@ def change_environment(new_env):
 
     friendly_function_name = 'Dynatrace Automation Tools'
     return environment.get_environment_for_function(new_env, friendly_function_name)
-    # return environment.get_environment(new_env)
 
 
 
