@@ -29,7 +29,7 @@ def test_environment():
     print('')
 
     print('Test get_env_name()')
-    env_name = environment.get_env_name('RobotAdmin')
+    env_name = environment.get_env_name('Dynatrace Automation')
     print(f'Returned value: {env_name}')
     print('')
 

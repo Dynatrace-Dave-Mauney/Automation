@@ -14,12 +14,12 @@ default_configuration_file = 'C:\\Users\\dave.mauney\\PycharmProjects\\Automatio
 # In the future use "Dynatrace Automation" for generic token for all Automation,
 # or "Dynatrace Automation <SubProject>" for a more specific token:
 # Examples:
+# Dynatrace Automation
 # Dynatrace Automation Reporting
+# Dynatrace Automation Reporting Deployment
 # Dynatrace Automation Tools
 # Dynatrace Automation Token Management
-supported_friendly_function_names = {
-    'RobotAdmin': 'ROBOT_ADMIN',
-}
+# Dynatrace Platform Document
 
 supported_environments = ['Prod', 'NonProd', 'Prep', 'Dev', 'Personal', 'Demo']
 
@@ -34,10 +34,7 @@ def get_env_name(function_name):
         return args.environment_name
     else:
         if function_name:
-            if function_name not in supported_friendly_function_names:
-                function_name = function_name.upper().replace(' ', '_')
-            else:
-                function_name = supported_friendly_function_names.get(function_name)
+            function_name = function_name.upper().replace(' ', '_')
         else:
             function_name = ''
         environment_variable_key = f'{function_name.upper()}_ENV_NAME'
@@ -82,10 +79,7 @@ def get_client_environment_for_function_print_control(env_name, friendly_functio
         client_id = args.client_id
         client_id_source = 'Command Line Argument "-ci" or "--client_id"'
     else:
-        if friendly_function_name in supported_friendly_function_names:
-            client_id_key = f'{supported_friendly_function_names.get(friendly_function_name)}_{env_name.upper()}_CLIENT_ID'
-        else:
-            client_id_key = f'{friendly_function_name.upper().replace(" ", "_")}_{env_name.upper()}_CLIENT_ID'
+        client_id_key = f'{friendly_function_name.upper().replace(" ", "_")}_{env_name.upper()}_CLIENT_ID'
         client_id = os.environ.get(client_id_key)
         client_id_source = f'Environment Variable "{client_id_key}"'
 
@@ -93,10 +87,7 @@ def get_client_environment_for_function_print_control(env_name, friendly_functio
         client_secret = args.client_secret
         client_secret_source = 'Command Line Argument "-cs" or "--client_secret"'
     else:
-        if friendly_function_name in supported_friendly_function_names:
-            client_secret_key = f'{supported_friendly_function_names.get(friendly_function_name)}_{env_name.upper()}_CLIENT_SECRET'
-        else:
-            client_secret_key = f'{friendly_function_name.upper().replace(" ", "_")}_{env_name.upper()}_CLIENT_SECRET'
+        client_secret_key = f'{friendly_function_name.upper().replace(" ", "_")}_{env_name.upper()}_CLIENT_SECRET'
         client_secret = os.environ.get(client_secret_key)
         client_secret_source = f'Environment Variable "{client_secret_key}"'
 
@@ -169,10 +160,7 @@ def get_environment_for_function_print_control(env_name, friendly_function_name,
         token = args.token
         token_source = 'Command Line Argument "-t" or "--token"'
     else:
-        if friendly_function_name in supported_friendly_function_names:
-            token_key = f'{supported_friendly_function_names.get(friendly_function_name)}_{env_name.upper()}_TOKEN'
-        else:
-            token_key = f'{friendly_function_name.upper().replace(" ", "_")}_{env_name.upper()}_TOKEN'
+        token_key = f'{friendly_function_name.upper().replace(" ", "_")}_{env_name.upper()}_TOKEN'
         token = os.environ.get(token_key)
         token_source = f'Environment Variable "{token_key}"'
 
