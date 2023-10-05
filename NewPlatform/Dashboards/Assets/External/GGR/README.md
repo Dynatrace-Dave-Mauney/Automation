@@ -1,3 +1,3 @@
 # Source
 
-Developed by Dynatrace Solutions Engineer, "GGR".
+The "Problem Analysis" dashboard was developed by Dynatrace Solutions Engineer, Gabriel Guilbee-Rodriguez.
