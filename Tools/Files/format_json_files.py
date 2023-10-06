@@ -9,7 +9,8 @@ import json
 
 def main():
     try:
-        input_glob_pattern = "../../NewPlatform/Dashboards/Assets/External/**"
+        # input_glob_pattern = "../../NewPlatform/Dashboards/Assets/External/**"
+        input_glob_pattern = "../../NewPlatform/Dashboards/Assets/*.json"
         output_directory_name = '/Temp/Formatted'
 
         for file_name in glob.glob(input_glob_pattern, recursive=True):
