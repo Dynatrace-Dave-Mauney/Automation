@@ -14,7 +14,7 @@ from Reuse import environment
 friendly_function_name = 'Dynatrace Automation'
 env_name_supplied = environment.get_env_name(friendly_function_name)
 # For easy control from IDE
-# env_name_supplied = 'Prod'
+env_name_supplied = 'Prod'
 # env_name_supplied = 'NonProd'
 # env_name_supplied = 'Prep'
 # env_name_supplied = 'Dev'
@@ -207,6 +207,8 @@ def process():
     # For when everything is commented out below...
     pass
 
+    process_current_customer_specific_auto_tags()
+
     # Run a sanity test, if pointed to 'Personal' or 'Demo' environment only
     # sanity_test()
 
@@ -301,6 +303,15 @@ def sanity_test():
     process_all_request_naming_rules()
     confirm('Do you want to create all conditional naming rules?')
     process_all_conditional_naming_rules()
+
+
+def process_current_customer_specific_auto_tags():
+    ###################################################################################################################
+    # current_customer_specific: Auto Tags
+    ###################################################################################################################
+    put_request_attribute('User-Agent', 'REQUEST_HEADER', 'User-Agent')
+    put_request_attribute_with_value_processing_control('User Agent Type', 'REQUEST_HEADER', 'User-Agent', {'extractSubstring': {'delimiter': '/', 'position': 'BEFORE'}, 'splitAt': '', 'trim': False})
+    put_request_attribute_tenable_client_ip()
 
 
 def process_customer_specific_auto_tags():
@@ -1805,33 +1816,11 @@ def put_request_attribute_with_value_processing_control(name, source, parameter,
 def put_request_attribute_tenable_client_ip():
     name = 'Tenable Client IP'
 
-    tenable_client_ip_list = [
-        '10.0.0.67',
-        '10.1.176.55',
-        '10.10.200.25',
-        '10.104.104.22',
-        '10.92.68.193',
-        '10.92.68.194',
-        '10.92.68.198',
-        '10.93.4.79',
-        '10.95.4.63',
-        '172.17.32.235',
-        '172.17.96.240',
-        '172.19.114.23',
-        '172.19.32.209',
-        '172.19.32.210',
-        '172.19.32.211',
-        '172.21.8.57',
-        '172.26.150.205',
-        '172.26.189.240',
-        '172.28.144.163',
-        '172.28.144.164',
-        '172.28.184.240',
-        '172.28.20.153',
-        '172.30.225.194',
-        '192.168.122.1',
-        '192.168.31.64',
-    ]
+    tenable_client_ip_list = environment.get_configuration('robot_admin_enable_client_ip_list')
+
+    if not tenable_client_ip_list:
+        print('The Tenable Client IP List is empty.  Nothing to do!')
+        return
 
     object_id = fixed_request_attribute_ids.get(name)
 
