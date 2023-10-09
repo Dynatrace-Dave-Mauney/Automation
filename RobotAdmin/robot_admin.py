@@ -1993,7 +1993,8 @@ def put_health_check_request_naming_rules_urls():
         "comparison": "REGEX_MATCHES",
         "negate": False,
         "type": "STRING",
-        "value": "/f5/monitor|/keepalive.htm|/webtest.html|/test.htm$|/webTest$|/health$|/healthCheck$|ping$",
+        # "value": "/f5/monitor|/keepalive.htm|/webtest.html|/test.htm$|/webTest$|/health$|/healthCheck$|ping$",
+        "value": "/healthCheck|/health$|/ready$|/readyz$|/heartbeat|/keepalive",
         "values": None
        }
       }
