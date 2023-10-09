@@ -14,7 +14,7 @@ from Reuse import environment
 friendly_function_name = 'Dynatrace Automation'
 env_name_supplied = environment.get_env_name(friendly_function_name)
 # For easy control from IDE
-env_name_supplied = 'Prod'
+# env_name_supplied = 'Prod'
 # env_name_supplied = 'NonProd'
 # env_name_supplied = 'Prep'
 # env_name_supplied = 'Dev'
@@ -309,9 +309,14 @@ def process_current_customer_specific_auto_tags():
     ###################################################################################################################
     # current_customer_specific: Auto Tags
     ###################################################################################################################
-    put_request_attribute('User-Agent', 'REQUEST_HEADER', 'User-Agent')
-    put_request_attribute_with_value_processing_control('User Agent Type', 'REQUEST_HEADER', 'User-Agent', {'extractSubstring': {'delimiter': '/', 'position': 'BEFORE'}, 'splitAt': '', 'trim': False})
-    put_request_attribute_tenable_client_ip()
+    pass
+    # put_request_attribute('User-Agent', 'REQUEST_HEADER', 'User-Agent')
+    # put_request_attribute_with_value_processing_control('User Agent Type', 'REQUEST_HEADER', 'User-Agent', {'extractSubstring': {'delimiter': '/', 'position': 'BEFORE'}, 'splitAt': '', 'trim': False})
+    # put_request_attribute_tenable_client_ip()
+    # put_health_check_request_naming_rules_user_agent()
+    # put_health_check_request_naming_rules_urls()
+    # put_request_attribute_with_value_processing_control('Non-Synthetic', 'REQUEST_HEADER', 'User-Agent', {'splitAt': '', 'trim': False, 'valueCondition': {'negate': True, 'operator': 'BEGINS_WITH', 'value': 'DynatraceSynthetic'}})
+    # put_request_attribute_with_value_processing_control('Synthetic', 'REQUEST_HEADER', 'User-Agent', {'splitAt': '', 'trim': False, 'valueCondition': {'negate': False, 'operator': 'BEGINS_WITH', 'value': 'DynatraceSynthetic'}})
 
 
 def process_customer_specific_auto_tags():
@@ -1953,7 +1958,7 @@ def put_health_check_request_naming_rules_user_agent():
         "requestAttribute": "User Agent Type",
         "source": None,
         "type": "STRING_REQUEST_ATTRIBUTE",
-        "value": "ELB-HealthChecker|kube-probe",
+        "value": "ELB-HealthChecker|kube-probe|curl",
         "values": None
        }
       }
