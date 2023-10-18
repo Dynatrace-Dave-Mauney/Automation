@@ -51,7 +51,7 @@ def load_management_zone_dict(env, token):
         inner_management_zones_json_list = management_zones_json.get('values')
         for inner_management_zones_json in inner_management_zones_json_list:
             name = inner_management_zones_json.get('name')
-            if name.endswith('-PROD') or name.endswith('-DR'):
+            if name.endswith('-PROD') or name.endswith('-PRD') or name.endswith('-DR'):
                 management_zone_id = inner_management_zones_json.get('id')
                 management_zone_dict[management_zone_id] = {'name': name, 'AlertRefs': 0, 'NotifyEmailRefs': 0, 'NotifyPagerDutyRefs': 0, 'NotifyOtherRefs': 0}
 
