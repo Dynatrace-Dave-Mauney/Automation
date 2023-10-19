@@ -31,6 +31,9 @@ def process_report(env, token, summary_mode):
             entity_id = inner_entities_json.get('entityId')
             display_name = inner_entities_json.get('displayName')
 
+            # if '-PRD' not in display_name.upper():
+            #     continue
+
             properties = inner_entities_json.get('properties')
             detected_name = properties.get('detectedName', '')
             to_relationships = inner_entities_json.get('toRelationships')
@@ -48,10 +51,6 @@ def process_report(env, token, summary_mode):
             count_total_hosts_in_groups = count_total_hosts_in_groups + hosts_in_group
 
     rows = sorted(rows)
-
-    if not summary_mode:
-        print('Total Host Groups:          ' + str(count_total))
-        print('Total Hosts in Host Groups: ' + str(count_total_hosts_in_groups))
 
     summary.append('There are ' + str(count_total) + ' hosts groups currently defined.  ')
     if count_total > 0:

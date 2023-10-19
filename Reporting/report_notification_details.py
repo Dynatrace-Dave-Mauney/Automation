@@ -26,6 +26,10 @@ def process_report(env, token, summary_mode):
         for inner_notifications_json in inner_notifications_json_list:
             entity_id = inner_notifications_json.get('id')
             name = inner_notifications_json.get('name')
+
+            # if '-PRD' not in name.upper():
+            #     continue
+
             endpoint = '/api/config/v1/notifications/' + entity_id
             params = ''
             notification = dynatrace_api.get(env, token, endpoint, params)[0]
@@ -53,16 +57,17 @@ def process_report(env, token, summary_mode):
                 bcc_receivers = ''
 
             if not summary_mode:
-                rows.append((entity_id, name, notification_type, alerting_profile, active, url, accept_any_certificate, payload, subject, body, str(receivers), str(cc_receivers), str(bcc_receivers)))
+                rows.append((name, entity_id, notification_type, alerting_profile, active, url, accept_any_certificate, payload, subject, body, str(receivers), str(cc_receivers), str(bcc_receivers)))
 
             count_total += 1
 
     summary.append('There are ' + str(count_total) + ' notifications currently defined.')
 
     if not summary_mode:
+        rows = sorted(rows)
         report_name = 'Notifications'
         report_writer.initialize_text_file(None)
-        report_headers = ('id', 'name', 'notificationType', 'alertingProfile', 'active', 'url', 'acceptAnyCertificate', 'payload', 'subject', 'body', 'receivers', 'ccReceivers', 'bccReceivers')
+        report_headers = ('name', 'id', 'notificationType', 'alertingProfile', 'active', 'url', 'acceptAnyCertificate', 'payload', 'subject', 'body', 'receivers', 'ccReceivers', 'bccReceivers')
         report_writer.write_console(report_name, report_headers, rows, delimiter='|')
         report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
         write_strings(['Total Notifications: ' + str(count_total)])

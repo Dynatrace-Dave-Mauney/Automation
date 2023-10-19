@@ -26,12 +26,14 @@ def process_report(env, token, summary_mode):
         for inner_management_zones_json in inner_management_zones_json_list:
             entity_id = inner_management_zones_json.get('id')
             name = inner_management_zones_json.get('name')
+
+            # if '-PRD' not in name.upper():
+            #     continue
+
             endpoint = '/api/config/v1/managementZones/' + entity_id
             params = ''
             management_zone = dynatrace_api.get(env, token, endpoint, params)[0]
-            description = management_zone.get('description')
-            if not description:
-                description = ''
+            description = management_zone.get('description', '')
             formatted_rules = format_rules(management_zone.get('rules'))
             formatted_dimensional_rules = format_dimensional_rules(management_zone.get('dimensionalRules'))
 

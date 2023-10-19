@@ -20,12 +20,17 @@ def process_report(env, token, summary_mode):
 	for web_applications_dict in web_applications_dicts:
 		entity_id = web_applications_dict.get('id')
 		name = web_applications_dict.get('name')
+
+		if 'PRD' not in name.upper():
+			continue
+
 		# DEBUG: only process one web application
 		# if 'TEMPLATE' in name:
 		# if entity_id == 'APPLICATION-245DD7C386F6725E':
 		summary.extend(process_web_application(env, token, summary_mode, entity_id, name, rows))
 
 	if not summary_mode:
+		rows = sorted(rows)
 		report_name = 'Web Applications Settings 2.0'
 		report_writer.initialize_text_file(None)
 		report_headers = ('Web Application Name', 'Entity ID', 'Schema ID', 'Value')

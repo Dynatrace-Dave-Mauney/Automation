@@ -1,6 +1,6 @@
 # Put all dashboards matching the file path pattern to the specified environment.
 
-import json
+# import json
 import glob
 import os
 import codecs
@@ -25,6 +25,7 @@ def run():
 
     post_dashboards('Personal', 'Assets/*.json')
     post_dashboards('Personal', 'Assets/External/CustomerSuccess/*.json')
+    post_dashboards('Personal', 'Assets/External/GGR/*.json')
     post_dashboards('Personal', 'Assets/External/TechShady/*.json')
 
 

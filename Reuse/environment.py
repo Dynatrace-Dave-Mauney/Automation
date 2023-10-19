@@ -124,7 +124,7 @@ def get_client_environment_for_function_print_control(env_name, friendly_functio
             if client_id_key:
                 print(f'Client ID Key:       {client_id_key}')
             if client_secret_key:
-                print(f'Client Secret Key:    {client_secret_key}')
+                print(f'Client Secret Key:   {client_secret_key}')
         exit(1)
 
 

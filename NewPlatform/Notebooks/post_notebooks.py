@@ -24,6 +24,8 @@ def run():
     #   'Sandbox/*.json' # Lenient reference
 
     post_notebooks('Personal', 'Assets/External/Demo/*.json')
+    # post_notebooks('NonProd', 'Assets/External/Demo/*.json')
+    # post_notebooks('Prod', 'Assets/External/Demo/*.json')
 
 
 def post_notebooks(env_name, path):

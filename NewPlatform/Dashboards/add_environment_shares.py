@@ -45,7 +45,11 @@ def get_document_id_list(env, client_id, client_secret):
     document_list = documents_json.get('documents')
     for document in document_list:
         document_id = document.get('id')
-        document_id_list.append(document_id)
+        document_name = document.get('name')
+
+        # Skip Events dashboards/notebooks since queries have a cost
+        if 'Events' not in document_name:
+            document_id_list.append(document_id)
 
     return document_id_list
 

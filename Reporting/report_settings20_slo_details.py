@@ -1,3 +1,4 @@
+import re
 import urllib.parse
 
 from Reuse import dynatrace_api
@@ -35,9 +36,16 @@ def process_report(env, token, summary_mode):
             metric_name = value.get('metricName')
             metric_expression = value.get('metricExpression')
             enabled = value.get('enabled')
+            filter = value.get('filter')
+
+            if 'mzName' in filter:
+                management_zone_name = re.sub('.*mzName\(', '', filter).replace(')', '').replace('"', '')
+                management_zone_name = re.sub(',.*', '', management_zone_name)
+            else:
+                management_zone_name = ''
 
             if not summary_mode:
-                rows.append((name, slo_summary, metric_name, metric_expression, enabled))
+                rows.append((name, management_zone_name, slo_summary, metric_name, metric_expression, enabled))
 
             count_total += 1
 
@@ -47,7 +55,7 @@ def process_report(env, token, summary_mode):
         rows = sorted(rows)
         report_name = 'SLO Definitions'
         report_writer.initialize_text_file(None)
-        report_headers = ('Name', 'Summary', 'MetricName', 'MetricExpression', 'Enabled')
+        report_headers = ('Name', 'Management Zone Name', 'Summary', 'MetricName', 'MetricExpression', 'Enabled')
         report_writer.write_console(report_name, report_headers, rows, delimiter='|')
         report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
         write_strings(['Total SLO definitions: ' + str(count_total)])

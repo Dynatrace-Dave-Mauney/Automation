@@ -5,9 +5,12 @@ from Reuse import new_platform_api
 
 
 def process(env, client_id, client_secret):
-	scope = 'document:environment-shares:read document:environment-shares:delete'
+	scope = 'document:environment-shares:read document:environment-shares:delete document:documents:read'
 
 	oauth_bearer_token = new_platform_api.get_oauth_bearer_token(client_id, client_secret, scope)
+
+	document_name_dict = load_document_names(env, oauth_bearer_token)
+
 	params = {'page-size': 1000}
 	results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/environment-shares', params)
 	environment_shares_json = json.loads(results.text)
@@ -21,7 +24,10 @@ def process(env, client_id, client_secret):
 		environment_share_document_id = environment_share.get('documentId')
 		environment_share_access = environment_share.get('access')
 		environment_share_claim_count = environment_share.get('claimCount')
-		delete_list.append(f'{environment_share_id}:{environment_share_document_id}:{environment_share_access}:{environment_share_claim_count}')
+		environment_share_document_name = document_name_dict.get(environment_share_document_id)
+
+		if 'Event' in environment_share_document_name:
+			delete_list.append(f'{environment_share_id}:{environment_share_document_name}:{environment_share_document_id}:{environment_share_access}:{environment_share_claim_count}')
 
 	delete_list = sorted(delete_list)
 
@@ -46,6 +52,20 @@ def process(env, client_id, client_secret):
 
 	print('Environment Shares Deleted: ' + str(count))
 
+
+def load_document_names(env, oauth_bearer_token):
+	document_name_dict = {}
+	params = {'page-size': 1000}
+	results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents', params)
+	documents_json = json.loads(results.text)
+	document_list = documents_json.get('documents')
+
+	for document in document_list:
+		document_id = document.get('id')
+		document_name = document.get('name')
+		document_name_dict[document_id] = document_name
+
+	return document_name_dict
 
 def main():
 	friendly_function_name = 'Dynatrace Platform Document'

@@ -26,6 +26,10 @@ def process_report(env, token, summary_mode):
         for inner_alerting_profiles_json in inner_alerting_profiles_json_list:
             entity_id = inner_alerting_profiles_json.get('id')
             name = inner_alerting_profiles_json.get('name')
+
+            # if '-PRD' not in name.upper():
+            #     continue
+
             endpoint = '/api/config/v1/alertingProfiles/' + entity_id
             params = ''
             alerting_profile = dynatrace_api.get(env, token, endpoint, params)[0]
@@ -43,6 +47,7 @@ def process_report(env, token, summary_mode):
     summary.append('There are ' + str(count_total) + ' alerting profiles currently defined.')
 
     if not summary_mode:
+        rows = sorted(rows)
         report_name = 'Alerting Profiles'
         report_writer.initialize_text_file(None)
         report_headers = ('name', 'id', 'managementZoneId', 'rules', 'eventTypeFilters')
