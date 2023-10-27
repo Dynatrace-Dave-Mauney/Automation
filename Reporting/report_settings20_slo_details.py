@@ -15,6 +15,8 @@ def process(env, token):
 
 
 def process_report(env, token, summary_mode):
+    customer_specific_management_zone_names = environment.get_configuration('report_settings20_slo_details.management_zone_names')
+
     rows = []
     summary = []
 
@@ -36,13 +38,17 @@ def process_report(env, token, summary_mode):
             metric_name = value.get('metricName')
             metric_expression = value.get('metricExpression')
             enabled = value.get('enabled')
-            filter = value.get('filter')
+            slo_filter = value.get('filter')
 
-            if 'mzName' in filter:
-                management_zone_name = re.sub('.*mzName\(', '', filter).replace(')', '').replace('"', '')
+            if 'mzName' in slo_filter:
+                management_zone_name = re.sub('.*mzName\(', '', slo_filter).replace(')', '').replace('"', '')
                 management_zone_name = re.sub(',.*', '', management_zone_name)
             else:
                 management_zone_name = ''
+                if customer_specific_management_zone_names:
+                    management_zone_name = customer_specific_management_zone_names.get(name, '')
+                if management_zone_name == '':
+                    print(f'Management zone missing for {name}: {filter}: {item}')
 
             if not summary_mode:
                 rows.append((name, management_zone_name, slo_summary, metric_name, metric_expression, enabled))

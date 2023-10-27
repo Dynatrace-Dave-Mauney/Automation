@@ -236,6 +236,7 @@ def process(env, token):
             row.append(mz_coverage_dict.get(key).get(entity_type))
         rows.append(row)
 
+    report_writer.initialize_text_file(None)
     report_name = 'Management Zone Coverage'
     report_headers = ['Management Zone']
     report_headers.extend(entity_types_of_interest)

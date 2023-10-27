@@ -8,7 +8,6 @@ def process(env, token):
 
 
 def process_report(env, token, summary_mode):
-    report_name = 'ActiveGate Details'
     rows = []
     summary = []
 
@@ -65,6 +64,7 @@ def process_report(env, token, summary_mode):
 
     if not summary_mode:
         report_writer.initialize_text_file(None)
+        report_name = 'ActiveGate Details'
         report_headers = ('hostname', 'id', 'osType', 'version', 'networkZone', 'networkAddresses', 'loadBalancerAddresses', 'type', 'environments', 'autoUpdateSettings', 'enabledModules')
         report_writer.write_console(report_name, report_headers, rows, delimiter='|')
         report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
