@@ -226,14 +226,20 @@ def get_configuration(configuration_key):
             print(f'Using default configuration file name of "{default_configuration_file}"')
 
     yaml_data = read_yaml(configuration_file)
-    yaml_value = yaml_data.get(configuration_key)
 
-    return yaml_value
+    if yaml_data:
+        yaml_value = yaml_data.get(configuration_key)
+        return yaml_value
+    else:
+        return None
 
 
 def read_yaml(yaml_file):
-    with open(yaml_file, 'r') as file:
-        return yaml.safe_load(file)
+    try:
+        with open(yaml_file, 'r') as file:
+            return yaml.safe_load(file)
+    except FileNotFoundError:
+        return None
 
 
 def args_parser():
