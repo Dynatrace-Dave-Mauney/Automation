@@ -22,7 +22,9 @@ def process():
 		print('Env or Token Environment Variable Not Set!')
 		exit(1)
 
-	post_fargate_paas_plus_token()
+	post_reporting_token()
+
+	# post_fargate_paas_plus_token()
 
 	# post_fargate_paas_token()
 	# post_active_gate_certificate_management_token()
@@ -91,8 +93,8 @@ def post_read_metrics_token():
 
 
 def post_reporting_token():
-	# return post_token('Reporting', ["activeGates.read", "activeGateTokenManagement.read", "apiTokens.read", "auditLogs.read", "entities.read", "events.read", "extensionConfigurations.read", "extensionEnvironment.read", "extensions.read", "metrics.read", "networkZones.read", "problems.read", "releases.read", "settings.read", "slo.read", "syntheticLocations.read", "credentialVault.read", "DataExport", "DssFileManagement", "ReadConfig", "ReadSyntheticData"])
-	return post_token('Reporting Pipeline', ["activeGates.read", "activeGateTokenManagement.read", "apiTokens.read", "auditLogs.read", "entities.read", "events.read", "extensionConfigurations.read", "extensionEnvironment.read", "extensions.read", "metrics.read", "networkZones.read", "problems.read", "releases.read", "settings.read", "slo.read", "syntheticLocations.read", "credentialVault.read", "DataExport", "DssFileManagement", "ReadConfig", "ReadSyntheticData"])
+	return post_token('Reporting', ["activeGates.read", "activeGateTokenManagement.read", "apiTokens.read", "auditLogs.read", "entities.read", "events.read", "extensionConfigurations.read", "extensionEnvironment.read", "extensions.read", "metrics.read", "networkZones.read", "problems.read", "releases.read", "settings.read", "slo.read", "syntheticLocations.read", "credentialVault.read", "DataExport", "DssFileManagement", "ReadConfig", "ReadSyntheticData"])
+	# return post_token('Reporting Pipeline', ["activeGates.read", "activeGateTokenManagement.read", "apiTokens.read", "auditLogs.read", "entities.read", "events.read", "extensionConfigurations.read", "extensionEnvironment.read", "extensions.read", "metrics.read", "networkZones.read", "problems.read", "releases.read", "settings.read", "slo.read", "syntheticLocations.read", "credentialVault.read", "DataExport", "DssFileManagement", "ReadConfig", "ReadSyntheticData"])
 
 
 def post_robot_admin_token():

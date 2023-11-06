@@ -3,10 +3,13 @@ import glob
 import json
 import yaml
 
-configuration_yaml_file = '/Temp/builtinmonitoring.slo/config.yaml'
-input_glob_pattern = '/Temp/builtinmonitoring.slo/*.json'
-output_configuration_yaml_file = '/Temp/builtinmonitoring.slo/new_config.yaml'
+# configuration_yaml_file = '/Temp/builtinmonitoring.slo/config.yaml'
+# input_glob_pattern = '/Temp/builtinmonitoring.slo/*.json'
+# output_configuration_yaml_file = '/Temp/builtinmonitoring.slo/new_config.yaml'
 
+configuration_yaml_file = '/Temp/builtinmanagement-zones-output/config.yaml'
+input_glob_pattern = '/Temp/builtinmanagement-zones-output/*.json'
+output_configuration_yaml_file = '/Temp/builtinmanagement-zones-output/new_config.yaml'
 
 def main():
 
@@ -21,7 +24,8 @@ def main():
                     # formatted_json = json.dumps(input_json, indent=4, sort_keys=False)
                     name = input_json.get('name')
                     # metric_expression = input_json.get('metricExpression')
-                    if '- Host Availability' in name:
+                    # if '- Host Availability' in name:
+                    if True:
                         id_to_keep = base_file_name.replace(".json", "")
                         # print(f'{name}: {metric_expression}:{id_to_keep}')
                         ids_to_keep.append(id_to_keep)
