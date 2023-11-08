@@ -22,7 +22,8 @@ def process():
 		print('Env or Token Environment Variable Not Set!')
 		exit(1)
 
-	post_reporting_token()
+	# post_reporting_token()
+	post_slo_generation_token()
 
 	# post_fargate_paas_plus_token()
 
@@ -112,6 +113,10 @@ def post_super_reader_token():
 
 def post_terraform_read_token():
 	return post_token('Terraform Read', ["settings.read", "slo.read", "CaptureRequestData", "ExternalSyntheticIntegration", "ReadConfig"])
+
+
+def post_slo_generation_token():
+	return post_token('SLO Generation Pipeline', ["entities.read", "ReadConfig", "WriteConfig", "settings.read", "settings.write",  "slo.read",  "slo.write"])
 
 
 def post_test_token():
