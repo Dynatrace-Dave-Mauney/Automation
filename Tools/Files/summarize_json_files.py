@@ -8,7 +8,9 @@ def main():
     try:
         # input_glob_pattern = "/Temp/builtinmonitoring.slo/*.json"
         # input_glob_pattern = "/tools/monaco20-CNB_Prod-DOWNLOAD/download_2023-10-25-110259/project_CNB_Prod/builtinmonitoring.slo/*.json"
-        input_glob_pattern = "/tools/monaco20-CNB_Prod-DOWNLOAD/download_2023-10-26-104556/project_CNB_Prod/builtinmonitoring.slo/*.json"
+        # input_glob_pattern = "/tools/monaco20-CNB_Prod-DOWNLOAD/download_2023-10-26-104556/project_CNB_Prod/builtinmonitoring.slo/*.json"
+        input_glob_pattern = "/tools/monaco20-CNB_NonProd-DOWNLOAD/download_2023-11-10-100123/project_CNB_NonProd/builtinmanagement-zones/*.json"
+        input_glob_pattern = "C:/tools/monaco20-CNB_NonProd-UPDATE-Exactuals-FINAL/CNB_NonProd/builtinmanagement-zones/*.json"
 
         for file_name in glob.glob(input_glob_pattern, recursive=True):
             base_file_name = os.path.basename(file_name)
@@ -17,14 +19,15 @@ def main():
                 with open(file_name, 'r', encoding='utf-8') as infile:
                     input_json = json.loads(infile.read())
                     formatted_json = json.dumps(input_json, indent=4, sort_keys=False)
+
                     name = input_json.get('name')
-                    metric_expression = input_json.get('metricExpression')
+                    json_id = input_json.get('id')
+                    # metric_expression = input_json.get('metricExpression')
                     # if '- Host Availability' in name:
                     # if ' - Synthetic Availability' in name or '- Service ' in name:
-                    if False:
-                        pass
-                    else:
-                        print(f'{name}: {metric_expression}')
+                    if 'PMTHB' in name:
+                        # print(f'{name}: {metric_expression}')
+                        print(f'{name}: {base_file_name}')
                         # print(formatted_json)
                         selected_count += 1
     except FileNotFoundError:
