@@ -7,13 +7,13 @@ def process(env, token):
     rows = []
 
     management_zone_dict = load_management_zone_dict(env, token)
-    print(management_zone_dict)
+    # print(management_zone_dict)
 
     alerting_profile_references_dict = load_and_count_alerting_profile_references(env, token, management_zone_dict)
-    print(management_zone_dict)
+    # print(management_zone_dict)
 
     count_problem_notification_references(env, token, management_zone_dict, alerting_profile_references_dict)
-    print(management_zone_dict)
+    # print(management_zone_dict)
 
     keys = management_zone_dict.keys()
     for key in keys:
@@ -70,7 +70,7 @@ def load_and_count_alerting_profile_references(env, token, management_zone_dict)
         inner_alerting_profiles_json_list = alerting_profiles_json.get('values')
         for inner_alerting_profiles_json in inner_alerting_profiles_json_list:
             # print(inner_alerting_profiles_json)
-            # name = inner_alerting_profiles_json.get('name')
+            name = inner_alerting_profiles_json.get('name')
             entity_id = inner_alerting_profiles_json.get('id')
             endpoint = '/api/config/v1/alertingProfiles/' + entity_id
             params = ''
@@ -84,8 +84,9 @@ def load_and_count_alerting_profile_references(env, token, management_zone_dict)
                 management_zone_counts['AlertRefs'] = management_zone_counts.get('AlertRefs') + 1
                 management_zone_dict[str(management_zone_id)] = management_zone_counts
                 alerting_profile_references_dict[entity_id] = management_zone_id
-            # else:
-            #     print(name, management_zone_id, 'NOTFOUND')
+            else:
+                pass
+                # print(name, management_zone_id, 'No management_zone_counts for alerting profile "managementZoneId"')
 
     return alerting_profile_references_dict
 
@@ -98,8 +99,9 @@ def count_problem_notification_references(env, token, management_zone_dict, aler
     for notifications_json in notifications_json_list:
         inner_notifications_json_list = notifications_json.get('values')
         for inner_notifications_json in inner_notifications_json_list:
+            # print(inner_notifications_json)
             entity_id = inner_notifications_json.get('id')
-            # name = inner_notifications_json.get('name')
+            name = inner_notifications_json.get('name')
             endpoint = '/api/config/v1/notifications/' + entity_id
             params = ''
             notification = dynatrace_api.get(env, token, endpoint, params)[0]
@@ -118,14 +120,20 @@ def count_problem_notification_references(env, token, management_zone_dict, aler
                     notification_reference_type = 'NotifyEmailRefs'
 
             management_zone_id = alerting_profile_references_dict.get(alerting_profile, None)
+            # print(name, notification_reference_type, alerting_profile, management_zone_id)
             if management_zone_id:
                 management_zone_counts = management_zone_dict.get(str(management_zone_id), None)
+                # print(management_zone_counts)
                 if management_zone_counts:
                     # print(name, management_zone_id, management_zone_counts)
                     management_zone_counts[notification_reference_type] = management_zone_counts.get(notification_reference_type) + 1
                     management_zone_dict[str(management_zone_id)] = management_zone_counts
-                # else:
-                #     print(name, management_zone_id, 'NOTFOUND')
+                else:
+                    pass
+                    # print(name, management_zone_id, 'No management_zone_counts')
+            else:
+                pass
+                # print(name, management_zone_id, 'No management_zone_id')
 
 
 def main():
