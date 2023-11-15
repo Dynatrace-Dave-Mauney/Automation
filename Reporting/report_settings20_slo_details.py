@@ -27,33 +27,35 @@ def process_report(env, token, summary_mode):
     schema_ids_param = f'schemaIds={schema_ids}'
     raw_params = schema_ids_param + '&scopes=environment&fields=schemaId,value,Summary&pageSize=500'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    settings_object = dynatrace_api.get(env, token, endpoint, params)[0]
-    items = settings_object.get('items', [])
+    settings_object_list = dynatrace_api.get(env, token, endpoint, params)
 
-    if items:
-        for item in items:
-            value = item.get('value')
-            slo_summary = item.get('summary').replace('\\', '')
-            name = value.get('name')
-            metric_name = value.get('metricName')
-            metric_expression = value.get('metricExpression')
-            enabled = value.get('enabled')
-            slo_filter = value.get('filter')
+    for settings_object in settings_object_list:
+        items = settings_object.get('items', [])
 
-            if 'mzName' in slo_filter:
-                management_zone_name = re.sub('.*mzName\(', '', slo_filter).replace(')', '').replace('"', '')
-                management_zone_name = re.sub(',.*', '', management_zone_name)
-            else:
-                management_zone_name = ''
-                if customer_specific_management_zone_names:
-                    management_zone_name = customer_specific_management_zone_names.get(name, '')
-                if management_zone_name == '':
-                    print(f'Management zone missing for {name}: {filter}: {item}')
+        if items:
+            for item in items:
+                value = item.get('value')
+                slo_summary = item.get('summary').replace('\\', '')
+                name = value.get('name')
+                metric_name = value.get('metricName')
+                metric_expression = value.get('metricExpression')
+                enabled = value.get('enabled')
+                slo_filter = value.get('filter')
 
-            if not summary_mode:
-                rows.append((name, management_zone_name, slo_summary, metric_name, metric_expression, enabled))
+                if 'mzName' in slo_filter:
+                    management_zone_name = re.sub('.*mzName\(', '', slo_filter).replace(')', '').replace('"', '')
+                    management_zone_name = re.sub(',.*', '', management_zone_name)
+                else:
+                    management_zone_name = ''
+                    if customer_specific_management_zone_names:
+                        management_zone_name = customer_specific_management_zone_names.get(name, '')
+                    if management_zone_name == '':
+                        print(f'Management zone missing for {name}: {slo_filter}: {item}')
 
-            count_total += 1
+                if not summary_mode:
+                    rows.append((name, management_zone_name, slo_summary, metric_name, metric_expression, enabled))
+
+                count_total += 1
 
     summary.append('There are ' + str(count_total) + ' SLOs currently defined.')
 
