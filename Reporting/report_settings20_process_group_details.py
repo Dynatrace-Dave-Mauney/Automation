@@ -64,19 +64,21 @@ def process_process_group(env, token, summary_mode, entity_id, name, rows):
     schema_ids_param = ''
     raw_params = f'{schema_ids_param}&scopes={entity_id}&fields=schemaId,value&pageSize=500'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    settings_object = dynatrace_api.get(env, token, endpoint, params)[0]
-    items = settings_object.get('items', [])
+    settings_object_list = dynatrace_api.get(env, token, endpoint, params)
 
-    for item in items:
-        schema_id = item.get('schemaId')
-        value = str(item.get('value'))
-        value = value.replace('{', '')
-        value = value.replace('}', '')
-        value = value.replace("'", "")
-        if not summary_mode:
-            rows.append((name, entity_id,  schema_id, value))
+    for settings_object in settings_object_list:
+        items = settings_object.get('items', [])
 
-    summary = sorted(summary)
+        for item in items:
+            schema_id = item.get('schemaId')
+            value = str(item.get('value'))
+            value = value.replace('{', '')
+            value = value.replace('}', '')
+            value = value.replace("'", "")
+            if not summary_mode:
+                rows.append((name, entity_id,  schema_id, value))
+
+        summary = sorted(summary)
 
     return summary
 

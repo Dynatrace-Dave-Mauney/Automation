@@ -74,7 +74,7 @@ def load_and_count_alerting_profile_references(env, token, management_zone_dict)
             entity_id = inner_alerting_profiles_json.get('id')
             endpoint = '/api/config/v1/alertingProfiles/' + entity_id
             params = ''
-            alerting_profile = dynatrace_api.get(env, token, endpoint, params)[0]
+            alerting_profile = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
             # print(alerting_profile)
             management_zone_id = alerting_profile.get('managementZoneId')
             # print(management_zone_id)
@@ -104,7 +104,7 @@ def count_problem_notification_references(env, token, management_zone_dict, aler
             name = inner_notifications_json.get('name')
             endpoint = '/api/config/v1/notifications/' + entity_id
             params = ''
-            notification = dynatrace_api.get(env, token, endpoint, params)[0]
+            notification = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
             # print(notification)
             # notification_type = notification.get('type')
             alerting_profile = notification.get('alertingProfile')

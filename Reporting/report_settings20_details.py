@@ -59,19 +59,21 @@ def process_report(env, token, summary_mode):
     endpoint = '/api/v2/settings/objects'
     raw_params = 'scopes=environment&fields=schemaId,value&pageSize=500'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    settings_object = dynatrace_api.get(env, token, endpoint, params)[0]
-    items = settings_object.get('items')
-    for item in items:
-        schema_id = item.get('schemaId')
-        value = str(item.get('value'))
-        value = value.replace('{', '')
-        value = value.replace('}', '')
-        value = value.replace("'", "")
-        if not summary_mode:
-            if schema_id not in ignore_list:
-                rows.append((schema_id, value))
+    settings_object_list = dynatrace_api.get(env, token, endpoint, params)
 
-        add_findings(findings, schema_id, item)
+    for settings_object in settings_object_list:
+        items = settings_object.get('items')
+        for item in items:
+            schema_id = item.get('schemaId')
+            value = str(item.get('value'))
+            value = value.replace('{', '')
+            value = value.replace('}', '')
+            value = value.replace("'", "")
+            if not summary_mode:
+                if schema_id not in ignore_list:
+                    rows.append((schema_id, value))
+
+            add_findings(findings, schema_id, item)
 
     # It just happens that the whole summary can be sorted in this particular case.
     summary = sorted(summary)

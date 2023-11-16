@@ -32,22 +32,24 @@ def process_report(env, token, summary_mode):
             endpoint = '/api/v2/settings/objects'
             raw_params = f'schemaIds={schema_id}&scopes=environment&fields=objectId,value&pageSize=500'
             params = urllib.parse.quote(raw_params, safe='/,&=')
-            settings_object = dynatrace_api.get(env, token, endpoint, params)[0]
-            items = settings_object.get('items')
-            count_objects = 0
-            for item in items:
-                object_id = item.get('objectId')
-                value = str(item.get('value'))
-                value = value.replace('{', '')
-                value = value.replace('}', '')
-                value = value.replace("'", "")
-                if not summary_mode:
-                    rows.append((schema_id, latest_schema_version, display_name, value, object_id))
-                count_objects += 1
+            settings_object_list = dynatrace_api.get(env, token, endpoint, params)
 
-            summary.append('Total ' + schema_id + ' Objects: ' + str(count_objects))
+            for settings_object in settings_object_list:
+                items = settings_object.get('items')
+                count_objects = 0
+                for item in items:
+                    object_id = item.get('objectId')
+                    value = str(item.get('value'))
+                    value = value.replace('{', '')
+                    value = value.replace('}', '')
+                    value = value.replace("'", "")
+                    if not summary_mode:
+                        rows.append((schema_id, latest_schema_version, display_name, value, object_id))
+                    count_objects += 1
 
-            count_total += 1
+                summary.append('Total ' + schema_id + ' Objects: ' + str(count_objects))
+
+                count_total += 1
 
     # It just happens that the whole summary can be sorted in this particular case.
     summary = sorted(summary)

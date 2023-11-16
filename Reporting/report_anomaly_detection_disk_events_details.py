@@ -19,7 +19,7 @@ def process_report(env, token, summary_mode):
 
     endpoint = '/api/config/v1/anomalyDetection/diskEvents'
     params = ''
-    anomaly_json = dynatrace_api.get(env, token, endpoint, params)[0]
+    anomaly_json = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
 
     anomaly_values = anomaly_json.get('values')
     for anomaly_value in anomaly_values:

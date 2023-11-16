@@ -355,27 +355,29 @@ def list_objects_of_schema(env, token, schema_id, filtering):
     endpoint = f'/api/v2/settings/objects'
     raw_params = f'schemaIds={schema_id}&fields=scope,objectId,value&pageSize=500'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    settings_object = dynatrace_api.get(env, token, endpoint, params)[0]
-    error_code = settings_object.get('error', {}).get('code', None)
-    if error_code:
-        if error_code == 404:
-            print('Schema type not found')
+    settings_object_list = dynatrace_api.get(env, token, endpoint, params)
+
+    for settings_object in settings_object_list:
+        error_code = settings_object.get('error', {}).get('code', None)
+        if error_code:
+            if error_code == 404:
+                print('Schema type not found')
+            else:
+                print('Something went wrong when getting the schema')
         else:
-            print('Something went wrong when getting the schema')
-    else:
-        items = settings_object.get('items')
-        for item in items:
-            print(item)
-            scope = item.get('scope')
-            object_id = item.get('objectId')
-            update_token = item.get('updateToken')
-            value = str(item.get('value'))
-            value = value.replace('{', '')
-            value = value.replace('}', '')
-            value = value.replace("'", "")
-            line = f'{object_id}, {update_token}, scope: {scope}, {value}'
-            # if not filtering or filtering in line:
-            #     print(line)
+            items = settings_object.get('items')
+            for item in items:
+                print(item)
+                scope = item.get('scope')
+                object_id = item.get('objectId')
+                update_token = item.get('updateToken')
+                value = str(item.get('value'))
+                value = value.replace('{', '')
+                value = value.replace('}', '')
+                value = value.replace("'", "")
+                line = f'{object_id}, {update_token}, scope: {scope}, {value}'
+                # if not filtering or filtering in line:
+                #     print(line)
 
 
 def list_metrics(env, token, filtering):
@@ -643,7 +645,6 @@ def change_environment(new_env):
 
     friendly_function_name = 'Dynatrace Automation Tools'
     return environment.get_environment_for_function(new_env, friendly_function_name)
-
 
 
 def run():

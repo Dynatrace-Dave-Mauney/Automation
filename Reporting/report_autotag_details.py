@@ -30,7 +30,7 @@ def process_report(env, token, summary_mode):
             # for later if details of rules, etc. are needed from each autotag...
             endpoint = '/api/config/v1/autoTags/' + entity_id
             params = ''
-            autotag = dynatrace_api.get(env, token, endpoint, params)[0]
+            autotag = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
 
             rules = autotag.get('rules')
 

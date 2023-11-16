@@ -24,20 +24,22 @@ def process_slos(env, token):
     schema_ids_param = f'schemaIds={schema_ids}'
     raw_params = schema_ids_param + '&scopes=environment&fields=objectId,value,Summary&pageSize=500'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    settings_object = dynatrace_api.get(env, token, endpoint, params)[0]
-    items = settings_object.get('items', [])
+    settings_object_list = dynatrace_api.get(env, token, endpoint, params)
 
-    if items:
-        for item in items:
-            object_id = item.get('objectId')
-            value = item.get('value')
-            # slo_summary = item.get('summary')
-            name = value.get('name')
-            metric_name = value.get('metricName')
-            # metric_expression = value.get('metricExpression')
-            enabled = value.get('enabled')
-            if enabled and name not in slo_skip_list:
-                slo_list.append((name, metric_name, object_id))
+    for settings_object in settings_object_list:
+        items = settings_object.get('items', [])
+
+        if items:
+            for item in items:
+                object_id = item.get('objectId')
+                value = item.get('value')
+                # slo_summary = item.get('summary')
+                name = value.get('name')
+                metric_name = value.get('metricName')
+                # metric_expression = value.get('metricExpression')
+                enabled = value.get('enabled')
+                if enabled and name not in slo_skip_list:
+                    slo_list.append((name, metric_name, object_id))
 
     put_slo_overview_dashboards(env, token, sorted(slo_list))
 
@@ -206,7 +208,7 @@ def print_list(any_list):
 
 
 def main():
-    # friendly_function_name = 'Dynatrace Automation Tools'
+    friendly_function_name = 'Dynatrace Automation Tools'
     # env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
     # env_name_supplied = 'Prod'

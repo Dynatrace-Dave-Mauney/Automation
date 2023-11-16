@@ -32,23 +32,25 @@ def process_report(env, token, summary_mode):
 
             endpoint = '/api/config/v1/managementZones/' + entity_id
             params = ''
-            management_zone = dynatrace_api.get(env, token, endpoint, params)[0]
-            description = management_zone.get('description', '')
-            formatted_rules = format_rules(management_zone.get('rules'))
-            formatted_dimensional_rules = format_dimensional_rules(management_zone.get('dimensionalRules'))
+            management_zone_list = dynatrace_api.get(env, token, endpoint, params)
 
-            # if formatted_dimensional_rules:
-            #     print(f'formatted_dimensional_rules: {formatted_dimensional_rules}')
+            for management_zone in management_zone_list:
+                description = management_zone.get('description', '')
+                formatted_rules = format_rules(management_zone.get('rules'))
+                formatted_dimensional_rules = format_dimensional_rules(management_zone.get('dimensionalRules'))
 
-            formatted_entity_rules = format_entity_rules(management_zone.get('entitySelectorBasedRules'))
+                # if formatted_dimensional_rules:
+                #     print(f'formatted_dimensional_rules: {formatted_dimensional_rules}')
 
-            # debug_info = f"     -------> DEBUG INFO (rules): {management_zone.get('rules')}"
+                formatted_entity_rules = format_entity_rules(management_zone.get('entitySelectorBasedRules'))
 
-            if not summary_mode:
-                # rows.append((name, formatted_rules, str(debug_info)))
-                rows.append((name, formatted_rules, formatted_entity_rules, formatted_dimensional_rules, entity_id, str(description)))
+                # debug_info = f"     -------> DEBUG INFO (rules): {management_zone.get('rules')}"
 
-            count_total += 1
+                if not summary_mode:
+                    # rows.append((name, formatted_rules, str(debug_info)))
+                    rows.append((name, formatted_rules, formatted_entity_rules, formatted_dimensional_rules, entity_id, str(description)))
+
+                count_total += 1
 
     summary.append('There are ' + str(count_total) + ' management zones currently defined.')
 

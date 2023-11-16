@@ -19,7 +19,7 @@ def process_report(env, token, summary_mode):
 
     endpoint = '/api/config/v1/aws/supportedServices'
     params = ''
-    aws_supported_services_json_dict = dynatrace_api.get(env, token, endpoint, params)[0]
+    aws_supported_services_json_dict = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
     aws_supported_services_json_list = aws_supported_services_json_dict.get('services')
 
     for aws_supported_services_json in aws_supported_services_json_list:

@@ -50,7 +50,7 @@ def get_technology_description_blocks(env, token, hub_technology_id):
     technology_description_blocks = []
     endpoint = f'/api/v2/hub/technologies/{hub_technology_id}' 
     params = ''
-    hub_technology_json = dynatrace_api.get(env, token, endpoint, params)[0]
+    hub_technology_json = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
     if not hub_technology_json.get('error'):
         hub_technology_description_blocks = hub_technology_json.get('descriptionBlocks')
         if hub_technology_description_blocks:
@@ -76,6 +76,7 @@ def main():
     print('Hub Summary')
     # process_hub_categories(env, token)
     process_hub_items(env, token, False)
+
 
 if __name__ == '__main__':
     main()

@@ -17,7 +17,7 @@ def process_report(env, token, summary_mode):
 
     endpoint = '/api/config/v1/anomalyDetection/services'
     params = ''
-    anomaly_json = dynatrace_api.get(env, token, endpoint, params)[0]
+    anomaly_json = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
 
     default_response_time_degradation_detection_mode = 'DETECT_AUTOMATICALLY'
     default_response_time_degradation_milliseconds = 100

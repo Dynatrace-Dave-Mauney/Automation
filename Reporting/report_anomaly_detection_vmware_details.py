@@ -17,7 +17,7 @@ def process_report(env, token, summary_mode):
 
     endpoint = '/api/config/v1/anomalyDetection/vmware'
     params = ''
-    anomaly_json = dynatrace_api.get(env, token, endpoint, params)[0]
+    anomaly_json = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
 
     default_esxi_high_cpu_saturation = True
     default_guest_cpu_limit_reached = True

@@ -32,7 +32,7 @@ def process_report(env, token, summary_mode):
 
             endpoint = '/api/config/v1/alertingProfiles/' + entity_id
             params = ''
-            alerting_profile = dynatrace_api.get(env, token, endpoint, params)[0]
+            alerting_profile = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
 
             if not summary_mode:
                 management_zone_id = alerting_profile.get('managementZoneId')

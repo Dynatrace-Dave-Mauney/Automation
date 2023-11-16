@@ -90,7 +90,7 @@ def process_custom_service_language(env, token, summary_mode, language, rows):
             # for later if details of rules, etc. are needed from each custom_service...
             # endpoint = '/api/config/v1/custom_services/' + entity_id
             # params = ''
-            # custom_service = dynatrace_api.get(env, token, endpoint, params)[0]
+            # custom_service = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
 
             if not summary_mode:
                 rows.append((f'Custom Service: {language}', name, entity_id))

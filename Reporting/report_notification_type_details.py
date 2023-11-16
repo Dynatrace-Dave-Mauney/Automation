@@ -18,7 +18,7 @@ def process(env, token):
             if name.endswith('-PROD') or name.endswith('-DR'):
                 endpoint = '/api/config/v1/notifications/' + entity_id
                 params = ''
-                notification = dynatrace_api.get(env, token, endpoint, params)[0]
+                notification = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
                 # print(notification)
                 notification_type = notification.get('type')
                 if notification_type == 'WEBHOOK':

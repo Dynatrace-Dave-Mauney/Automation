@@ -207,7 +207,11 @@ def process():
     # For when everything is commented out below...
     pass
 
-    process_current_customer_specific_auto_tags()
+    put_request_attribute('x-dynatrace (client-side)', 'REQUEST_HEADER', 'x-dynatrace')
+    put_request_attribute('x-dynatrace', 'REQUEST_HEADER', 'x-dynatrace')
+
+
+    # process_current_customer_specific_auto_tags()
 
     # Run a sanity test, if pointed to 'Personal' or 'Demo' environment only
     # sanity_test()

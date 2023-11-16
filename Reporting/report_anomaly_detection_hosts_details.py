@@ -17,7 +17,7 @@ def process_report(env, token, summary_mode):
 
     endpoint = '/api/config/v1/anomalyDetection/hosts'
     params = ''
-    anomaly_json = dynatrace_api.get(env, token, endpoint, params)[0]
+    anomaly_json = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
 
     default_connection_lost_detection = True
     default_connection_lost_detection_on_graceful_shutdowns = False

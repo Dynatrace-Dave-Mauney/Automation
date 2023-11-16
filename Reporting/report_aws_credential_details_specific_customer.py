@@ -32,7 +32,7 @@ def process_report(env, token, summary_mode):
 
         endpoint = '/api/config/v1/aws/credentials/' + entity_id
         params = ''
-        aws_credentials = dynatrace_api.get(env, token, endpoint, params)[0]
+        aws_credentials = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
         supporting_services = aws_credentials.get('supportingServicesToMonitor')
 
         if supporting_services:

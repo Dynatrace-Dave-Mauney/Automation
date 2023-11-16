@@ -17,7 +17,7 @@ def process_report(env, token, summary_mode):
 
     endpoint = '/api/config/v1/dataPrivacy'
     params = ''
-    data_privacy_json = dynatrace_api.get(env, token, endpoint, params)[0]
+    data_privacy_json = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
 
     mask_ip_addresses_and_gps_coordinates = data_privacy_json.get('maskIpAddressesAndGpsCoordinates')
     mask_user_action_names = data_privacy_json.get('maskUserActionNames')

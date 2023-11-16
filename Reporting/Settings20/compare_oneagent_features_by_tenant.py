@@ -22,23 +22,25 @@ def process_oneagent_features(env_name, env, token, all_env_name_data):
     schema_ids_param = f'schemaIds={schema_ids}'
     raw_params = schema_ids_param + '&scopes=environment&fields=schemaId,value,Summary&pageSize=500'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    settings_object = dynatrace_api.get(env, token, endpoint, params)[0]
-    items = settings_object.get('items', [])
+    settings_object_list = dynatrace_api.get(env, token, endpoint, params)
 
-    lines = []
+    for settings_object in settings_object_list:
+        items = settings_object.get('items', [])
 
-    if items:
-        for item in items:
-            value = item.get('value')
-            summary = item.get('summary').replace('\\', '')
-            enabled = value.get('enabled')
-            cryptic_key = value.get('key')
-            feature_name = f'{summary} ({cryptic_key})'
-            lines.append(f'{feature_name}:{enabled}')
+        lines = []
 
-            feature_dict = all_env_name_data.get(feature_name, {})
-            feature_dict[env_name] = enabled
-            all_env_name_data[feature_name] = feature_dict
+        if items:
+            for item in items:
+                value = item.get('value')
+                summary = item.get('summary').replace('\\', '')
+                enabled = value.get('enabled')
+                cryptic_key = value.get('key')
+                feature_name = f'{summary} ({cryptic_key})'
+                lines.append(f'{feature_name}:{enabled}')
+
+                feature_dict = all_env_name_data.get(feature_name, {})
+                feature_dict[env_name] = enabled
+                all_env_name_data[feature_name] = feature_dict
 
         return all_env_name_data
 

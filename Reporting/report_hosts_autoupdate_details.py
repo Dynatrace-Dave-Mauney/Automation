@@ -17,7 +17,7 @@ def process_report(env, token, summary_mode):
 
     endpoint = '/api/config/v1/hosts/autoupdate'
     params = ''
-    hosts_autoupdate_json = dynatrace_api.get(env, token, endpoint, params)[0]
+    hosts_autoupdate_json = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
 
     setting = hosts_autoupdate_json.get('setting')
     version = hosts_autoupdate_json.get('version')

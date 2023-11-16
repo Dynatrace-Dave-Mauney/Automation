@@ -32,7 +32,7 @@ def process_report(env, token, summary_mode):
 
             endpoint = '/api/config/v1/maintenanceWindows/' + entity_id
             params = ''
-            maintenance_window = dynatrace_api.get(env, token, endpoint, params)[0]
+            maintenance_window = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
             entity_type = maintenance_window.get('type', '')
             enabled = maintenance_window.get('enabled', '')
             suppression = maintenance_window.get('suppression', '')

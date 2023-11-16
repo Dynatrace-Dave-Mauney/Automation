@@ -419,20 +419,22 @@ def save_settings20_objects():
             # raw_params = f'schemaIds={schema_id}&scopes=environment&fields=objectId,value&pageSize=500'
             raw_params = f'schemaIds={schema_id}&fields=objectId,value,scope&pageSize=500'
             params = urllib.parse.quote(raw_params, safe='/,&=')
-            setting_object = dynatrace_api.get(env, token, endpoint, params)[0]
-            items = setting_object.get('items')
-            for item in items:
-                # print(item)
-                if schema_id == 'builtin:logmonitoring.log-dpp-rules' and '[Built-in]' in item.get('value').get('ruleName', ''):
-                    pass
-                    # print('Skipping ' + schema_id + ' rule ' + item.get('value').get('ruleName', ''))
-                else:
-                    # item['scope'] = 'environment'
-                    item['schemaId'] = schema_id
-                    item['schemaVersion'] = schema_dict[schema_id]
-                    config_list.append(item)
+            settings_object_list = dynatrace_api.get(env, token, endpoint, params)
 
-                    write_settings20_json(schema_id, item)
+            for settings_object in settings_object_list:
+                items = settings_object.get('items')
+                for item in items:
+                    # print(item)
+                    if schema_id == 'builtin:logmonitoring.log-dpp-rules' and '[Built-in]' in item.get('value').get('ruleName', ''):
+                        pass
+                        # print('Skipping ' + schema_id + ' rule ' + item.get('value').get('ruleName', ''))
+                    else:
+                        # item['scope'] = 'environment'
+                        item['schemaId'] = schema_id
+                        item['schemaVersion'] = schema_dict[schema_id]
+                        config_list.append(item)
+
+                        write_settings20_json(schema_id, item)
 
     yaml_dict['configs'] = config_list
 

@@ -17,49 +17,51 @@ def process(env, token):
     schema_ids_param = f'schemaIds={schema_ids}'
     raw_params = schema_ids_param + '&scopes=environment&fields=schemaId,value,Summary&pageSize=500'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    settings_object = dynatrace_api.get(env, token, endpoint, params)[0]
-    items = settings_object.get('items', [])
+    settings_object_list = dynatrace_api.get(env, token, endpoint, params)
 
-    if items:
-        for item in items:
-            value = item.get('value')
-            slo_summary = item.get('summary').replace('\\', '')
-            name = value.get('name')
-            metric_name = value.get('metricName')
-            metric_expression = value.get('metricExpression')
-            enabled = value.get('enabled')
-            slo_filter = value.get('filter')
+    for settings_object in settings_object_list:
+        items = settings_object.get('items', [])
 
-            if 'mzName' in slo_filter:
-                management_zone_name = re.sub('.*mzName\(', '', slo_filter).replace(')', '').replace('"', '')
-                management_zone_name = re.sub(',.*', '', management_zone_name)
-            else:
-                management_zone_name = ''
+        if items:
+            for item in items:
+                value = item.get('value')
+                slo_summary = item.get('summary').replace('\\', '')
+                name = value.get('name')
+                metric_name = value.get('metricName')
+                metric_expression = value.get('metricExpression')
+                enabled = value.get('enabled')
+                slo_filter = value.get('filter')
 
-            slo_type = 'UNKNOWN'
-            if ' - Synthetic Availability (HTTP)' in name:
-                slo_type = 'HTTP'
-            else:
-                if ' - Synthetic Availability (Browser)' in name:
-                    slo_type = 'Browser'
+                if 'mzName' in slo_filter:
+                    management_zone_name = re.sub('.*mzName\(', '', slo_filter).replace(')', '').replace('"', '')
+                    management_zone_name = re.sub(',.*', '', management_zone_name)
                 else:
-                    if ' - Service Errors' in name or ' - Service Performance' in name:
-                        slo_type = 'Service'
+                    management_zone_name = ''
+
+                slo_type = 'UNKNOWN'
+                if ' - Synthetic Availability (HTTP)' in name:
+                    slo_type = 'HTTP'
+                else:
+                    if ' - Synthetic Availability (Browser)' in name:
+                        slo_type = 'Browser'
                     else:
-                        if ' - Host Availability' in name:
-                            slo_type = 'Host'
+                        if ' - Service Errors' in name or ' - Service Performance' in name:
+                            slo_type = 'Service'
+                        else:
+                            if ' - Host Availability' in name:
+                                slo_type = 'Host'
 
-            slo_dashboard_lookup_key = (management_zone_name, slo_type)
+                slo_dashboard_lookup_key = (management_zone_name, slo_type)
 
-            print(slo_dashboard_lookup_key, slo_dashboard_lookup)
+                print(slo_dashboard_lookup_key, slo_dashboard_lookup)
 
-            slo_type = 'Manual'
-            if slo_dashboard_lookup_key in slo_dashboard_lookup:
-                slo_type = 'Generated'
+                slo_type = 'Manual'
+                if slo_dashboard_lookup_key in slo_dashboard_lookup:
+                    slo_type = 'Generated'
 
-            rows.append((name, management_zone_name, slo_summary, metric_name, metric_expression, enabled, slo_type))
+                rows.append((name, management_zone_name, slo_summary, metric_name, metric_expression, enabled, slo_type))
 
-            count_total += 1
+                count_total += 1
 
     rows = sorted(rows)
     report_name = 'SLO Definitions'

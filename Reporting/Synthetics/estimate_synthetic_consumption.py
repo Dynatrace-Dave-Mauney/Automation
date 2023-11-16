@@ -22,7 +22,7 @@ def process(env, token):
         inner_synthetics_json_list = synthetics_json.get('monitors')
         for inner_synthetics_json in inner_synthetics_json_list:
             endpoint = '/api/v1/synthetic/monitors/' + inner_synthetics_json.get('entityId')
-            synthetic_json = dynatrace_api.get(env, token, endpoint, params)[0]
+            synthetic_json = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
             synthetic_name = synthetic_json.get('name')
             synthetic_type = synthetic_json.get('type')
             synthetic_enabled = synthetic_json.get('enabled')

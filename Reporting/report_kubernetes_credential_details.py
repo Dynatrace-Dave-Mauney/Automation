@@ -32,7 +32,7 @@ def process_report(env, token, summary_mode):
 
             endpoint = '/api/config/v1/kubernetes/credentials/' + entity_id
             params = ''
-            details = dynatrace_api.get(env, token, endpoint, params)[0]
+            details = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
 
             events_integration_enabled = details.get('eventsIntegrationEnabled')
 

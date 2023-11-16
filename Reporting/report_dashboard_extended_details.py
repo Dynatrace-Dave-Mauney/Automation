@@ -33,7 +33,7 @@ def process_report(env, token, summary_mode):
 
             endpoint = '/api/config/v1/dashboards/' + entity_id
             params = ''
-            dashboard = dynatrace_api.get(env, token, endpoint, params)[0]
+            dashboard = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
             dashboard_metadata = dashboard.get('dashboardMetadata')
             shared = dashboard_metadata.get('shared', False)
             preset = dashboard_metadata.get('preset', False)

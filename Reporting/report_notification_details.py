@@ -32,7 +32,7 @@ def process_report(env, token, summary_mode):
 
             endpoint = '/api/config/v1/notifications/' + entity_id
             params = ''
-            notification = dynatrace_api.get(env, token, endpoint, params)[0]
+            notification = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
             # print(notification)
             notification_type = notification.get('type')
             alerting_profile = notification.get('alertingProfile')
