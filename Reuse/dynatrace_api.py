@@ -8,8 +8,10 @@ from inspect import currentframe
 from json import JSONDecodeError
 from requests import Response
 
-verify_certificate = os.getenv('DYNATRACE_API_VERIFY_CERTIFICATE', False)
-if verify_certificate.lower == 'true':
+verify_certificate = os.getenv('DYNATRACE_API_VERIFY_CERTIFICATE', True)
+if verify_certificate.lower() == 'false':
+    verify_certificate = False
+else:
     verify_certificate = True
 
 
