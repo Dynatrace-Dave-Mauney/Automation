@@ -53,6 +53,8 @@ def test_host(hostname: str, buffer_days: int=30) -> str:
         return f'{hostname} cert error {e}'
     except socket.timeout as e:
         return f'{hostname} could not connect'
+    except ConnectionResetError as e:
+        return f'{hostname} connection reset'
     else:
         if will_expire_in < datetime.timedelta(days=0):
             return f'{hostname} cert will expired'

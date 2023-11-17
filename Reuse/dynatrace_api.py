@@ -1,3 +1,4 @@
+import os
 import json
 import requests
 import ssl
@@ -7,6 +8,10 @@ from inspect import currentframe
 from json import JSONDecodeError
 from requests import Response
 
+verify_certificate = os.getenv('DYNATRACE_API_VERIFY_CERTIFICATE', False)
+if verify_certificate.lower == 'true':
+    verify_certificate = True
+
 
 def get(url, token, endpoint, params):
     # token_string = token.split('.')[0] + '.' + token.split('.')[1]
@@ -15,13 +20,16 @@ def get(url, token, endpoint, params):
     # Allow for rare cases of passing the complete endpoint as a URL, or the much more common case
     # of just passing the relative path of the endpoint
     # For the very special case of calling ActiveGate endpoints over port 9999, do not validate certificate
-    verify = True
+    verify = verify_certificate
     if endpoint.startswith('https://'):
         full_url = endpoint
         if ':9999' in endpoint:
             verify = False
     else:
         full_url = url + endpoint
+
+    if not verify:
+        requests.packages.urllib3.disable_warnings()
 
     try:
         resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token}, timeout=60.0, verify=verify)
@@ -54,7 +62,7 @@ def get(url, token, endpoint, params):
             # print(f'next_page_key: {next_page_key}')
             params = {'nextPageKey': next_page_key}
             full_url = url + endpoint
-            resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
+            resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token}, timeout=60.0, verify=verify)
             # print(resp.url)
 
             if resp.status_code != 200:

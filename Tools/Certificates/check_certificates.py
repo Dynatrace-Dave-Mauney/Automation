@@ -9,8 +9,9 @@ from Reuse import environment
 
 
 # To set a default domain name and/or a list of hosts to bypass:
-# configuration_yaml_file = 'check_certificates.yaml'
-configuration_yaml_file = '../../$Input/Tools/Certificates/check_certificates.yaml'
+configuration_yaml_file = 'check_certificates.yaml'
+# configuration_yaml_file = '../../$Input/Tools/Certificates/check_certificates.yaml'
+# configuration_yaml_file = '../../$Input/Tools/Certificates/check_certificates_customer_specific.yaml'
 
 
 def process(env, token):
@@ -132,7 +133,7 @@ def main():
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
     # env_name_supplied = 'Prod'
-    # env_name_supplied = 'NonProd'
+    env_name_supplied = 'NonProd'
     # env_name_supplied = 'Prep'
     # env_name_supplied = 'Dev'
     # env_name_supplied = 'Personal'
