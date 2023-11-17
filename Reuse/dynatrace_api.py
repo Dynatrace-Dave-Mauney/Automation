@@ -8,9 +8,11 @@ from inspect import currentframe
 from json import JSONDecodeError
 from requests import Response
 
-verify_certificate = os.getenv('DYNATRACE_API_VERIFY_CERTIFICATE', True)
+# For get only currently, support bypassing cert verification
+verify_certificate = os.getenv('DYNATRACE_API_VERIFY_CERTIFICATE', 'true')
 if verify_certificate.lower() == 'false':
     verify_certificate = False
+    print('WARNING: Certificate verification is being bypassed (for gets only)')
 else:
     verify_certificate = True
 
@@ -22,6 +24,7 @@ def get(url, token, endpoint, params):
     # Allow for rare cases of passing the complete endpoint as a URL, or the much more common case
     # of just passing the relative path of the endpoint
     # For the very special case of calling ActiveGate endpoints over port 9999, do not validate certificate
+    # Also, Bypass certificate verification if appropriate environment variable is set
     verify = verify_certificate
     if endpoint.startswith('https://'):
         full_url = endpoint
