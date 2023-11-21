@@ -22,8 +22,10 @@ def process():
 		print('Env or Token Environment Variable Not Set!')
 		exit(1)
 
+	post_dynatrace_automation_token()
+
 	# post_reporting_token()
-	post_slo_generation_token()
+	# post_slo_generation_token()
 
 	# post_fargate_paas_plus_token()
 
@@ -44,6 +46,52 @@ def process():
 
 def post_api_token():
 	return post_token('API Tokens (Read/Write)', ["apiTokens.read", "apiTokens.write"])
+
+
+def post_dynatrace_automation_token():
+	# Supports Token Key: DYNATRACE_AUTOMATION_PERSONAL_TOKEN
+	# Has every known permission needed by the automation project (and maybe some more!)
+	return post_token('Automation', [
+		"ActiveGateCertManagement",
+		"CaptureRequestData",
+		"DTAQLAccess",
+		"DataExport",
+		"DataImport",
+		"DssFileManagement",
+		"ExternalSyntheticIntegration",
+		"InstallerDownload",
+		"ReadConfig",
+		"ReadSyntheticData",
+		"RumJavaScriptTagManagement",
+		"WriteConfig",
+		"activeGateTokenManagement.read",
+		"activeGates.read",
+		"apiTokens.read",
+		"auditLogs.read",
+		"credentialVault.read",
+		"entities.read",
+		"entities.write",
+		"events.ingest",
+		"events.read",
+		"events.read",
+		"extensionConfigurations.read",
+		"extensionEnvironment.read",
+		"extensions.read",
+		"geographicRegions.read",
+		"hub.read",
+		"logs.ingest",
+		"metrics.ingest",
+		"metrics.read",
+		"networkZones.read",
+		"problems.read",
+		"releases.read",
+		"settings.read",
+		"settings.write",
+		"slo.read",
+		"slo.write",
+		"syntheticExecutions.read",
+		"syntheticLocations.read",
+		])
 
 
 def post_dashboard_generator_token():
