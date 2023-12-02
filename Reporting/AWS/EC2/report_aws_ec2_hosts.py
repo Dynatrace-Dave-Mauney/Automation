@@ -8,16 +8,17 @@ from Reuse import report_writer
 
 def process(env, token):
 	rows = []
-	raw_endpoint = '/api/v2/entities?pageSize=4000&from=now-5y&entitySelector=type(EC2_INSTANCE)&fields=fromRelationships.isAccessibleBy'
-	endpoint = urllib.parse.quote(raw_endpoint, safe='/,&=?')
-	r = dynatrace_api.get_object_list(env, token, endpoint)
-	ec2_instance_json = json.loads(r.text)
-	ec2_instance_list = ec2_instance_json.get('entities')
-	for ec2_instance in ec2_instance_list:
-		# print(ec2_instance)
-		display_name = ec2_instance.get('displayName')
-		if not display_name.startswith('UNKNOWN'):
-			rows.append([display_name])
+	endpoint = '/api/v2/entities'
+	raw_params = 'pageSize=4000&from=now-5y&entitySelector=type(EC2_INSTANCE)&fields=fromRelationships.isAccessibleBy'
+	params = urllib.parse.quote(raw_params, safe='/,&=?')
+	ec2_instance_json_list = dynatrace_api.get(env, token, endpoint, params)
+	for ec2_instance_json in ec2_instance_json_list:
+		ec2_instance_list = ec2_instance_json.get('entities')
+		for ec2_instance in ec2_instance_list:
+			# print(ec2_instance)
+			display_name = ec2_instance.get('displayName')
+			if not display_name.startswith('UNKNOWN'):
+				rows.append([display_name])
 
 	rows = sorted(rows)
 	report_name = 'EC2 Hosts'
@@ -43,7 +44,7 @@ def main():
 	# env_name_supplied = 'Prep'
 	# env_name_supplied = 'Dev'
 	# env_name_supplied = 'Personal'
-	# env_name_supplied = 'Demo'
+	env_name_supplied = 'Demo'
 	env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 	process(env, token)
 

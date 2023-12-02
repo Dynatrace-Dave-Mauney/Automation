@@ -21,11 +21,9 @@ def process(token, print_mode):
     # https://www.dynatrace.com/support/help/shortlink/activegate-configuration-ssl#managing-certificates-via-rest-api
     # List:
     # https://myActiveGate:9999/e/myEnvironmentId/api/v1/certificate/list
-    # endpoint = f'https://localhost:9999/e/{tenant}/api/v1/certificate/list'
-    endpoint = f'https://localhost:9999/e/{tenant}/api/v1/certificate/list'
+    url = f'https://localhost:9999/e/{tenant}/api/v1/certificate/list'
     params = ''
-    activegates_json_list = dynatrace_api.get(endpoint, token, endpoint, params)
-    print(activegates_json_list)
+    activegates_json_list = dynatrace_api.get_json_list_with_pagination(url, token, verify=False, disable_verify_warnings=True)
 
     # if print_mode:
     #     print('id' + '|' + 'osType' + '|' + 'version' + '|' + 'type' + '|' + 'hostname' + '|' + 'environments' + '|' + 'autoUpdateSettings' + '|' + 'networkZone' + '|' + 'modules')

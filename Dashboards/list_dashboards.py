@@ -7,8 +7,9 @@ from Reuse import environment
 
 
 def process(env, token):
+	endpoint = '/api/config/v1/dashboards'
 	lines = []
-	r = dynatrace_api.get_object_list(env, token, endpoint='/api/config/v1/dashboards')
+	r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
 	res = r.json()
 	for entry in res['dashboards']:
 		dashboard_name = entry.get('name')
