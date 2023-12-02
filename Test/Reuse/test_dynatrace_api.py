@@ -1,140 +1,184 @@
 import json
+import time
 import urllib.parse
 
+from requests.exceptions import HTTPError
+from requests.exceptions import RequestException
 from Reuse import dynatrace_api
 from Reuse import environment
 
-
-def test_get_object_list(env, token, endpoint):
-    r = dynatrace_api.get_object_list(env, token, endpoint)
-    return r
+auto_tags_endpoint = '/api/config/v1/autoTags'
+alerting_profiles_endpoint = '/api/config/v1/alertingProfiles'
+metrics_endpoint = '/api/v2/metrics'
+entity_types_endpoint = '/api/v2/entityTypes'
+entities_endpoint = '/api/v2/entities'
 
 
 def test_get_alerting_profiles(env, token):
-    endpoint = '/api/config/v1/alertingProfiles'
-    params = ''
-    r = dynatrace_api.get(env, token, endpoint, params)
-    return r
+    return dynatrace_api.get_json_list_with_pagination(f'{env}{alerting_profiles_endpoint}', token)
 
 
 def test_get_metrics(env, token):
-    endpoint = '/api/v2/metrics'
     raw_params = 'pageSize=1000&fields=+displayName,+description,+unit,+aggregationTypes,+defaultAggregation,+dimensionDefinitions,+transformations,+entityType'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    r = dynatrace_api.get(env, token, endpoint, params)
-    return r
+    return dynatrace_api.get_json_list_with_pagination(f'{env}{metrics_endpoint}', token, params=params)
 
 
 def test_get_entity_types(env, token):
-    endpoint = '/api/v2/entityTypes'
     raw_params = 'pageSize=500'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    r = dynatrace_api.get(env, token, endpoint, params)
-    return r
+    return dynatrace_api.get_json_list_with_pagination(f'{env}{entity_types_endpoint}', token, params=params)
 
 
 def test_get_entity_type_host(env, token):
-    endpoint = '/api/v2/entities'
     raw_params = 'pageSize=500&entitySelector=type(HOST)&fields=+properties.monitoringMode, +properties.state,+toRelationships'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    r = dynatrace_api.get(env, token, endpoint, params)
-    return r
+    return dynatrace_api.get_json_list_with_pagination(f'{env}{entities_endpoint}', token, params=params)
 
 
-def test_post(env, token, endpoint, payload):
-    r = dynatrace_api.post(env, token, endpoint, payload)
-    return r
+def test_get_without_pagination(url, token, **kwargs):
+    return dynatrace_api.get_without_pagination(url, token, **kwargs)
 
 
-def test_post_plain_text(env, token, endpoint, payload):
-    r = dynatrace_api.post_plain_text(env, token, endpoint, payload)
-    return r
+def test_post_object(url, token, payload, **kwargs):
+    return dynatrace_api.post_object(url, token, payload, **kwargs)
 
 
-def test_put(env, token, endpoint, object_id, payload):
-    r = dynatrace_api.put(env, token, endpoint, object_id, payload)
-    return r
+def test_post_plain_text(env, token, payload):
+    return dynatrace_api.post_plain_text(env, token, payload)
 
 
-def test_delete(env, token, endpoint, object_id):
-    dynatrace_api.delete(env, token, endpoint, object_id)
+def test_put_object(url, token, payload):
+    return dynatrace_api.put_object(url, token, payload)
+
+
+def test_delete_object(url, token):
+    dynatrace_api.delete_object(url, token)
 
 
 def main():
     _, env, token = environment.get_environment('Personal')
 
-    endpoint = '/api/config/v1/autoTags'
-    r = test_get_object_list(env, token, endpoint)
-    # object_json_list = json.loads(r.text).get('values')
-    if r.status_code != 200:
-        print(f'Unexpected status code {r.status_code} from "test_get_object_list" method for endpoint "{endpoint}"')
-        print_response_details(r)
-        exit(1)
-
-    # print(f'Result successfully obtained for endpoint "{endpoint}" from "test_get_object_list" method: {object_json_list}')
-    print(f'Result successfully obtained for endpoint "{endpoint}" from "test_get_object_list" method')
-
+    print('')
+    print('Test Dynatrace API')
+    print('')
+    print('Start sunny day tests...')
+    # alerting_profiles_list = test_get_alerting_profiles(env, token)
     alerting_profiles_list = test_get_alerting_profiles(env, token)
-    # print(f'Result successfully obtained from "test_get_alerting_profiles" method: {alerting_profiles_list}')
-    print(f'Result successfully obtained from "test_get_alerting_profiles" method')
+    print(f'PASS: Result successfully obtained from "test_get_alerting_profiles" method: {len(alerting_profiles_list)} alerting profile pages')
+    # print('PASS: Result successfully obtained from "test_get_alerting_profiles" method')
 
     metrics_list = test_get_metrics(env, token)
-    # print(f'Result successfully obtained from "test_get_metrics" method: {metrics_list}')
-    print(f'Result successfully obtained from "test_get_metrics" method')
+    print(f'PASS: Result successfully obtained from "test_get_metrics" method: {len(metrics_list)} metrics pages')
+    # print('PASS: Result successfully obtained from "test_get_metrics" method')
 
     entity_type_list = test_get_entity_types(env, token)
-    # print(f'Result successfully obtained from "test_get_entity_types" method: {entity_type_list}')
-    print(f'Result successfully obtained from "test_get_entity_types" method')
+    print(f'PASS: Result successfully obtained from "test_get_entity_types" method: {len(entity_type_list)} entity pages')
+    # print('PASS: Result successfully obtained from "test_get_entity_types" method')
 
     host_list = test_get_entity_type_host(env, token)
-    # print(f'Result successfully obtained from "test_get_entity_type_host" method: {host_list}')
-    print(f'Result successfully obtained from "test_get_entity_type_host" method')
+    print(f'PASS: Result successfully obtained from "test_get_entity_type_host" method: {len(host_list)} host pages')
+    # print('PASS: Result successfully obtained from "test_get_entity_type_host" method')
 
-    endpoint = '/api/config/v1/autoTags'
+    # params = ''
+    # headers = {'Authorization': "Api-Token " + token}
+    # timeout = 60
+    # verify = True
+    # disable_verify_warnings = False
+    # handle_exceptions = True
+    exit_on_exception = False
+    r = test_get_without_pagination(f'{env}{auto_tags_endpoint}', token, exit_on_exception=exit_on_exception)
+    if r.status_code == 200:
+        results = json.loads(r.text)
+        print(f'PASS: Result successfully obtained from "test_get_without_pagination" method: {len(results)} objects for endpoint {auto_tags_endpoint}')
+    else:
+        print(f'FAIL: Unexpected status code {r.status_code} from "test_get_without_pagination" method for endpoint "{auto_tags_endpoint}"')
+        print_response_details(r)
+
+    object_json_list = json.loads(r.text).get('values')
+    print(f'PASS: Result successfully obtained for endpoint "{auto_tags_endpoint}" from "test_get_without_pagination" method: {object_json_list}')
+    # print('PASS: Result successfully obtained for endpoint from "test_get_without_pagination" method')
+
     payload = json.dumps({'name': 'TestAutoTag', 'rules': []})
 
-    r = test_post(env, token, endpoint, payload)
+    r = test_post_object(f'{env}{auto_tags_endpoint}', token, payload)
     if r.status_code != 201:
-        print('Unexpected status code from "test_post" method')
+        print('FAIL: Unexpected status code from "test_post_object" method')
         print_response_details(r)
-        exit(1)
 
     object_id = json.loads(r.text).get('id')
-    print(f'Posted {object_id} successfully with "test_post" method')
+    print(f'PASS: Posted {object_id} successfully with "test_post_object" method')
 
-    r = test_put(env, token, endpoint, object_id, payload)
+    r = test_put_object(f'{env}{auto_tags_endpoint}/{object_id}', token, payload)
     if r.status_code != 204:
-        print('Unexpected status code from "test_put" method')
+        print('FAIL: Unexpected status code from "test_put_object" method')
         print_response_details(r)
-        exit(1)
 
-    print(f'Put {object_id} successfully with "test_put" method')
+    print(f'PASS: Put {object_id} successfully with "test_put_object" method')
 
-    test_delete(env, token, endpoint, object_id)
-    print(f'Deleted {object_id} successfully with "test_delete" method')
+    test_delete_object(f'{env}{auto_tags_endpoint}/{object_id}', token)
+    print(f'PASS: Deleted {object_id} successfully with "test_delete_object" method')
+    sleep(5)
+
+    r = test_post_object(f'{env}{auto_tags_endpoint}', token, payload)
+    if r.status_code != 201:
+        print('FAIL: Unexpected status code from "test_post_object" method')
+        print_response_details(r)
+
+    object_id = json.loads(r.text).get('id')
+    print(f'PASS: Posted {object_id} successfully with "test_post_object" method')
+
+    # Save some information for rainy day test of double post
+    sunny_day_post_object_id = object_id
+    sunny_day_post_payload = payload
 
     endpoint = '/api/v2/metrics/ingest'
     payload = 'com.dynatrace.automation.responseTime,language=python 1000'
 
-    r = test_post_plain_text(env, token, endpoint, payload)
+    r = test_post_plain_text(f'{env}{endpoint}', token, payload)
     if r.status_code != 202:
-        print('Unexpected status code {r.status_code} from "test_post_plain_text" method')
+        print('FAIL: Unexpected status code {r.status_code} from "test_post_plain_text" method')
         print_response_details(r)
-        exit(1)
 
-    print(f'Posted plain text object successfully')
+    print(f'PASS: Posted plain text object successfully')
 
-    print('End of sunny day tests...')
+    print('End sunny day tests...')
     print('')
 
-    # print('Begin failure testing...')
-    # Must test one at a time since a failure generally results in an exit statement from dynatrace_api.py
-    # Test bad endpoint for get
-    # dynatrace_api.get(env, token, '/api/v2/metrics/BAD', None)
-    # Test bad endpoint for get object list
-    # test_get_object_list(env, token, '/api/config/v1/BAD')
+    print('Begin rainy day tests...')
+    # Double post for error handling testing
+    try:
+        # r = test_post_object(f'{env}{endpoint}', token, payload)
+        r = test_post_object(f'{env}{auto_tags_endpoint}', token, sunny_day_post_payload, handle_exceptions=False, exit_on_exception=False)
+        print(f'FAIL: Double post worked unexpectedly!')
+        print_response_details(r)
+    except HTTPError:
+        print('PASS: Double post got expected HTTPError exception')
+
+    # Cleanup
+    test_delete_object(f'{env}{auto_tags_endpoint}/{sunny_day_post_object_id}', token)
+
+    # Test bad endpoint for gets with no exception handling
+    try:
+        dynatrace_api.get_json_list_with_pagination(f'{env}/api/v1/bad/endpoint', token, handle_exceptions=False)
+        print('FAIL: get_json_list_with_pagination with bad endpoint did not get expected exception')
+    except RequestException:
+        print('PASS: get_json_list_with_pagination with bad endpoint got expected exception')
+
+    try:
+        dynatrace_api.get_without_pagination(f'{env}/api/v1/bad/endpoint', token, handle_exceptions=False)
+        print('FAIL: get_without_pagination with bad endpoint did not get expected exception')
+    except RequestException:
+        print('PASS: get_without_pagination with bad endpoint got expected exception')
+
     # Test bad endpoint for delete
-    # test_delete(env, token, '/api/v2/bad/endpoint', 'BAD-OBJECT-ID')
+    try:
+        dynatrace_api.delete_object(f'{env}/api/v1/bad/endpoint', token, handle_exceptions=False)
+        print('FAIL: delete_object with bad endpoint did not get expected exception')
+    except RequestException:
+        print('PASS: delete_object with bad endpoint got expected exception')
+
+    print('End rainy day tests...')
 
 
 def print_response_details(r):
@@ -145,6 +189,11 @@ def print_response_details(r):
     print(r.url)
     print(r.headers)
     print(r.raw)
+
+
+def sleep(seconds):
+    print(f'Sleeping for {seconds} seconds to allow for eventual consistency')
+    time.sleep(seconds)
 
 
 if __name__ == '__main__':

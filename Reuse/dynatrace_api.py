@@ -14,45 +14,83 @@ class RateLimitException(Exception):
     pass
 
 
-# For get only currently, support bypassing cert verification
-verify_certificate = os.getenv('DYNATRACE_API_VERIFY_CERTIFICATE', 'true')
-if verify_certificate.lower() == 'false':
-    verify_certificate = False
-    print('WARNING: Certificate verification is being bypassed (for gets only)')
-    requests.packages.urllib3.disable_warnings()
+default_timeout = 60
+default_handle_exceptions = True
+default_exit_on_exception = True
+
+# Allows for bypassing certificate verification
+default_verify = os.getenv('DYNATRACE_API_VERIFY_CERTIFICATE', 'true')
+if default_verify.lower() == 'false':
+    default_verify = False
 else:
-    verify_certificate = True
+    default_verify = True
+default_disable_certificate_warnings = False
 
 
-def get(url, token, endpoint, params):
+def get(env, token, endpoint, params):
+    """ Deprecated: Use "get_json_list_with_pagination" instead """
+    return get_json_list(f'{env}{endpoint}', token, params=params)
+
+
+def get_json_list(url, token, params):
+    """ Deprecated: Use "get_json_list_with_pagination" instead """
+    """ Get a paginated list of JSON objects with default timeout and certificate verification settings """
+    return get_json_list_with_pagination(url, token, params=params, timeout=default_timeout, verify=default_verify, disable_verify_warnings=default_disable_certificate_warnings)
+
+
+def get_json_list_with_pagination(url, token, **kwargs):
+    """
+    get json list with pagination.
+    Called by convenience methods or externally if control is needed.
+    Supported keyword arguments:
+    params
+    headers
+    timeout
+    verify
+    disable_verify_warnings
+    handle_exceptions
+    exit_on_exception
+    """
+
     # For debugging pagination
     # page_number = 1
 
-    # Allow for rare cases of passing the complete endpoint as a URL in addition to the common case of passing the relative path of the endpoint
-    # For the very special (and untested) case of calling ActiveGate endpoints over port 9999, do not verify the certificate
-    verify = verify_certificate
+    params, headers, timeout, verify, disable_verify_warnings, handle_exceptions, exit_on_exception = process_kwargs(token, **kwargs)
 
-    if endpoint.startswith('https://'):
-        full_url = endpoint
-        if ':9999' in endpoint:
-            verify = False
-            requests.packages.urllib3.disable_warnings()
-    else:
-        full_url = url + endpoint
+    if not verify and disable_verify_warnings:
+        requests.packages.urllib3.disable_warnings()
 
-    fn = partial(rate_limited_get, full_url, params=params, headers={'Authorization': "Api-Token " + token}, timeout=60.0, verify=verify)
+    fn = partial(rate_limited_get, url, params=params, headers=headers, timeout=timeout, verify=verify)
+
+    r = None
+
     try:
         r = retry_with_backoff(fn)
+        # if r.status_code == 404:
+        #     print(f'GET for URL "{url}" returned HTTP Status Code 404.  Returning an empty list.')
+        #     return []
         r.raise_for_status()
     except requests.exceptions.RequestException as e:
-        handle_exception(e, f'GET Failed for URL "{full_url}" with parameters "{params}"')
-        raise SystemExit(e)
+        if handle_exceptions:
+            handle_exception(e, f'GET Failed for URL "{url}"')
+            if exit_on_exception:
+                print("Exiting Program")
+                raise SystemExit(e)
+        else:
+            raise
+
+    json_data = None
 
     try:
         json_data = r.json()
     except JSONDecodeError as e:
-        handle_exception(e, f'JSON decode error. Response Text: {r.text}')
-        raise SystemExit(e)
+        if handle_exceptions:
+            handle_exception(e, f'JSON decode error. Response Text: {r.text}')
+            if exit_on_exception:
+                print("Exiting Program")
+                raise SystemExit(e)
+        else:
+            raise
 
     # Some json is just a list of dictionaries.
     # Config V1 AWS Credentials is the only example I am aware of.
@@ -68,16 +106,30 @@ def get(url, token, endpoint, params):
         # page_number += 1
         # print(f'Getting page number {page_number} with next page key of "{next_page_key}"')
         params = {'nextPageKey': next_page_key}
-        full_url = url + endpoint
-        fn = partial(rate_limited_get, full_url, params=params, headers={'Authorization': "Api-Token " + token}, timeout=60.0, verify=verify)
+        fn = partial(rate_limited_get, url, params=params, headers=headers, timeout=timeout, verify=verify)
+
         try:
             r = retry_with_backoff(fn)
             r.raise_for_status()
         except requests.exceptions.RequestException as e:
-            handle_exception(e, f'Paginated GET Failed with {r.status_code} - {r.reason} {r.text}. URL: {full_url}. Params: {params}')
-            raise SystemExit(e)
+            if handle_exceptions:
+                handle_exception(e, f'Paginated GET Failed with {r.status_code} - {r.reason} {r.text}. URL: {url}. Params: {params}')
+                if exit_on_exception:
+                    print("Exiting Program")
+                    raise SystemExit(e)
+            else:
+                raise
 
-        json_data = r.json()
+        try:
+            json_data = r.json()
+        except JSONDecodeError as e:
+            if handle_exceptions:
+                handle_exception(e, f'JSON decode error. Response Text: {r.text}')
+                if exit_on_exception:
+                    print("Exiting Program")
+                    raise SystemExit(e)
+            else:
+                raise
 
         next_page_key = json_data.get('nextPageKey')
         json_list.append(json_data)
@@ -86,115 +138,186 @@ def get(url, token, endpoint, params):
 
 
 def get_object_list(env, token, endpoint):
-    url = env + endpoint
-    return get_without_pagination(url, token)
-
-
-def get_plain_text_list(env, token, endpoint):
+    """ Deprecated: Use "get_without_pagination" instead """
     url = env + endpoint
     return get_without_pagination(url, token)
 
 
 def get_by_object_id(env, token, endpoint, object_id):
+    """ Deprecated: Use "get_without_pagination" instead """
     url = env + endpoint + '/' + object_id
     r = get_without_pagination(url, token)
     return json.loads(r.text)
 
 
-def get_without_pagination(url, token):
-    """get with rate limit and connection exception exponential backoff, but without pagination support"""
-    fn = partial(rate_limited_get, url, params='', headers={'Authorization': "Api-Token " + token}, timeout=60.0, verify=verify_certificate)
+def get_without_pagination(url, token, **kwargs):
+    """ Get response object without pagination.
+    Called by convenience methods or externally if control is needed.
+    Supported keyword arguments:
+    params
+    headers
+    timeout
+    verify
+    disable_verify_warnings
+    handle_exceptions
+    exit_on_exception
+    """
+
+    params, headers, timeout, verify, disable_verify_warnings, handle_exceptions, exit_on_exception = process_kwargs(token, **kwargs)
+
+    if not verify and disable_verify_warnings:
+        requests.packages.urllib3.disable_warnings()
+
+    fn = partial(rate_limited_get, url, params=params, headers=headers, timeout=timeout, verify=verify)
+
+    r = None
+
     try:
         r = retry_with_backoff(fn)
         r.raise_for_status()
     except requests.exceptions.RequestException as e:
-        handle_exception(e, f'Failed to get url "{url}"')
-        raise SystemExit(e)
+        if handle_exceptions:
+            handle_exception(e, f'Failed to get URL "{url}"')
+            if exit_on_exception:
+                print("Exiting Program")
+                raise SystemExit(e)
+        else:
+            raise
 
     return r
 
 
 def post(env, token, endpoint, payload):
+    """ Deprecated: Use "post_object" instead """
+    return post_object(f'{env}{endpoint}', token, payload)
+
+
+def post_object(url, token, payload, **kwargs):
     # In general, avoid post in favor of put so "fixed ids" can be used
-    json_data = json.loads(payload)
-    formatted_payload = json.dumps(json_data, indent=4, sort_keys=False)
-    url = env + endpoint
-    fn = partial(rate_limited_post, url, formatted_payload.encode('utf-8'), headers={'Authorization': 'Api-Token ' + token, 'Content-Type': 'application/json; charset=utf-8'}, timeout=60.0, verify=verify_certificate)
+    params, headers, timeout, verify, disable_verify_warnings, handle_exceptions, exit_on_exception = process_kwargs(token, **kwargs)
+    # Only use headers if actually passed, since the default is not good for this method
+    # TODO: Experiment with using the "JSON" header for all calls except "plain text" ones as new default
+    headers = kwargs.get('headers', {'Authorization': 'Api-Token ' + token, 'Content-Type': 'application/json; charset=utf-8'})
+
+    # print('post_object variables from kwargs:', params, headers, timeout, verify, disable_verify_warnings, handle_exceptions, exit_on_exception)
+    json_data = None
+
+    if 'application/json' in headers:
+        json_data = json.loads(payload)
+        formatted_payload = json.dumps(json_data, indent=4, sort_keys=False).encode('utf-8')
+    else:
+        formatted_payload = payload
+
+    fn = partial(rate_limited_post, url, formatted_payload, headers=headers, timeout=timeout, verify=verify)
+
+    r = None
+
     try:
         r = retry_with_backoff(fn)
-        if r.status_code not in [200, 201, 204]:
+        if r.status_code not in [200, 201, 202, 204]:
             error_filename = '$post_error_payload.json'
             with open(error_filename, 'w') as file:
                 file.write(formatted_payload)
-                try:
-                    name = json_data.get('name')
-                    if name:
-                        print('Name: ' + name)
-                except AttributeError:
-                    print(formatted_payload)
-                print('Error in "dynatrace_api.post(env, token, endpoint: str, payload: str)" method')
-                print('See ' + error_filename + ' for more details')
+                if 'application/json' in headers:
+                    try:
+                        name = json_data.get('name')
+                        if name:
+                            print('Name: ' + name)
+                    except AttributeError:
+                        print(formatted_payload)
+                print('Error in "dynatrace_api.post_object" method')
+                print(f'Status Code/Reason: {r.status_code} - {r.reason}')
+                print(f'See {error_filename} for payload contents')
         r.raise_for_status()
     except requests.exceptions.RequestException as e:
-        handle_exception(e, f'Failed to put to endpoint "{endpoint}" for payload "{payload}"')
-        raise SystemExit(e)
+        # print('Requests Exception Handling', handle_exceptions, exit_on_exception)
+        if handle_exceptions:
+            handle_exception(e, f'Failed to post to URL "{url}" with payload "{payload}"')
+            if exit_on_exception:
+                print("Exiting Program")
+                raise SystemExit(e)
+        else:
+            raise
 
     return r
 
 
-def post_plain_text(env, token, endpoint, payload):
-    url = env + endpoint
-
-    fn = partial(rate_limited_post, url, payload, headers={'Authorization': 'Api-Token ' + token, 'accept':  '*/*', 'Content-Type': 'text/plain; charset=utf-8'}, timeout=60.0, verify=verify_certificate)
-    try:
-        r = retry_with_backoff(fn)
-        r.raise_for_status()
-    except requests.exceptions.RequestException as e:
-        handle_exception(e, f'Failed to post plain text to endpoint "{endpoint}" for payload "{payload}"')
-        raise SystemExit(e)
-
-    return r
+def post_plain_text(url, token, payload, **kwargs):
+    headers = kwargs.get('headers', {'Authorization': 'Api-Token ' + token, 'accept': '*/*', 'Content-Type': 'text/plain; charset=utf-8'})
+    kwargs['headers'] = headers
+    # print(f'post_plain_text kwargs: {kwargs}')
+    return post_object(url, token, payload, **kwargs)
 
 
-def put(env, token, endpoint, object_id, payload):
+def put_object(url, token, payload, **kwargs):
     # In general, favor put over post so "fixed ids" can be used
-    json_data = json.dumps(json.loads(payload), indent=4, sort_keys=False)
-    if object_id:
-        url = env + endpoint + '/' + object_id
-    else:
-        url = env + endpoint
+    params, headers, timeout, verify, disable_verify_warnings, handle_exceptions, exit_on_exception = process_kwargs(token, **kwargs)
 
-    fn = partial(rate_limited_put, url, json_data.encode('utf-8'), headers={'Authorization': 'Api-Token ' + token, 'Content-Type': 'application/json; charset=utf-8'}, timeout=60.0, verify=verify_certificate)
+    json_data = json.dumps(json.loads(payload), indent=4, sort_keys=False)
+
+    r = None
+
+    fn = partial(rate_limited_put, url, json_data.encode('utf-8'), headers={'Authorization': 'Api-Token ' + token, 'Content-Type': 'application/json; charset=utf-8'}, timeout=60.0, verify=default_verify)
     try:
         r = retry_with_backoff(fn)
         if r.status_code not in [200, 201, 204]:
             error_filename = '$put_error_payload.json'
             with open(error_filename, 'w') as file:
                 file.write(json_data)
-                print('Error in "dynatrace_api.put(env, token, endpoint, object_id, payload)" method')
-                print('See ' + error_filename + ' for more details')
+                print('Error in "dynatrace_api.put" method')
+                print('See ' + error_filename + ' for payload contents')
         r.raise_for_status()
     except requests.exceptions.RequestException as e:
-        handle_exception(e, f'Failed to put to endpoint "{endpoint}" for payload "{payload}"')
-        raise SystemExit(e)
+        if handle_exception:
+            handle_exception(e, f'Failed to put to URL "{url}" for payload "{payload}"')
+            if exit_on_exception:
+                print("Exiting Program")
+                raise SystemExit(e)
+        else:
+            raise
 
     return r
 
 
+def put(env, token, endpoint, object_id, payload):
+    """ Deprecated: Use "put_object" instead """
+    if object_id:
+        url = env + endpoint + '/' + object_id
+    else:
+        url = env + endpoint
+
+    return put_object(url, token, payload)
+
+
 def put_without_id(env, token, endpoint, payload):
-    return put(env, token, endpoint, None, payload)
+    """ Deprecated: Use "put_object" instead """
+    return put_object(f'{env}{endpoint}', token, payload)
 
 
 def delete(env, token, endpoint, object_id):
-    url = f'{env}{endpoint}/{object_id}'
+    """ Deprecated: Use "delete_object" instead """
+    return delete_object(f'{env}{endpoint}/{object_id}', token)
 
-    fn = partial(rate_limited_delete, url, headers={'Authorization': "Api-Token " + token}, timeout=60.0, verify=verify_certificate)
+
+def delete_object(url, token, **kwargs):
+    params, headers, timeout, verify, disable_verify_warnings, handle_exceptions, exit_on_exception = process_kwargs(token, **kwargs)
+    if not verify and disable_verify_warnings:
+        requests.packages.urllib3.disable_warnings()
+
+    r = None
+
+    fn = partial(rate_limited_delete, url, headers=headers, timeout=timeout, verify=verify)
     try:
         r = retry_with_backoff(fn)
         r.raise_for_status()
     except requests.exceptions.RequestException as e:
-        handle_exception(e, f'Failed to delete object id "{object_id}" from endpoint "{endpoint}"')
-        raise SystemExit(e)
+        if handle_exceptions:
+            handle_exception(e, f'Failed to delete URL "{url}"')
+            if exit_on_exception:
+                print("Exiting Program")
+                raise SystemExit(e)
+        else:
+            raise
 
     return r
 
@@ -254,5 +377,37 @@ def handle_exception(e, message):
         if e.response.text:
             print("Please check the following HTTP response to troubleshoot the issue:")
             print(e.response.text)
-    print("Exiting Program")
     traceback.print_exc()
+
+
+def process_kwargs(token, **kwargs):
+    default_headers = {'Authorization': "Api-Token " + token}
+
+    params = kwargs.get('params', '')
+    headers = kwargs.get('headers', default_headers)
+    timeout = kwargs.get('timeout', default_timeout)
+    verify = kwargs.get('verify', default_verify)
+    disable_verify_warnings = kwargs.get('disable_verify_warnings', default_disable_certificate_warnings)
+    handle_exceptions = kwargs.get('handle_exceptions', default_handle_exceptions)
+    exit_on_exception = kwargs.get('exit_on_exception', default_exit_on_exception)
+
+    return params, headers, timeout, verify, disable_verify_warnings, handle_exceptions, exit_on_exception
+
+
+"""
+Refactoring Plan:
+
+Pick env or url
+
+get_object_list(env, token, endpoint): SPLIT (returns Response)
+get_by_object_id(env, token, endpoint, object_id): SPLIT (returns JSON)
+post(env, token, endpoint, payload): SPLIT (returns Response) 
+post_plain_text(env, token, endpoint, payload): SPLIT (returns Response)
+put(env, token, endpoint, object_id, payload): SPLIT (returns Response)
+put_without_id(env, token, endpoint, payload): SPLIT (returns Response)
+"""
+
+
+if __name__ == '__main__':
+    print('This module is not designed to be run standalone!')
+    print('You might want to run the "Test/Reuse/test_dynatrace_api.py module instead.')
