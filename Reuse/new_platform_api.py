@@ -19,7 +19,7 @@ def get_oauth_bearer_token(client_id, client_secret, scope):
 
     r = requests.post(url, headers=headers, data=data)
     if r.status_code == 200:
-        oauth_bearer_token = json.loads(r.text)['access_token']
+        oauth_bearer_token = r.json()['access_token']
         return oauth_bearer_token
     else:
         print(f'POST Request to Get OAuth Bearer Token Failed:')

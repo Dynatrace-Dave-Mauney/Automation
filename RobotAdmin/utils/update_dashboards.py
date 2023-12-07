@@ -12,7 +12,7 @@ def process_dashboards(env, token):
 
     endpoint = '/api/config/v1/dashboards'
     r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
-    dashboards_json_dict = json.loads(r.text)
+    dashboards_json_dict = r.json()
     dashboards_json_list = dashboards_json_dict.get('dashboards')
 
     for dashboards_json in dashboards_json_list:

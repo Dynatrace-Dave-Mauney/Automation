@@ -31,7 +31,7 @@ def save_synthetics(env, token, path):
 		if True:
 			endpoint = '/api/v1/synthetic/monitors'
 			r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{synthetic_id}', token)
-			synthetic = json.loads(r.text)
+			synthetic = r.json()
 			if True:
 				clean_filename = re.sub(r"[/\\?%*:|\"<>\x7F\x00-\x1F]", "-", f'{synthetic_name}.json')
 				print(f'Saving {synthetic_name} ({synthetic_id}) ({synthetic_type} type) to {clean_filename}')

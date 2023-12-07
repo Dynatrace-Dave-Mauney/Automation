@@ -41,7 +41,7 @@ def process_connectivity_info(env, token):
     rows = []
     endpoint = '/api/v1/deployment/installer/agent/connectioninfo'
     r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
-    connection_info_json = json.loads(r.text)
+    connection_info_json = r.json()
     communication_endpoints = connection_info_json.get('communicationEndpoints')
 
     headers = ['Communication Endpoint']
@@ -77,7 +77,7 @@ def process_versions(env, token):
             endpoint = f'/api/v1/deployment/installer/agent/versions/{os_type}/{installer_type}'
             try:
                 r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token, handle_exceptions=False)
-                agent_version_json = json.loads(r.text)
+                agent_version_json = r.json()
                 available_versions = agent_version_json.get('availableVersions')
                 if available_versions:
                     for available_version in available_versions:
@@ -100,7 +100,7 @@ def process_latest_version(env, token):
             endpoint = f'/api/v1/deployment/installer/agent/{os_type}/{installer_type}/latest/metainfo'
             try:
                 r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token, handle_exceptions=False)
-                agent_version_json = json.loads(r.text)
+                agent_version_json = r.json()
                 latest_version = agent_version_json.get('latestAgentVersion')
                 if latest_version:
                     rows.append([os_type, installer_type, latest_version])

@@ -89,13 +89,13 @@ def main():
     exit_on_exception = False
     r = test_get_without_pagination(f'{env}{auto_tags_endpoint}', token, exit_on_exception=exit_on_exception)
     if r.status_code == 200:
-        results = json.loads(r.text)
+        results = r.json()
         print(f'PASS: Result successfully obtained from "test_get_without_pagination" method: {len(results)} objects for endpoint {auto_tags_endpoint}')
     else:
         print(f'FAIL: Unexpected status code {r.status_code} from "test_get_without_pagination" method for endpoint "{auto_tags_endpoint}"')
         print_response_details(r)
 
-    object_json_list = json.loads(r.text).get('values')
+    object_json_list = r.json().get('values')
     print(f'PASS: Result successfully obtained for endpoint "{auto_tags_endpoint}" from "test_get_without_pagination" method: {object_json_list}')
     # print('PASS: Result successfully obtained for endpoint from "test_get_without_pagination" method')
 
@@ -106,7 +106,7 @@ def main():
         print('FAIL: Unexpected status code from "test_post_object" method')
         print_response_details(r)
 
-    object_id = json.loads(r.text).get('id')
+    object_id = r.json().get('id')
     print(f'PASS: Posted {object_id} successfully with "test_post_object" method')
 
     r = test_put_object(f'{env}{auto_tags_endpoint}/{object_id}', token, payload)
@@ -125,7 +125,7 @@ def main():
         print('FAIL: Unexpected status code from "test_post_object" method')
         print_response_details(r)
 
-    object_id = json.loads(r.text).get('id')
+    object_id = r.json().get('id')
     print(f'PASS: Posted {object_id} successfully with "test_post_object" method')
 
     # Save some information for rainy day test of double post

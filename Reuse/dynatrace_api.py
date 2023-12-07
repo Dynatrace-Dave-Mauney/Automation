@@ -147,7 +147,7 @@ def get_by_object_id(env, token, endpoint, object_id):
     """ Deprecated: Use "get_without_pagination" instead """
     url = env + endpoint + '/' + object_id
     r = get_without_pagination(url, token)
-    return json.loads(r.text)
+    return r.json()
 
 
 def get_without_pagination(url, token, **kwargs):

@@ -909,7 +909,7 @@ def post_web_application(web_application_name):
         return 'aaaaaaaa-aaaa-aaaa-aaaa-111111111111'
     else:
         r = post(endpoint, payload)
-        return json.loads(r.text).get('id')
+        return r.json().get('id')
 
 
 def build_web_application(name):

@@ -26,13 +26,13 @@ def process(env_name, env, token):
     download_count = 0
     endpoint = '/api/config/v1/autoTags'
     r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
-    auto_tag_json = json.loads(r.text)
+    auto_tag_json = r.json()
     auto_tag_values = auto_tag_json.get('values')
     for auto_tag_value in auto_tag_values:
         auto_tag_name = auto_tag_value.get('name')
         auto_tag_id = auto_tag_value.get('id')
         r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{auto_tag_id}', token)
-        auto_tag = json.loads(r.text)
+        auto_tag = r.json()
         clean_filename = re.sub(r"[/\\?%*:|\"<>\x7F\x00-\x1F]", "-", f'{auto_tag_name}.json')
         print(f'Saving {auto_tag_name} ({auto_tag_id}) to {clean_filename}')
         save_auto_tag(path, clean_filename, auto_tag)

@@ -38,54 +38,54 @@ print(f'skip_slow_api_calls: {skip_slow_api_calls}')
 
 def get_groups():
     r = get_account_management_api('groups')
-    return json.loads(r.text)
+    return r.json()
 
 
 def get_permissions_for_group(group_uuid):
     api_type = f'groups/{group_uuid}/permissions'
     r = get_account_management_api(api_type)
-    return json.loads(r.text)
+    return r.json()
 
 
 def get_users_in_group(group_uuid):
     api_type = f'groups/{group_uuid}/users'
     r = get_account_management_api(api_type)
-    return json.loads(r.text)
+    return r.json()
 
 
 def get_permissions():
     r = get_account_management_api('permissions')
-    return json.loads(r.text)
+    return r.json()
 
 
 def get_users():
     r = get_account_management_api('users')
-    return json.loads(r.text)
+    return r.json()
 
 
 def get_environments():
     r = get_account_management_api('environments')
-    return json.loads(r.text)
+    return r.json()
 
 
 def get_regions():
     r = get_account_management_api('regions')
-    return json.loads(r.text)
+    return r.json()
 
 
 def get_time_zones():
     r = get_account_management_api('time-zones')
-    return json.loads(r.text)
+    return r.json()
 
 
 def get_service_users():
     r = get_account_management_api('service-users')
-    return json.loads(r.text)
+    return r.json()
 
 
 def get_subscriptions():
     r = get_account_management_api('subscriptions')
-    return json.loads(r.text)
+    return r.json()
 
 
 def get_account_management_api(api_type):
@@ -116,7 +116,7 @@ def get_oauth_bearer_token():
     headers = {'Content-type': 'application/x-www-form-urlencoded'}
     r = requests.post(f'https://sso.dynatrace.com/sso/oauth2/token?grant_type=client_credentials&client_id={client_id}&client_secret={client_secret}&scope=account-idm-read account-idm-write&resource=urn:dtaccount:{account_id}', headers=headers)
     if r.status_code == 200:
-        oauth_bearer_token = json.loads(r.text)["access_token"]
+        oauth_bearer_token = r.json()["access_token"]
         return oauth_bearer_token
     else:
         print(f'POST Request to Get OAuth Bearer Token Failed:')

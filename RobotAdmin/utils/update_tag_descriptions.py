@@ -31,7 +31,7 @@ def update(config_endpoint, tag_name, key, value):
 
 		# print(r.text)
 
-		config_json = json.loads(r.text)
+		config_json = r.json()
 		config_list = config_json.get('values')
 		config_dict = {}
 		for config in config_list:
