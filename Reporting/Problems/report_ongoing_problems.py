@@ -27,7 +27,7 @@ def process_report(env, token, summary_mode):
     problem_selector = 'managementZones()'
     severity_level = 'severityLevel()'
     params = f'pageSize={page_size}&from={from_time}&fields={fields}&problemSelector={problem_selector}&severityLevel={severity_level}'
-    problems_json_list = dynatrace_api.get(env, token, endpoint, params)
+    problems_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
     for problems_json in problems_json_list:
         inner_problems_json_list = problems_json.get('problems')

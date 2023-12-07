@@ -7,8 +7,7 @@ def process(env_name, env, token):
 	print('Environment URL: ' + env)
 
 	endpoint = '/api/config/v1/dashboards'
-	params = ''
-	dashboards_json_list = dynatrace_api.get(env, token, endpoint, params)
+	dashboards_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
 	count = 0
 	# delete_list = ['f0c29915-7717-4afd-9ed0-a6031fa670cd']
@@ -35,7 +34,8 @@ def process(env_name, env, token):
 				# if name.endswith('-PROD SLOs'):
 				# if 'SQL Server' in name and not dashboard_id.startswith('00000000-dddd-bbbb-ffff-0000000000'):
 				# if not name.startswith('Prod:') and not name.startswith('TEMP:'):
-				if dashboard_id.startswith('aaaaaaaa-bbbb-cccc-dddd-'):
+				# if dashboard_id.startswith('aaaaaaaa-bbbb-cccc-dddd-'):
+				if name.startswith('Fake'):
 					delete_list.append(dashboard_id + ': ' + name + ': ' + owner)
 
 			# Full clean of 'Personal' environment
@@ -87,8 +87,7 @@ def process(env_name, env, token):
 			for line in delete_list:
 				dashboard_id = line.split(':', 1)[0]
 				endpoint = '/api/config/v1/dashboards/' + dashboard_id
-				params = ''
-				dynatrace_api.delete(env, token, endpoint, params)
+				dynatrace_api.delete_object(f'{env}{endpoint}', token)
 				print('DELETED: ' + line)
 				count += 1
 
@@ -103,7 +102,7 @@ def run():
 	# env_name_supplied = 'NonProd'
 	# env_name_supplied = 'Prep'
 	# env_name_supplied = 'Dev'
-	# env_name_supplied = 'Personal'
+	env_name_supplied = 'Personal'
 	# env_name_supplied = 'Demo'
 	env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 	process(env_name, env, token)

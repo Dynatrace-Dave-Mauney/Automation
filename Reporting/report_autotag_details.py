@@ -18,8 +18,7 @@ def process_report(env, token, summary_mode):
     count_total = 0
 
     endpoint = '/api/config/v1/autoTags'
-    params = ''
-    autotags_json_list = dynatrace_api.get(env, token, endpoint, params)
+    autotags_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     for autotags_json in autotags_json_list:
         inner_autotags_json_list = autotags_json.get('values')
@@ -29,8 +28,8 @@ def process_report(env, token, summary_mode):
 
             # for later if details of rules, etc. are needed from each autotag...
             endpoint = '/api/config/v1/autoTags/' + entity_id
-            params = ''
-            autotag = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
+            r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
+            autotag = r.json()
 
             rules = autotag.get('rules')
 

@@ -16,6 +16,7 @@ slo_skip_list = [
     'FAKE2-PROD',
 ]
 
+
 def process_slos(env, token):
     slo_list = []
 
@@ -24,7 +25,7 @@ def process_slos(env, token):
     schema_ids_param = f'schemaIds={schema_ids}'
     raw_params = schema_ids_param + '&scopes=environment&fields=objectId,value,Summary&pageSize=500'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    settings_object_list = dynatrace_api.get(env, token, endpoint, params)
+    settings_object_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
     for settings_object in settings_object_list:
         items = settings_object.get('items', [])
@@ -140,8 +141,8 @@ def put_slo_overview_menu_dashboard(env, token, dashboard_coverage):
 
     endpoint = '/api/config/v1/dashboards'
     formatted_slo_overview_menu_dashboard = json.dumps(slo_overview_menu_dashboard, indent=4, sort_keys=False)
-    dynatrace_api.put(env, token, endpoint, slo_overview_menu_dashboard_id, formatted_slo_overview_menu_dashboard)
-    print(f'PUT {slo_overview_menu_dashboard_name} dashboard to {env}) with id: {slo_overview_menu_dashboard_id}')
+    dynatrace_api.put_object(f'{env}{endpoint}/{slo_overview_menu_dashboard_id}', token, formatted_slo_overview_menu_dashboard)
+    print(f'PUT {slo_overview_menu_dashboard_name} dashboard to {env}/#dashboard;id={slo_overview_menu_dashboard_id};gtf=-2h;gf=all')
     print('')
 
 
@@ -161,15 +162,16 @@ def put_dashboard(env, token, dashboard_number, slo_overview_dashboard, new_tile
     slo_overview_dashboard['tiles'] = new_tiles
 
     endpoint = '/api/config/v1/dashboards'
-    formatted_slo = json.dumps(slo_overview_dashboard, indent=4, sort_keys=False)
-    dynatrace_api.put(env, token, endpoint, dashboard_id, formatted_slo)
-    print(f'PUT {dashboard_name} dashboard to {env}) with id: {dashboard_id}')
+    formatted_slo_overview_dashboard = json.dumps(slo_overview_dashboard, indent=4, sort_keys=False)
+    dynatrace_api.put_object(f'{env}{endpoint}/{dashboard_id}', token, formatted_slo_overview_dashboard)
+    print(f'PUT {dashboard_name} dashboard to {env}/#dashboard;id={dashboard_id};gtf=-2h;gf=all')
     print('')
 
 
 def get_assigned_entity(env, token, object_id):
     endpoint = '/api/v2/settings/objects'
-    settings_object = dynatrace_api.get_by_object_id(env, token, endpoint, object_id)
+    r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{object_id}', token)
+    settings_object = r.json()
     update_token = settings_object.get('updateToken')
     assigned_entity = object_id_to_entity_id(update_token)
     return assigned_entity
@@ -209,13 +211,13 @@ def print_list(any_list):
 
 def main():
     friendly_function_name = 'Dynatrace Automation Tools'
-    # env_name_supplied = environment.get_env_name(friendly_function_name)
+    env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
     # env_name_supplied = 'Prod'
     # env_name_supplied = 'NonProd'
     # env_name_supplied = 'Prep'
     # env_name_supplied = 'Dev'
-    env_name_supplied = 'Personal'
+    # env_name_supplied = 'Personal'
     # env_name_supplied = 'Demo'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 

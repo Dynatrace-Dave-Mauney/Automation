@@ -26,7 +26,7 @@ def process_settings(env_name, env, token, all_env_name_data):
     # raw_params = schema_ids_param + '&scopes=environment&fields=schemaId,value,summary&pageSize=500'
     raw_params = '&scopes=environment&fields=schemaId,value,summary&pageSize=500'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    settings_object_list = dynatrace_api.get(env, token, endpoint, params)
+    settings_object_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
     items = []
     for settings_object in settings_object_list:

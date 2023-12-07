@@ -22,7 +22,7 @@ def process(env, token):
     # from_time = 'now-72h'
     from_time = 'now-30m'
     params = 'metricSelector=' + urllib.parse.quote(metric_selector_schema_id) + metric_selector_transformation + '&from=' + from_time + '&entitySelector=' + urllib.parse.quote(entity_selector)
-    metrics_json_list = dynatrace_api.get(env, token, endpoint, params)
+    metrics_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     print(metrics_json_list)
     for metrics_json in metrics_json_list:
         result_list = metrics_json.get('result')
@@ -72,12 +72,13 @@ def post_event(env, token, event_type, title, start_time, end_time, timeout, ent
 
 
 def post(env, token, endpoint: str, payload: str) -> Response:
-    return dynatrace_api.post(env, token, endpoint, payload)
+    return dynatrace_api.post_object(f'{env}{endpoint}', token, payload)
 
 
 def get_process_group_instance(env, token, process_group_instance_id):
     endpoint = f'/api/v1/entity/infrastructure/processes'
-    return(dynatrace_api.get_by_object_id(env, token, endpoint, process_group_instance_id))
+    r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{process_group_instance_id}', token)
+    return r.json()
 
 
 def get_current_time_as_epoch_in_milliseconds():
@@ -91,14 +92,14 @@ def get_line_number():
 
 
 def run():
-    # friendly_function_name = 'Dynatrace Automation Tools'
-    # env_name_supplied = environment.get_env_name(friendly_function_name)
+    friendly_function_name = 'Dynatrace Automation Tools'
+    env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
     # env_name_supplied = 'Prod'
     # env_name_supplied = 'NonProd'
     # env_name_supplied = 'Prep'
     # env_name_supplied = 'Dev'
-    env_name_supplied = 'Personal'
+    # env_name_supplied = 'Personal'
     # env_name_supplied = 'Demo'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 

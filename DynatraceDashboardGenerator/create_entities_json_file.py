@@ -8,19 +8,20 @@ import sys
 
 from Reuse import dynatrace_api
 
-def get_entity_types(url, token):
-    # print(f'get_entity_types({url}, {token})')
+
+def get_entity_types(env, token):
+    # print(f'get_entity_types({env}, {token})')
     endpoint = '/api/v2/entityTypes'
     params = 'pageSize=500'
-    json_list = dynatrace_api.get(url, token, endpoint, params)
+    json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     entity_types = []
     for json_dict in json_list:
         entity_types.extend(json_dict.get('types'))
     return entity_types
 
 
-def get_entities(url, token, entity_types):
-    print(f'get_entities({url}, {token}, {entity_types})')
+def get_entities(env, token, entity_types):
+    print(f'get_entities({env}, {token}, {entity_types})')
     all_entities = []
     for entity_type_dict in entity_types:
         entity_type = entity_type_dict.get('type')
@@ -35,7 +36,7 @@ def get_entities(url, token, entity_types):
         fields = 'fromRelationships,+lastSeenTms,+firstSeenTms,+managementZones,+toRelationships,+tags,+properties'
         # if entity_type == 'SERVICE':
         params = params + '&fields=' + fields
-        entities_list = dynatrace_api.get(url, token, endpoint, params)
+        entities_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
         # print(entities_list[0])
         # exit()
 

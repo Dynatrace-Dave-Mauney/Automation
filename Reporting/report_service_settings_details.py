@@ -52,9 +52,8 @@ def process_type(env, token, summary_mode, entity_type, rows):
 
     count_total = 0
 
-    endpoint = '/api/config/v1/service/' + entity_type
-    params = ''
-    service_settings_json_list = dynatrace_api.get(env, token, endpoint, params)
+    endpoint = '/api/config/v1/service'
+    service_settings_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}/{entity_type}', token)
 
     for service_settings_json in service_settings_json_list:
         inner_service_settings_json_list = service_settings_json.get('values')
@@ -77,9 +76,8 @@ def process_custom_service_language(env, token, summary_mode, language, rows):
 
     count_total = 0
 
-    endpoint = '/api/config/v1/service/customServices/' + language
-    params = ''
-    custom_services_json_list = dynatrace_api.get(env, token, endpoint, params)
+    endpoint = '/api/config/v1/service/customServices'
+    custom_services_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}/{language}', token)
 
     for custom_services_json in custom_services_json_list:
         inner_custom_services_json_list = custom_services_json.get('values')
@@ -88,9 +86,9 @@ def process_custom_service_language(env, token, summary_mode, language, rows):
             name = inner_custom_services_json.get('name')
 
             # for later if details of rules, etc. are needed from each custom_service...
-            # endpoint = '/api/config/v1/custom_services/' + entity_id
-            # params = ''
-            # custom_service = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
+            # endpoint = '/api/config/v1/custom_services'
+            # r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{entity_id}', token)
+            # custom_service = r.json()
 
             if not summary_mode:
                 rows.append((f'Custom Service: {language}', name, entity_id))
@@ -112,7 +110,7 @@ def main():
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
     # env_name_supplied = 'Prod'
-    env_name_supplied = 'NonProd'
+    # env_name_supplied = 'NonProd'
     # env_name_supplied = 'Prep'
     # env_name_supplied = 'Dev'
     # env_name_supplied = 'Personal'

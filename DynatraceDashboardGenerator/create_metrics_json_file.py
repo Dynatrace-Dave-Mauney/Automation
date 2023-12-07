@@ -7,12 +7,13 @@ import sys
 
 from Reuse import dynatrace_api
 
-def get_metrics(url, token):
-    # print(f'get_metrics({url}, {token}')
+
+def get_metrics(env, token):
+    # print(f'get_metrics({env}, {token}')
     endpoint = '/api/v2/metrics'
     params = '?pageSize=1000&fields=+displayName,+description,+unit,+aggregationTypes,' \
              '+defaultAggregation,+dimensionDefinitions,+transformations,+entityType'
-    metrics = dynatrace_api.get(url, token, endpoint, params)
+    metrics = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     return metrics
 
 

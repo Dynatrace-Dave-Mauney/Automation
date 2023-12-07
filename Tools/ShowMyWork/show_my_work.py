@@ -49,7 +49,7 @@ def report_fixed_id_entities():
 def report_fixed_id_entity(entity_type, endpoint):
 	print(f'{entity_type}:')
 	print_lines = []
-	r = dynatrace_api.get_object_list(env, token, endpoint)
+	r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
 	entity_json = json.loads(r.text)
 	if endpoint == '/api/config/v1/dashboards':
 		values_key = 'dashboards'

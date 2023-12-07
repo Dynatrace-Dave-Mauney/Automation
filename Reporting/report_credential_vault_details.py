@@ -54,7 +54,7 @@ def process_type(env, token, summary_mode, entity_type):
 
     endpoint = '/api/config/v1/credentials'
     params = 'type=' + entity_type
-    credential_vault_json_list = dynatrace_api.get(env, token, endpoint, params)
+    credential_vault_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
     for credential_vault_json in credential_vault_json_list:
         inner_credential_vault_json_list = credential_vault_json.get('credentials')

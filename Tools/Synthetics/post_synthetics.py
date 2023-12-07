@@ -1,3 +1,9 @@
+import json
+
+from Reuse import dynatrace_api
+from Reuse import environment
+
+
 """
 
 POST HTTP_CHECK synthetics based on a template, changing the following fields per synthetic:
@@ -17,15 +23,11 @@ locations = {
     'Prod': ['SYNTHETIC_LOCATION-Y', 'SYNTHETIC_LOCATION-Z']
     }
 
-import json
-
-from Reuse import dynatrace_api
-from Reuse import environment
-
 
 def process():
     # Test
     post_default_http_check(target_env_name='Personal', monitor_name='A', monitor_urls=['https://dynatrace.com'])
+
 
 def post_default_http_check(target_env_name, monitor_name, monitor_urls):
     post_http_check(target_env_name, monitor_name, monitor_urls)
@@ -72,7 +74,7 @@ def post_http_check(target_env_name, monitor_name, monitor_urls):
     formatted_monitor = json.dumps(monitor, indent=4, sort_keys=False)
     # print(formatted_monitor)
 
-    response = dynatrace_api.post(env, token, endpoint, formatted_monitor)
+    response = dynatrace_api.post_object(f'{env}{endpoint}', token, formatted_monitor)
     new_entity_id = json.loads(response.text).get('entityId')
 
     print(f'Posted {monitor_name} to {env_name} ({env}) with entity id {new_entity_id}')

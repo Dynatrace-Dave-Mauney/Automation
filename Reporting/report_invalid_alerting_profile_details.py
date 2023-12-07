@@ -5,11 +5,8 @@ from Reuse import report_writer
 
 def load_management_zone_dict(env, token):
     management_zone_dict = {}
-
     endpoint = '/api/config/v1/managementZones'
-    params = ''
-    management_zones_json_list = dynatrace_api.get(env, token, endpoint, params)
-
+    management_zones_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
     for management_zones_json in management_zones_json_list:
         inner_management_zones_json_list = management_zones_json.get('values')
         for inner_management_zones_json in inner_management_zones_json_list:
@@ -33,9 +30,7 @@ def process_report(env, token):
     count_total = 0
 
     endpoint = '/api/config/v1/alertingProfiles'
-    params = ''
-    alerting_profiles_json_list = dynatrace_api.get(env, token, endpoint, params)
-
+    alerting_profiles_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
     for alerting_profiles_json in alerting_profiles_json_list:
         inner_alerting_profiles_json_list = alerting_profiles_json.get('values')
         for inner_alerting_profiles_json in inner_alerting_profiles_json_list:
@@ -43,8 +38,8 @@ def process_report(env, token):
             name = inner_alerting_profiles_json.get('name')
 
             endpoint = '/api/config/v1/alertingProfiles/' + entity_id
-            params = ''
-            alerting_profile = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
+            r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
+            alerting_profile = r.json()
 
             management_zone_id = alerting_profile.get('managementZoneId')
 

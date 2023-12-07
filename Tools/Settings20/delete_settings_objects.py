@@ -1,8 +1,8 @@
 from Reuse import dynatrace_api
 from Reuse import environment
 
-# friendly_function_name = 'Dynatrace Automation Tools'
-# env_name_supplied = environment.get_env_name(friendly_function_name)
+friendly_function_name = 'Dynatrace Automation Tools'
+env_name_supplied = environment.get_env_name(friendly_function_name)
 # For easy control from IDE
 # env_name_supplied = 'Prod'
 # env_name_supplied = 'NonProd'
@@ -34,7 +34,7 @@ def cleanup():
 		# 'vu9U3hXa3q0AAAABACNidWlsdGluOmxvZ21vbml0b3JpbmcubG9nLWRwcC1ydWxlcwAGdGVuYW50AAZ0ZW5hbnQAJDhhM2I1OTQ2LTA0OWItNTkwOC04MDc3LTk5MjUzMWEyZDM3Yb7vVN4V2t6t',
 		# 'vu9U3hXa3q0AAAABACNidWlsdGluOmxvZ21vbml0b3JpbmcubG9nLWRwcC1ydWxlcwAGdGVuYW50AAZ0ZW5hbnQAJDEyYmI2Y2MzLTM5YjItM2I4Ny04MTE0LWFjMjM2OTI2ZDg5Mr7vVN4V2t6t',
 	]:
-		dynatrace_api.delete(env, token, endpoint, object_id)
+		dynatrace_api.delete_object(f'{env}{endpoint}/{object_id}', token)
 
 
 def confirm(message):

@@ -36,8 +36,7 @@ def process_type(env, token, print_mode, entity_type):
     count_total = 0
 
     endpoint = '/api/config/v1/' + entity_type
-    params = ''
-    rum_json_list = dynatrace_api.get(env, token, endpoint, params)
+    rum_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     if print_mode:
         if entity_type == 'applications/web':
@@ -71,8 +70,7 @@ def process_string_list(env, token, print_mode, entity_type):
     count_total = 0
 
     endpoint = '/api/config/v1/' + entity_type
-    params = ''
-    rum_json_list = dynatrace_api.get(env, token, endpoint, params)
+    rum_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     if print_mode:
         print(string_list_key[entity_type])

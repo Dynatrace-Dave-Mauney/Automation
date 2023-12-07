@@ -4,7 +4,6 @@ Save synthetics from the tenant to the path indicated below.
 import json
 import os
 import re
-import sys
 
 from Reuse import dynatrace_api
 from Reuse import environment
@@ -18,8 +17,9 @@ def save(path, file, content):
 
 
 def save_synthetics(env, token, path):
+	endpoint = '/api/v1/synthetic/monitors'
 	download_count = 0
-	r = dynatrace_api.get_object_list(env, token, endpoint='/api/v1/synthetic/monitors')
+	r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
 	res = r.json()
 	print(res)
 	for entry in res['monitors']:
@@ -27,15 +27,19 @@ def save_synthetics(env, token, path):
 		synthetic_id = entry.get('entityId')
 		synthetic_type = entry.get('type')
 		print(synthetic_name, synthetic_id, synthetic_type)
-		if 'BRINK' in synthetic_name:
-			synthetic = dynatrace_api.get_by_object_id(env, token, endpoint='/api/v1/synthetic/monitors', object_id=synthetic_id)
+		# if 'BRINK' in synthetic_name:
+		if True:
+			endpoint = '/api/v1/synthetic/monitors'
+			r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{synthetic_id}', token)
+			synthetic = json.loads(r.text)
 			if True:
 				clean_filename = re.sub(r"[/\\?%*:|\"<>\x7F\x00-\x1F]", "-", f'{synthetic_name}.json')
 				print(f'Saving {synthetic_name} ({synthetic_id}) ({synthetic_type} type) to {clean_filename}')
 				save(path, clean_filename, synthetic)
-				download_count +=1
+				download_count += 1
 
 	print(f'Downloaded {download_count} synthetics to {path}')
+
 
 def main():
 	friendly_function_name = 'Dynatrace Automation Tools'
@@ -45,7 +49,7 @@ def main():
 	# env_name_supplied = 'NonProd'
 	# env_name_supplied = 'Prep'
 	# env_name_supplied = 'Dev'
-	# env_name_supplied = 'Personal'
+	env_name_supplied = 'Personal'
 	# env_name_supplied = 'Demo'
 	env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 

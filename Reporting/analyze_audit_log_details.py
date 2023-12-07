@@ -30,7 +30,7 @@ def process_report(env, token, summary_mode):
 
     endpoint = '/api/v2/auditlogs'
     params = 'pageSize=5000&from=' + timeframe
-    auditlog_json_list = dynatrace_api.get(env, token, endpoint, params)
+    auditlog_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
     for auditlog_json in auditlog_json_list:
         inner_auditlog_json_list = auditlog_json.get('auditLogs')

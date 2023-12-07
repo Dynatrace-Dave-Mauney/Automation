@@ -18,8 +18,7 @@ def process_report(env, token, summary_mode):
     count_total = 0
 
     endpoint = '/api/config/v1/kubernetes/credentials'
-    params = ''
-    kubernetes_credentials_json_list = dynatrace_api.get(env, token, endpoint, params)
+    kubernetes_credentials_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     events_not_enabled = []
 
@@ -30,9 +29,9 @@ def process_report(env, token, summary_mode):
             name = inner_kubernetes_credentials_json.get('name')
             endpoint_url = inner_kubernetes_credentials_json.get('endpointUrl')
 
-            endpoint = '/api/config/v1/kubernetes/credentials/' + entity_id
-            params = ''
-            details = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
+            endpoint = '/api/config/v1/kubernetes/credentials'
+            r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{entity_id}', token)
+            details = r.json()
 
             events_integration_enabled = details.get('eventsIntegrationEnabled')
 

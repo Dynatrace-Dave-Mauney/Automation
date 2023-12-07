@@ -7,8 +7,7 @@ def process(env, token):
     rows = []
 
     endpoint = '/api/config/v1/notifications'
-    params = ''
-    notifications_json_list = dynatrace_api.get(env, token, endpoint, params)
+    notifications_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     for notifications_json in notifications_json_list:
         inner_notifications_json_list = notifications_json.get('values')
@@ -18,7 +17,8 @@ def process(env, token):
             if name.endswith('-PROD') or name.endswith('-DR'):
                 endpoint = '/api/config/v1/notifications/' + entity_id
                 params = ''
-                notification = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
+                r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
+                notification = r.json()
                 # print(notification)
                 notification_type = notification.get('type')
                 if notification_type == 'WEBHOOK':

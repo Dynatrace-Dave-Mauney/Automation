@@ -10,7 +10,7 @@ def get_tag_data(env, token):
     endpoint = '/api/config/v1/autoTags'
     raw_params = 'fields=+description'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    auto_tags_json_list = dynatrace_api.get(env, token, endpoint, params)
+    auto_tags_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
     tag_data_list = []
 

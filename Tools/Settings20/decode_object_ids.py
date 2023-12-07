@@ -178,7 +178,7 @@ def test_update_token():
 
 def get_update_token(object_id):
     endpoint = '/api/v2/settings/objects'
-    settings_object = dynatrace_api.get_by_object_id(env, token, endpoint, object_id)
+    settings_object = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{object_id}', token)
     update_token = settings_object.get('updateToken')
     print(update_token)
     return update_token

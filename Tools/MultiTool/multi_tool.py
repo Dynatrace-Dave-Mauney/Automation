@@ -248,8 +248,7 @@ def view_entity_v1(entity_id, env, token):
 
 def list_entity_types(env, token, filtering):
     endpoint = '/api/v2/entityTypes'
-    params = ''
-    entities_json_list = dynatrace_api.get(env, token, endpoint, params)
+    entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     print('id' + '|' + 'name')
 
@@ -268,7 +267,7 @@ def list_entities_of_type(env, token, entity_type, filtering):
     endpoint = '/api/v2/entities'
     entity_selector = 'type(' + entity_type + ')'
     params = '&entitySelector=' + urllib.parse.quote(entity_selector)
-    entities_json_list = dynatrace_api.get(env, token, endpoint, params)
+    entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
     lines = []
 
@@ -313,8 +312,7 @@ def view_object(object_id, env, token):
 
 def list_schemas(env, token, filtering):
     endpoint = '/api/v2/settings/schemas'
-    params = ''
-    settings_json_list = dynatrace_api.get(env, token, endpoint, params)
+    settings_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     schema_ids = []
     schema_dict = {}
@@ -336,7 +334,7 @@ def list_objects_at_environment_scope(env, token, filtering):
     endpoint = '/api/v2/settings/objects'
     raw_params = 'scopes=environment&fields=schemaId,value&pageSize=500'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    settings_object_list = dynatrace_api.get(env, token, endpoint, params)
+    settings_object_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     for settings_object in settings_object_list:
         items = settings_object.get('items')
         for item in items:
@@ -355,7 +353,7 @@ def list_objects_of_schema(env, token, schema_id, filtering):
     endpoint = f'/api/v2/settings/objects'
     raw_params = f'schemaIds={schema_id}&fields=scope,objectId,value&pageSize=500'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    settings_object_list = dynatrace_api.get(env, token, endpoint, params)
+    settings_object_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
     for settings_object in settings_object_list:
         error_code = settings_object.get('error', {}).get('code', None)
@@ -375,7 +373,7 @@ def list_objects_of_schema(env, token, schema_id, filtering):
                 value = value.replace('{', '')
                 value = value.replace('}', '')
                 value = value.replace("'", "")
-                line = f'{object_id}, {update_token}, scope: {scope}, {value}'
+                # line = f'{object_id}, {update_token}, scope: {scope}, {value}'
                 # if not filtering or filtering in line:
                 #     print(line)
 
@@ -385,7 +383,7 @@ def list_metrics(env, token, filtering):
     # raw_params = 'pageSize=500&fields=+created'
     raw_params = 'pageSize=500'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    metrics_json_list = dynatrace_api.get(env, token, endpoint, params)
+    metrics_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     # print('metric_id' + '|' + 'displayName' + '|' + 'created')
     print('metric_id' + '|' + 'displayName')
 
@@ -489,7 +487,7 @@ def list_events(env, token, filtering):
     page_size = 1000
     from_time = 'now-24h'
     params = f'pageSize={page_size}&from={from_time}'
-    events_json_list = dynatrace_api.get(env, token, endpoint, params)
+    events_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
     print('Events')
     print('eventId|eventType|title|startTime|endTime|duration (D:HH:MM:SS.MMM')

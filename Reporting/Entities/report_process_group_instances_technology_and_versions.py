@@ -15,7 +15,7 @@ def process(env, token, entity_type):
     endpoint = '/api/v2/entities'
     entity_selector = 'type(' + entity_type + ')'
     params = '&entitySelector=' + urllib.parse.quote(entity_selector) + '&fields=' + urllib.parse.quote('properties.SOFTWARETECHNOLOGIES')
-    entities_json_list = dynatrace_api.get(env, token, endpoint, params)
+    entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
     rows = []
 

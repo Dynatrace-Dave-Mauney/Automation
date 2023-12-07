@@ -18,8 +18,7 @@ def process_report(env, token, summary_mode):
     count_total = 0
 
     endpoint = '/api/v2/networkZones'
-    params = ''
-    network_zones_json_list = dynatrace_api.get(env, token, endpoint, params)
+    network_zones_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     for network_zones_json in network_zones_json_list:
         inner_network_zones_json_list = network_zones_json.get('networkZones')

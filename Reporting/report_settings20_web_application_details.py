@@ -47,8 +47,7 @@ def get_web_applications(env, token):
 	web_applications = []
 
 	endpoint = '/api/config/v1/applications/web'
-	params = ''
-	web_applications_json_list = dynatrace_api.get(env, token, endpoint, params)
+	web_applications_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 	for web_applications_json in web_applications_json_list:
 		inner_web_applications_json_list = web_applications_json.get('values')
 		for inner_web_applications_json in inner_web_applications_json_list:
@@ -70,7 +69,7 @@ def process_web_application(env, token, summary_mode, entity_id, name, rows):
 	# schema_id_param = ''
 	raw_params = f'{schema_id_param}&scopes={entity_id}&fields=schemaId,value&pageSize=500'
 	params = urllib.parse.quote(raw_params, safe='/,&=')
-	settings_object_list = dynatrace_api.get(env, token, endpoint, params)
+	settings_object_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
 	for settings_object in settings_object_list:
 		items = settings_object.get('items', [])

@@ -18,8 +18,7 @@ def process_report(env, token, summary_mode):
     count_total = 0
 
     endpoint = '/api/config/v1/managementZones'
-    params = ''
-    management_zones_json_list = dynatrace_api.get(env, token, endpoint, params)
+    management_zones_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     for management_zones_json in management_zones_json_list:
         inner_management_zones_json_list = management_zones_json.get('values')
@@ -30,27 +29,26 @@ def process_report(env, token, summary_mode):
             # if '-PRD' not in name.upper():
             #     continue
 
-            endpoint = '/api/config/v1/managementZones/' + entity_id
-            params = ''
-            management_zone_list = dynatrace_api.get(env, token, endpoint, params)
+            endpoint = '/api/config/v1/managementZones'
+            r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{entity_id}', token)
+            management_zone = r.json()
 
-            for management_zone in management_zone_list:
-                description = management_zone.get('description', '')
-                formatted_rules = format_rules(management_zone.get('rules'))
-                formatted_dimensional_rules = format_dimensional_rules(management_zone.get('dimensionalRules'))
+            description = management_zone.get('description', '')
+            formatted_rules = format_rules(management_zone.get('rules'))
+            formatted_dimensional_rules = format_dimensional_rules(management_zone.get('dimensionalRules'))
 
-                # if formatted_dimensional_rules:
-                #     print(f'formatted_dimensional_rules: {formatted_dimensional_rules}')
+            # if formatted_dimensional_rules:
+            #     print(f'formatted_dimensional_rules: {formatted_dimensional_rules}')
 
-                formatted_entity_rules = format_entity_rules(management_zone.get('entitySelectorBasedRules'))
+            formatted_entity_rules = format_entity_rules(management_zone.get('entitySelectorBasedRules'))
 
-                # debug_info = f"     -------> DEBUG INFO (rules): {management_zone.get('rules')}"
+            # debug_info = f"     -------> DEBUG INFO (rules): {management_zone.get('rules')}"
 
-                if not summary_mode:
-                    # rows.append((name, formatted_rules, str(debug_info)))
-                    rows.append((name, formatted_rules, formatted_entity_rules, formatted_dimensional_rules, entity_id, str(description)))
+            if not summary_mode:
+                # rows.append((name, formatted_rules, str(debug_info)))
+                rows.append((name, formatted_rules, formatted_entity_rules, formatted_dimensional_rules, entity_id, str(description)))
 
-                count_total += 1
+            count_total += 1
 
     summary.append('There are ' + str(count_total) + ' management zones currently defined.')
 

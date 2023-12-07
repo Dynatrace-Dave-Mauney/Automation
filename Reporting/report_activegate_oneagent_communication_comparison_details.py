@@ -18,8 +18,7 @@ def process(env, token):
     active_gate_network_address_list = []
 
     endpoint = '/api/v2/activeGates'
-    params = ''
-    activegates_json_list = dynatrace_api.get(env, token, endpoint, params)
+    activegates_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     rows.append('hostname' + '|' + 'osType' + '|' + 'version' + '|' + 'networkZone' + '|' + 'networkAddresses')
 

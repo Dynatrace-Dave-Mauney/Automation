@@ -18,8 +18,7 @@ def process_report(env, token, summary_mode):
     count_total = 0
 
     endpoint = '/api/config/v1/alertingProfiles'
-    params = ''
-    alerting_profiles_json_list = dynatrace_api.get(env, token, endpoint, params)
+    alerting_profiles_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     for alerting_profiles_json in alerting_profiles_json_list:
         inner_alerting_profiles_json_list = alerting_profiles_json.get('values')
@@ -31,8 +30,8 @@ def process_report(env, token, summary_mode):
             #     continue
 
             endpoint = '/api/config/v1/alertingProfiles/' + entity_id
-            params = ''
-            alerting_profile = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
+            r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
+            alerting_profile = r.json()
 
             if not summary_mode:
                 management_zone_id = alerting_profile.get('managementZoneId')

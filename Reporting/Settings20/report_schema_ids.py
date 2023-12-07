@@ -6,8 +6,7 @@ from Reuse import report_writer
 def process(env, token):
     rows = []
     endpoint = '/api/v2/settings/schemas'
-    params = ''
-    settings_json_list = dynatrace_api.get(env, token, endpoint, params)
+    settings_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     # schema_ids = []
     # schema_dict = {}

@@ -34,7 +34,7 @@ def process_report(env, token, summary_mode):
         
         raw_params = f'entitySelector=type({entity_type})'
         params = urllib.parse.quote(raw_params, safe='/,&=')
-        manual_tags_json_list = dynatrace_api.get(env, token, endpoint, params)
+        manual_tags_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     
         for manual_tags_json in manual_tags_json_list:
             inner_manual_tags_json_list = manual_tags_json.get('tags')

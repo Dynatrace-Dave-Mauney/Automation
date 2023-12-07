@@ -49,7 +49,7 @@ def process():
 def change_host_group_autoupdate_setting(host_group, setting):
     host_group_id = host_group_lookup[host_group]
     endpoint = '/api/config/v1/hostgroups/' + host_group_id + '/autoupdate'
-    settings_json_list = dynatrace_api.get(env, token, endpoint, '')
+    settings_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
     settings_json = settings_json_list[0]
     old_setting = settings_json.get('setting')
     version = settings_json.get('version')
@@ -61,7 +61,7 @@ def change_host_group_autoupdate_setting(host_group, setting):
 def change_host_autoupdate_setting(host, setting):
     host_id = host_lookup[host]
     endpoint = '/api/config/v1/hosts/' + host_id + '/autoupdate'
-    settings_json_list = dynatrace_api.get(env, token, endpoint, '')
+    settings_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
     settings_json = settings_json_list[0]
     old_setting = settings_json.get('setting')
     version = settings_json.get('version')
@@ -72,7 +72,7 @@ def change_host_autoupdate_setting(host, setting):
 
 def put(env, endpoint, token, payload):
     # The host group or host id is already embedded in the endpoint
-    dynatrace_api.put_without_id(env, token, endpoint, payload)
+    dynatrace_api.put_object(f'{env}{endpoint}', token, payload)
 
 
 def load_host_group_lookup(host_groups):
@@ -82,7 +82,7 @@ def load_host_group_lookup(host_groups):
     raw_params = 'pageSize=4000&entitySelector=type(HOST_GROUP)&to=-72h'
     # raw_params = 'entitySelector=type(HOST_GROUP)'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    entities_json_list = dynatrace_api.get(env, token, endpoint, params)
+    entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     for entities_json in entities_json_list:
         inner_entities_json_list = entities_json.get('entities')
         for inner_entities_json in inner_entities_json_list:
@@ -98,7 +98,7 @@ def load_host_lookup(hosts):
     endpoint = '/api/v2/entities'
     raw_params = 'pageSize=4000&entitySelector=type(HOST)&to=-72h'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    entities_json_list = dynatrace_api.get(env, token, endpoint, params)
+    entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     for entities_json in entities_json_list:
         inner_entities_json_list = entities_json.get('entities')
         for inner_entities_json in inner_entities_json_list:
@@ -116,7 +116,7 @@ if __name__ == '__main__':
     # env_name_supplied = 'NonProd'
     # env_name_supplied = 'Prep'
     # env_name_supplied = 'Dev'
-    # env_name_supplied = 'Personal'
+    env_name_supplied = 'Personal'  # For Safety
     # env_name_supplied = 'Demo'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 

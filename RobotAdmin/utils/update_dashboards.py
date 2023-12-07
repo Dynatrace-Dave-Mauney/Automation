@@ -11,7 +11,7 @@ def process_dashboards(env, token):
     count_updated = 0
 
     endpoint = '/api/config/v1/dashboards'
-    r = dynatrace_api.get_object_list(env, token, endpoint)
+    r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
     dashboards_json_dict = json.loads(r.text)
     dashboards_json_list = dashboards_json_dict.get('dashboards')
 
@@ -20,7 +20,7 @@ def process_dashboards(env, token):
         name = dashboards_json.get('name')
         owner = dashboards_json.get('owner')
 
-        new_name = name
+        # new_name = name
         if '00000001-0000-0000-0000-' in dashboard_id or '00000001-0000-0000-0001-' in dashboard_id:
             if ' Service ' not in name and ' Synthetic ' not in name and name.endswith('SLOs'):
                 if 'Browser' in name:
@@ -29,12 +29,12 @@ def process_dashboards(env, token):
                     new_name = name.replace('SLOs', 'Synthetic HTTP SLOs')
 
                 print(name, new_name, dashboard_id, owner)
-                dashboard = dynatrace_api.get_by_object_id(env, token, endpoint, dashboard_id)
+                dashboard = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{dashboard_id}', token)
                 dashboard_metadata = dashboard.get('dashboardMetadata')
                 dashboard_metadata['name'] = new_name
 
                 payload = json.dumps(dashboard)
-                r = dynatrace_api.put(env, token, endpoint, dashboard_id, payload)
+                r = dynatrace_api.put_object(f'{env}{endpoint}/{dashboard_id}', token, payload)
                 if r.status_code != 204:
                     print(f'Bad status code: {r.status_code}')
                     exit(1)
@@ -46,6 +46,7 @@ def process_dashboards(env, token):
     print(f'Total Dashboards: {count_total}')
     print(f'Updated Dashboards: {count_updated}')
 
+
 def main():
     friendly_function_name = 'Dynatrace Automation'
     env_name_supplied = environment.get_env_name(friendly_function_name)
@@ -54,7 +55,7 @@ def main():
     # env_name_supplied = 'NonProd'
     # env_name_supplied = 'Prep'
     # env_name_supplied = 'Dev'
-    # env_name_supplied = 'Personal'
+    env_name_supplied = 'Personal'  # For Safety
     # env_name_supplied = 'Demo'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 

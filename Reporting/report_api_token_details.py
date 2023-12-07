@@ -18,8 +18,7 @@ def process_report(env, token, summary_mode):
     count_total = 0
 
     endpoint = '/api/v2/apiTokens'
-    params = ''
-    activegates_json_list = dynatrace_api.get(env, token, endpoint, params)
+    activegates_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     for activegates_json in activegates_json_list:
         inner_activegates_json_list = activegates_json.get('apiTokens')

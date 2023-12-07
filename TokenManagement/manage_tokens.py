@@ -10,7 +10,7 @@ env_name_supplied = environment.get_env_name(friendly_function_name)
 # env_name_supplied = 'NonProd'
 # env_name_supplied = 'Prep'
 # env_name_supplied = 'Dev'
-# env_name_supplied = 'Personal'
+env_name_supplied = 'Personal'
 # env_name_supplied = 'Demo'
 env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 
@@ -22,7 +22,8 @@ def process():
 		print('Env or Token Environment Variable Not Set!')
 		exit(1)
 
-	post_dynatrace_automation_token()
+	test()
+	# post_dynatrace_automation_token()
 
 	# post_reporting_token()
 	# post_slo_generation_token()
@@ -173,7 +174,8 @@ def post_test_token():
 
 def post_token(token_name, token_scopes):
 	payload = json.dumps({"name": token_name, "scopes": token_scopes})
-	token_posted = json.loads(dynatrace_api.post(env, token, endpoint, payload).text)
+	r = dynatrace_api.post_object(f'{env}{endpoint}', token, payload)
+	token_posted = r.json()
 	print(f'Created token named "{token_name}" with scopes: {token_scopes}: {token_posted.get("token")}')
 	print(f'Be sure to save the token displayed below in your password keeper/secrets manager/vault!')
 	print(f'{token_posted.get("token")}')
@@ -183,18 +185,19 @@ def post_token(token_name, token_scopes):
 
 
 def put_token(token_id, payload):
-	dynatrace_api.put(env, token, endpoint, token_id, payload)
+	dynatrace_api.put_object(f'{env}{endpoint}/{token_id}', token, payload)
 
 
 def get_token(token_id):
 	# If a secret is passed as the token id, shorten it
 	token_split = token_id.split('.')
 	shortened_token_id = f'{token_split[0]}.{token_split[1]}'
-	return dynatrace_api.get_by_object_id(env, token, endpoint, shortened_token_id)
+	r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{shortened_token_id}', token)
+	return r.json()
 
 
 def delete_token(token_id):
-	dynatrace_api.delete(env, token, endpoint, token_id)
+	dynatrace_api.delete_object(f'{env}{endpoint}/{token_id}', token)
 	print(f'Deleted token with id {token_id}')
 
 
@@ -202,14 +205,15 @@ def rotate_token(token_id):
 	old_token = get_token(token_id)
 	old_token.pop('id')
 	old_token.pop('creationDate')
-	new_token = json.loads(dynatrace_api.post(env, token, endpoint, json.dumps(old_token)).text)
+	r = dynatrace_api.post_object(f'{env}{endpoint}', token, json.dumps(old_token))
+	new_token = r.json()
 	delete_token(token_id)
 	print('Rotated tokens: ' + token_id + ' -> ' + str(new_token))
 	return new_token
 
 
 def list_tokens():
-	token_json_list = dynatrace_api.get(env, token, endpoint, '')
+	token_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
 	formatted_token_details = []
 

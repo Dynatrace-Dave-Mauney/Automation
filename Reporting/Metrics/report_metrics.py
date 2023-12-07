@@ -11,7 +11,7 @@ def process(env, token):
     endpoint = '/api/v2/metrics'
     raw_params = 'pageSize=500&fields=+created'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    metrics_json_list = dynatrace_api.get(env, token, endpoint, params)
+    metrics_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     for metrics_json in metrics_json_list:
         inner_metrics_json_list = metrics_json.get('metrics')
         for inner_metrics_json in inner_metrics_json_list:

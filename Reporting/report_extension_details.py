@@ -20,7 +20,7 @@ def process_report(env, token, summary_mode):
 
     endpoint = '/api/config/v1/extensions'
     params = 'pageSize=500'
-    extension_json_list = dynatrace_api.get(env, token, endpoint, params)
+    extension_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
     for extension_json in extension_json_list:
         inner_extension_json_list = extension_json.get('extensions')

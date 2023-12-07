@@ -6,8 +6,7 @@ def process_hub_categories(env, token):
     print('Hub Categories')
     print(f'id|name|description')
     endpoint = '/api/v2/hub/categories'
-    params = ''
-    hub_categories_json_list = dynatrace_api.get(env, token, endpoint, params)
+    hub_categories_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
     for hub_categories_json in hub_categories_json_list:
         inner_hub_categories_json_list = hub_categories_json.get('items')
         for inner_hub_categories_json in inner_hub_categories_json_list:
@@ -22,8 +21,7 @@ def process_hub_items(env, token, show_description_blocks):
     print(f'id|name|description')
     print('type|id|name|description|tags|documentationLink|marketingLink|comingSoon|artifactId')
     endpoint = '/api/v2/hub/items'
-    params = ''
-    hub_items_json_list = dynatrace_api.get(env, token, endpoint, params)
+    hub_items_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
     for hub_items_json in hub_items_json_list:
         inner_hub_items_json_list = hub_items_json.get('items')
         for inner_hub_items_json in inner_hub_items_json_list:
@@ -49,8 +47,7 @@ def process_hub_items(env, token, show_description_blocks):
 def get_technology_description_blocks(env, token, hub_technology_id):
     technology_description_blocks = []
     endpoint = f'/api/v2/hub/technologies/{hub_technology_id}' 
-    params = ''
-    hub_technology_json = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
+    hub_technology_json = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
     if not hub_technology_json.get('error'):
         hub_technology_description_blocks = hub_technology_json.get('descriptionBlocks')
         if hub_technology_description_blocks:

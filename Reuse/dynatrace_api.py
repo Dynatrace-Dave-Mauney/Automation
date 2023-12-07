@@ -361,8 +361,9 @@ def retry_with_backoff(fn, retries=5, backoff_in_seconds=1):
     while True:
         try:
             return fn()
-        except (ConnectionError, TimeoutError, RateLimitException):
+        except (ConnectionError, ConnectionResetError, TimeoutError, RateLimitException):
             if x == retries:
+                print(f'Retried with exponential backoff {retries} times, but could not recover.')
                 raise
 
             sleep = (backoff_in_seconds * 2 ** x + random.uniform(0, 1))

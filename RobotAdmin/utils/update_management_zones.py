@@ -36,11 +36,8 @@ def add_showcase_rules_to_mz(management_zone_name, host_group_list):
     endpoint = '/api/config/v1/managementZones'
 
     if not object_cache.get(endpoint):
-        r = dynatrace_api.get_object_list(env, token, endpoint)
-
-        # print(r.text)
-
-        config_json = json.loads(r.text)
+        r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
+        config_json = r.json()
         config_list = config_json.get('values')
         config_dict = {}
         for config in config_list:
@@ -80,9 +77,8 @@ def add_showcase_rules_to_mz(management_zone_name, host_group_list):
     ]
 
     object_id = object_cache[endpoint].get(management_zone_name)
-    # config_object = json.loads(get_by_object_id(endpoint, object_id).text)
-    config_object = dynatrace_api.get_by_object_id(env, token, endpoint, object_id)
-
+    r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{object_id}', token)
+    config_object = r.json()
     new_entity_selector_based_rules = []
     for host_group in host_group_list:
         tag = 'BETA Host Group:' + host_group
@@ -94,7 +90,7 @@ def add_showcase_rules_to_mz(management_zone_name, host_group_list):
     config_object['entitySelectorBasedRules'].extend(new_entity_selector_based_rules)
     config_object.pop('id')
 
-    dynatrace_api.post(env, endpoint, endpoint, json.dumps(config_object))
+    dynatrace_api.post_object(f'{env}{endpoint}', token, json.dumps(config_object))
 
 
 def add_database_rule_to_mz(management_zone_name):
@@ -102,11 +98,8 @@ def add_database_rule_to_mz(management_zone_name):
     endpoint = '/api/config/v1/managementZones'
 
     if not object_cache.get(endpoint):
-        r = dynatrace_api.get_object_list(env, token, endpoint)
-
-        # print(r.text)
-
-        config_json = json.loads(r.text)
+        r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
+        config_json = r.json()
         config_list = config_json.get('values')
         config_dict = {}
         for config in config_list:
@@ -117,16 +110,15 @@ def add_database_rule_to_mz(management_zone_name):
         object_cache[endpoint] = config_dict
 
     object_id = object_cache[endpoint].get(management_zone_name)
-    # config_object = json.loads(get_by_object_id(endpoint, object_id).text)
-    config_object = dynatrace_api.get_by_object_id(env, token, endpoint, object_id)
-
+    r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{object_id}', token)
+    config_object = r.json()
     tag = 'Host Group:' + management_zone_name
     current_entity_selector_based_rules = config_object.get('entitySelectorBasedRules')
     additional_entity_selector_based_rule = get_database_entity_selector_based_rule(tag)
     if additional_entity_selector_based_rule not in current_entity_selector_based_rules:
         config_object['entitySelectorBasedRules'].append(additional_entity_selector_based_rule)
         print(f'Adding database rule to {management_zone_name}')
-        dynatrace_api.put(env, token, endpoint, object_id, json.dumps(config_object))
+        dynatrace_api.put_object(f'{env}{endpoint}/{object_id}', token, json.dumps(config_object))
 
 
 def get_database_entity_selector_based_rule(tag):
@@ -195,8 +187,8 @@ def add_showcase_rules():
 
 def add_database_rules():
     endpoint = '/api/config/v1/managementZones'
-    management_zone_json = dynatrace_api.get_object_list(env, token, endpoint)
-
+    r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
+    management_zone_json = r.json()
     management_zone_lookup_list = []
     management_zone_list = management_zone_json.get('values')
     for management_zone in management_zone_list:
@@ -207,7 +199,8 @@ def add_database_rules():
     raw_params = 'pageSize=4000&entitySelector=type(HOST_GROUP)&fields=+properties,+toRelationships&to=-72h'
     params = urllib.parse.quote(raw_params, safe='/,&=?')
     endpoint = f'/api/v2/entities?{params}'
-    host_group_json = dynatrace_api.get_object_list(env, token, endpoint)
+    r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
+    host_group_json = r.json()
     host_group_list = host_group_json.get('entities')
     for host_group in host_group_list:
         host_group_name = host_group.get('displayName')

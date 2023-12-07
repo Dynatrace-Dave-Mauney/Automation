@@ -69,8 +69,7 @@ def process_type(env, token, summary_mode, entity_type):
     count_total = 0
 
     endpoint = '/api/config/v1/calculatedMetrics/' + entity_type
-    params = ''
-    calculated_metrics_json_list = dynatrace_api.get(env, token, endpoint, params)
+    calculated_metrics_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     for calculated_metrics_json in calculated_metrics_json_list:
         inner_calculated_metrics_json_list = calculated_metrics_json.get('values')

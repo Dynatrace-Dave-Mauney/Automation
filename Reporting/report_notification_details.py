@@ -18,8 +18,7 @@ def process_report(env, token, summary_mode):
     count_total = 0
 
     endpoint = '/api/config/v1/notifications'
-    params = ''
-    notifications_json_list = dynatrace_api.get(env, token, endpoint, params)
+    notifications_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     for notifications_json in notifications_json_list:
         inner_notifications_json_list = notifications_json.get('values')
@@ -30,9 +29,10 @@ def process_report(env, token, summary_mode):
             # if '-PRD' not in name.upper():
             #     continue
 
-            endpoint = '/api/config/v1/notifications/' + entity_id
-            params = ''
-            notification = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
+            endpoint = '/api/config/v1/notifications'
+            r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{entity_id}', token)
+            notification = r.json()
+
             # print(notification)
             notification_type = notification.get('type')
             alerting_profile = notification.get('alertingProfile')

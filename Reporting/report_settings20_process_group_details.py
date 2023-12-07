@@ -43,8 +43,7 @@ def get_process_groups(env, token):
     process_groups = []
 
     endpoint = '/api/v1/entity/infrastructure/process-groups'
-    params = ''
-    process_groups_json_list = dynatrace_api.get(env, token, endpoint, params)
+    process_groups_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
     for process_groups_json in process_groups_json_list:
         entity_id = process_groups_json.get('entityId')
         name = process_groups_json.get('displayName')
@@ -64,7 +63,7 @@ def process_process_group(env, token, summary_mode, entity_id, name, rows):
     schema_ids_param = ''
     raw_params = f'{schema_ids_param}&scopes={entity_id}&fields=schemaId,value&pageSize=500'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    settings_object_list = dynatrace_api.get(env, token, endpoint, params)
+    settings_object_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
     for settings_object in settings_object_list:
         items = settings_object.get('items', [])

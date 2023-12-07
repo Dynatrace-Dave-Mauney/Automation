@@ -57,6 +57,7 @@ def post_default_service_slos(target_env_name, asn):
     metric_expression = '((builtin:service.response.time:avg:partition("latency",value("good",lt(10000))):splitBy():count:default(0))/(builtin:service.response.time:avg:splitBy():count)*(100))'
     post_slo(target_env_name, summary, author, metric_name, metric_expression, slo_filter)
 
+
 def post_default_http_check_availability_slo(target_env_name, monitor_name):
     monitor_type = 'Synthetic Availability (HTTP)'
     summary = f'{monitor_name} - {monitor_type}'
@@ -87,7 +88,7 @@ def post_slo(target_env_name, summary, author, metric_name, metric_expression, s
     endpoint = '/api/v2/settings/objects'
     formatted_slo = json.dumps(slo_list, indent=4, sort_keys=False)
 
-    response = dynatrace_api.post(env, token, endpoint, formatted_slo)
+    response = dynatrace_api.post_object(f'{env}{endpoint}', token, formatted_slo)
 
     # print(f'JSON Response: {response.text}')
 

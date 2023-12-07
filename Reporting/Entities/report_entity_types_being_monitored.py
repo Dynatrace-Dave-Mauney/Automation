@@ -22,8 +22,8 @@ def process_report(env, token, summary_mode):
     count_monitored_total = 0
 
     endpoint = '/api/v2/entityTypes'
-    params = ''
-    entities_json_list = dynatrace_api.get(env, token, endpoint, params)
+    params = 'pageSize=500'
+    entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
     for entities_json in entities_json_list:
         inner_entities_json_list = entities_json.get('types')
@@ -36,7 +36,7 @@ def process_report(env, token, summary_mode):
                 endpoint = '/api/v2/entities'
                 entity_selector = 'type(' + entity_type + ')'
                 params = '&entitySelector=' + urllib.parse.quote(entity_selector)
-                entity_type_json_list = dynatrace_api.get(env, token, endpoint, params)
+                entity_type_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
                 total_count = entity_type_json_list[0].get('totalCount')
                 if total_count > 0:
                     rows.append((entity_type, display_name, str(total_count)))

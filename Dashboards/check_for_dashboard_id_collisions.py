@@ -63,8 +63,7 @@ def load_tenants(env_name_list):
         _, env, token = environment.get_environment(env_name)
 
         endpoint = '/api/config/v1/dashboards'
-        params = ''
-        dashboards_json_list = dynatrace_api.get(env, token, endpoint, params)
+        dashboards_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
         # count = 0
         tenant_list = []

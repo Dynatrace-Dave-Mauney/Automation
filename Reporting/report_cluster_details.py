@@ -16,9 +16,9 @@ def process_report(env, token, summary_mode):
     summary = []
 
     endpoint = '/api/v1/config/clusterversion'
-    params = ''
-    entities_json_list = dynatrace_api.get(env, token, endpoint, params)
-    version = entities_json_list[0].get('version')
+    r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
+    entities_json = r.json()
+    version = entities_json.get('version')
 
     if not summary_mode:
         rows.append([version])

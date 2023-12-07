@@ -19,8 +19,7 @@ def process(env, token, mz_name, tag):
         raw_params += tag_param
 
     params = urllib.parse.quote(raw_params, safe='/,=')
-    process_group_json_list = dynatrace_api.get(env, token, endpoint, params)
-
+    process_group_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     for process_group_json in process_group_json_list:
         inner_process_group_json_list = process_group_json.get('entities')
         for inner_process_group_json in inner_process_group_json_list:
@@ -42,9 +41,7 @@ def process(env, token, mz_name, tag):
 def process_pg(env, token, process_group, display_name, mz_name, tag):
     rows = []
     endpoint = '/api/v1/entity/infrastructure/process-groups/' + process_group + '/logs'
-    params = ''
-    process_group_logs_json_list = dynatrace_api.get(env, token, endpoint, params)
-
+    process_group_logs_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
     for process_group_logs_json in process_group_logs_json_list:
         inner_process_group_logs_json_list = process_group_logs_json.get('logs')
         for inner_process_group_logs_json in inner_process_group_logs_json_list:

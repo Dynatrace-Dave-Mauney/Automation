@@ -18,8 +18,7 @@ def process_report(env, token, summary_mode):
     count_total = 0
 
     endpoint = '/api/config/v1/aws/credentials'
-    params = ''
-    aws_credentials_json_list = dynatrace_api.get(env, token, endpoint, params)
+    aws_credentials_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     for aws_credentials_json in aws_credentials_json_list:
         entity_id = aws_credentials_json.get('id')

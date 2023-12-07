@@ -18,8 +18,7 @@ def process_report(env, token, summary_mode):
     count_total = 0
 
     endpoint = '/api/v1/synthetic/monitors'
-    params = ''
-    entities_json_list = dynatrace_api.get(env, token, endpoint, params)
+    entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
     for entities_json in entities_json_list:
         inner_entities_json_list = entities_json.get('monitors')
         for inner_entities_json in inner_entities_json_list:

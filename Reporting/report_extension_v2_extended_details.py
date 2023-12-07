@@ -10,7 +10,7 @@ def process(env, token):
 
     endpoint = '/api/v2/extensions'
     params = 'pageSize=100'
-    extension_json_list = dynatrace_api.get(env, token, endpoint, params)
+    extension_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
     for extension_json in extension_json_list:
         inner_extension_json_list = extension_json.get('extensions')
@@ -20,7 +20,7 @@ def process(env, token):
             extension_version = inner_extension_json.get('version')
 
             endpoint = f'/api/v2/extensions/{extension_name}/monitoringConfigurations'
-            extension_configuration_json_list = dynatrace_api.get(env, token, endpoint, params)
+            extension_configuration_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
             for extension_configuration_json in extension_configuration_json_list:
                 inner_extension_configuration_json_list = extension_configuration_json.get('items')
                 for inner_extension_configuration_json in inner_extension_configuration_json_list:

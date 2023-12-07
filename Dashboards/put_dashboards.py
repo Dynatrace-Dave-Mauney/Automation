@@ -308,7 +308,7 @@ def get_owner():
 
 def put_dashboard(env, token, dashboard_id, payload):
     endpoint = '/api/config/v1/dashboards'
-    dynatrace_api.put(env, token, endpoint, dashboard_id, payload)
+    dynatrace_api.put_object(f'{env}{endpoint}/{dashboard_id}', token, payload)
 
 
 def main(arguments):

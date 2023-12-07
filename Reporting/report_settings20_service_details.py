@@ -42,8 +42,7 @@ def get_services(env, token):
 	services = []
 
 	endpoint = '/api/v1/entity/services'
-	params = ''
-	services_json_list = dynatrace_api.get(env, token, endpoint, params)
+	services_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 	for services_json in services_json_list:
 		entity_id = services_json.get('entityId')
 		name = services_json.get('displayName')
@@ -63,7 +62,7 @@ def process_service(env, token, summary_mode, entity_id, name, rows):
 	schema_id_param = ''
 	raw_params = f'{schema_id_param}&scopes={entity_id}&fields=schemaId,value&pageSize=500'
 	params = urllib.parse.quote(raw_params, '/,&=')
-	settings_object_list = dynatrace_api.get(env, token, endpoint, params)
+	settings_object_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
 	for settings_object in settings_object_list:
 		items = settings_object.get('items', [])
@@ -93,7 +92,7 @@ def main():
 	# env_name_supplied = 'NonProd'
 	# env_name_supplied = 'Prep'
 	# env_name_supplied = 'Dev'
-	# env_name_supplied = 'Personal'
+	env_name_supplied = 'Personal'
 	# env_name_supplied = 'Demo'
 	env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 	process(env, token)

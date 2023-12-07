@@ -44,8 +44,7 @@ def load_management_zone_dict(env, token):
     management_zone_dict = {}
 
     endpoint = '/api/config/v1/managementZones'
-    params = ''
-    management_zones_json_list = dynatrace_api.get(env, token, endpoint, params)
+    management_zones_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     for management_zones_json in management_zones_json_list:
         inner_management_zones_json_list = management_zones_json.get('values')
@@ -62,9 +61,7 @@ def load_and_count_alerting_profile_references(env, token, management_zone_dict)
     alerting_profile_references_dict = {}
 
     endpoint = '/api/config/v1/alertingProfiles'
-    params = ''
-    alerting_profiles_json_list = dynatrace_api.get(env, token, endpoint, params)
-    # print(alerting_profiles_json_list)
+    alerting_profiles_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     for alerting_profiles_json in alerting_profiles_json_list:
         inner_alerting_profiles_json_list = alerting_profiles_json.get('values')
@@ -73,9 +70,8 @@ def load_and_count_alerting_profile_references(env, token, management_zone_dict)
             name = inner_alerting_profiles_json.get('name')
             entity_id = inner_alerting_profiles_json.get('id')
             endpoint = '/api/config/v1/alertingProfiles/' + entity_id
-            params = ''
-            alerting_profile = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
-            # print(alerting_profile)
+            r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
+            alerting_profile = r.json()
             management_zone_id = alerting_profile.get('managementZoneId')
             # print(management_zone_id)
             management_zone_counts = management_zone_dict.get(str(management_zone_id), None)
@@ -93,20 +89,16 @@ def load_and_count_alerting_profile_references(env, token, management_zone_dict)
 
 def count_problem_notification_references(env, token, management_zone_dict, alerting_profile_references_dict):
     endpoint = '/api/config/v1/notifications'
-    params = ''
-    notifications_json_list = dynatrace_api.get(env, token, endpoint, params)
-
+    notifications_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
     for notifications_json in notifications_json_list:
         inner_notifications_json_list = notifications_json.get('values')
         for inner_notifications_json in inner_notifications_json_list:
             # print(inner_notifications_json)
             entity_id = inner_notifications_json.get('id')
             name = inner_notifications_json.get('name')
-            endpoint = '/api/config/v1/notifications/' + entity_id
-            params = ''
-            notification = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
-            # print(notification)
-            # notification_type = notification.get('type')
+            endpoint = '/api/config/v1/notifications'
+            r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{entity_id}', token)
+            notification = r.json()
             alerting_profile = notification.get('alertingProfile')
             notification_type = notification.get('type')
 

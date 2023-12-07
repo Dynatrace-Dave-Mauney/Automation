@@ -11,7 +11,7 @@ def process(env, token):
 	endpoint = '/api/v2/entities'
 	raw_params = 'pageSize=4000&from=now-5y&entitySelector=type(EC2_INSTANCE)&fields=fromRelationships.isAccessibleBy'
 	params = urllib.parse.quote(raw_params, safe='/,&=?')
-	ec2_instance_json_list = dynatrace_api.get(env, token, endpoint, params)
+	ec2_instance_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 	for ec2_instance_json in ec2_instance_json_list:
 		ec2_instance_list = ec2_instance_json.get('entities')
 		for ec2_instance in ec2_instance_list:

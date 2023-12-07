@@ -16,8 +16,8 @@ def process_report(env, token, summary_mode):
     summary = []
 
     endpoint = '/api/config/v1/frequentIssueDetection'
-    params = ''
-    frequent_issue_detection_json = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
+    r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
+    frequent_issue_detection_json = r.json()
 
     frequent_issue_detection_application_enabled = frequent_issue_detection_json.get('frequentIssueDetectionApplicationEnabled')
     frequent_issue_detection_service_enabled = frequent_issue_detection_json.get('frequentIssueDetectionServiceEnabled')

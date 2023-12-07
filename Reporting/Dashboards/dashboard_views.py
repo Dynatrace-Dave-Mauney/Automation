@@ -1,5 +1,6 @@
 import urllib.parse
 
+from requests.exceptions import HTTPError
 from Reuse import dynatrace_api
 from Reuse import environment
 from Reuse import report_writer
@@ -15,7 +16,7 @@ def process(env, token):
     metric_query_options = ':splitBy("id"):avg:auto:sort(value(avg,descending)):fold:limit(100)'
     from_time = 'now-1M'
     params = 'metricSelector=' + urllib.parse.quote(metric_schema_id) + metric_query_options + '&from=' + from_time
-    metrics_json_list = dynatrace_api.get(env, token, endpoint, params)
+    metrics_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     for metrics_json in metrics_json_list:
         result_list = metrics_json.get('result')
         for result in result_list:
@@ -52,8 +53,7 @@ def load_dashboard_details(env, token):
     dashboard_details = {}
 
     endpoint = '/api/config/v1/dashboards'
-    params = ''
-    dashboards_json_list = dynatrace_api.get(env, token, endpoint, params)
+    dashboards_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     for dashboards_json in dashboards_json_list:
         inner_dashboards_json_list = dashboards_json.get('dashboards')
@@ -67,13 +67,17 @@ def load_dashboard_details(env, token):
 
 
 def get_dashboard(env, token, dashboard_id):
+    dashboard = None
     endpoint = f'/api/config/v1/dashboards/{dashboard_id}'
-    params = ''
-    dashboard_json_list = dynatrace_api.get(env, token, endpoint, params)
-    if dashboard_json_list:
-        dashboard = dashboard_json_list[0]
-        if dashboard.get('dashboardMetadata'):
-            return dashboard
+    try:
+        r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token, handle_exceptions=False)
+        dashboard = r.json()
+    except HTTPError as e:
+        if not '404' in str(e):
+            print('Oopsie!')
+
+    if dashboard and dashboard.get('dashboardMetadata'):
+        return dashboard
 
     # Dashboard was not successfully retrieved
     return None

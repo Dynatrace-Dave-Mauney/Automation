@@ -18,8 +18,7 @@ def process_report(env, token, summary_mode):
     count_total = 0
 
     endpoint = '/api/config/v1/azure/credentials'
-    params = ''
-    azure_credentials_json_list = dynatrace_api.get(env, token, endpoint, params)
+    azure_credentials_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     for azure_credentials_json in azure_credentials_json_list:
         inner_azure_credentials_json_list = azure_credentials_json.get('values')

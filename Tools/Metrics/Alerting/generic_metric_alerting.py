@@ -27,7 +27,7 @@ def check_disk_space(env, token):
 def check_metric(env, token, metric_friendly_name, metric_selector, entity_selector, from_time, threshold):
     endpoint = '/api/v2/metrics/query'
     params = 'metricSelector=' + urllib.parse.quote(metric_selector) + '&from=' + from_time + '&entitySelector=' + urllib.parse.quote(entity_selector)
-    metrics_json_list = dynatrace_api.get(env, token, endpoint, params)
+    metrics_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     # print(metrics_json_list)
     for metrics_json in metrics_json_list:
         result_list = metrics_json.get('result')
@@ -70,12 +70,12 @@ def post_event(env, token, event_type, title, start_time, end_time, timeout, ent
 
 
 def post(env, token, endpoint: str, payload: str) -> Response:
-    return dynatrace_api.post(env, token, endpoint, payload)
+    return dynatrace_api.post_object(f'{env}{endpoint}', token, payload)
 
 
 def get_host(env, token, host_id):
     endpoint = f'/api/v1/entity/infrastructure/hosts'
-    return(dynatrace_api.get_by_object_id(env, token, endpoint, host_id))
+    return dynatrace_api.get_without_pagination(f'{env}{endpoint}/{host_id}', token)
 
 
 def get_current_time_as_epoch_in_milliseconds():

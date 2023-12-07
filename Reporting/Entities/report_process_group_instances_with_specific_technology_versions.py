@@ -44,7 +44,7 @@ def process_entities(env, token, target_management_zone, rows):
     if target_management_zone:
         entity_selector += f',mzName("{target_management_zone}")'
     params = '&entitySelector=' + urllib.parse.quote(entity_selector) + '&fields=' + urllib.parse.quote('properties.SOFTWARETECHNOLOGIES')
-    entities_json_list = dynatrace_api.get(env, token, endpoint, params)
+    entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
     for entities_json in entities_json_list:
         inner_entities_json_list = entities_json.get('entities')

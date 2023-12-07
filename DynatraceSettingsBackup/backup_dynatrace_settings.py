@@ -34,7 +34,7 @@ env_name_supplied = environment.get_env_name(friendly_function_name)
 # env_name_supplied = 'NonProd'
 # env_name_supplied = 'Prep'
 # env_name_supplied = 'Dev'
-# env_name_supplied = 'Personal'
+env_name_supplied = 'Personal'
 # env_name_supplied = 'Demo'
 env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 
@@ -378,7 +378,7 @@ def save_config(endpoint, json_file_name, payload, config_list):
 
 def get_config_endpoint(endpoint):
     full_endpoint = f'/api/config/v1{endpoint}'
-    return dynatrace_api.get_object_list(env, token, full_endpoint)
+    return dynatrace_api.get_without_pagination(f'{env}{full_endpoint}', token)
 
 
 def save_settings20_objects():
@@ -393,8 +393,7 @@ def save_settings20_objects():
     # include_schemas = ['builtin:logmonitoring.log-dpp-rules', 'builtin:logmonitoring.schemaless-log-metric', 'builtin:logmonitoring.log-custom-attributes']
 
     endpoint = '/api/v2/settings/schemas'
-    params = ''
-    settings_json_list = dynatrace_api.get(env, token, endpoint, params)
+    settings_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     schema_ids = []
     schema_dict = {}
@@ -419,7 +418,7 @@ def save_settings20_objects():
             # raw_params = f'schemaIds={schema_id}&scopes=environment&fields=objectId,value&pageSize=500'
             raw_params = f'schemaIds={schema_id}&fields=objectId,value,scope&pageSize=500'
             params = urllib.parse.quote(raw_params, safe='/,&=')
-            settings_object_list = dynatrace_api.get(env, token, endpoint, params)
+            settings_object_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
             for settings_object in settings_object_list:
                 items = settings_object.get('items')
@@ -488,7 +487,7 @@ def save_slo_objects():
 
     endpoint = '/api/v2/slo'
     params = f'&pageSize=500'
-    slo_json_list = dynatrace_api.get(env, token, endpoint, params)
+    slo_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
     # print(slo_json_list)
 
@@ -519,7 +518,7 @@ def save_synthetic_monitor_objects():
     endpoint = '/api/v1/synthetic/monitors'
     raw_params = f'&pageSize=5000'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    synthetic_monitor_json_list = dynatrace_api.get(env, token, endpoint, params)
+    synthetic_monitor_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
     # print(synthetic_monitor_json_list)
 
@@ -531,8 +530,7 @@ def save_synthetic_monitor_objects():
         for inner_synthetic_monitor_json in inner_synthetic_monitor_json_list:
             synthetic_monitor_id = inner_synthetic_monitor_json.get('entityId')
             endpoint = f'/api/v1/synthetic/monitors/{synthetic_monitor_id}'
-            params = ''
-            synthetic_monitor_details_json = dynatrace_api.get(env, token, endpoint, params)
+            synthetic_monitor_details_json = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
             write_environment_json('api/v1/synthetic/monitors', synthetic_monitor_id, synthetic_monitor_details_json)
             config_list.append(inner_synthetic_monitor_json)
 
@@ -553,7 +551,7 @@ def save_synthetic_location_objects():
     endpoint = '/api/v1/synthetic/locations'
     raw_params = f'&pageSize=5000'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    synthetic_location_json_list = dynatrace_api.get(env, token, endpoint, params)
+    synthetic_location_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
     # print(synthetic_location_json_list)
 
@@ -565,8 +563,7 @@ def save_synthetic_location_objects():
         for inner_synthetic_location_json in inner_synthetic_location_json_list:
             synthetic_location_id = inner_synthetic_location_json.get('entityId')
             endpoint = f'/api/v1/synthetic/locations/{synthetic_location_id}'
-            params = ''
-            synthetic_location_details_json = dynatrace_api.get(env, token, endpoint, params)
+            synthetic_location_details_json = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
             write_environment_json('api/v1/synthetic/location', synthetic_location_id, synthetic_location_details_json)
             config_list.append(inner_synthetic_location_json)
 

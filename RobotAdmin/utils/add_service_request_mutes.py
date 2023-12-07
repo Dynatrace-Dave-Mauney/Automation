@@ -13,7 +13,7 @@ def process():
     # env_name_supplied = 'NonProd'
     # env_name_supplied = 'Prep'
     # env_name_supplied = 'Dev'
-    env_name_supplied = 'Personal'
+    env_name_supplied = 'Personal'  # For Safety
     # env_name_supplied = 'Demo'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 
@@ -24,7 +24,7 @@ def process():
     endpoint = '/api/v2/settings/objects'
     raw_params = 'schemaIds=builtin:settings.mutedrequests&fields=objectId,value,scope&pageSize=500'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    json_response_list = dynatrace_api.get(env, token, endpoint, params)
+    json_response_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     for json_response in json_response_list:
         item_list.extend(json_response.get('items'))
 
@@ -51,7 +51,7 @@ def process():
     params = urllib.parse.quote(raw_params, safe='/,&=?')
 
     service_list = []
-    json_response_list = dynatrace_api.get(env, token, endpoint, params)
+    json_response_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
     for json_response in json_response_list:
         service_list.extend(json_response.get('entities'))
 
@@ -83,7 +83,7 @@ def process():
         # print(partitioned_payload_list)
         for partition in partitioned_payload_list:
             # print(partition)
-            dynatrace_api.post(env, token, endpoint, json.dumps(partition))
+            dynatrace_api.post_object(f'{env}{endpoint}', token, json.dumps(partition))
     else:
         print('No services need mute added at this time')
 

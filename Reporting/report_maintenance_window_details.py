@@ -20,9 +20,7 @@ def process_report(env, token, summary_mode):
     count_disabled = 0
 
     endpoint = '/api/config/v1/maintenanceWindows'
-    params = ''
-    maintenance_windows_json_list = dynatrace_api.get(env, token, endpoint, params)
-
+    maintenance_windows_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
     for maintenance_windows_json in maintenance_windows_json_list:
         inner_maintenance_windows_json_list = maintenance_windows_json.get('values')
         for inner_maintenance_windows_json in inner_maintenance_windows_json_list:
@@ -30,9 +28,10 @@ def process_report(env, token, summary_mode):
             name = inner_maintenance_windows_json.get('name')
             description = inner_maintenance_windows_json.get('description', '')
 
-            endpoint = '/api/config/v1/maintenanceWindows/' + entity_id
-            params = ''
-            maintenance_window = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
+            endpoint = '/api/config/v1/maintenanceWindows'
+            r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{entity_id}', token)
+            maintenance_window = r.json()
+
             entity_type = maintenance_window.get('type', '')
             enabled = maintenance_window.get('enabled', '')
             suppression = maintenance_window.get('suppression', '')

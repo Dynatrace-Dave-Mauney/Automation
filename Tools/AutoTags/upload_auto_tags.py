@@ -30,7 +30,7 @@ def upload_auto_tags(env_name, path):
 
 def post_auto_tag(env, token, auto_tag_id, payload):
     endpoint = '/api/config/v1/autoTags'
-    dynatrace_api.post(env, token, endpoint, payload)
+    dynatrace_api.post_object(f'{env}{endpoint}', token, payload)
 
 
 if __name__ == '__main__':

@@ -18,7 +18,6 @@ slo_dashboard_prefix = 'FF000001-0000-0000-0000-'
 friendly_function_name = 'Dynatrace Automation Tools'
 
 
-
 def process():
     dashboard_put_count = 0
 
@@ -67,8 +66,7 @@ def load_lookup_management_zones(target_env_name):
     env_name, env, token = environment.get_environment_for_function_print_control(target_env_name, friendly_function_name, False)
 
     endpoint = '/api/config/v1/managementZones'
-    params = ''
-    management_zones_json_list = dynatrace_api.get(env, token, endpoint, params)
+    management_zones_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
     for management_zones_json in management_zones_json_list:
         inner_management_zones_json_list = management_zones_json.get('values')
         for inner_management_zones_json in inner_management_zones_json_list:
@@ -84,7 +82,7 @@ def load_lookup_metrics(target_env_name):
 
     endpoint = '/api/v2/metrics'
     params = 'text=func:slo'
-    metrics_json_list = dynatrace_api.get(env, token, endpoint, params)
+    metrics_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     for metrics_json in metrics_json_list:
         inner_metrics_json_list = metrics_json.get('metrics')
         for inner_metrics_json in inner_metrics_json_list:
@@ -102,7 +100,7 @@ def load_lookup_slos(target_env_name):
     endpoint = '/api/v2/settings/objects'
     raw_params = 'schemaIds=builtin:monitoring.slo'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    slos_json_list = dynatrace_api.get(env, token, endpoint, params)
+    slos_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     for slos_json in slos_json_list:
         inner_slos_json_list = slos_json.get('items')
         for inner_slos_json in inner_slos_json_list:
@@ -233,7 +231,8 @@ def put_http_check_availability_slo_dashboard(target_env_name, monitor_name, own
 
     # TODO: This is a hack to get the entity id from an update token to add as dashboard tile reference
     endpoint = '/api/v2/settings/objects'
-    settings_object = dynatrace_api.get_by_object_id(env, token, endpoint, slo_id)
+    r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{slo_id}', token)
+    settings_object = r.json()
     update_token = settings_object.get('updateToken')
     # print('DEBUG put_http_check_availability_slo_dashboard update token decode details:', slo_id, slo_name, update_token)
 
@@ -260,7 +259,7 @@ def put_http_check_availability_slo_dashboard(target_env_name, monitor_name, own
 
     endpoint = '/api/config/v1/dashboards'
     formatted_slo = json.dumps(http_check_availability_slo_dashboard, indent=4, sort_keys=False)
-    dynatrace_api.put(env, token, endpoint, dashboard_id, formatted_slo)
+    dynatrace_api.put_object(f'{env}{endpoint}/{dashboard_id}', token, formatted_slo)
     print(f'PUT {monitor_name} dashboard to {env_name} ({env}) with id: {dashboard_id}')
     print('')
 
@@ -298,7 +297,8 @@ def put_service_slo_dashboard(target_env_name, asn, owner):
     service_errors_slo_id = get_slo_id(target_env_name, service_errors_slo_name)
     # TODO: This is a hack to get the entity id from an update token to add as dashboard tile reference
     endpoint = '/api/v2/settings/objects'
-    settings_object = dynatrace_api.get_by_object_id(env, token, endpoint, service_errors_slo_id)
+    r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{service_errors_slo_id}', token)
+    settings_object = r.json()
     update_token = settings_object.get('updateToken')
     service_errors_assigned_entity = object_id_to_entity_id(update_token)
 
@@ -309,7 +309,8 @@ def put_service_slo_dashboard(target_env_name, asn, owner):
     service_performance_slo_id = get_slo_id(target_env_name, service_performance_slo_name)
     # TODO: This is a hack to get the entity id from an update token to add as dashboard tile reference
     endpoint = '/api/v2/settings/objects'
-    settings_object = dynatrace_api.get_by_object_id(env, token, endpoint, service_performance_slo_id)
+    r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{service_performance_slo_id}', token)
+    settings_object = r.json()
     update_token = settings_object.get('updateToken')
     service_performance_assigned_entity = object_id_to_entity_id(update_token)
 
@@ -350,7 +351,7 @@ def put_service_slo_dashboard(target_env_name, asn, owner):
                     index += 1
     endpoint = '/api/config/v1/dashboards'
     formatted_slo = json.dumps(service_slo_dashboard, indent=4, sort_keys=False)
-    dynatrace_api.put(env, token, endpoint, dashboard_id, formatted_slo)
+    dynatrace_api.put_object(f'{env}{endpoint}/{dashboard_id}', token, formatted_slo)
     print(f'PUT {asn} dashboard to {env_name} ({env}) with id: {dashboard_id}')
     print('')
 

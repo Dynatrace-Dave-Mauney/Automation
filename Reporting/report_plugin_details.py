@@ -18,8 +18,7 @@ def process_report(env, token, summary_mode):
     count_total = 0
 
     endpoint = '/api/config/v1/plugins'
-    params = ''
-    extension_json_list = dynatrace_api.get(env, token, endpoint, params)
+    extension_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     for extension_json in extension_json_list:
         inner_extension_json_list = extension_json.get('values')
@@ -62,7 +61,7 @@ def main():
     # env_name_supplied = 'NonProd'
     # env_name_supplied = 'Prep'
     # env_name_supplied = 'Dev'
-    env_name_supplied = 'Personal'
+    # env_name_supplied = 'Personal'
     # env_name_supplied = 'Demo'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
     process(env, token)

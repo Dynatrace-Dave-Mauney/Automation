@@ -23,7 +23,7 @@ def process_report(env, token, summary_mode):
     page_size = 1000
     from_time = 'now-24h'
     params = f'pageSize={page_size}&from={from_time}'
-    events_json_list = dynatrace_api.get(env, token, endpoint, params)
+    events_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
     for events_json in events_json_list:
         inner_events_json_list = events_json.get('events')
@@ -42,7 +42,7 @@ def process_report(env, token, summary_mode):
 
             count_total += 1
 
-    summary.append('There are ' + str(count_total) + ' events currently defined.')
+    summary.append('There are ' + str(count_total) + f' events in the timeframe {from_time}.')
 
     if not summary_mode:
         rows = sorted(rows)

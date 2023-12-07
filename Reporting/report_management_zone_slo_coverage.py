@@ -50,8 +50,7 @@ def load_management_zone_dict(env, token):
     management_zone_dict = {}
 
     endpoint = '/api/config/v1/managementZones'
-    params = ''
-    management_zones_json_list = dynatrace_api.get(env, token, endpoint, params)
+    management_zones_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     for management_zones_json in management_zones_json_list:
         inner_management_zones_json_list = management_zones_json.get('values')
@@ -74,7 +73,7 @@ def count_slo_references(env, token, management_zone_dict):
     schema_ids_param = f'schemaIds={schema_ids}'
     raw_params = schema_ids_param + '&scopes=environment&fields=schemaId,value,Summary&pageSize=500'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    settings_objects = dynatrace_api.get(env, token, endpoint, params)
+    settings_objects = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     for settings_object in settings_objects:
         items = settings_object.get('items', [])
 
@@ -84,7 +83,7 @@ def count_slo_references(env, token, management_zone_dict):
                 # slo_summary = item.get('summary').replace('\\', '')
                 name = value.get('name')
                 slos_found_settings_20.append(name)
-                metric_name = value.get('metricName')
+                # metric_name = value.get('metricName')
                 metric_expression = value.get('metricExpression')
                 enabled = value.get('enabled')
                 slo_filter = value.get('filter')
@@ -189,7 +188,7 @@ def count_slo_references_from_env_v2_slo_api(env, token, management_zone_dict, s
     endpoint = '/api/v2/slo'
     raw_params = f'&pageSize=500'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    slo_objects = dynatrace_api.get(env, token, endpoint, params)
+    slo_objects = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     for slo_object in slo_objects:
         items = slo_object.get('slo', [])
 

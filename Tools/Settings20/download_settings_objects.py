@@ -22,7 +22,7 @@ env_name_supplied = environment.get_env_name(friendly_function_name)
 # env_name_supplied = 'NonProd'
 # env_name_supplied = 'Prep'
 # env_name_supplied = 'Dev'
-# env_name_supplied = 'Personal'
+env_name_supplied = 'Personal'
 # env_name_supplied = 'Demo'
 env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 
@@ -64,8 +64,7 @@ def save_settings20_objects():
     include_schemas = ['builtin:logmonitoring.log-dpp-rules']
 
     endpoint = '/api/v2/settings/schemas'
-    params = ''
-    settings_json_list = dynatrace_api.get(env, token, endpoint, params)
+    settings_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     schema_ids = []
     schema_dict = {}
@@ -89,7 +88,7 @@ def save_settings20_objects():
             # params = f'schemaIds={schema_id.replace}&scopes=environment&fields=objectId,value&pageSize=500'
             raw_params = f'schemaIds={schema_id}&fields=objectId,value,scope&pageSize=500'
             params = urllib.parse.quote(raw_params, safe='/,&=')
-            settings_object_list = dynatrace_api.get(env, token, endpoint, params)
+            settings_object_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
             for settings_object in settings_object_list:
                 items = settings_object.get('items')

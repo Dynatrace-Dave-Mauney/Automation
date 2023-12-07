@@ -6,7 +6,7 @@ from Reuse import report_writer
 
 
 target_management_zones = [
-    # 'HostGroup:Laptops',
+    'HostGroup:Laptops',
 ]
 
 # target_technologies = [
@@ -25,6 +25,7 @@ target_management_zones = [
 target_technologies = [
     'dynatrace',
     'windows',
+    'dotnet',
 ]
 
 
@@ -52,8 +53,8 @@ def process_entities(env, token, target_management_zone, rows):
     entity_selector = 'type(PROCESS_GROUP)'
     if target_management_zone:
         entity_selector += f',mzName("{target_management_zone}")'
-    params = '&entitySelector=' + urllib.parse.quote(entity_selector) + '&fields=' + urllib.parse.quote('managementZones,icon')
-    entities_json_list = dynatrace_api.get(env, token, endpoint, params)
+    params = '&pageSize=4000&entitySelector=' + urllib.parse.quote(entity_selector) + '&fields=' + urllib.parse.quote('managementZones,icon')
+    entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
     for entities_json in entities_json_list:
         inner_entities_json_list = entities_json.get('entities')

@@ -22,8 +22,7 @@ def process_hub_items_from_api(env, token):
     results = []
 
     endpoint = '/api/v2/hub/items'
-    params = ''
-    hub_items_json_list = dynatrace_api.get(env, token, endpoint, params)
+    hub_items_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
     for hub_items_json in hub_items_json_list:
         inner_hub_items_json_list = hub_items_json.get('items')
         for inner_hub_items_json in inner_hub_items_json_list:

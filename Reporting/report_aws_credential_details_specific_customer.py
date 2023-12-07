@@ -23,8 +23,7 @@ def process_report(env, token, summary_mode):
     counts_supporting_service_metric_details = {}
 
     endpoint = '/api/config/v1/aws/credentials'
-    params = ''
-    aws_credentials_json_list = dynatrace_api.get(env, token, endpoint, params)
+    aws_credentials_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     for aws_credentials_json in aws_credentials_json_list:
         entity_id = aws_credentials_json.get('id')
@@ -32,7 +31,8 @@ def process_report(env, token, summary_mode):
 
         endpoint = '/api/config/v1/aws/credentials/' + entity_id
         params = ''
-        aws_credentials = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
+        r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
+        aws_credentials = r.json()
         supporting_services = aws_credentials.get('supportingServicesToMonitor')
 
         if supporting_services:

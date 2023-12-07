@@ -19,7 +19,7 @@ def process_report(env, token, summary_mode):
 
     endpoint = '/api/v2/synthetic/locations'
     params = 'type=PRIVATE'
-    synthetic_locations_json_list = dynatrace_api.get(env, token, endpoint, params)
+    synthetic_locations_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
     for synthetic_locations_json in synthetic_locations_json_list:
         inner_synthetic_locations_json_list = synthetic_locations_json.get('locations')
@@ -30,30 +30,26 @@ def process_report(env, token, summary_mode):
             status = inner_synthetic_locations_json.get('status')
             geo_location_id = inner_synthetic_locations_json.get('geoLocationId')
 
-            endpoint = '/api/v2/synthetic/locations/' + geo_location_id
-            params = ''
-            geo_location_list = dynatrace_api.get(env, token, endpoint, params)
+            endpoint = '/api/v2/synthetic/locations'
+            r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{geo_location_id}', token)
+            geo_location = r.json()
 
-            for geo_location in geo_location_list:
-                # DEBUG:
-                # print(geo_location)
+            geo_country_code = geo_location.get('countryCode')
+            geo_region_code = geo_location.get('regionCode')
+            geo_city = geo_location.get('city')
+            geo_latitude = geo_location.get('latitude')
+            geo_longitude = geo_location.get('longitude')
+            geo_status = geo_location.get('status')
+            geo_availability_location_outage = geo_location.get('availabilityLocationOutage')
+            geo_availability_node_outage = geo_location.get('availabilityNodeOutage')
+            geo_location_node_outage_delay_in_minutes = geo_location.get('locationNodeOutageDelayInMinutes')
+            geo_availability_notifications_enabled = geo_location.get('availabilityNotificationsEnabled')
+            geo_auto_update_chromium = geo_location.get('autoUpdateChromium')
 
-                geo_country_code = geo_location.get('countryCode')
-                geo_region_code = geo_location.get('regionCode')
-                geo_city = geo_location.get('city')
-                geo_latitude = geo_location.get('latitude')
-                geo_longitude = geo_location.get('longitude')
-                geo_status = geo_location.get('status')
-                geo_availability_location_outage = geo_location.get('availabilityLocationOutage')
-                geo_availability_node_outage = geo_location.get('availabilityNodeOutage')
-                geo_location_node_outage_delay_in_minutes = geo_location.get('locationNodeOutageDelayInMinutes')
-                geo_availability_notifications_enabled = geo_location.get('availabilityNotificationsEnabled')
-                geo_auto_update_chromium = geo_location.get('autoUpdateChromium')
+            if not summary_mode:
+                rows.append((name, entity_id, entity_type, status, geo_location_id, geo_country_code, geo_region_code, geo_city, str(geo_latitude), str(geo_longitude), geo_status, str(geo_availability_location_outage), str(geo_availability_node_outage), str(geo_location_node_outage_delay_in_minutes), str(geo_availability_notifications_enabled), str(geo_auto_update_chromium)))
 
-                if not summary_mode:
-                    rows.append((name, entity_id, entity_type, status, geo_location_id, geo_country_code, geo_region_code, geo_city, str(geo_latitude), str(geo_longitude), geo_status, str(geo_availability_location_outage), str(geo_availability_node_outage), str(geo_location_node_outage_delay_in_minutes), str(geo_availability_notifications_enabled), str(geo_auto_update_chromium)))
-
-                count_total += 1
+            count_total += 1
 
     summary.append('There are ' + str(count_total) + ' synthetic locations currently defined and reporting.')
 

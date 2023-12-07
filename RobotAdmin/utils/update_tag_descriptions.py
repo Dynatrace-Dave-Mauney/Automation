@@ -27,7 +27,7 @@ def update(config_endpoint, tag_name, key, value):
 	endpoint = '/api/config/v1/' + config_endpoint
 
 	if not object_cache.get(endpoint):
-		r = dynatrace_api.get_object_list(env, token, endpoint)
+		r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
 
 		# print(r.text)
 
@@ -51,7 +51,8 @@ def update(config_endpoint, tag_name, key, value):
 
 	# print(f'object_id: {object_id}')
 
-	config_object = dynatrace_api.get_by_object_id(env, token, endpoint, object_id)
+	r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{object_id}', token)
+	config_object = r.json()
 
 	# print(object)
 
@@ -64,7 +65,7 @@ def update(config_endpoint, tag_name, key, value):
 
 	# print(config_object)
 
-	dynatrace_api.put(env, token, endpoint, object_id, json.dumps(config_object))
+	dynatrace_api.put_object(f'{env}{endpoint}/{object_id}', token, json.dumps(config_object))
 
 	print('For "' + tag_name + '" (' + endpoint + '/' + object_id + ') ' + key + ' changed from "' + str(current_value) + '" to + "' + str(value) + '"')
 

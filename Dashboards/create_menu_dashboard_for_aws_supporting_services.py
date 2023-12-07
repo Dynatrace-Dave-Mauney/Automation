@@ -53,11 +53,13 @@ menu_dashboard_template = {
 def process(env, token):
     endpoint = '/api/config/v1/dashboards'
     dashboard_kvp_tuple_list = []
-    res = json.loads(dynatrace_api.get_object_list(env, token, endpoint).text)
-    for entry in res['dashboards']:
-        dashboard_id = entry.get('id')
-        dashboard_name = entry.get('name')
-        dashboard_owner = entry.get('owner')
+    r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
+    dashboard_json_list = r.json()
+
+    for dashboard_json in dashboard_json_list.get('dashboards'):
+        dashboard_id = dashboard_json.get('id')
+        dashboard_name = dashboard_json.get('name')
+        dashboard_owner = dashboard_json.get('owner')
         if "Dynatrace" in dashboard_owner and ('AWS' in dashboard_name or 'Amazon' in dashboard_name):
             dashboard_short_name = dashboard_name.replace('AWS ', '').replace('Amazon ', '')
             dashboard_kvp_tuple = (dashboard_short_name, dashboard_id)
@@ -79,7 +81,7 @@ def process(env, token):
 
 def put_dashboard(env, token, dashboard_id, payload):
     endpoint = '/api/config/v1/dashboards'
-    dynatrace_api.put(env, token, endpoint, dashboard_id, payload)
+    dynatrace_api.put_object(f'{env}{endpoint}/{dashboard_id}', token, payload)
 
 
 def main():

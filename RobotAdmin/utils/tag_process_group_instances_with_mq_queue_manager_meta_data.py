@@ -28,7 +28,7 @@ def process():
     endpoint = '/api/v2/entities'
     entity_selector = 'type(' + entity_type + ')'
     params = '&entitySelector=' + urllib.parse.quote(entity_selector) + '&fields=' + urllib.parse.quote('properties.softwareTechnologies,properties.customPgMetadata,tags')
-    entities_json_list = dynatrace_api.get(env, token, endpoint, params)
+    entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     for entities_json in entities_json_list:
         inner_entities_json_list = entities_json.get('entities')
         for inner_entities_json in inner_entities_json_list:
@@ -56,7 +56,7 @@ def post_queue_manager_tag(entity_id, queue_manager):
 
 
 def post(endpoint, payload):
-    return dynatrace_api.post(env, token, endpoint, payload)
+    return dynatrace_api.post_object(f'{env}{endpoint}', token, payload)
 
 
 def get_line_number():

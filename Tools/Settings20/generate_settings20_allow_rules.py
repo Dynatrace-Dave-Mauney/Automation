@@ -11,8 +11,7 @@ def process(env, token):
 	allow2 = '";'
 
 	endpoint = '/api/v2/settings/schemas'
-	params = ''
-	settings_json_list = dynatrace_api.get(env, token, endpoint, params)
+	settings_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
 	for settings_json in settings_json_list:
 		inner_settings_json_list = settings_json.get('items')

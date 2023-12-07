@@ -20,7 +20,7 @@ entities_written = []
 services_encountered = []
 
 
-def get_entity_stack(url, token, verify, entities, level):
+def get_entity_stack(env, token, verify, entities, level):
 
     global services_encountered
     global entities_written
@@ -37,7 +37,8 @@ def get_entity_stack(url, token, verify, entities, level):
         # print(f'entity: {entity}')
 
         endpoint = '/api/v2/entities'
-        entity_json = dynatrace_api.get_by_object_id(url, token, endpoint, entity)
+        r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{entity}', token)
+        entity_json = r.json()
 
         entity_id = entity_json.get('entityId')
         display_name = entity_json.get('displayName')
@@ -62,7 +63,7 @@ def get_entity_stack(url, token, verify, entities, level):
                 entity_id = runs_on_child_dict.get('id')
                 if entity_id:
                     runs_on_child_entities.append(entity_id)
-            get_entity_stack(url, token, verify, runs_on_child_entities, level)
+            get_entity_stack(env, token, verify, runs_on_child_entities, level)
 
         calls_child_entities = []
         calls_child_dicts = entity_json.get('fromRelationships').get('calls')
@@ -75,7 +76,7 @@ def get_entity_stack(url, token, verify, entities, level):
                 entity_id = calls_child_dict.get('id')
                 if entity_id:
                     calls_child_entities.append(entity_id)
-            get_entity_stack(url, token, verify, calls_child_entities, level)
+            get_entity_stack(env, token, verify, calls_child_entities, level)
         level = level_in
 
         # Reset for next "root entity"
@@ -117,7 +118,8 @@ def run():
     # env_name_supplied = 'Demo'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 
-    service = 'SERVICE-5946F26F5835488B'
+    # service = 'SERVICE-5946F26F5835488B' # Unknown
+    service = 'SERVICE-1359B1B090290EDD' # Prod
 
     process(env, token, verify=True, entity_list_string=service)
 

@@ -22,12 +22,14 @@ def process_entity_type(env, token):
     endpoint = '/api/v1/synthetic/monitors'
     raw_params = 'enabled=true'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    synthetics_json_list = dynatrace_api.get(env, token, endpoint, params)
+    synthetics_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     for synthetics_json in synthetics_json_list:
         inner_synthetics_json_list = synthetics_json.get('monitors')
         for inner_synthetics_json in inner_synthetics_json_list:
-            endpoint = '/api/v1/synthetic/monitors/' + inner_synthetics_json.get('entityId')
-            synthetic_json = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
+            endpoint = '/api/v1/synthetic/monitors'
+            entity_id = inner_synthetics_json.get('entityId')
+            r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{entity_id}', token)
+            synthetic_json = r.json()
             synthetic_type = synthetic_json.get('type')
             if synthetic_type == 'BROWSER':
                 step_key = 'events'

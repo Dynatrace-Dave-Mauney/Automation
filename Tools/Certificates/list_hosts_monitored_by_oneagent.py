@@ -35,7 +35,7 @@ def get_hosts(env, token):
     endpoint = '/api/v2/entities'
     raw_params = 'pageSize=500&entitySelector=type(HOST)&fields=+properties.detectedName'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    hosts = dynatrace_api.get(env, token, endpoint, params)
+    hosts = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     return hosts
 
 

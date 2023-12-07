@@ -20,8 +20,7 @@ def process_report(env, token, summary_mode):
     count_total = 0
 
     endpoint = '/api/v2/settings/schemas'
-    params = ''
-    settings_json_list = dynatrace_api.get(env, token, endpoint, params)
+    settings_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     for settings_json in settings_json_list:
         inner_settings_json_list = settings_json.get('items')
@@ -32,7 +31,7 @@ def process_report(env, token, summary_mode):
             endpoint = '/api/v2/settings/objects'
             raw_params = f'schemaIds={schema_id}&scopes=environment&fields=objectId,value&pageSize=500'
             params = urllib.parse.quote(raw_params, safe='/,&=')
-            settings_object_list = dynatrace_api.get(env, token, endpoint, params)
+            settings_object_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
             for settings_object in settings_object_list:
                 items = settings_object.get('items')

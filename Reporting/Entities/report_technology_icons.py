@@ -12,7 +12,7 @@ def process(env, token):
     endpoint = '/api/v2/entities'
     entity_selector = 'type(PROCESS_GROUP)'
     params = '&entitySelector=' + urllib.parse.quote(entity_selector) + '&fields=' + urllib.parse.quote('icon')
-    entities_json_list = dynatrace_api.get(env, token, endpoint, params)
+    entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
     for entities_json in entities_json_list:
         inner_entities_json_list = entities_json.get('entities')

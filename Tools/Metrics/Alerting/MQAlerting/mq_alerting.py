@@ -47,8 +47,8 @@ def check_mq_metric(env, token, metric_friendly_name, metric_selector_schema_id,
     endpoint = '/api/v2/metrics/query'
     entity_selector = 'type(PROCESS_GROUP_INSTANCE)'
     params = 'metricSelector=' + urllib.parse.quote(metric_selector_schema_id) + metric_selector_transformation + '&from=' + from_time + '&entitySelector=' + urllib.parse.quote(entity_selector)
-    metrics_json_list = dynatrace_api.get(env, token, endpoint, params)
-    # print(metrics_json_list)
+    r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token, params=params)
+    metrics_json_list = r.json()
     for metrics_json in metrics_json_list:
         result_list = metrics_json.get('result')
         if result_list:
@@ -130,12 +130,13 @@ def post_event(env, token, event_type, title, start_time, end_time, timeout, ent
 
 
 def post(env, token, endpoint: str, payload: str) -> Response:
-    return dynatrace_api.post(env, token, endpoint, payload)
+    return dynatrace_api.post_object(f'{env}{endpoint}', token, payload)
 
 
 def get_process_group_instance(env, token, process_group_instance_id):
     endpoint = f'/api/v1/entity/infrastructure/processes'
-    return(dynatrace_api.get_by_object_id(env, token, endpoint, process_group_instance_id))
+    r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{process_group_instance_id}', token)
+    return r.json()
 
 
 def read_yaml(input_file_name):

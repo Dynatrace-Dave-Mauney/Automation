@@ -18,8 +18,7 @@ def process_report(env, token, summary_mode):
     count_total = 0
 
     endpoint = '/api/v2/eventTypes'
-    params = ''
-    events_json_list = dynatrace_api.get(env, token, endpoint, params)
+    events_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     for events_json in events_json_list:
         inner_events_json_list = events_json.get('eventTypeInfos')

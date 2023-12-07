@@ -7,12 +7,11 @@ import sys
 
 from Reuse import dynatrace_api
 
-def get_version(url, token):
+
+def get_version(env, token):
     endpoint = '/api/v1/config/clusterversion'
-    params = ''
-    json_list = dynatrace_api.get(url, token, endpoint, params)
-    # version: str = json_list[0].get('version', '')
-    version = json_list[0]
+    r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
+    version = r.json()
     return version
 
 

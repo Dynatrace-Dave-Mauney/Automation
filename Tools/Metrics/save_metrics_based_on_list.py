@@ -18,7 +18,9 @@ def save(path, file, content):
 
 
 def save_metric(env, token, metric_id):
-    metric = dynatrace_api.get_by_object_id(env, token, endpoint='/api/v2/metrics', object_id=metric_id)
+    endpoint = '/api/v2/metrics'
+    r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{metric_id}', token)
+    metric = r.json()
     print('Saving ' + metric_id + ' to ' + PATH)
     save(PATH, metric_id.replace(':', '-') + '.json', metric)
 

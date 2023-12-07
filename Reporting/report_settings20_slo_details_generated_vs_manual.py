@@ -17,7 +17,7 @@ def process(env, token):
     schema_ids_param = f'schemaIds={schema_ids}'
     raw_params = schema_ids_param + '&scopes=environment&fields=schemaId,value,Summary&pageSize=500'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    settings_object_list = dynatrace_api.get(env, token, endpoint, params)
+    settings_object_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
     for settings_object in settings_object_list:
         items = settings_object.get('items', [])
@@ -85,8 +85,7 @@ def load_slo_dashboard_lookup(env, token):
     count_total = 0
 
     endpoint = '/api/config/v1/dashboards'
-    params = ''
-    dashboards_json_list = dynatrace_api.get(env, token, endpoint, params)
+    dashboards_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     for dashboards_json in dashboards_json_list:
         inner_dashboards_json_list = dashboards_json.get('dashboards')

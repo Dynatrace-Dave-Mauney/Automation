@@ -17,7 +17,7 @@ def process(env, token):
     entity_selector = 'type(HOST)'
     # entity_selector = 'type(PROCESS_GROUP_INSTANCE)'
     params = 'metricSelector=' + urllib.parse.quote(metric_schema_id) + metric_query_options + '&from=' + from_time + '&entitySelector=' + urllib.parse.quote(entity_selector)
-    metrics_json_list = dynatrace_api.get(env, token, endpoint, params)
+    metrics_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     # print(metrics_json_list)
     for metrics_json in metrics_json_list:
         result_list = metrics_json.get('result')

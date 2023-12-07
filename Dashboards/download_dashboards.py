@@ -37,10 +37,11 @@ def save(path, file, content):
 
 
 def save_dashboards(env, token, path):
+	endpoint = '/api/config/v1/dashboards'
 	download_count = 0
-	r = dynatrace_api.get_object_list(env, token, endpoint='/api/config/v1/dashboards')
-	res = r.json()
-	for entry in res['dashboards']:
+	r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
+	dashboard_json = r.json()
+	for entry in dashboard_json.get('dashboards'):
 		dashboard_name = entry.get('name')
 		dashboard_id = entry.get('id')
 		dashboard_owner = entry.get('owner')
@@ -52,8 +53,10 @@ def save_dashboards(env, token, path):
 		# if dashboard_owner == 'Dynatrace':
 		# if dashboard_owner == 'dave.mauney@dynatrace.com' and 'SLO' in dashboard_name:
 		# if 'TEMPLATE: Oracle' in dashboard_name:
+		endpoint = '/api/config/v1/dashboards'
 		if dashboard_id not in known_collisions and dashboard_name != 'Home':
-			dashboard = dynatrace_api.get_by_object_id(env, token, endpoint='/api/config/v1/dashboards', object_id=dashboard_id)
+			r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{dashboard_id}', token)
+			dashboard = r.json()
 			# dashboard_metadata = dashboard.get('dashboardMetadata')
 			# dashboard_preset = dashboard_metadata.get('preset')
 			# if 'ism74021' in str(dashboard):

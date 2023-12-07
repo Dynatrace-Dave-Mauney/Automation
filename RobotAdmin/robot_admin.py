@@ -210,7 +210,6 @@ def process():
     put_request_attribute('x-dynatrace (client-side)', 'REQUEST_HEADER', 'x-dynatrace')
     put_request_attribute('x-dynatrace', 'REQUEST_HEADER', 'x-dynatrace')
 
-
     # process_current_customer_specific_auto_tags()
 
     # Run a sanity test, if pointed to 'Personal' or 'Demo' environment only
@@ -680,7 +679,7 @@ def put(endpoint, object_id, payload):
 
     json_data = json.dumps(json.loads(payload), indent=4, sort_keys=False)
 
-    r = dynatrace_api.put(env, token, endpoint, object_id, json_data.encode('utf-8'))
+    r = dynatrace_api.put_object(f'{env}{endpoint}/{object_id}', token, json_data.encode('utf-8'))
 
     if r.status_code == 201:
         print('Added ' + name + ': ' + object_id + ' (' + endpoint + ')')
@@ -690,20 +689,19 @@ def put(endpoint, object_id, payload):
 
 
 def post(endpoint: str, payload: str) -> Response:
-    r = dynatrace_api.post(env, token, endpoint, payload)
+    r = dynatrace_api.post_object(f'{env}{endpoint}', token, payload)
     return r
 
 
 def delete(endpoint, object_id):
-    r = dynatrace_api.delete(env, token, endpoint, object_id)
+    r = dynatrace_api.delete_object(f'{env}{endpoint}/{object_id}', token)
     print(f'Deleted {object_id} ({endpoint}')
     return r
 
 
 def post_management_zone_per_aws_credential_name():
     endpoint = '/api/config/v1/aws/credentials'
-    r = get_object_list(endpoint)
-    aws_credentials_json = json.loads(r.text)
+    aws_credentials_json = get_object_list(endpoint)
     for aws_credential in aws_credentials_json:
         aws_credential_name = aws_credential.get('name')
         post_management_zone_aws_credential_name(aws_credential_name)
@@ -1689,11 +1687,13 @@ def dump_json(endpoint, object_id):
 
 
 def get_by_object_id(endpoint, object_id):
-    return dynatrace_api.get_by_object_id(env, token, endpoint, object_id)
+    r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{object_id}', token)
+    return r.json()
 
 
-def get_object_list(endpoint: str) -> Response:
-    return dynatrace_api.get_object_list(env, token, endpoint)
+def get_object_list(endpoint):
+    r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
+    return r.json()
 
 
 def put_conditional_naming_rules(rule_type, name, attribute, name_format):
@@ -2038,8 +2038,7 @@ def delete_auto_tags_with_fixed_ids():
         exit(get_line_number())
 
     endpoint = '/api/config/v1/autoTags'
-    r = get_object_list(endpoint)
-    auto_tags_json = json.loads(r.text)
+    auto_tags_json = get_object_list(endpoint)
     auto_tag_list = auto_tags_json.get('values')
     for auto_tag in auto_tag_list:
         object_id = auto_tag.get('id')
@@ -2063,8 +2062,7 @@ def delete_request_attributes_with_fixed_ids():
         exit(get_line_number())
 
     endpoint = '/api/config/v1/service/requestAttributes'
-    r = get_object_list(endpoint)
-    request_attributes_json = json.loads(r.text)
+    request_attributes_json = get_object_list(endpoint)
     request_attribute_list = request_attributes_json.get('values')
     for request_attribute in request_attribute_list:
         object_id = request_attribute.get('id')
@@ -2084,8 +2082,7 @@ def delete_request_naming_rules_with_fixed_ids():
         exit(get_line_number())
 
     endpoint = '/api/config/v1/service/requestNaming'
-    r = get_object_list(endpoint)
-    request_naming_rules_json = json.loads(r.text)
+    request_naming_rules_json = get_object_list(endpoint)
     request_naming_rule_list = request_naming_rules_json.get('values')
     for request_naming_rule in request_naming_rule_list:
         object_id = request_naming_rule.get('id')
@@ -2108,8 +2105,7 @@ def delete_conditional_naming_rules_with_fixed_ids():
 
     for rule_type in ['host', 'processGroup', 'service']:
         endpoint = '/api/config/v1/conditionalNaming/' + rule_type
-        r = get_object_list(endpoint)
-        conditional_naming_rules_json = json.loads(r.text)
+        conditional_naming_rules_json = get_object_list(endpoint)
         conditional_naming_rule_list = conditional_naming_rules_json.get('values')
         for conditional_naming_rule in conditional_naming_rule_list:
             object_id = conditional_naming_rule.get('id')
@@ -2129,8 +2125,7 @@ def delete_auto_tags():
         exit(get_line_number())
 
     endpoint = '/api/config/v1/autoTags'
-    r = get_object_list(endpoint)
-    auto_tags_json = json.loads(r.text)
+    auto_tags_json = get_object_list(endpoint)
     auto_tag_list = auto_tags_json.get('values')
     for auto_tag in auto_tag_list:
         object_id = auto_tag.get('id')
@@ -2150,8 +2145,7 @@ def delete_beta_auto_tags():
         exit(get_line_number())
 
     endpoint = '/api/config/v1/autoTags'
-    r = get_object_list(endpoint)
-    auto_tags_json = json.loads(r.text)
+    auto_tags_json = get_object_list(endpoint)
     auto_tag_list = auto_tags_json.get('values')
     for auto_tag in auto_tag_list:
         object_id = auto_tag.get('id')
@@ -2171,8 +2165,7 @@ def delete_request_attributes():
         exit(get_line_number())
 
     endpoint = '/api/config/v1/service/requestAttributes'
-    r = get_object_list(endpoint)
-    request_attributes_json = json.loads(r.text)
+    request_attributes_json = get_object_list(endpoint)
     request_attribute_list = request_attributes_json.get('values')
     for request_attribute in request_attribute_list:
         object_id = request_attribute.get('id')
@@ -2197,8 +2190,7 @@ def report_fixed_id_entities():
 def report_fixed_id_entity(entity_type, endpoint):
     print(f'{entity_type}:')
     print_lines = []
-    r = get_object_list(endpoint)
-    entity_json = json.loads(r.text)
+    entity_json = get_object_list(endpoint)
     entity_list = entity_json.get('values')
     for entity in entity_list:
         object_id = entity.get('id')
@@ -2214,8 +2206,7 @@ def dump_auto_tags():
     print('Auto Tags:')
     print_lines = []
     endpoint = '/api/config/v1/autoTags'
-    r = get_object_list(endpoint)
-    request_attributes_json = json.loads(r.text)
+    request_attributes_json = get_object_list(endpoint)
     request_attribute_list = request_attributes_json.get('values')
     for request_attribute in request_attribute_list:
         object_id = request_attribute.get('id')
@@ -2233,8 +2224,7 @@ def dump_request_attributes():
     print('Request Attributes:')
     print_lines = []
     endpoint = '/api/config/v1/service/requestAttributes'
-    r = get_object_list(endpoint)
-    request_attributes_json = json.loads(r.text)
+    request_attributes_json = get_object_list(endpoint)
     request_attribute_list = request_attributes_json.get('values')
     for request_attribute in request_attribute_list:
         object_id = request_attribute.get('id')
@@ -2252,8 +2242,7 @@ def dump_request_naming_rules_rules():
     print('Request Naming Rules:')
     print_lines = []
     endpoint = '/api/config/v1/service/requestNaming'
-    r = get_object_list(endpoint)
-    request_naming_json = json.loads(r.text)
+    request_naming_json = get_object_list(endpoint)
     request_attribute_list = request_naming_json.get('values')
     for request_attribute in request_attribute_list:
         object_id = request_attribute.get('id')

@@ -17,12 +17,13 @@ def process(env, token):
     else:
         raw_params = 'enabled=true'
         params = urllib.parse.quote(raw_params, safe='/,&=')
-    synthetics_json_list = dynatrace_api.get(env, token, endpoint, params)
+    synthetics_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     for synthetics_json in synthetics_json_list:
         inner_synthetics_json_list = synthetics_json.get('monitors')
         for inner_synthetics_json in inner_synthetics_json_list:
             endpoint = '/api/v1/synthetic/monitors/' + inner_synthetics_json.get('entityId')
-            synthetic_json = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
+            r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
+            synthetic_json = r.json()
             synthetic_name = synthetic_json.get('name')
             synthetic_type = synthetic_json.get('type')
             synthetic_enabled = synthetic_json.get('enabled')

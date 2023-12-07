@@ -20,8 +20,7 @@ def process(env, token):
         mda_dict[mda] = {'dashboards': []}
 
     endpoint = '/api/config/v1/dashboards'
-    params = ''
-    dashboards_json_list = dynatrace_api.get(env, token, endpoint, params)
+    dashboards_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
     dashboard_id_list = []
     for dashboards_json in dashboards_json_list:
         inner_dashboards_json_list = dashboards_json.get('dashboards')
@@ -29,20 +28,20 @@ def process(env, token):
             entity_id = inner_dashboards_json.get('id')
             dashboard_id_list.append(entity_id)
     for dashboard_id in sorted(dashboard_id_list):
-        dashboard_json = dynatrace_api.get(env, token, endpoint + '/' + dashboard_id, params)
-        for dashboard in dashboard_json:
-            dashboard_metadata = dashboard.get('dashboardMetadata')
-            name = dashboard_metadata.get('name')
-            for mda in sorted(mda_list):
-                if mda in str(dashboard):
-                    try:
-                        rows.append([f'MDA {mda} found in dashboard {name}'])
-                        dashboard_list = mda_dict[mda].get('dashboards')
-                        if name not in dashboard_list:
-                            dashboard_list.append(name)
-                            mda_dict[mda]['dashboards'] = dashboard_list
-                    except KeyError:
-                        rows.append([f'MDA {mda} found in dashboard {name} but not in target list'])
+        r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{dashboard_id}', token)
+        dashboard = r.json()
+        dashboard_metadata = dashboard.get('dashboardMetadata')
+        name = dashboard_metadata.get('name')
+        for mda in sorted(mda_list):
+            if mda in str(dashboard):
+                try:
+                    rows.append([f'MDA {mda} found in dashboard {name}'])
+                    dashboard_list = mda_dict[mda].get('dashboards')
+                    if name not in dashboard_list:
+                        dashboard_list.append(name)
+                        mda_dict[mda]['dashboards'] = dashboard_list
+                except KeyError:
+                    rows.append([f'MDA {mda} found in dashboard {name} but not in target list'])
 
     compile_findings(mda_dict, rows)
 

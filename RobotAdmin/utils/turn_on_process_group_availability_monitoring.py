@@ -47,7 +47,7 @@ def process():
     endpoint = '/api/v2/entities'
     entity_selector = 'type(' + entity_type + ')'
     params = '&entitySelector=' + urllib.parse.quote(entity_selector) + '&fields=' + urllib.parse.quote('managementZones,icon')
-    entities_json_list = dynatrace_api.get(env, token, endpoint, params)
+    entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     for entities_json in entities_json_list:
         inner_entities_json_list = entities_json.get('entities')
         for inner_entities_json in inner_entities_json_list:
@@ -79,7 +79,7 @@ def turn_on_process_group_monitoring_setting(process_group_to_update):
 
     endpoint = '/api/v2/settings/objects'
     params = 'schemaIds=' + urllib.parse.quote('builtin:availability.process-group-alerting') + '&scopes=' + process_group_to_update + '&fields=' + urllib.parse.quote('objectId,value')
-    settings_json_list = dynatrace_api.get(env, token, endpoint, params)
+    settings_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     # print(settings_json_list)
     for settings_json in settings_json_list:
         total_count = settings_json.get('totalCount', '0')
@@ -108,10 +108,10 @@ def turn_on_process_group_monitoring_setting(process_group_to_update):
 
     if put_object_id_list:
         for put_object_id in put_object_id_list:
-            dynatrace_api.put(env, token, endpoint, put_object_id, json.dumps(post_payload_list))
+            dynatrace_api.put_object(f'{env}{endpoint}/{put_object_id}', token, json.dumps(post_payload_list))
 
     if post_payload_list:
-        dynatrace_api.post(env, token, endpoint, json.dumps(post_payload_list))
+        dynatrace_api.post_object(f'{env}{endpoint}', token, json.dumps(post_payload_list))
 
 
 def get_line_number():
@@ -121,5 +121,6 @@ def get_line_number():
 
 if __name__ == '__main__':
     # For testing POST vs PUT you may want to delete an object ID
-    # dynatrace_api.delete(env, token, '/api/v2/settings/objects', 'vu9U3hXa3q0AAAABACtidWlsdGluOmF2YWlsYWJpbGl0eS5wcm9jZXNzLWdyb3VwLWFsZXJ0aW5nAA1QUk9DRVNTX0dST1VQABAzRjQyODNBMDMwQ0I4Qjg0ACRhZjJlYWRiOS03YjY5LTNlODQtOTllOS03MDQxMzBiZDUwYTO-71TeFdrerQ')
+    # endpoint = '/api/v2/settings/objects'
+    # dynatrace_api.delete_object(f'{env}{endpoint}, token, 'vu9U3hXa3q0AAAABACtidWlsdGluOmF2YWlsYWJpbGl0eS5wcm9jZXNzLWdyb3VwLWFsZXJ0aW5nAA1QUk9DRVNTX0dST1VQABAzRjQyODNBMDMwQ0I4Qjg0ACRhZjJlYWRiOS03YjY5LTNlODQtOTllOS03MDQxMzBiZDUwYTO-71TeFdrerQ')
     process()

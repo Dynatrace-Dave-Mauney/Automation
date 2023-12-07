@@ -21,8 +21,7 @@ def process_report(env, token, summary_mode):
     count_dynatrace_owned = 0
 
     endpoint = '/api/config/v1/dashboards'
-    params = ''
-    dashboards_json_list = dynatrace_api.get(env, token, endpoint, params)
+    dashboards_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     for dashboards_json in dashboards_json_list:
         inner_dashboards_json_list = dashboards_json.get('dashboards')
@@ -33,7 +32,7 @@ def process_report(env, token, summary_mode):
 
             endpoint = '/api/config/v1/dashboards/' + entity_id
             params = ''
-            dashboard = dynatrace_api.get(env, token, endpoint, params)[0]  # No pagination needed
+            dashboard = dynatrace_api.get_without_pagination(env, token, endpoint, params)[0]  # No pagination needed
             dashboard_metadata = dashboard.get('dashboardMetadata')
             shared = dashboard_metadata.get('shared', False)
             preset = dashboard_metadata.get('preset', False)
@@ -53,7 +52,7 @@ def process_report(env, token, summary_mode):
                    str(count_shared) + ' are currently shared. ' + str(count_preset) + ' are defined as preset. ' + str(count_dynatrace_owned) + ' were created by Dynatrace.')
 
     if not summary_mode:
-        rows = sorted_rows()
+        rows = sorted(rows)
         report_name = 'Dashboards (Extended Details)'
         report_writer.initialize_text_file(None)
         report_headers = ('name', 'id', 'owner', 'shared', 'preset')

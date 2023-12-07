@@ -15,8 +15,7 @@ def process(env, token):
     # Want to check every management zone?
     # It may take a while and I have not tested it yet.  I opted for hard coding a list to start.
     # endpoint = '/api/config/v1/managementZones'
-    # params = ''
-    # management_zones_json_list = dynatrace_api.get(env, token, endpoint, params)
+    # management_zones_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
     # management_zone_list = []
     # for management_zones_json in management_zones_json_list:
     #     inner_management_zones_json_list = management_zones_json.get('values')
@@ -36,8 +35,7 @@ def process(env, token):
         management_zone_dict[management_zone] = {'dashboards': [], 'alertingProfiles': [], 'metricEvents': [], 'maintenanceWindows': []}
 
     endpoint = '/api/config/v1/dashboards'
-    params = ''
-    dashboards_json_list = dynatrace_api.get(env, token, endpoint, params)
+    dashboards_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
     dashboard_id_list = []
     for dashboards_json in dashboards_json_list:
         inner_dashboards_json_list = dashboards_json.get('dashboards')
@@ -45,7 +43,7 @@ def process(env, token):
             entity_id = inner_dashboards_json.get('id')
             dashboard_id_list.append(entity_id)
     for dashboard_id in sorted(dashboard_id_list):
-        dashboard_json = dynatrace_api.get(env, token, endpoint + '/' + dashboard_id, params)
+        dashboard_json = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}/{dashboard_id}', token)
         for dashboard in dashboard_json:
             dashboard_metadata = dashboard.get('dashboardMetadata')
             name = dashboard_metadata.get('name')
@@ -67,8 +65,7 @@ def process(env, token):
                         rows.append((management_zone, 'Dashboard', name, comment))
 
     endpoint = '/api/config/v1/alertingProfiles'
-    params = ''
-    alerting_profiles_json_list = dynatrace_api.get(env, token, endpoint, params)
+    alerting_profiles_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
     alerting_profile_id_list = []
     for alerting_profiles_json in alerting_profiles_json_list:
         inner_alerting_profiles_json_list = alerting_profiles_json.get('values')
@@ -76,7 +73,7 @@ def process(env, token):
             entity_id = inner_alerting_profiles_json.get('id')
             alerting_profile_id_list.append(entity_id)
     for alerting_profile_id in sorted(alerting_profile_id_list):
-        alerting_profile_json = dynatrace_api.get(env, token, endpoint + '/' + alerting_profile_id, params)
+        alerting_profile_json = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}/{alerting_profile_id}', token)
         for alerting_profile in alerting_profile_json:
             display_name = alerting_profile.get('displayName')
             management_zone_id = alerting_profile.get('managementZoneId')
@@ -96,7 +93,7 @@ def process(env, token):
     endpoint = '/api/v2/settings/objects'
     raw_params = 'schemaIds=builtin:alerting.maintenance-window&fields=objectId,value'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    settings_json_list = dynatrace_api.get(env, token, endpoint, params)
+    settings_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
     for settings_json in settings_json_list:
         inner_settings_json_list = settings_json.get('items')
@@ -135,8 +132,7 @@ def process(env, token):
 def load_management_zone_lookup(env, token):
     management_zone_lookup = {}
     endpoint = '/api/config/v1/managementZones'
-    params = ''
-    management_zones_json_list = dynatrace_api.get(env, token, endpoint, params)
+    management_zones_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
     for management_zones_json in management_zones_json_list:
         inner_management_zones_json_list = management_zones_json.get('values')
         for inner_management_zones_json in inner_management_zones_json_list:
@@ -175,7 +171,7 @@ def main():
     # env_name_supplied = 'NonProd'
     # env_name_supplied = 'Prep'
     # env_name_supplied = 'Dev'
-    env_name_supplied = 'Personal'
+    # env_name_supplied = 'Personal'
     # env_name_supplied = 'Demo'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 

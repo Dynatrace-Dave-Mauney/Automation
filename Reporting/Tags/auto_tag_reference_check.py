@@ -10,8 +10,7 @@ def process(env, token):
     auto_tag_dict = {}
 
     endpoint = '/api/config/v1/autoTags'
-    params = ''
-    auto_tags_json_list = dynatrace_api.get(env, token, endpoint, params)
+    auto_tags_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     auto_tag_list = []
     for auto_tags_json in auto_tags_json_list:
@@ -24,8 +23,7 @@ def process(env, token):
         auto_tag_dict[auto_tag] = {'dashboards': [], 'managementZones': [], 'alertingProfiles': [], 'metricEvents': [], 'maintenanceWindows': []}
 
     endpoint = '/api/config/v1/dashboards'
-    params = ''
-    dashboards_json_list = dynatrace_api.get(env, token, endpoint, params)
+    dashboards_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
     dashboard_id_list = []
     for dashboards_json in dashboards_json_list:
         inner_dashboards_json_list = dashboards_json.get('dashboards')
@@ -33,7 +31,7 @@ def process(env, token):
             entity_id = inner_dashboards_json.get('id')
             dashboard_id_list.append(entity_id)
     for dashboard_id in sorted(dashboard_id_list):
-        dashboard_json = dynatrace_api.get(env, token, endpoint + '/' + dashboard_id, params)
+        dashboard_json = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}/{dashboard_id}', token)
         for dashboard in dashboard_json:
             dashboard_metadata = dashboard.get('dashboardMetadata')
             name = dashboard_metadata.get('name')
@@ -48,16 +46,15 @@ def process(env, token):
                         rows.append(['Obsolete tag ' + auto_tag + ' referenced in dashboard ' + name])
 
     endpoint = '/api/config/v1/managementZones'
-    params = ''
     management_zone_id_list = []
-    management_zones_json_list = dynatrace_api.get(env, token, endpoint, params)
+    management_zones_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
     for management_zones_json in management_zones_json_list:
         inner_management_zones_json_list = management_zones_json.get('values')
         for inner_management_zones_json in inner_management_zones_json_list:
             entity_id = inner_management_zones_json.get('id')
             management_zone_id_list.append(entity_id)
     for management_zone_id in sorted(management_zone_id_list):
-        management_zone_json = dynatrace_api.get(env, token, endpoint + '/' + management_zone_id, params)
+        management_zone_json = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}/{management_zone_id}', token)
         for management_zone in management_zone_json:
             rules = management_zone.get('rules')
             name = management_zone.get('name')
@@ -78,8 +75,7 @@ def process(env, token):
                             rows.append(['Obsolete tag ' + comparison_info_value_key + ' referenced in management zone ' + name])
 
     endpoint = '/api/config/v1/alertingProfiles'
-    params = ''
-    alerting_profiles_json_list = dynatrace_api.get(env, token, endpoint, params)
+    alerting_profiles_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
     alerting_profile_id_list = []
     for alerting_profiles_json in alerting_profiles_json_list:
         inner_alerting_profiles_json_list = alerting_profiles_json.get('values')
@@ -87,7 +83,7 @@ def process(env, token):
             entity_id = inner_alerting_profiles_json.get('id')
             alerting_profile_id_list.append(entity_id)
     for alerting_profile_id in sorted(alerting_profile_id_list):
-        alerting_profile_json = dynatrace_api.get(env, token, endpoint + '/' + alerting_profile_id, params)
+        alerting_profile_json = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}/{alerting_profile_id}', token)
         for alerting_profile in alerting_profile_json:
             rules = alerting_profile.get('rules')
             display_name = alerting_profile.get('displayName')
@@ -105,9 +101,8 @@ def process(env, token):
                             rows.append(['Obsolete tag ' + tag_filter_key + ' referenced in alerting profile ' + display_name])
 
     endpoint = '/api/config/v1/anomalyDetection/metricEvents'
-    params = ''
     metric_event_id_list = []
-    metric_events_json_list = dynatrace_api.get(env, token, endpoint, params)
+    metric_events_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
     for metric_events_json in metric_events_json_list:
         inner_metric_events_json_list = metric_events_json.get('values')
         for inner_metric_events_json in inner_metric_events_json_list:
@@ -115,7 +110,7 @@ def process(env, token):
             if not entity_id.startswith('ruxit') and not entity_id.startswith('dynatrace'):
                 metric_event_id_list.append(entity_id)
     for metric_event_id in sorted(metric_event_id_list):
-        metric_event_json = dynatrace_api.get(env, token, endpoint + '/' + metric_event_id, params)
+        metric_event_json = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}/{metric_event_id}', token)
         for metric_event in metric_event_json:
             name = metric_event.get('name')
             alerting_scope_list = metric_event.get('alertingScope', [])
@@ -137,7 +132,7 @@ def process(env, token):
     endpoint = '/api/v2/settings/objects'
     raw_params = 'schemaIds=builtin:alerting.maintenance-window&fields=objectId,value'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    settings_json_list = dynatrace_api.get(env, token, endpoint, params)
+    settings_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
     for settings_json in settings_json_list:
         inner_settings_json_list = settings_json.get('items')

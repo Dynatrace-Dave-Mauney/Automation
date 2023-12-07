@@ -6,6 +6,7 @@ from Reuse import dynatrace_api
 from Reuse import environment
 from Reuse import report_writer
 
+
 def summarize(env, token):
     return process(env, token)
 
@@ -22,7 +23,6 @@ def process(token, print_mode):
     # List:
     # https://myActiveGate:9999/e/myEnvironmentId/api/v1/certificate/list
     url = f'https://localhost:9999/e/{tenant}/api/v1/certificate/list'
-    params = ''
     activegates_json_list = dynatrace_api.get_json_list_with_pagination(url, token, verify=False, disable_verify_warnings=True)
 
     # if print_mode:
@@ -58,9 +58,7 @@ def process(token, print_mode):
             enabled_modules_str = enabled_modules_str.replace("'", "")
 
             # if print_mode:
-            #     print(hostname + '|' + os_type + '|' + version + '|' + entity_type + '|' + hostname + '|' + environments_str + '|' + auto_update_settings_str + '|' + network_zone + '|' + enabled_modules_str)
             if 'ONE_AGENT_ROUTING' and print_mode and 'aks' not in hostname and 'SYNTHETIC' not in enabled_modules_str:
-                # print(inner_activegates_json)
                 print(hostname + '|' + os_type + '|' + version + '|' + network_zone + '|' + report_writer.stringify_list(network_addresses))
 
             if 'ONE_AGENT_ROUTING' in enabled_modules and \
@@ -100,7 +98,7 @@ def main():
     # env_name_supplied = 'NonProd'
     # env_name_supplied = 'Prep'
     # env_name_supplied = 'Dev'
-    env_name_supplied = 'Personal'
+    # env_name_supplied = 'Personal'
     # env_name_supplied = 'Demo'
     # env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
     token = environment.get_configuration('report_activegate_certificate_details.temp_token')

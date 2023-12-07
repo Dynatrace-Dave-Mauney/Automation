@@ -12,13 +12,13 @@ def process(env, token):
     endpoint = '/api/v2/entities'
     raw_params = 'pageSize=1000&entitySelector=type(CLOUD_APPLICATION_NAMESPACE)'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    kubernetes_namespaces_json_list = dynatrace_api.get(env, token, endpoint, params)
+    kubernetes_namespaces_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
     # Get all hosts with "Kubernetes Namespace" tag(s)
     endpoint = '/api/v2/entities'
     raw_params = 'entitySelector=type(HOST),tag("Kubernetes Namespace")&fields=+tags'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    hosts_json_list = dynatrace_api.get(env, token, endpoint, params)
+    hosts_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
     namespaces = []
     for kubernetes_namespaces_json in kubernetes_namespaces_json_list:
@@ -84,7 +84,7 @@ def post_namespace(env, token, name_space_name):
     management_zone['rules'][0]['conditions'][0]['comparisonInfo']['value']['value'] = name_space_name
 
     endpoint = '/api/config/v1/managementZones'
-    dynatrace_api.post(env, token, endpoint, json.dumps(management_zone))
+    dynatrace_api.post_object(f'{env}{endpoint}', token, json.dumps(management_zone))
 
 
 def delete_kubernetes_namespace_management_zones(env_name, env, token):
@@ -99,7 +99,7 @@ def delete_kubernetes_namespace_management_zones(env_name, env, token):
     endpoint = '/api/config/v1/managementZones'
     raw_params = 'pageSize=1000'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    management_zone_json_list = dynatrace_api.get(env, token, endpoint, params)
+    management_zone_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
     print(management_zone_json_list)
 
@@ -110,7 +110,7 @@ def delete_kubernetes_namespace_management_zones(env_name, env, token):
             management_zone_name = inner_management_zone_json.get('name')
             if management_zone_name.startswith('ZZ K8s NS'):
                 print(f'{management_zone_name} ({management_zone_id})')
-                dynatrace_api.delete(env, token, endpoint, management_zone_id)
+                dynatrace_api.delete_object(f'{env}{endpoint}/{management_zone_id}', token)
 
 
 def get_line_number():
@@ -128,7 +128,7 @@ def run():
     # env_name_supplied = 'Dev'
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'Demo'
-    env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
+    _, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 
     print('Generate kubernetes management zones by namespace')
 

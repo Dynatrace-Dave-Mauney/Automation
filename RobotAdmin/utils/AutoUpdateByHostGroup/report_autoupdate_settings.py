@@ -14,7 +14,7 @@ def load_host_group_lookup():
     endpoint = '/api/v2/entities'
     raw_params = 'pageSize=4000&entitySelector=type(HOST_GROUP)&to=-24h'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    entities_json_list = dynatrace_api.get(env, token, endpoint, params)
+    entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     for entities_json in entities_json_list:
         inner_entities_json_list = entities_json.get('entities')
         for inner_entities_json in inner_entities_json_list:
@@ -25,7 +25,7 @@ def load_host_group_lookup():
 
 def get_host_auto_update_setting(host_id):
     endpoint = '/api/config/v1/hosts/' + host_id + '/autoupdate'
-    settings_json_list = dynatrace_api.get(env, token, endpoint, '')
+    settings_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
     settings_json = settings_json_list[0]
     return settings_json.get('setting', 'None')
 
@@ -40,7 +40,7 @@ def get_host_group_auto_update_setting(host_group_id):
         return host_group_auto_update_setting_cache.get(host_group_id)
 
     endpoint = '/api/config/v1/hostgroups/' + host_group_id + '/autoupdate'
-    settings_json_list = dynatrace_api.get(env, token, endpoint, '')
+    settings_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
     settings_json = settings_json_list[0]
     return settings_json.get('setting', 'None')
 
@@ -53,7 +53,7 @@ def process():
     # raw_params = 'pageSize=4000&entitySelector=type(HOST)&to=-24h&fields=properties,tags'
     raw_params = 'pageSize=4000&entitySelector=type(HOST)&to=-24h&fields=properties.installerVersion,tags'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    entities_json_list = dynatrace_api.get(env, token, endpoint, params)
+    entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     print('Host Group Name' + '|' + 'Host Name' + '|' + 'Installer Version' + '|' + 'Host Group ID' + '|' + 'Host ID')
     for entities_json in entities_json_list:
         inner_entities_json_list = entities_json.get('entities')

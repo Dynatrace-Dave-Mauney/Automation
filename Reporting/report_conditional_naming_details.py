@@ -53,8 +53,7 @@ def process_type(env, token, summary_mode, entity_type):
     count_total = 0
 
     endpoint = '/api/config/v1/conditionalNaming/' + entity_type
-    params = ''
-    conditional_naming_json_list = dynatrace_api.get(env, token, endpoint, params)
+    conditional_naming_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     for conditional_naming_json in conditional_naming_json_list:
         inner_conditional_naming_json_list = conditional_naming_json.get('values')

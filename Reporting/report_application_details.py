@@ -20,9 +20,9 @@ def process_report(env, token, summary_mode):
     count_total = 0
 
     endpoint = '/api/v2/entities'
-    raw_params = 'pageSize=4000&entitySelector=type(APPLICATION)&fields=+properties&to=-5m'
+    raw_params = 'pageSize=4000&entitySelector=type(APPLICATION)&fields=+properties&to=-24h'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    entities_json_list = dynatrace_api.get(env, token, endpoint, params)
+    entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     for entities_json in entities_json_list:
         inner_entities_json_list = entities_json.get('entities')
         for inner_entities_json in inner_entities_json_list:
@@ -77,7 +77,7 @@ def main():
     # env_name_supplied = 'Prep'
     # env_name_supplied = 'Dev'
     # env_name_supplied = 'Personal'
-    # env_name_supplied = 'Demo'
+    env_name_supplied = 'Demo'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
     process(env, token)
     

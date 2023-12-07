@@ -217,8 +217,7 @@ def process(env, token):
         counts_by_entity_type_template[entity_type_of_interest] = 0
 
     endpoint = '/api/config/v1/managementZones'
-    params = ''
-    management_zone_json_list = dynatrace_api.get(env, token, endpoint, params)
+    management_zone_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
     for management_zone_json in management_zone_json_list:
         inner_management_zone_json_list = management_zone_json.get('values')
@@ -257,7 +256,7 @@ def get_mz_coverage_for_entity_type(env, token, entity_type, mz_coverage_dict):
     if entity_type == 'SERVICE':
         raw_params += ',properties.serviceType'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    entities_json_list = dynatrace_api.get(env, token, endpoint, params)
+    entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
     for entities_json in entities_json_list:
         inner_entities_json_list = entities_json.get('entities')

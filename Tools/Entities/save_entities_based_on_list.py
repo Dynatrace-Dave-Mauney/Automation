@@ -17,7 +17,9 @@ def save(path, file, content):
 
 
 def save_entity(env, token, entity_id):
-    entity = dynatrace_api.get_by_object_id(env, token, endpoint='/api/v2/entities', object_id=entity_id)
+    endpoint = '/api/v2/entities'
+    r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{entity_id}', token)
+    entity = r.json()
     print('Saving ' + entity_id + ' to ' + PATH)
     save(PATH, entity_id + '.json', entity)
 
