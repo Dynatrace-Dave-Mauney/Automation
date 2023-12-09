@@ -2362,7 +2362,7 @@ def copy_paste_reuse_section():
     # put_auto_tag_host_technology()
 
     # TODO: Figure why these placeholders are bad:
-    # put_auto_tag_typical_process_group_dynamic_key('Java Main CLass', 'JAVA_MAIN_CLASS', '{ProcessGroup:JavaMainCLass}')
+    # put_auto_tag_typical_process_group_dynamic_key('Java Main Class', 'JAVA_MAIN_CLASS', '{ProcessGroup:JavaMainClass}')
     # put_auto_tag_typical_process_group_dynamic_key('Jboss Home', 'JBOSS_HOME', '{ProcessGroup:JbossHome}')
     # put_auto_tag_typical_process_group_dynamic_key('Jboss Mode', 'JBOSS_MODE', '{ProcessGroup:JbossMode}')
     # put_auto_tag_typical_process_group_dynamic_key('Jboss Server Name', 'JBOSS_SERVER_NAME', '{ProcessGroup:JbossServerName}')
