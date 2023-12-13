@@ -5,26 +5,33 @@ from Reuse import environment
 from Reuse import report_writer
 
 
-def process(env, token):
-    rows = []
+def process(env, token, entity_types):
+
     entity_type_list = []
+    if entity_types:
+        entity_type_list = entity_types
 
-    endpoint = '/api/v2/entityTypes'
-    params = 'pageSize=500'
-    entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
+    rows = []
 
-    for entities_json in entities_json_list:
-        inner_entities_json_list = entities_json.get('types')
-        for inner_entities_json in inner_entities_json_list:
-            entity_type = inner_entities_json.get('type')
-            entity_type_list.append(entity_type)
+    # Load the entity type list if not passed in
+    if not entity_type_list:
+        endpoint = '/api/v2/entityTypes'
+        params = 'pageSize=500'
+        entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
+
+        for entities_json in entities_json_list:
+            inner_entities_json_list = entities_json.get('types')
+            for inner_entities_json in inner_entities_json_list:
+                entity_type = inner_entities_json.get('type')
+                entity_type_list.append(entity_type)
 
     for entity_type in entity_type_list:
         rows.extend(process_entity_type(env, token, entity_type))
 
+    rows = sorted(rows)
     report_name = 'Entities'
     report_writer.initialize_text_file(None)
-    report_headers = ('entityId', 'displayName')
+    report_headers = ('displayName', 'entityId')
     report_writer.write_console(report_name, report_headers, rows, delimiter='|')
     report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
     report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
@@ -34,8 +41,11 @@ def process(env, token):
 def process_entity_type(env, token, entity_type):
     rows = []
     endpoint = '/api/v2/entities'
-    entity_selector = 'type(' + entity_type + ')'
-    params = '&entitySelector=' + urllib.parse.quote(entity_selector)
+    entity_selector = f'&entitySelector=type({entity_type})'
+    # fields = f'&fields="tags"'
+    fields = ''
+    raw_params = entity_selector + fields
+    params = urllib.parse.quote(raw_params, safe='/,&=')
     entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
     for entities_json in entities_json_list:
@@ -43,7 +53,9 @@ def process_entity_type(env, token, entity_type):
         for inner_entities_json in inner_entities_json_list:
             entity_id = inner_entities_json.get('entityId')
             display_name = inner_entities_json.get('displayName')
-            rows.append((entity_id, display_name))
+            # tags = inner_entities_json.get('tags')
+            # rows.append((entity_id, display_name, str(tags)))
+            rows.append((display_name, entity_id))
 
     return rows
 
@@ -59,13 +71,13 @@ def main():
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'Demo'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
-    
-    process(env, token)
 
-    # More selective techniques
-    # process_entity_type(env, token, 'PROCESS_GROUP')
-    # process_entity_type(env, token, 'SERVICE')
-    # process_entity_type(env, token, 'HOST')
+    # To process all entity types, pass "None"
+    # process(env, token, None)
+
+    # To process specific entity types, pass a list
+    process(env, token, ['HOST', 'SERVICE', 'PROCESS_GROUP', 'APPLICATION', 'KUBERNETES_CLUSTER', 'KUBERNETES_NODE', 'KUBERNETES_SERVICE'])
+    # process(env, token, ['HOST'])
 
     # entity_types_to_report = [
     #     'APPLICATION',
@@ -122,9 +134,6 @@ def main():
     #     'VIRTUALMACHINE',
     #     'VMWARE_DATACENTER',
     # ]
-    #
-    # for entity_type in entity_types_to_report:
-    #     process_entity_type(env, token, entity_type)
 
 
 if __name__ == '__main__':
