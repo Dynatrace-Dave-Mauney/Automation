@@ -3,27 +3,28 @@ import glob
 import json
 import os
 import shutil
+import yaml
 from inspect import currentframe
 
 PREFIX = 'Prod:'
 DASHBOARD_CUSTOM_PATH = 'Custom/Overview-Customer2-Prod'
+DASHBOARD_TEMPLATE_PATH = 'Templates/Overview'
+
 # PREFIX = 'NonProd:'
 # DASHBOARD_CUSTOM_PATH = 'Custom/Overview-Customer2-NonProd (With Prod Tags)'
-# PREFIX = 'DEMO:'
-# DASHBOARD_CUSTOM_PATH = 'Custom/Overview'
+# DASHBOARD_TEMPLATE_PATH = 'Templates/Overview'
 
-# OWNER = 'nobody@example.com'
+# PREFIX = 'DEMO:'
+# DASHBOARD_CUSTOM_PATH = 'Custom/Overview-Demo'
+# DASHBOARD_TEMPLATE_PATH = 'Templates/Overview'
+
+
 # OWNER = os.environ.get('DASHBOARD_OWNER_EMAIL', 'nobody@example.com')
 # OWNER = 'nobody@example.com'
 OWNER = 'dave.mauney@dynatrace.com'
 SHARED = True
 PRESET = True
 MENU_PRESET = True
-
-# Customer1/Customer2
-DASHBOARD_TEMPLATE_PATH = 'Templates/Overview'
-# Demo
-# DASHBOARD_TEMPLATE_PATH = 'Templates/Overview-Demo'
 
 # Used when no API token was available, so ID renames were done
 # DASHBOARD_TEMPLATE_PATH = 'Templates/Overview-Customer2-NonProd'
@@ -227,7 +228,6 @@ SERVICE_FILTERS = ['SERVICE_TYPE']
 DATABASE_SERVICE_FILTERS = ['DATABASE_VENDOR']
 PROCESS_GROUP_FILTERS = []
 HOST_FILTERS = ['HOST_MONITORING_MODE', 'HOST_VIRTUALIZATION_TYPE', 'OS_TYPE']
-
 CUSTOM_DEVICE_FILTERS = ['CUSTOM_DIMENSION:Custom Device']
 
 # For Demo/Customer2 True
@@ -236,6 +236,8 @@ hasMobile = True
 
 confirmation_required = True
 remove_directory_at_startup = True
+
+use_yaml_for_dynamic_tag_filters = True
 
 
 def customize_dashboards():
@@ -247,6 +249,9 @@ def customize_dashboards():
 
     confirm('Customize dashboards from ' + DASHBOARD_TEMPLATE_PATH + ' to ' + DASHBOARD_CUSTOM_PATH)
     initialize()
+
+    if use_yaml_for_dynamic_tag_filters:
+        load_tag_filters_from_yaml()
 
     for filename in glob.glob(DASHBOARD_TEMPLATE_PATH + '/00000000-*'):
         print(filename)
@@ -393,6 +398,48 @@ def get_linenumber():
     # print('get_linenumber()')
     cf = currentframe()
     return cf.f_back.f_lineno
+
+
+def load_tag_filters_from_yaml():
+    global WEB_APPLICATION_TAGS
+    global SERVICE_TAGS
+    global PROCESS_GROUP_TAGS
+    global HOST_TAGS
+    global KUBERNETES_TAGS
+    global DATABASE_SERVICE_TAGS
+    global IIS_TAGS
+
+    input_filename = 'dynamic_tag_filters.yaml'
+
+    try:
+        yaml_dict = read_yaml(input_filename)
+    except FileNotFoundError as e:
+        print(f'YAML configuration file {input_filename} was not found...aborting')
+        exit(1)
+
+    WEB_APPLICATION_TAGS = yaml_dict.get('APPLICATION', [])
+    SERVICE_TAGS = yaml_dict.get('SERVICE', [])
+    PROCESS_GROUP_TAGS = yaml_dict.get('PROCESS_GROUP', [])
+    HOST_TAGS = yaml_dict.get('HOST', [])
+    kubernetes_cluster_tags = yaml_dict.get('KUBERNETES_CLUSTER', [])
+    kubernetes_node_tags = yaml_dict.get('KUBERNETES_NODE', [])
+    kubernetes_service_tags = yaml_dict.get('KUBERNETES_SERVICE', [])
+    print(kubernetes_service_tags, kubernetes_cluster_tags, kubernetes_node_tags)
+    KUBERNETES_TAGS = kubernetes_cluster_tags
+    if kubernetes_node_tags:
+        KUBERNETES_TAGS.extend(kubernetes_cluster_tags)
+    if kubernetes_service_tags:
+        KUBERNETES_TAGS.extend(kubernetes_service_tags)
+    DATABASE_SERVICE_TAGS = yaml_dict.get('DATABASE_SERVICE', [])
+
+    # Hardcode for now...include if needed...
+    IIS_TAGS = ['IIS App Pool']
+
+def read_yaml(input_file_name):
+    with open(input_file_name, 'r') as file:
+        document = file.read()
+        yaml_data = yaml.load(document, Loader=yaml.FullLoader)
+    return yaml_data
 
 
 def main():

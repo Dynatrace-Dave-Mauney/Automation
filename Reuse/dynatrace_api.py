@@ -361,7 +361,7 @@ def retry_with_backoff(fn, retries=5, backoff_in_seconds=1):
     while True:
         try:
             return fn()
-        except (ConnectionError, ConnectionResetError, TimeoutError, RateLimitException):
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout, ConnectionError, ConnectionResetError, TimeoutError, RateLimitException):
             if x == retries:
                 print(f'Retried with exponential backoff {retries} times, but could not recover.')
                 raise
