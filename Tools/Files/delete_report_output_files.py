@@ -27,22 +27,24 @@ oddball_list = [
     '../../Reporting/analyze_audit_log_details.html',
     '../../Reporting/analyze_audit_log_details.txt',
     '../../Reporting/analyze_audit_log_details.xlsx',
+    '../../Tools/test_report_writer.html',
+    '../../Tools/test_report_writer.txt',
+    '../../Tools/test_report_writer.xlsx',
 ]
 
 def main():
     count = 0
     delete_list = []
 
-    # append_to_delete_list(delete_list, '../../Reporting/**/report_*.html')
-    # append_to_delete_list(delete_list, '../../Reporting/**/report_*.txt')
-    # append_to_delete_list(delete_list, '../../Reporting/**/report_*.xlsx')
+    append_to_delete_list(delete_list, '../../Reporting/**/report_*.html')
+    append_to_delete_list(delete_list, '../../Reporting/**/report_*.txt')
+    append_to_delete_list(delete_list, '../../Reporting/**/report_*.xlsx')
 
     # Use to find oddballs...just choose "N" to skip the delete and then add them to the oddball_list
     # append_to_delete_list(delete_list, '../../Reporting/**/*.html')
     # append_to_delete_list(delete_list, '../../Reporting/**/*.txt')
     # append_to_delete_list(delete_list, '../../Reporting/**/*.xlsx')
 
-    # delete_list.extend(oddball_list)
     for oddball in oddball_list:
         if os.path.isfile(oddball):
             delete_list.append(oddball)
