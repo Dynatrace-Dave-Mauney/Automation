@@ -24,7 +24,7 @@ def process_report(env, token, summary_mode):
     for extension_json in extension_json_list:
         inner_extension_json_list = extension_json.get('extensions')
         for inner_extension_json in inner_extension_json_list:
-            print(inner_extension_json)
+            # print(inner_extension_json)
             extension_name = inner_extension_json.get('extensionName')
             version = inner_extension_json.get('version')
 

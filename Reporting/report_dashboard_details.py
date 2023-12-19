@@ -52,13 +52,10 @@ def process_report(env, token, summary_mode):
             if not filter_by_owner and not filter_by_id_starts_with and not filter_by_id_not_starts_with and owner == 'Dynatrace':
                 count_dynatrace_owned += 1
 
-    if not summary_mode:
-        print('Total Dashboards:   ' + str(count_total))
-        if not filter_by_owner:
-            print('Dynatrace Created:  ' + str(count_dynatrace_owned))
-            summary.append('There are ' + str(count_total) + ' dashboards currently defined.  ' + str(count_dynatrace_owned) + ' were created by Dynatrace.')
-        else:
-            summary.append('There are ' + str(count_total) + ' dashboards currently defined owned by ' + target_owner)
+    if filter_by_owner:
+        summary.append('There are ' + str(count_total) + ' dashboards currently defined owned by ' + target_owner)
+    else:
+        summary.append('There are ' + str(count_total) + ' dashboards currently defined.  ' + str(count_dynatrace_owned) + ' were created by Dynatrace.')
 
     if not summary_mode:
         rows = sorted(rows)
@@ -111,6 +108,7 @@ def main():
     # env_name_supplied = 'Demo'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
     process(env, token)
+    # print(summarize(env, token))
     
     
 if __name__ == '__main__':

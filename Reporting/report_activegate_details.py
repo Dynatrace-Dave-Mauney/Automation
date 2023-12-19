@@ -3,6 +3,10 @@ from Reuse import environment
 from Reuse import report_writer
 
 
+def summarize(env, token):
+    return process_report(env, token, True)
+
+
 def process(env, token):
     return process_report(env, token, False)
 
@@ -55,7 +59,16 @@ def process_report(env, token, summary_mode):
                      'VMWARE' in enabled_modules or
                      'EXTENSIONS_V1' in enabled_modules or
                      'EXTENSIONS_V2' in enabled_modules):
-                summary.append('ActiveGate is configured for OneAgent routing and running extensions on ' + hostname)
+                summary.append(f'ActiveGate is configured for OneAgent routing and running extensions on {hostname} ({report_writer.stringify_list(network_addresses)})')
+            else:
+                if (
+                    'AWS' in enabled_modules or
+                    'AZURE' in enabled_modules or
+                    'VMWARE' in enabled_modules or
+                    'EXTENSIONS_V1' in enabled_modules or
+                    'EXTENSIONS_V2' in enabled_modules
+                ):
+                    summary.append('ActiveGate is configured for running extensions on ' + hostname)
 
             count_total += 1
 
@@ -85,13 +98,14 @@ def main():
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
     # env_name_supplied = 'Prod'
-    # env_name_supplied = 'NonProd'
+    env_name_supplied = 'NonProd'
     # env_name_supplied = 'Prep'
     # env_name_supplied = 'Dev'
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'Demo'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
     process(env, token)
+    # print(summarize(env, token))
 
 
 if __name__ == '__main__':
