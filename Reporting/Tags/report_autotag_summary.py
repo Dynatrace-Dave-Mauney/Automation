@@ -45,13 +45,13 @@ def process(env_name_list, all_env_name_data):
 
         rows.append((autotag_name, autotag_description, report_writer.stringify_list(autotag_env_name_list), finding))
 
-        report_name = 'Auto Tag Summary'
-        report_writer.initialize_text_file(None)
-        report_headers = ('Auto Tag Name', 'Description', 'Environments', 'Finding')
-        report_writer.write_console(report_name, report_headers, rows, delimiter='|')
-        report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
-        report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
-        report_writer.write_html(None, report_name, report_headers, rows)
+    report_name = 'Auto Tag Summary'
+    report_writer.initialize_text_file(None)
+    report_headers = ('Auto Tag Name', 'Description', 'Environments', 'Finding')
+    report_writer.write_console(report_name, report_headers, rows, delimiter='|')
+    report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
+    report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
+    report_writer.write_html(None, report_name, report_headers, rows)
 
 
 def add_or_update(env_name, env_name_data, all_env_name_data):
