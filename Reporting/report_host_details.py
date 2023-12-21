@@ -21,6 +21,9 @@ def process_report(env, token, summary_mode):
     count_full_stack = 0
     count_infra_only = 0
     count_paas = 0
+    count_has_host_group = 0
+    count_has_no_host_group = 0
+    count_has_no_host_group_but_should_probably = 0
 
     counts_os = {}
     counts_state = {}
@@ -39,6 +42,11 @@ def process_report(env, token, summary_mode):
             display_name = inner_entities_json.get('displayName', '')
 
             properties = inner_entities_json.get('properties')
+
+            # import json
+            # formatted_json = json.dumps(inner_entities_json, indent=4, sort_keys=False)
+            # print(formatted_json)
+            # exit(1234)
 
             monitoring_mode = properties.get('monitoringMode', '')
             logical_cpu_cores = str(properties.get('logicalCpuCores', ''))
@@ -64,8 +72,19 @@ def process_report(env, token, summary_mode):
                 if "Data Center" in str(tag) or "Datacenter" in str(tag):
                     data_center = tag.get('value', '')
 
+            host_group_name = properties.get('hostGroupName', 'No Host Group')
+            if host_group_name != 'No Host Group':
+                count_has_host_group += 1
+            else:
+                count_has_no_host_group += 1
+                if paas_vendor_type != 'AZURE_WEBSITES' and paas_vendor_type != 'AWS_ECS_FARGATE':
+                    count_has_no_host_group_but_should_probably += 1
+                    # To check for other paas_vendor_tyoe settings...
+                    # if paas_vendor_type != 'NONE':
+                    #     print('paas_vendor_type: ', paas_vendor_type)
+
             if not summary_mode:
-                rows.append((display_name, entity_id, monitoring_mode, paas_vendor_type, logical_cpu_cores, cpu_cores, memory_total, os_type, state, network_zone, hypervisor_type, cloud_type, k8s_cluster, environment_name, data_center))
+                rows.append((display_name, entity_id, monitoring_mode, host_group_name, paas_vendor_type, logical_cpu_cores, cpu_cores, memory_total, os_type, state, network_zone, hypervisor_type, cloud_type, k8s_cluster, environment_name, data_center))
 
                 # Temp code: for listing hosts and their host groups only
                 # for tag in tags:
@@ -110,13 +129,16 @@ def process_report(env, token, summary_mode):
             'The operating systems breakdown is ' + counts_os_str + '.  ' +
             'The Hypervisor breakdown is ' + counts_hypervisor_type_str + '.  ' +
             'The Network Zone breakdown is ' + counts_network_zone_str + '.  ' +
-            'The Agent State breakdown is ' + counts_state_str + '.  ')
+            'The Agent State breakdown is ' + counts_state_str + '.  ' +
+            str(count_has_host_group) + ' hosts have a host group.  ' +
+            str(count_has_no_host_group) + ' hosts do not have a host group.  ' +
+            str(count_has_no_host_group_but_should_probably) + ' hosts do not have a host group and probably should.  ')
 
     if not summary_mode:
         rows = sorted(rows)
         report_name = 'Hosts'
         report_writer.initialize_text_file(None)
-        report_headers = ('displayName', 'entityId', 'monitoringMode', 'paasVendorType', 'logicalCpuCores', 'cpuCores', 'memoryTotal', 'osType', 'state', 'networkZone', 'hypervisorType', 'cloudType', 'k8sCluster', 'environment', 'dataCenter')
+        report_headers = ('displayName', 'entityId', 'monitoringMode', 'host group', 'paasVendorType', 'logicalCpuCores', 'cpuCores', 'memoryTotal', 'osType', 'state', 'networkZone', 'hypervisorType', 'cloudType', 'k8sCluster', 'environment', 'dataCenter')
         report_writer.write_console(report_name, report_headers, rows, delimiter='|')
         report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
         write_strings(['Total Hosts: ' + str(count_total)])
@@ -124,9 +146,12 @@ def process_report(env, token, summary_mode):
         write_strings(['Infra Only: ' + str(count_infra_only)])
         write_strings(['PaaS: ' + str(count_paas)])
         write_strings(['OS Counts: ' + str(counts_os_str)])
-        write_strings(['Hypervisor Type Counts' + str(counts_hypervisor_type_str)])
+        write_strings(['Hypervisor Type Counts: ' + str(counts_hypervisor_type_str)])
         write_strings(['Network Zone Counts: ' + str(counts_network_zone_str)])
         write_strings(['State Counts: ' + str(counts_state_str)])
+        write_strings(['Hosts with Host Groups: ' + str(count_has_host_group)])
+        write_strings(['Hosts without Host Groups: ' + str(count_has_no_host_group)])
+        write_strings(['Hosts without Host Groups (and probably should have one): ' + str(count_has_no_host_group_but_should_probably)])
         write_strings(summary)
         report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
         report_writer.write_html(None, report_name, report_headers, rows)
@@ -165,7 +190,8 @@ def main():
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 
     process(env, token)
-    
+    # print(summarize(env, token))
+
     
 if __name__ == '__main__':
     main()

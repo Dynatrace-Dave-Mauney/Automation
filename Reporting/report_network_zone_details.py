@@ -16,6 +16,9 @@ def process_report(env, token, summary_mode):
     summary = []
 
     count_total = 0
+    count_too_few_active_gates = 0
+    count_default_active_gates = 0
+    count_default_one_agents = 0
 
     endpoint = '/api/v2/networkZones'
     network_zones_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
@@ -32,6 +35,13 @@ def process_report(env, token, summary_mode):
             num_of_one_agents_from_other_zones = inner_network_zones_json.get('numOfOneAgentsFromOtherZones')
             num_of_configured_active_gates = inner_network_zones_json.get('numOfConfiguredActiveGates')
 
+            if num_of_configured_active_gates < 2:
+                count_too_few_active_gates += 1
+
+            if entity_id == 'default':
+                count_default_active_gates = num_of_configured_active_gates
+                count_default_one_agents = num_of_one_agents_using
+
             alternative_zones_str = str(alternative_zones).replace('[', '')
             alternative_zones_str = alternative_zones_str.replace(']', '')
             alternative_zones_str = alternative_zones_str.replace("'", "")
@@ -42,6 +52,12 @@ def process_report(env, token, summary_mode):
             count_total += 1
 
     summary.append('There are ' + str(count_total) + ' network zones currently defined and reporting.')
+    if count_too_few_active_gates > 0:
+        summary.append('There are ' + str(count_too_few_active_gates) + ' network zones with less than 2 ActiveGates currently and reporting to them.')
+    if count_default_active_gates > 0:
+        summary.append('The default network zone has ' + str(count_default_active_gates) + ' ActiveGates reporting to it.')
+    if count_default_one_agents > 0:
+        summary.append('There default network zone has ' + str(count_default_one_agents) + ' OneAgents reporting to it.')
 
     if not summary_mode:
         report_name = 'Network Zones'

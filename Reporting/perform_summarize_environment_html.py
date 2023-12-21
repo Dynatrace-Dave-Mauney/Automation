@@ -32,6 +32,7 @@ import report_management_zone_details
 import report_mobile_application_details
 import report_network_zone_details
 import report_notification_details
+import report_oneagent_details
 import report_oneagent_direct_communication_details
 import report_plugin_details
 import report_process_group_details
@@ -98,6 +99,8 @@ html_bottom = '''</pre>
 
 # outfile and findings are global for convenience.
 outfile_name = '../$Output/Reporting/Environment_Summary_For_' + env_name.replace(' ', '_') + '.html'
+outfile_name = 'Environment_Summary_For_' + env_name.replace(' ', '_') + '.html'
+outfile_name = 'perform_summarize_environment_html_for_' + env_name.replace(' ', '_') + '.html'
 outfile = open(outfile_name, 'w')
 outfile.close()
 
@@ -192,7 +195,7 @@ def process():
 		write_h1_heading('Environment Summary For ' + env_name + ' Environment As Of ' + report_date)
 
 		# Write the Architecture summary header
-		write_h2_heading('Architecture')
+		write_h2_heading('Architecture/Platform')
 
 		heading = 'Cluster Summary'
 		write_h3_heading(heading)
@@ -206,9 +209,11 @@ def process():
 		write_blank_line()
 		write_findings(heading)
 
-		heading = 'Synthetic Location Summary'
+		heading = 'OneAgents Summary'
 		write_h3_heading(heading)
-		write_summary(report_synthetic_location_details.summarize)
+		write_summary(report_oneagent_details.summarize)
+		write_summary(report_oneagent_direct_communication_details.summarize)
+		write_summary(report_hosts_autoupdate_details.summarize)
 		write_blank_line()
 		write_findings(heading)
 
@@ -218,16 +223,10 @@ def process():
 		write_blank_line()
 		write_findings(heading)
 
-		heading = 'OneAgent Auto Update Summary'
-		write_h3_heading(heading)
-		write_summary(report_hosts_autoupdate_details.summarize)
-		write_blank_line()
-		write_findings(heading)
-
 		# Write the Topology summary header
 		write_h2_heading('Topology')
 
-		heading = 'Applications (Web) Summary'
+		heading = 'Web Applications Summary'
 		write_h3_heading(heading)
 		write_summary(report_application_details.summarize)
 		write_blank_line()
@@ -248,6 +247,12 @@ def process():
 		heading = 'HTTP Check Synthetics Summary'
 		write_h3_heading(heading)
 		write_summary(report_synthetic_http_check_details.summarize)
+		write_blank_line()
+		write_findings(heading)
+
+		heading = 'Synthetic Location Summary'
+		write_h3_heading(heading)
+		write_summary(report_synthetic_location_details.summarize)
 		write_blank_line()
 		write_findings(heading)
 
@@ -275,15 +280,18 @@ def process():
 		write_blank_line()
 		write_findings(heading)
 
-		heading = 'Extension Summary'
+		# Write the Extensions/Plugins/Integrations summary header
+		write_h2_heading('Topology')
+
+		heading = 'Extension V2 Summary'
 		write_h3_heading(heading)
-		write_summary(report_extension_details.summarize)
+		write_summary(report_extension_v2_details.summarize)
 		write_blank_line()
 		write_findings(heading)
 
-		heading = 'ExtensionV2 Summary'
+		heading = 'Extension V1 Summary'
 		write_h3_heading(heading)
-		write_summary(report_extension_v2_details.summarize)
+		write_summary(report_extension_details.summarize)
 		write_blank_line()
 		write_findings(heading)
 
@@ -335,12 +343,6 @@ def process():
 		heading = 'Notifications Summary'
 		write_h3_heading(heading)
 		write_summary(report_notification_details.summarize)
-		write_blank_line()
-		write_findings(heading)
-
-		heading = 'OneAgents Direct Communication Summary'
-		write_h3_heading(heading)
-		write_summary(report_oneagent_direct_communication_details.summarize)
 		write_blank_line()
 		write_findings(heading)
 
