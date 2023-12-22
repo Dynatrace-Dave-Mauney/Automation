@@ -42,6 +42,7 @@ import report_service_details
 import report_service_settings_details
 import report_settings20_details
 import report_settings20_slo_details
+import report_slo_dashboard_references
 import report_synthetic_details
 import report_synthetic_http_check_details
 import report_synthetic_location_details
@@ -431,6 +432,7 @@ def process():
 		write_h3_heading(heading)
 		write_summary(report_settings20_slo_details.summarize)
 		write_summary(report_broken_slo_metrics.summarize)
+		write_summary(report_slo_dashboard_references.summarize)
 		write_blank_line()
 		write_findings(heading)
 

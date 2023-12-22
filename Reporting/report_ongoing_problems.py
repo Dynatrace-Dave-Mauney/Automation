@@ -4,6 +4,8 @@ from Reuse import dynatrace_api
 from Reuse import environment
 from Reuse import report_writer
 
+duration_threshold_in_days = 30
+
 
 def summarize(env, token):
     return process_report(env, token, True)
@@ -45,7 +47,7 @@ def process_report(env, token, summary_mode):
 
             duration_days, duration_hours, duration_minutes, duration_seconds = get_duration(start_time, end_time)
 
-            if duration_days < 7:
+            if duration_days < duration_threshold_in_days:
                 continue
 
             affected_entities_list = []
@@ -62,19 +64,22 @@ def process_report(env, token, summary_mode):
 
             if not summary_mode:
                 # rows.append((display_id, problem_title, problem_type, start_date_time, end_date_time, formatted_duration, formatted_affected_entities, formatted_root_cause_entity))
-                if formatted_affected_entities not in unique_rows:
-                    rows.append([formatted_affected_entities, problem_title])
-                    unique_rows.append(formatted_affected_entities)
-                    count_total += 1
+                # if formatted_affected_entities not in unique_rows:
+                #     rows.append([formatted_affected_entities, problem_title])
+                #     unique_rows.append(formatted_affected_entities)
+                #     count_total += 1
+                rows.append([display_id, problem_title, formatted_affected_entities])
 
-    summary.append(f'There are {str(count_total)} matching problem entities in the timeframe ({from_time})')
+            count_total += 1
+
+    summary.append(f'There are {str(count_total)} problems that have been open for more than {duration_threshold_in_days} days')
 
     if not summary_mode:
         rows = sorted(rows)
-        report_name = 'Problems - 7 days+'
+        report_name = f'Problems - {duration_threshold_in_days} days+'
         report_writer.initialize_text_file(None)
         # report_headers = ('displayId', 'startTime', 'endTime', 'duration (D:HH:MM:SS.MMM', 'affectedEntities', 'rootCauseEntity')
-        report_headers = ['affectedEntities', 'Problem Title']
+        report_headers = ['Problem ID', 'Problem Title', 'Affected Entities']
         report_writer.write_console(report_name, report_headers, rows, delimiter='|')
         report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
         write_strings(['Total Problems: ' + str(count_total)])
@@ -140,8 +145,9 @@ def main():
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'Demo'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
-    process(env, token)
-    
+    # process(env, token)
+    print(summarize(env, token))
+
     
 if __name__ == '__main__':
     main()
