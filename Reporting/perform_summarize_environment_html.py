@@ -14,6 +14,7 @@ import report_application_details
 import report_autotag_details
 import report_aws_credential_details
 import report_azure_credential_details
+import report_broken_slo_metrics
 import report_calculated_metrics_details
 import report_cluster_details
 import report_conditional_naming_details
@@ -34,11 +35,13 @@ import report_network_zone_details
 import report_notification_details
 import report_oneagent_details
 import report_oneagent_direct_communication_details
+import report_ongoing_problems
 import report_plugin_details
 import report_process_group_details
 import report_service_details
 import report_service_settings_details
 import report_settings20_details
+import report_settings20_slo_details
 import report_synthetic_details
 import report_synthetic_http_check_details
 import report_synthetic_location_details
@@ -421,6 +424,19 @@ def process():
 		heading = 'Anomaly Detection For VMWare Summary'
 		write_h3_heading(heading)
 		write_summary(report_anomaly_detection_vmware_details.summarize)
+		write_blank_line()
+		write_findings(heading)
+
+		heading = 'SLO Summary'
+		write_h3_heading(heading)
+		write_summary(report_settings20_slo_details.summarize)
+		write_summary(report_broken_slo_metrics.summarize)
+		write_blank_line()
+		write_findings(heading)
+
+		heading = 'Problems Summary'
+		write_h3_heading(heading)
+		write_summary(report_ongoing_problems.summarize)
 		write_blank_line()
 		write_findings(heading)
 

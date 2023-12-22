@@ -21,6 +21,8 @@ def process_report(env, token, summary_mode):
     summary = []
 
     count_total = 0
+    count_has_management_zone_filter = 0
+    count_has_no_management_zone_filter = 0
 
     endpoint = '/api/v2/settings/objects'
     schema_ids = 'builtin:monitoring.slo'
@@ -45,19 +47,23 @@ def process_report(env, token, summary_mode):
                 if 'mzName' in slo_filter:
                     management_zone_name = re.sub('.*mzName\(', '', slo_filter).replace(')', '').replace('"', '')
                     management_zone_name = re.sub(',.*', '', management_zone_name)
+                    count_has_management_zone_filter += 1
                 else:
                     management_zone_name = ''
                     if customer_specific_management_zone_names:
                         management_zone_name = customer_specific_management_zone_names.get(name, '')
                     if management_zone_name == '':
                         print(f'Management zone missing for {name}: {slo_filter}: {item}')
+                    count_has_no_management_zone_filter += 1
 
                 if not summary_mode:
                     rows.append((name, management_zone_name, slo_summary, metric_name, metric_expression, enabled))
 
                 count_total += 1
 
-    summary.append('There are ' + str(count_total) + ' SLOs currently defined.')
+    summary.append(f'There are {count_total} SLOs currently defined.')
+    summary.append(f'{count_has_management_zone_filter} SLOs have a management zone filter.')
+    summary.append(f'{count_has_no_management_zone_filter} SLOs have no management zone filter.')
 
     if not summary_mode:
         rows = sorted(rows)

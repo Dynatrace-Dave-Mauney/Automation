@@ -18,12 +18,12 @@ def process_report(env, token, summary_mode):
     summary = []
 
     count_total = 0
-    count_has_management_zone = 0
-    count_has_no_management_zone = 0
-    count_has_no_management_zone_but_probably_should = 0
+    count_has_host_group = 0
+    count_has_no_host_group = 0
+    count_has_no_host_group_but_should_probably = 0
 
     endpoint = '/api/v2/entities'
-    raw_params = 'pageSize=4000&entitySelector=type(HOST)&to=-5m&fields=properties,tags,managementZones'
+    raw_params = 'pageSize=4000&entitySelector=type(HOST)&to=-5m&fields=properties,tags'
     params = urllib.parse.quote(raw_params, safe='/,&=?')
     entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     for entities_json in entities_json_list:
@@ -54,49 +54,38 @@ def process_report(env, token, summary_mode):
                 if "Data Center" in str(tag) or "Datacenter" in str(tag):
                     data_center = tag.get('value', '')
 
-            host_group_name = properties.get('hostGroupName', 'No Host Group')
-
-            management_zone_name_list = []
-            management_zone_names = ''
-            management_zone_dict_list = inner_entities_json.get('managementZones')
-            if management_zone_dict_list:
-                for management_zone_dict in management_zone_dict_list:
-                    management_zone_name_list.append(management_zone_dict.get('name'))
-
-            if management_zone_name_list:
-                management_zone_names = sort_and_stringify_list_items(management_zone_name_list)
-
-            if management_zone_names != '':
-                count_has_management_zone += 1
+            host_group_name = properties.get('hostGroupName', None)
+            if host_group_name:
+                count_has_host_group += 1
             else:
-                count_has_no_management_zone += 1
+                count_has_no_host_group += 1
                 if paas_vendor_type != 'AZURE_WEBSITES' and paas_vendor_type != 'AWS_ECS_FARGATE':
-                    count_has_no_management_zone_but_probably_should += 1
+                    count_has_no_host_group_but_should_probably += 1
 
             if not summary_mode:
-                if management_zone_names == '':
-                    rows.append((display_name, entity_id, monitoring_mode, host_group_name, management_zone_names, paas_vendor_type, logical_cpu_cores, cpu_cores, memory_total, os_type, state, network_zone, hypervisor_type, cloud_type, k8s_cluster, environment_name, data_center))
+                if not host_group_name:
+                    rows.append((display_name, entity_id, monitoring_mode, paas_vendor_type, logical_cpu_cores, cpu_cores, memory_total, os_type, state, network_zone, hypervisor_type, cloud_type, k8s_cluster, environment_name, data_center))
 
             count_total += 1
 
     summary.append('There are ' + str(count_total) + ' hosts currently being monitored.  ')
     if count_total > 0:
         summary.append(
-            str(count_has_management_zone) + ' hosts have management zone(s).  ' +
-            str(count_has_no_management_zone) + ' hosts do not have management zone(s).  ' +
-            str(count_has_no_management_zone_but_probably_should) + ' hosts do not have management zone(s) and probably should.  ')
+            str(count_has_host_group) + ' hosts have a host group.  ' +
+            str(count_has_no_host_group) + ' hosts do not have a host group.  ' +
+            str(count_has_no_host_group_but_should_probably) + ' hosts do not have a host group and probably should.  ')
 
     if not summary_mode:
         rows = sorted(rows)
-        report_name = 'Hosts'
+        report_name = 'Hosts Without A Host Group'
         report_writer.initialize_text_file(None)
-        report_headers = ('displayName', 'entityId', 'monitoringMode', 'host group', 'management zone', 'paasVendorType', 'logicalCpuCores', 'cpuCores', 'memoryTotal', 'osType', 'state', 'networkZone', 'hypervisorType', 'cloudType', 'k8sCluster', 'environment', 'dataCenter')
+        report_headers = ('displayName', 'entityId', 'monitoringMode', 'paasVendorType', 'logicalCpuCores', 'cpuCores', 'memoryTotal', 'osType', 'state', 'networkZone', 'hypervisorType', 'cloudType', 'k8sCluster', 'environment', 'dataCenter')
         report_writer.write_console(report_name, report_headers, rows, delimiter='|')
         report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
         write_strings(['Total Hosts: ' + str(count_total)])
-        write_strings(['Hosts with Management Zones: ' + str(count_has_management_zone)])
-        write_strings(['Hosts without Management Zones: ' + str(count_has_no_management_zone)])
-        write_strings(['Hosts without Management Zones (and probably should have one): ' + str(count_has_no_management_zone_but_probably_should)])
+        write_strings(['Hosts with Host Groups: ' + str(count_has_host_group)])
+        write_strings(['Hosts without Host Groups: ' + str(count_has_no_host_group)])
+        write_strings(['Hosts without Host Groups (and probably should have one): ' + str(count_has_no_host_group_but_should_probably)])
         write_strings(summary)
         report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
         report_writer.write_html(None, report_name, report_headers, rows)
@@ -115,15 +104,6 @@ def sort_and_stringify_dictionary_items(any_dict):
     dict_str = dict_str.replace('~COMMA~', ', ')
     dict_str = dict_str.replace("'", "")
     return dict_str
-
-
-def sort_and_stringify_list_items(any_list):
-    list_str = str(sorted(any_list))
-    list_str = list_str.replace('[', '')
-    list_str = list_str.replace(']', '')
-    list_str = list_str.replace("'", "")
-    list_str = list_str.replace(' ', '')
-    return list_str
 
 
 def write_strings(string_list):
