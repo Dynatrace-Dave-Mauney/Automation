@@ -29,6 +29,12 @@ client_secret = os.getenv('CLIENT_SECRET')
 client_id = os.getenv('CLIENT_ID')
 skip_slow_api_calls = environment.get_boolean_environment_variable('SKIP_SLOW_API_CALLS', 'True')
 
+configuration_path = 'configurations.yaml'
+if os.path.isfile(configuration_path):
+    account_id = environment.get_configuration('account_id', configuration_file=configuration_path)
+    client_secret = environment.get_configuration('client_secret', configuration_file=configuration_path)
+    client_id = environment.get_configuration('client_id', configuration_file=configuration_path)
+
 print('Masked environment variables:')
 print(f'account_id: {account_id[:10]}*')
 print(f'client_secret: {client_secret[:5]}*{client_secret[70:]}')
