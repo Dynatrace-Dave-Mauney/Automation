@@ -16,6 +16,11 @@ def process_report(env, token, summary_mode):
     summary = []
 
     count_total = 0
+    count_dynatrace_owner = 0
+    count_last_used_date_none = 0
+    count_too_many_scopes = 0
+
+    too_many_scopes_threshold = 10
 
     endpoint = '/api/v2/apiTokens'
     api_tokens_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
@@ -29,21 +34,41 @@ def process_report(env, token, summary_mode):
             owner = inner_api_tokens_json.get('owner')
             creation_date = inner_api_tokens_json.get('creationDate')
 
+            r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{entity_id}', token)
+            api_token = r.json()
+
+            last_used_date = api_token.get('lastUsedDate')
+            scopes = api_token.get('scopes')
+
             if not summary_mode:
-                rows.append((name, entity_id, str(enabled), owner, creation_date))
+                rows.append((name, entity_id, str(enabled), owner, creation_date, last_used_date, report_writer.stringify_list(scopes)))
 
             count_total += 1
 
-    summary.append('There are ' + str(count_total) + ' API tokens currently available.')
+            if owner.lower().endswith('dynatrace.com'):
+                count_dynatrace_owner += 1
+
+            if not last_used_date:
+                count_last_used_date_none += 1
+
+            if len(scopes) > too_many_scopes_threshold:
+                count_too_many_scopes += 1
+
+    summary.append(f'There are {count_total} API tokens currently available.')
+    summary.append(f'There are {count_last_used_date_none} API Tokens with no Last Used Date.')
+    summary.append(f'There are {count_too_many_scopes} API Tokens with more than {too_many_scopes_threshold} scopes.')
+    summary.append(f'There are {count_dynatrace_owner} API Tokens owned by a Dynatrace employee.')
 
     if not summary_mode:
         rows = sorted(rows)
         report_name = ''
         report_writer.initialize_text_file(None)
-        report_headers = ('name', 'id', 'enabled', 'owner', 'creationDate')
+        report_headers = ('Name', 'ID', 'Enabled', 'Owner', 'Creation Date', 'Last Used Date', 'Scopes')
         report_writer.write_console(report_name, report_headers, rows, delimiter='|')
         report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
-        write_strings(['Total API Tokens: ' + str(count_total)])
+        write_strings([f'Total API Tokens: {count_total}'])
+        write_strings([f'API Tokens with no Last Used Date: {count_last_used_date_none}'])
+        write_strings([f'API Tokens with more than {too_many_scopes_threshold} scopes: {count_too_many_scopes}'])
         write_strings(summary)
         report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
         report_writer.write_html(None, report_name, report_headers, rows)

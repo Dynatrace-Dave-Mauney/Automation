@@ -23,7 +23,7 @@ def process_report(env, token, summary_mode):
     count_total = 0
     count_too_many_dem_units = 0
 
-    too_many_dem_units_threshold = 240
+    too_many_dem_units_threshold = 120
 
     endpoint = '/api/v1/synthetic/monitors'
     if include_disabled:

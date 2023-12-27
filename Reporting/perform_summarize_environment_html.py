@@ -9,7 +9,8 @@ import report_anomaly_detection_disk_events_details
 import report_anomaly_detection_hosts_details
 import report_anomaly_detection_services_details
 import report_anomaly_detection_vmware_details
-import report_api_token_details
+# import report_api_token_details
+import report_api_token_extended_details
 import report_application_details
 import report_autotag_details
 import report_aws_credential_details
@@ -19,7 +20,7 @@ import report_calculated_metrics_details
 import report_cluster_details
 import report_conditional_naming_details
 import report_credential_vault_details
-import report_dashboard_details
+# import report_dashboard_details
 import report_dashboard_extended_details
 import report_data_privacy_details
 import report_extension_details
@@ -45,6 +46,7 @@ import report_settings20_details
 import report_settings20_slo_details
 import report_slo_dashboard_references
 import report_synthetic_details
+import report_synthetic_consumption
 import report_synthetic_http_check_details
 import report_synthetic_location_details
 
@@ -255,6 +257,12 @@ def process():
 		write_blank_line()
 		write_findings(heading)
 
+		heading = 'Synthetic Consumption Summary'
+		write_h3_heading(heading)
+		write_summary(report_synthetic_consumption.summarize)
+		write_blank_line()
+		write_findings(heading)
+
 		heading = 'Synthetic Location Summary'
 		write_h3_heading(heading)
 		write_summary(report_synthetic_location_details.summarize)
@@ -353,7 +361,7 @@ def process():
 
 		heading = 'Dashboards Summary'
 		write_h3_heading(heading)
-		write_summary(report_dashboard_details.summarize)
+		# write_summary(report_dashboard_details.summarize)
 		write_summary(report_dashboard_extended_details.summarize)
 		write_blank_line()
 		write_findings(heading)
@@ -452,7 +460,7 @@ def process():
 
 		heading = 'API Token Summary'
 		write_h3_heading(heading)
-		write_summary(report_api_token_details.summarize)
+		write_summary(report_api_token_extended_details.summarize)
 		write_blank_line()
 		write_findings(heading)
 
