@@ -30,9 +30,9 @@ def process_report(env, token, summary_mode):
             name = inner_dashboards_json.get('name')
             owner = inner_dashboards_json.get('owner')
 
-            endpoint = '/api/config/v1/dashboards/' + entity_id
-            params = ''
-            dashboard = dynatrace_api.get_without_pagination(env, token, endpoint, params)[0]  # No pagination needed
+            endpoint = '/api/config/v1/dashboards'
+            r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{entity_id}', token)
+            dashboard = r.json()
             dashboard_metadata = dashboard.get('dashboardMetadata')
             shared = dashboard_metadata.get('shared', False)
             preset = dashboard_metadata.get('preset', False)
@@ -82,7 +82,7 @@ def main():
     # env_name_supplied = 'NonProd'
     # env_name_supplied = 'Prep'
     # env_name_supplied = 'Dev'
-    # env_name_supplied = 'Personal'
+    env_name_supplied = 'Personal'
     # env_name_supplied = 'Demo'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
     process(env, token)

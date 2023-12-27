@@ -20,6 +20,7 @@ import report_cluster_details
 import report_conditional_naming_details
 import report_credential_vault_details
 import report_dashboard_details
+import report_dashboard_extended_details
 import report_data_privacy_details
 import report_extension_details
 import report_extension_v2_details
@@ -353,6 +354,7 @@ def process():
 		heading = 'Dashboards Summary'
 		write_h3_heading(heading)
 		write_summary(report_dashboard_details.summarize)
+		write_summary(report_dashboard_extended_details.summarize)
 		write_blank_line()
 		write_findings(heading)
 
