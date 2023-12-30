@@ -22,6 +22,9 @@ def process_report(env, token, summary_mode):
 
     count_total = 0
     count_too_many_dem_units = 0
+    count_total_dem_units_per_hour = 0
+    maximum_dem_units_per_hour = 0
+    average_dem_units_per_hour = 0
 
     too_many_dem_units_threshold = 120
 
@@ -54,6 +57,9 @@ def process_report(env, token, summary_mode):
             event_count = len(script_events)
 
             estimated_hourly_consumption = estimate_consumption(synthetic_enabled, synthetic_type, event_count, synthetic_frequency, synthetic_location_count)
+            count_total_dem_units_per_hour += estimated_hourly_consumption
+            if estimated_hourly_consumption > maximum_dem_units_per_hour:
+                maximum_dem_units_per_hour = estimated_hourly_consumption
 
             if not summary_mode:
                 row_data = (synthetic_name, synthetic_enabled, synthetic_type, event_count, synthetic_frequency, synthetic_location_count, estimated_hourly_consumption)
@@ -68,8 +74,13 @@ def process_report(env, token, summary_mode):
             # if count_total >= 50:
             #     break
 
+        average_dem_units_per_hour = count_total_dem_units_per_hour/count_total
+
         summary.append(f'There are {count_total} synthetic tests currently defined.')
         summary.append(f'There are {count_too_many_dem_units} synthetic tests currently defined using more than {too_many_dem_units_threshold} DEM units per hour.')
+        summary.append(f'There are {count_total_dem_units_per_hour} total DEM units per hour being consumed by Synthetics.')
+        summary.append(f'The maximum consumption by a Synthetic is {maximum_dem_units_per_hour} DEM units per hour.')
+        summary.append(f'The average consumption by all Synthetics is {average_dem_units_per_hour} DEM units per hour.')
 
         if not summary_mode:
             sorted_rows = sorted(rows, key=lambda row: row[0].lower())
@@ -77,12 +88,21 @@ def process_report(env, token, summary_mode):
             report_headers = ['Synthetic Name', 'State (Enabled/Disabled)', 'Type (Browser/HTTP)', 'Number of Steps', 'Frequency (Runs every X minutes)', 'Number of Locations', 'Hourly DEM Unit Consumption']
             report_writer.write_console(report_name, report_headers, sorted_rows, delimiter='|')
             report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
-            write_strings(['Total Synthetic Tests: ' + str(count_total)])
+            write_string(f'Total Synthetic Tests: {count_total}')
+            write_string(f'Synthetics using more than {too_many_dem_units_threshold} DEM units per hour: {count_too_many_dem_units}')
+            write_string(f'Total DEM units per hour being consumed by Synthetics: {count_total_dem_units_per_hour}')
+            write_string(f'Maximum DEM units per hour consumption by a Synthetic: {maximum_dem_units_per_hour}')
+            write_string(f'Average DEM units per hour consumption by all Synthetics: {average_dem_units_per_hour}')
             write_strings(summary)
             report_writer.write_xlsx(None, report_name, report_headers, sorted_rows, header_format=None, auto_filter=(0, len(report_headers)))
             report_writer.write_html(None, report_name, report_headers, sorted_rows)
 
     return summary
+
+
+def write_string(string):
+    report_writer.write_console_plain_text([string])
+    report_writer.write_plain_text(None, [string])
 
 
 def write_strings(string_list):
@@ -120,8 +140,8 @@ def main():
     # env_name_supplied = 'Demo'
     _, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 
-    # process(env, token)
-    print(summarize(env, token))
+    process(env, token)
+    # print(summarize(env, token))
 
 
 if __name__ == '__main__':

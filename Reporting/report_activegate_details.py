@@ -102,7 +102,6 @@ def process_report(env, token, summary_mode):
             count_total += 1
 
     summary.append('There are ' + str(count_total) + ' ActiveGates currently defined and reporting.')
-
     summary.append('There are ' + str(count_version_not_up_to_date) + ' ActiveGates that are not up to date.')
     summary.append('There are ' + str(count_version_up_to_date) + ' ActiveGates that are up to date.')
     summary.append('The newest minor version is ' + str(max_version))
@@ -110,6 +109,7 @@ def process_report(env, token, summary_mode):
     summary.append('ActiveGate automatic update setting is ' + str(active_gate_auto_update_setting))
 
     if not summary_mode:
+        rows = sorted(rows)
         report_writer.initialize_text_file(None)
         report_name = 'ActiveGate Details'
         report_headers = ('hostname', 'id', 'osType', 'version', 'version status', 'networkZone', 'networkAddresses', 'loadBalancerAddresses', 'type', 'environments', 'autoUpdateSettings', 'enabledModules')

@@ -27,12 +27,15 @@ import report_extension_details
 import report_extension_v2_details
 import report_frequent_issue_detection_details
 import report_host_details
+import report_hosts_without_host_group
+import report_hosts_without_management_zone
 import report_host_group_details
 import report_hosts_autoupdate_details
 import report_kubernetes_credential_details
 import report_maintenance_window_details
 import report_management_zone_details
 import report_mobile_application_details
+import report_monitored_entities_custom_tags_details
 import report_network_zone_details
 import report_notification_details
 import report_oneagent_details
@@ -40,9 +43,10 @@ import report_oneagent_direct_communication_details
 import report_ongoing_problems
 import report_plugin_details
 import report_process_group_details
+import report_rum_details
 import report_service_details
 import report_service_settings_details
-import report_settings20_details
+# import report_settings20_details
 import report_settings20_slo_details
 import report_slo_dashboard_references
 import report_synthetic_details
@@ -50,7 +54,7 @@ import report_synthetic_consumption
 import report_synthetic_http_check_details
 import report_synthetic_location_details
 
-from Reuse import dynatrace_api
+# from Reuse import dynatrace_api
 from Reuse import environment
 
 friendly_function_name = 'Dynatrace Automation Reporting'
@@ -105,8 +109,8 @@ html_bottom = '''</pre>
 </html>'''
 
 # outfile and findings are global for convenience.
-outfile_name = '../$Output/Reporting/Environment_Summary_For_' + env_name.replace(' ', '_') + '.html'
-outfile_name = 'Environment_Summary_For_' + env_name.replace(' ', '_') + '.html'
+# outfile_name = '../$Output/Reporting/Environment_Summary_For_' + env_name.replace(' ', '_') + '.html'
+# outfile_name = 'Environment_Summary_For_' + env_name.replace(' ', '_') + '.html'
 outfile_name = 'perform_summarize_environment_html_for_' + env_name.replace(' ', '_') + '.html'
 outfile = open(outfile_name, 'w')
 outfile.close()
@@ -149,9 +153,12 @@ def write_h3_heading(heading):
 
 def write_summary(func):
 	if write_summary_switch:
-		# DEBUG:
-		# print('Printing summary')
 		summary_list = func(env, token)
+		write_summary_results(summary_list)
+
+
+def write_summary_results(summary_list):
+	if write_summary_switch:
 		for line in summary_list:
 			line = line.replace('are 0', 'are no')
 			line = line.replace('.  0 are', '.  None are')
@@ -236,6 +243,7 @@ def process():
 		heading = 'Web Applications Summary'
 		write_h3_heading(heading)
 		write_summary(report_application_details.summarize)
+		write_summary(report_rum_details.summarize)
 		write_blank_line()
 		write_findings(heading)
 
@@ -284,12 +292,14 @@ def process():
 		heading = 'Hosts Summary'
 		write_h3_heading(heading)
 		write_summary(report_host_details.summarize)
+		write_summary(report_hosts_without_host_group.summarize)
+		write_summary(report_hosts_without_management_zone.summarize)
 		write_blank_line()
 		write_findings(heading)
 
 		heading = 'Host Groups Summary'
 		write_h3_heading(heading)
-		write_summary(report_host_group_details.summarize)
+		write_summary_results(report_host_group_details.summarize(env, token, perform_check_naming_standard=True))
 		write_blank_line()
 		write_findings(heading)
 
@@ -337,13 +347,19 @@ def process():
 
 		heading = 'Management Zones Summary'
 		write_h3_heading(heading)
-		write_summary(report_management_zone_details.summarize)
+		write_summary_results(report_management_zone_details.summarize(env, token, perform_check_naming_standard=True))
 		write_blank_line()
 		write_findings(heading)
 
 		heading = 'AutoTags Summary'
 		write_h3_heading(heading)
 		write_summary(report_autotag_details.summarize)
+		write_blank_line()
+		write_findings(heading)
+
+		heading = 'Manual Tags Summary'
+		write_h3_heading(heading)
+		write_summary(report_monitored_entities_custom_tags_details.summarize)
 		write_blank_line()
 		write_findings(heading)
 
@@ -487,15 +503,10 @@ def main(arguments):
 	usage = '''
 	perform_summarize_environment_print.py: Report environment summary
 
-	Usage:    perform_summarize_environment_print.py <tenant/environment URL> <token> <friendly_environment_name>
-	Examples: perform_summarize_environment_print.py https://<TENANT>.live.dynatrace.com ABCD123ABCD123 SaaSDemo
-			  perform_summarize_environment_print.py https://<TENANT>.dynatrace-managed.com/e/<ENV>> ABCD123ABCD123 ManagedDemo
+	Usage:    	perform_summarize_environment_print.py <tenant/environment URL> <token> <friendly_environment_name>
+	Examples: 	perform_summarize_environment_print.py https://<TENANT>.live.dynatrace.com ABCD123ABCD123 SaaSDemo
+				perform_summarize_environment_print.py https://<TENANT>.dynatrace-managed.com/e/<ENV>> ABCD123ABCD123 ManagedDemo
 	'''
-
-	# DEBUG:
-	# print('main invoked')
-	# print('args' + str(arguments))
-	# print(env)
 
 	# When no arguments are supplied, use the default global values
 	if len(arguments) == 1:
@@ -526,4 +537,3 @@ def main(arguments):
 
 if __name__ == '__main__':
 	main(sys.argv)
-

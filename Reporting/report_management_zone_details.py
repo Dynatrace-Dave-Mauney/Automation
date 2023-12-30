@@ -2,12 +2,21 @@ from Reuse import dynatrace_api
 from Reuse import environment
 from Reuse import report_writer
 
+perform_check_naming_standard = False
+report_naming_standard_violations_only = False
 
-def summarize(env, token):
+
+def summarize(env, token, **kwargs):
+    global perform_check_naming_standard
+    perform_check_naming_standard = kwargs.get('perform_check_naming_standard', False)
     return process_report(env, token, True)
 
 
-def process(env, token):
+def process(env, token, **kwargs):
+    global perform_check_naming_standard
+    global report_naming_standard_violations_only
+    perform_check_naming_standard = kwargs.get('perform_check_naming_standard', False)
+    report_naming_standard_violations_only = kwargs.get('report_naming_standard_violations_only', False)
     return process_report(env, token, False)
 
 
@@ -16,6 +25,8 @@ def process_report(env, token, summary_mode):
     summary = []
 
     count_total = 0
+    count_naming_standard_pass = 0
+    count_naming_standard_fail = 0
 
     endpoint = '/api/config/v1/managementZones'
     management_zones_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
@@ -44,19 +55,34 @@ def process_report(env, token, summary_mode):
 
             # debug_info = f"     -------> DEBUG INFO (rules): {management_zone.get('rules')}"
 
+            standard_string = 'N/A'
+            standard_met = True
+            if perform_check_naming_standard:
+                standard_met, reason = check_naming_standard(env, name)
+                if standard_met:
+                    standard_string = 'Meets naming standards'
+                    count_naming_standard_pass += 1
+                else:
+                    standard_string = f'Does not meet naming standards because {reason}'
+                    count_naming_standard_fail += 1
+
             if not summary_mode:
-                # rows.append((name, formatted_rules, str(debug_info)))
-                rows.append((name, formatted_rules, formatted_entity_rules, formatted_dimensional_rules, entity_id, str(description)))
+                # rows.append((name, formatted_rules, formatted_entity_rules, formatted_dimensional_rules, entity_id, description))
+                if not report_naming_standard_violations_only or (report_naming_standard_violations_only and not standard_met):
+                    rows.append((name, formatted_rules, formatted_entity_rules, formatted_dimensional_rules, entity_id, description, standard_string))
 
             count_total += 1
 
-    summary.append('There are ' + str(count_total) + ' management zones currently defined.')
+    summary.append(f'There are {count_total} management zones currently defined.')
+    if perform_check_naming_standard:
+        summary.append(f'There are {count_naming_standard_pass} management zones currently defined that meet the naming standard.')
+        summary.append(f'There are {count_naming_standard_fail} management zones currently defined that do not meet the naming standard.')
 
     if not summary_mode:
         rows = sorted(rows)
         report_name = 'Management Zones'
         report_writer.initialize_text_file(None)
-        report_headers = ('Name', 'Rules', 'Entity Rules', 'Dimensional Rules', 'ID', 'Description')
+        report_headers = ('Name', 'Rules', 'Entity Rules', 'Dimensional Rules', 'ID', 'Description', 'Naming Standard Finding')
         report_writer.write_console(report_name, report_headers, rows, delimiter='|')
         report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
         write_strings(['Total Management Zones: ' + str(count_total)])
@@ -224,6 +250,21 @@ def format_dimensional_rules(dimensional_rules):
     return str(formatted_dimensional_rules)
 
 
+def check_naming_standard(env, name):
+    name_split_list = name.split('-')
+    if len(name_split_list) != 2:
+        return False, 'Name must have one hyphen'
+    else:
+        if env.startswith('https://p'):
+            if name_split_list[1] not in ['PROD', 'DR']:
+                return False, 'Production name must end with "-PROD" or "-DR"'
+        else:
+            if name_split_list[1] not in ['DEV', 'SIT', 'XXX']:
+                return False, 'Non-Production name must end with "-DEV", "-SIT", etc.'
+
+    return True, 'Name meets standards'
+
+
 def main():
     friendly_function_name = 'Dynatrace Automation Reporting'
     env_name_supplied = environment.get_env_name(friendly_function_name)
@@ -236,7 +277,8 @@ def main():
     # env_name_supplied = 'Demo'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
     process(env, token)
-    
+    # print(summarize(env, token, perform_check_naming_standard=True))
+
     
 if __name__ == '__main__':
     main()

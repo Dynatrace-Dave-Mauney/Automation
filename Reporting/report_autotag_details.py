@@ -16,39 +16,55 @@ def process_report(env, token, summary_mode):
     summary = []
 
     count_total = 0
+    count_key_value = 0
+    count_key_only = 0
 
     endpoint = '/api/config/v1/autoTags'
-    autotags_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
+    auto_tags_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
-    for autotags_json in autotags_json_list:
-        inner_autotags_json_list = autotags_json.get('values')
-        for inner_autotags_json in inner_autotags_json_list:
-            entity_id = inner_autotags_json.get('id')
-            name = inner_autotags_json.get('name')
+    for auto_tags_json in auto_tags_json_list:
+        inner_auto_tags_json_list = auto_tags_json.get('values')
+        for inner_auto_tags_json in inner_auto_tags_json_list:
+            entity_id = inner_auto_tags_json.get('id')
+            name = inner_auto_tags_json.get('name')
 
-            # for later if details of rules, etc. are needed from each autotag...
             endpoint = '/api/config/v1/autoTags/' + entity_id
             r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
-            autotag = r.json()
+            auto_tag = r.json()
 
-            rules = autotag.get('rules')
+            # import json
+            # formatted_auto_tag = json.dumps(auto_tag, indent=4, sort_keys=False)
+            # print(formatted_auto_tag)
+
+            key_value_string = ''
+            rules = auto_tag.get('rules')
+            if is_key_value(rules):
+                key_value_string = 'Key/Value Pair'
+                count_key_value += 1
+            else:
+                key_value_string = 'Key Only'
+                count_key_only += 1
 
             if not summary_mode:
-                rows.append((name, entity_id, str(rules)))
+                rows.append((name, entity_id, key_value_string, str(rules)))
 
             count_total += 1
 
     rows = sorted(rows)
 
-    summary.append('There are ' + str(count_total) + ' automatically applied tags currently defined.')
+    summary.append(f'There are {count_total} automatically applied tags currently defined.')
+    summary.append(f'There are {count_key_value} key/value automatically applied tags currently defined.')
+    summary.append(f'There are {count_key_only} key only automatically applied tags currently defined.')
 
     if not summary_mode:
         report_name = 'Automatic Tags'
         report_writer.initialize_text_file(None)
-        report_headers = ('name', 'id', 'rules')
+        report_headers = ('Name', 'ID', 'Key/Value Finding', 'Rules')
         report_writer.write_console(report_name, report_headers, rows, delimiter='|')
         report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
-        write_strings(['Total Automatically Applied Tags: ' + str(count_total)])
+        write_string(f'Total Automatically Applied Tags: {count_total}')
+        write_string(f'Total Automatically Applied Key/Value Tags: {count_key_value}')
+        write_string(f'Total Automatically Applied Key Only Tags: {count_key_only}')
         write_strings(summary)
         report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
         report_writer.write_html(None, report_name, report_headers, rows)
@@ -56,9 +72,23 @@ def process_report(env, token, summary_mode):
     return summary
 
 
+def write_string(string):
+    report_writer.write_console_plain_text([string])
+    report_writer.write_plain_text(None, [string])
+
+
 def write_strings(string_list):
     report_writer.write_console_plain_text(string_list)
     report_writer.write_plain_text(None, string_list)
+
+
+def is_key_value(rules):
+    for rule in rules:
+        value_format = rule.get('valueFormat')
+        if value_format:
+            return True
+
+    return False
 
 
 def main():
