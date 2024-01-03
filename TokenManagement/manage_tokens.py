@@ -22,27 +22,31 @@ def process():
 		print('Env or Token Environment Variable Not Set!')
 		exit(1)
 
-	test()
-	# post_dynatrace_automation_token()
-
-	# post_reporting_token()
-	# post_slo_generation_token()
-
-	# post_fargate_paas_plus_token()
-
-	# post_fargate_paas_token()
-	# post_active_gate_certificate_management_token()
-	# post_monaco_token()
-	# post_installer_download_token()
-
-	# list_tokens()
-	# post_reporting_token()
-	# post_robot_admin_token()
-
 	# Run test
 	# test()
 
-	# See "test()" method for common examples
+	# or...
+
+	# Create some tokens!
+	# These are the most important ones for the "Automation" project...
+	# post_dynatrace_automation_token()
+	# post_reporting_token()
+	# post_tools_token()
+
+	# These are important for other reasons
+	# post_monaco_token()
+	# post_installer_download_token()
+
+	# These are more "special cases"
+	# post_slo_generation_token()
+	# post_fargate_paas_plus_token()
+	# post_fargate_paas_token()
+	# post_active_gate_certificate_management_token()
+
+	# Commonly used for obvious reasons
+	# list_tokens()
+
+	# See "test()" method for common examples, if you don't see it above...
 
 
 def post_api_token():
@@ -95,6 +99,19 @@ def post_dynatrace_automation_token():
 		])
 
 
+def post_reporting_token():
+	return post_token('Automation Reporting', ["activeGates.read", "activeGateTokenManagement.read", "apiTokens.read", "auditLogs.read", "entities.read", "events.read", "extensionConfigurations.read", "extensionEnvironment.read", "extensions.read", "metrics.read", "networkZones.read", "problems.read", "releases.read", "settings.read", "slo.read", "syntheticLocations.read", "credentialVault.read", "DataExport", "DssFileManagement", "ReadConfig", "ReadSyntheticData"])
+	# return post_token('Reporting Pipeline', ["activeGates.read", "activeGateTokenManagement.read", "apiTokens.read", "auditLogs.read", "entities.read", "events.read", "extensionConfigurations.read", "extensionEnvironment.read", "extensions.read", "metrics.read", "networkZones.read", "problems.read", "releases.read", "settings.read", "slo.read", "syntheticLocations.read", "credentialVault.read", "DataExport", "DssFileManagement", "ReadConfig", "ReadSyntheticData"])
+
+
+def post_tools_token():
+	return post_token('Automation Tools', ["activeGates.read", "activeGateTokenManagement.read", "apiTokens.read", "auditLogs.read", "credentialVault.read", "entities.read", "entities.write", "events.ingest", "events.read", "extensionConfigurations.read", "extensionEnvironment.read", "extensions.read", "geographicRegions.read", "hub.read", "metrics.read", "networkZones.read", "problems.read", "releases.read", "settings.read", "settings.write", "slo.read", "syntheticExecutions.read", "syntheticLocations.read", "CaptureRequestData", "DataExport", "DataImport", "DssFileManagement", "DTAQLAccess", "ExternalSyntheticIntegration", "LogExport", "ReadConfig", "ReadSyntheticData", "WriteConfig"])
+
+
+def post_tools_token_without_log_export():
+	return post_token('Automation Tools', ["activeGates.read", "activeGateTokenManagement.read", "apiTokens.read", "auditLogs.read", "credentialVault.read", "entities.read", "entities.write", "events.ingest", "events.read", "extensionConfigurations.read", "extensionEnvironment.read", "extensions.read", "geographicRegions.read", "hub.read", "metrics.read", "networkZones.read", "problems.read", "releases.read", "settings.read", "settings.write", "slo.read", "syntheticExecutions.read", "syntheticLocations.read", "CaptureRequestData", "DataExport", "DataImport", "DssFileManagement", "DTAQLAccess", "ExternalSyntheticIntegration", "ReadConfig", "ReadSyntheticData", "WriteConfig"])
+
+
 def post_dashboard_generator_token():
 	return post_token('Dashboard Generator', ["metrics.read", "ReadConfig", "WriteConfig"])
 
@@ -140,19 +157,6 @@ def post_problem_analysis_token():
 
 def post_read_metrics_token():
 	return post_token('Read Metrics', ["metrics.read"])
-
-
-def post_reporting_token():
-	return post_token('Reporting', ["activeGates.read", "activeGateTokenManagement.read", "apiTokens.read", "auditLogs.read", "entities.read", "events.read", "extensionConfigurations.read", "extensionEnvironment.read", "extensions.read", "metrics.read", "networkZones.read", "problems.read", "releases.read", "settings.read", "slo.read", "syntheticLocations.read", "credentialVault.read", "DataExport", "DssFileManagement", "ReadConfig", "ReadSyntheticData"])
-	# return post_token('Reporting Pipeline', ["activeGates.read", "activeGateTokenManagement.read", "apiTokens.read", "auditLogs.read", "entities.read", "events.read", "extensionConfigurations.read", "extensionEnvironment.read", "extensions.read", "metrics.read", "networkZones.read", "problems.read", "releases.read", "settings.read", "slo.read", "syntheticLocations.read", "credentialVault.read", "DataExport", "DssFileManagement", "ReadConfig", "ReadSyntheticData"])
-
-
-def post_robot_admin_token():
-	return post_token('Robot Admin V4', ["activeGates.read", "activeGateTokenManagement.read", "apiTokens.read", "auditLogs.read", "credentialVault.read", "entities.read", "entities.write", "events.ingest", "events.read", "extensionConfigurations.read", "extensionEnvironment.read", "extensions.read", "geographicRegions.read", "hub.read", "metrics.read", "networkZones.read", "problems.read", "releases.read", "settings.read", "settings.write", "slo.read", "syntheticExecutions.read", "syntheticLocations.read", "CaptureRequestData", "DataExport", "DataImport", "DssFileManagement", "DTAQLAccess", "ExternalSyntheticIntegration", "LogExport", "ReadConfig", "ReadSyntheticData", "WriteConfig"])
-
-
-def post_robot_admin_token_dev():
-	return post_token('Robot Admin Dev V4', ["activeGates.read", "activeGateTokenManagement.read", "apiTokens.read", "auditLogs.read", "credentialVault.read", "entities.read", "entities.write", "events.ingest", "events.read", "extensionConfigurations.read", "extensionEnvironment.read", "extensions.read", "geographicRegions.read", "hub.read", "metrics.read", "networkZones.read", "problems.read", "releases.read", "settings.read", "settings.write", "slo.read", "syntheticExecutions.read", "syntheticLocations.read", "CaptureRequestData", "DataExport", "DataImport", "DssFileManagement", "DTAQLAccess", "ExternalSyntheticIntegration", "ReadConfig", "ReadSyntheticData", "WriteConfig"])
 
 
 def post_super_reader_token():
@@ -256,9 +260,9 @@ def test():
 	delete_token(test_token.get('id'))
 	test_token = post_reporting_token()
 	delete_token(test_token.get('id'))
-	test_token = post_robot_admin_token()
+	test_token = post_tools_token()
 	delete_token(test_token.get('id'))
-	test_token = post_robot_admin_token_dev()
+	test_token = post_tools_token_without_log_export()
 	delete_token(test_token.get('id'))
 	test_token = post_super_reader_token()
 	delete_token(test_token.get('id'))
