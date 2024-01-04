@@ -26,8 +26,26 @@ def process_report(env, token, summary_mode):
             entity_id = inner_azure_credentials_json.get('id')
             name = inner_azure_credentials_json.get('name')
 
+            r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{entity_id}', token)
+            azure_credentials = r.json()
+            print(azure_credentials)
+            label = azure_credentials.get('label')
+            app_id = azure_credentials.get('appId')
+            directory_id = azure_credentials.get('directoryId')
+            key = azure_credentials.get('key')
+            active = azure_credentials.get('active')
+            auto_tagging = azure_credentials.get('autoTagging')
+            monitor_only_tagged_entities = azure_credentials.get('monitorOnlyTaggedEntities')
+            monitor_only_tag_pairs = azure_credentials.get('monitorOnlyTagPairs')
+            monitor_only_excluding_tag_pairs = azure_credentials.get('monitorOnlyExcludingTagPairs')
+            supporting_services = azure_credentials.get('supportingServices')
+            supporting_service_names = []
+            for supporting_service in supporting_services:
+                supporting_service_name = supporting_service.get('name')
+                supporting_service_names.append(supporting_service_name)
+
             if not summary_mode:
-                rows.append((name, entity_id))
+                rows.append((name, label, entity_id, app_id, directory_id, key, active, auto_tagging, monitor_only_tagged_entities, str(monitor_only_tag_pairs), str(monitor_only_excluding_tag_pairs), str(supporting_service_names)))
 
             count_total += 1
 
@@ -36,7 +54,7 @@ def process_report(env, token, summary_mode):
     if not summary_mode:
         report_name = 'Azure Subscriptions'
         report_writer.initialize_text_file(None)
-        report_headers = ('Name', 'ID')
+        report_headers = ('Name', 'label', 'ID', 'appId', 'directoryId', 'key', 'active', 'autoTagging', 'monitorOnlyTaggedEntities', 'monitorOnlyTagPairs', 'monitorOnlyExcludingTagPairs', 'supportingServices')
         report_writer.write_console(report_name, report_headers, rows, delimiter='|')
         report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
         write_strings(['Total Azure Subscriptions: ' + str(count_total)])

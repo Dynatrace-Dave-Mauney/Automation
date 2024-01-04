@@ -17,30 +17,35 @@ def process_report(env, token, summary_mode):
 
     count_total = 0
 
-    endpoint = '/api/config/v1/plugins'
-    plugin_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
+    endpoint = '/api/config/v1/service/requestAttributes'
+    request_attributes_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
 
-    for plugin_json in plugin_json_list:
-        inner_plugin_json_list = plugin_json.get('values')
-        for inner_plugin_json in inner_plugin_json_list:
-            entity_id = inner_plugin_json.get('id')
-            name = inner_plugin_json.get('name')
-            description = inner_plugin_json.get('description')
+    for request_attributes_json in request_attributes_json_list:
+        inner_request_attributes_json_list = request_attributes_json.get('values')
+        for inner_request_attributes_json in inner_request_attributes_json_list:
+            entity_id = inner_request_attributes_json.get('id')
+            name = inner_request_attributes_json.get('name')
+
+            # If more details are ever needed
+            # endpoint = '/api/config/v1/service/requestAttributes/' + entity_id
+            # r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
+            # request_attribute = r.json()
 
             if not summary_mode:
-                rows.append((entity_id, name, description))
+                rows.append((name, entity_id))
 
             count_total += 1
 
-    summary.append('There are ' + str(count_total) + ' plugins currently uploaded.')
+    summary.append('There are ' + str(count_total) + ' request attributes currently defined.')
 
     if not summary_mode:
-        report_name = 'Plugins'
+        rows = sorted(rows)
+        report_name = 'Request Attributes'
         report_writer.initialize_text_file(None)
-        report_headers = ('id', 'name', 'description')
+        report_headers = ('name', 'id')
         report_writer.write_console(report_name, report_headers, rows, delimiter='|')
         report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
-        write_strings(['Total Plugins: ' + str(count_total)])
+        write_strings(['Total request_attributes: ' + str(count_total)])
         write_strings(summary)
         report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
         report_writer.write_html(None, report_name, report_headers, rows)

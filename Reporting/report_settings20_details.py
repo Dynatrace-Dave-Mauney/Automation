@@ -88,6 +88,7 @@ def process_report(env, token, summary_mode):
         summary.append('Environment has no findings')
 
     if not summary_mode:
+        rows = sorted(rows)
         report_name = 'Settings 2.0'
         report_writer.initialize_text_file(None)
         report_headers = ('Schema ID', 'Formatted Values')

@@ -29,8 +29,18 @@ def process_report(env, token, summary_mode):
             name = inner_extension_json.get('name')
             entity_type = inner_extension_json.get('type')
 
+            if entity_id == 'custom.python.ad_replication_checks':
+                r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{entity_id}/global', token)
+                extension = r.json()
+                properties = extension.get('properties')
+                share_hosts = properties.get('share_hosts')
+                share_hosts_split = share_hosts.split(',')
+                for share_host in sorted(share_hosts_split):
+                    if not summary_mode:
+                        rows.append((entity_id, name, entity_type, share_host))
+
             if not summary_mode:
-                rows.append((entity_id, name, entity_type))
+                rows.append((entity_id, name, entity_type, ''))
 
             count_total += 1
             if not entity_id.startswith('dynatrace'):
@@ -41,7 +51,7 @@ def process_report(env, token, summary_mode):
     if not summary_mode:
         report_name = 'Extensions'
         report_writer.initialize_text_file(None)
-        report_headers = ('Entity ID', 'Name', 'Entity Type')
+        report_headers = ('Entity ID', 'Name', 'Entity Type', 'Comment')
         report_writer.write_console(report_name, report_headers, rows, delimiter='|')
         report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
         write_strings(['Total Extensions: ' + str(count_total)])

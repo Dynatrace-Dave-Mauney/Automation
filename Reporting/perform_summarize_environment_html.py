@@ -43,10 +43,14 @@ import report_oneagent_direct_communication_details
 import report_ongoing_problems
 import report_plugin_details
 import report_process_group_details
+import report_request_attribute_details
 import report_rum_details
 import report_service_details
 import report_service_settings_details
+import report_settings20_cloud_application_workload_detection_details
+import report_settings20_cloud_kubernetes_monitoring_details
 # import report_settings20_details
+import report_settings20_service_key_requests_details
 import report_settings20_slo_details
 import report_slo_dashboard_references
 import report_synthetic_details
@@ -280,6 +284,7 @@ def process():
 		heading = 'Services Summary'
 		write_h3_heading(heading)
 		write_summary(report_service_details.summarize)
+		write_summary(report_request_attribute_details.summarize)
 		write_blank_line()
 		write_findings(heading)
 
@@ -339,6 +344,8 @@ def process():
 		heading = 'Kubernetes Configuration Summary'
 		write_h3_heading(heading)
 		write_summary(report_kubernetes_credential_details.summarize)
+		write_summary(report_settings20_cloud_application_workload_detection_details.summarize)
+		write_summary(report_settings20_cloud_kubernetes_monitoring_details.summarize)
 		write_blank_line()
 		write_findings(heading)
 
@@ -385,6 +392,7 @@ def process():
 		heading = 'Service Settings Summary'
 		write_h3_heading(heading)
 		write_summary(report_service_settings_details.summarize)
+		write_summary(report_settings20_service_key_requests_details.summarize)
 		write_blank_line()
 		write_findings(heading)
 

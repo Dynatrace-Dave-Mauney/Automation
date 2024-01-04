@@ -1,3 +1,5 @@
+import urllib.parse
+
 from Reuse import dynatrace_api
 from Reuse import environment
 from Reuse import report_writer
@@ -14,33 +16,41 @@ def process(env, token):
 def process_report(env, token, summary_mode):
     rows = []
     summary = []
-
     count_total = 0
 
-    endpoint = '/api/config/v1/plugins'
-    plugin_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
+    schema_id = 'builtin:settings.subscriptions.service'
 
-    for plugin_json in plugin_json_list:
-        inner_plugin_json_list = plugin_json.get('values')
-        for inner_plugin_json in inner_plugin_json_list:
-            entity_id = inner_plugin_json.get('id')
-            name = inner_plugin_json.get('name')
-            description = inner_plugin_json.get('description')
+    endpoint = '/api/v2/settings/objects'
+    raw_params = f'schemaIds={schema_id}&fields=value,scope&pageSize=500'
+    params = urllib.parse.quote(raw_params, safe='/,&=')
+    settings_object_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
+    for settings_object in settings_object_list:
+        print(settings_object)
+        items = settings_object.get('items')
+        for item in items:
+            print(item)
             if not summary_mode:
-                rows.append((entity_id, name, description))
+                scope = item.get('scope')
+                value = item.get('value')
+                print(value)
+                key_request_list = value.get('keyRequestNames')
+                for key_request in key_request_list:
+                    rows.append([key_request, scope])
 
             count_total += 1
 
-    summary.append('There are ' + str(count_total) + ' plugins currently uploaded.')
+    summary.append(f'There are {count_total} service key requests currently defined.')
+
+    summary = sorted(summary)
 
     if not summary_mode:
-        report_name = 'Plugins'
+        rows = sorted(rows)
+        report_name = 'Service Key Requests'
         report_writer.initialize_text_file(None)
-        report_headers = ('id', 'name', 'description')
+        report_headers = ['Key Request', 'Scope']
         report_writer.write_console(report_name, report_headers, rows, delimiter='|')
         report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
-        write_strings(['Total Plugins: ' + str(count_total)])
         write_strings(summary)
         report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
         report_writer.write_html(None, report_name, report_headers, rows)

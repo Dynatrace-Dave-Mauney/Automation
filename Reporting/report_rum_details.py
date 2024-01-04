@@ -7,7 +7,7 @@ string_list_key = {'allowedBeaconOriginsForCors': 'allowedBeaconOrigins', 'appli
 
 
 def summarize(env, token):
-    return process(env, token, False)
+    return process_report(env, token, True)
 
 
 def process(env, token):
