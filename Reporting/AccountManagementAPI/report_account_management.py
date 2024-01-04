@@ -23,23 +23,37 @@ from Reuse import report_writer
 # On the top navigation bar, go to Identity & access management > OAuth clients.
 # In the upper-right corner of the page, select Account Management API.
 
-
-account_id = os.getenv('ACCOUNTID')
-client_secret = os.getenv('CLIENT_SECRET')
-client_id = os.getenv('CLIENT_ID')
+# First, try to get the new/improved names
+account_id = os.getenv('DYNATRACE_AUTOMATION_ACCOUNT_ID')
+client_id = os.getenv('DYNATRACE_AUTOMATION_CLIENT_ID')
+client_secret = os.getenv('DYNATRACE_AUTOMATION_CLIENT_SECRET')
 skip_slow_api_calls = environment.get_boolean_environment_variable('SKIP_SLOW_API_CALLS', 'True')
+environment_variable_source = 'New Environment Variable Names'
+
+
+# If the new/improved names are not found, fall back to the older names
+if not account_id and not client_id and not client_secret:
+    print('WARNING: Using deprecated environment variable names')
+    account_id = os.getenv('ACCOUNTID')
+    client_id = os.getenv('CLIENT_ID')
+    client_secret = os.getenv('CLIENT_SECRET')
+    skip_slow_api_calls = environment.get_boolean_environment_variable('DYNATRACE_SKIP_SLOW_ACCOUNT_MANAGEMENT_API_CALLS', 'True')
+    environment_variable_source = 'Old Environment Variable Names'
 
 configuration_path = 'configurations.yaml'
 if os.path.isfile(configuration_path):
     account_id = environment.get_configuration('account_id', configuration_file=configuration_path)
-    client_secret = environment.get_configuration('client_secret', configuration_file=configuration_path)
     client_id = environment.get_configuration('client_id', configuration_file=configuration_path)
+    client_secret = environment.get_configuration('client_secret', configuration_file=configuration_path)
+    skip_slow_api_calls = environment.get_configuration('skip_slow_api_calls', configuration_file=configuration_path)
+    environment_variable_source = 'Configuration File'
 
 print('Masked environment variables:')
 print(f'account_id: {account_id[:10]}*')
 print(f'client_secret: {client_secret[:5]}*{client_secret[70:]}')
 print(f'client_id: {client_id[:10]}*')
 print(f'skip_slow_api_calls: {skip_slow_api_calls}')
+print(f'environment_variable_source: {environment_variable_source}')
 
 
 def get_groups():
