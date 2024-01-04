@@ -1,4 +1,4 @@
-import json
+# import json
 import os
 import requests
 
@@ -6,22 +6,28 @@ from Reuse import environment
 from Reuse import report_writer
 # from Reuse import directories_and_files
 
-# Reporting for: https://api.dynatrace.com/spec/
+"""
+Reporting for: https://api.dynatrace.com/spec/
 
-# Creating an OAuth Client:
-# Old UI: Person Icon > Account Settings > Pick Account if needed > Identity & access management > OAuth Clients > "Create client" button
-# New UI: Person Icon > Account Management > Pick Account if needed > Identity & access management > OAuth Clients > "Create client" button
-# Assign all permissions under the Account section:
-# account-idm-read, account-idm-write, account-env-read, account-env-write, account-uac-read, account-uac-write,
-# iam-policies-management, iam:policies:write, iam:policies:read, iam:bindings:write, iam:bindings:read,
-# iam:effective-permissions:read
+Creating an OAuth Client:
+Old UI: Person Icon > Account Settings > Pick Account if needed > Identity & access management > OAuth Clients > "Create client" button
+New UI: Person Icon > Account Management > Pick Account if needed > Identity & access management > OAuth Clients > "Create client" button
+Assign all permissions under the Account section:
+account-idm-read, account-idm-write, account-env-read, account-env-write, account-uac-read, account-uac-write,
+iam-policies-management, iam:policies:write, iam:policies:read, iam:bindings:write, iam:bindings:read,
+iam:effective-permissions:read
 
-# Accessing the Account Management API
-# Navigate here: https://api.dynatrace.com/spec/
-# Or:
-# Open the User menu and select Account settings (in latest Dynatrace, Account Management).
-# On the top navigation bar, go to Identity & access management > OAuth clients.
-# In the upper-right corner of the page, select Account Management API.
+Accessing the Account Management API:
+Navigate to https://api.dynatrace.com/spec/ or:
+Open the User menu and select Account settings (in latest Dynatrace, Account Management).
+On the top navigation bar, go to Identity & access management > OAuth clients.
+In the upper-right corner of the page, select Account Management API.
+
+To get the Account ID:
+Old UI: Person Icon > Account Settings > Pick Account if needed
+New UI: Person Icon > Account Settings > Pick Account if needed
+AccountID appears as the query parameter in the address URL
+"""
 
 # First, try to get the new/improved names
 account_id = os.getenv('DYNATRACE_AUTOMATION_ACCOUNT_ID')
