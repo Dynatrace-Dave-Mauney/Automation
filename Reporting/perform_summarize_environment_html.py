@@ -23,6 +23,7 @@ import report_credential_vault_details
 # import report_dashboard_details
 import report_dashboard_extended_details
 import report_data_privacy_details
+import report_database_service_details
 import report_extension_details
 import report_extension_v2_details
 import report_frequent_issue_detection_details
@@ -285,6 +286,7 @@ def process():
 		write_h3_heading(heading)
 		write_summary(report_service_details.summarize)
 		write_summary(report_request_attribute_details.summarize)
+		write_summary(report_database_service_details.summarize)
 		write_blank_line()
 		write_findings(heading)
 
