@@ -26,14 +26,14 @@ def process_report(env, token, summary_mode):
     settings_object_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
     for settings_object in settings_object_list:
-        print(settings_object)
+        # print(settings_object)
         items = settings_object.get('items')
         for item in items:
-            print(item)
+            # print(item)
             if not summary_mode:
                 scope = item.get('scope')
                 value = item.get('value')
-                print(value)
+                # print(value)
                 key_request_list = value.get('keyRequestNames')
                 for key_request in key_request_list:
                     rows.append([key_request, scope])

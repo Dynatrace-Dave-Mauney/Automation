@@ -35,16 +35,16 @@ def process_report(env, token, summary_mode):
         # print(settings_object)
         items = settings_object.get('items')
         for item in items:
-            # print(item)
+            scope = item.get('scope')
+            value = item.get('value')
+            cloud_application_pipeline_enabled = value.get('cloudApplicationPipelineEnabled')
+            pvc_monitoring_enabled = value.get('pvcMonitoringEnabled')
+            open_metrics_pipeline_enabled = value.get('openMetricsPipelineEnabled')
+            open_metrics_builtin_enabled = value.get('openMetricsBuiltinEnabled')
+            event_processing_active = value.get('eventProcessingActive')
+            filter_events = value.get('filterEvents')
+
             if not summary_mode:
-                scope = item.get('scope')
-                value = item.get('value')
-                cloud_application_pipeline_enabled = value.get('cloudApplicationPipelineEnabled')
-                pvc_monitoring_enabled = value.get('pvcMonitoringEnabled')
-                open_metrics_pipeline_enabled = value.get('openMetricsPipelineEnabled')
-                open_metrics_builtin_enabled = value.get('openMetricsBuiltinEnabled')
-                event_processing_active = value.get('eventProcessingActive')
-                filter_events = value.get('filterEvents')
                 rows.append((scope, cloud_application_pipeline_enabled, pvc_monitoring_enabled, open_metrics_pipeline_enabled, open_metrics_builtin_enabled, event_processing_active, filter_events))
 
             if scope != 'environment':

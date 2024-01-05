@@ -110,16 +110,16 @@ def check_naming_standard(env, name):
     name_split_list = name.split('-')
     name_hyphen_count = len(name_split_list) - 1
     if name_hyphen_count == 0 or name_hyphen_count > 2:
-        print('Rule 1', name, name_hyphen_count, name_split_list)
+        # print('Rule 1', name, name_hyphen_count, name_split_list)
         return False, 'Name must have one or two hyphens'
     else:
         if env.startswith('https://p'):
             if name_split_list[1].upper() not in ['PROD', 'DR']:
-                print('Rule 2', name, name_hyphen_count, name_split_list)
+                # print('Rule 2', name, name_hyphen_count, name_split_list)
                 return False, 'Production name must end with "-PROD" or "-DR"'
         else:
             if name_split_list[1].upper() not in ['DEV', 'SIT', 'UAT', 'QA', 'STG', 'IAT', 'SAND', 'TEST', 'NPRD', 'RST', 'GW', 'STG1', 'STG2', 'STG3', 'UAT1', 'UAT2', 'UAT3', 'DEV1', 'DEV2', 'DEV3']:
-                print('Rule 3', name, name_hyphen_count, name_split_list)
+                # print('Rule 3', name, name_hyphen_count, name_split_list)
                 return False, 'Non-Production name must end with "-DEV", "-SIT", etc.'
 
     # print('Rule 4', name, name_hyphen_count, name_split_list)

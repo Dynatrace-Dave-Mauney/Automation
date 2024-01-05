@@ -28,7 +28,7 @@ def process_report(env, token, summary_mode):
 
             r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{entity_id}', token)
             azure_credentials = r.json()
-            print(azure_credentials)
+            # print(azure_credentials)
             label = azure_credentials.get('label')
             app_id = azure_credentials.get('appId')
             directory_id = azure_credentials.get('directoryId')

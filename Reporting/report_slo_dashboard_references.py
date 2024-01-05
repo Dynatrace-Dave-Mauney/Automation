@@ -91,15 +91,15 @@ def process_report(env, token, summary_mode):
     summary.append(f'{count_has_dashboard_reference} SLOs are referenced by one or more dashboards.')
     summary.append(f'{count_has_no_dashboard_reference} SLOs are not referenced by any dashboard.')
 
-    report_name = 'SLO Dashboard References'
-    report_writer.initialize_text_file(None)
-    report_headers = ['Finding']
-    report_writer.write_console(report_name, report_headers, rows, delimiter='|')
-    report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
-    report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
-    report_writer.write_html(None, report_name, report_headers, rows)
-
-    write_strings(summary)
+    if not summary_mode:
+        report_name = 'SLO Dashboard References'
+        report_writer.initialize_text_file(None)
+        report_headers = ['Finding']
+        report_writer.write_console(report_name, report_headers, rows, delimiter='|')
+        report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
+        report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
+        report_writer.write_html(None, report_name, report_headers, rows)
+        write_strings(summary)
 
     return summary
 
