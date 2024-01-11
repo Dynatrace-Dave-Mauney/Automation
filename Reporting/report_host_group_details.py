@@ -8,6 +8,7 @@ from Reuse import standards
 
 perform_check_naming_standard = False
 report_naming_standard_violations_only = False
+configuration_object = environment.get_configuration_object('configurations.yaml')
 
 
 def summarize(env, token, **kwargs):
@@ -115,12 +116,10 @@ def check_naming_standard(name, **kwargs):
     if not env_name:
         return False, 'Environment name ("env_name") must be passed'
 
-    configuration_object = environment.get_configuration_object('configurations.yaml')
-
     if not configuration_object:
         return False, 'Configuration object ("configuration_object") could not be loaded'
 
-    return standards.check_naming_standard(env_name, name, configuration_object, 'management zone')
+    return standards.check_naming_standard(env_name, name, configuration_object, 'host group')
 
 
 def main():
@@ -137,8 +136,8 @@ def main():
     # process(env, token)
     # process(env, token, perform_check_naming_standard=False, report_naming_standard_violations_only=False)
     # print(summarize(env, token, perform_check_naming_standard=False, report_naming_standard_violations_only=False))
-    # process(env, token, env_name=env_name_supplied, perform_check_naming_standard=True)
-    print(summarize(env, token, env_name=env_name_supplied, perform_check_naming_standard=True))
+    process(env, token, env_name=env_name_supplied, perform_check_naming_standard=True)
+    # print(summarize(env, token, env_name=env_name_supplied, perform_check_naming_standard=True))
 
     
 if __name__ == '__main__':

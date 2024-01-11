@@ -5,6 +5,7 @@ from Reuse import standards
 
 perform_check_naming_standard = False
 report_naming_standard_violations_only = False
+configuration_object = environment.get_configuration_object('configurations.yaml')
 
 
 def summarize(env, token, **kwargs):
@@ -260,8 +261,6 @@ def check_naming_standard(name, **kwargs):
     if not env_name:
         return False, 'Environment name ("env_name") must be passed'
 
-    configuration_object = environment.get_configuration_object('configurations.yaml')
-
     if not configuration_object:
         return False, 'Configuration object ("configuration_object") could not be loaded'
 
@@ -280,8 +279,8 @@ def main():
     # env_name_supplied = 'Demo'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
     # process(env, token)
-    # process(env, token, env_name=env_name_supplied, perform_check_naming_standard=True)
-    print(summarize(env, token, env_name=env_name_supplied, perform_check_naming_standard=True))
+    process(env, token, env_name=env_name_supplied, perform_check_naming_standard=True)
+    # print(summarize(env, token, env_name=env_name_supplied, perform_check_naming_standard=True))
 
     
 if __name__ == '__main__':

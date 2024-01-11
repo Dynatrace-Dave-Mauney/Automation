@@ -47,7 +47,7 @@ def get_env():
     env_name, env, _ = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 
     configuration_object = environment.get_configuration_object('configurations.yaml')
-    print(configuration_object)
+    # print(configuration_object)
 
     return env_name, env, configuration_object
 

@@ -3,7 +3,7 @@
 from Reuse import environment
 
 supported_naming_standard_flavors = [1]
-supported_entity_types = ['management zone', 'alerting profile', 'problem notification integration', 'host group']
+supported_entity_types = ['management zone', 'alerting profile', 'notification', 'host group']
 
 
 def check_naming_standard(env_name, name, configuration_object, entity_type):
@@ -37,10 +37,14 @@ def check_naming_standard_flavor_1(env_name, name, configuration_object, entity_
             # print('Rule 1', name, name_hyphen_count, name_split_list)
             return False, f'Entity type {entity_type} name must have one hyphen'
         else:
-            application_environment_name = name_split_list[-1].upper()
+            if entity_type == 'host group':
+                application_environment_name = name_split_list[1].upper()
+            else:
+                application_environment_name = name_split_list[-1].upper()
+
             if application_environment_name not in valid_environments:
-                # print('Rule 2', name, name_hyphen_count, name_split_list)
-                return False, f'Application Environment Name {name} not found in the valid environment list: {valid_environments}'
+                # print('Rule 2', name, name_hyphen_count, name_split_list, application_environment_name)
+                return False, f'Application Environment Name {application_environment_name} not found in the valid environment list: {valid_environments}'
 
     # print('Rule 3', name, name_hyphen_count, name_split_list)
     return True, 'Name meets standards'
