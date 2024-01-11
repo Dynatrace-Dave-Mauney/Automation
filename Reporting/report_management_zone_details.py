@@ -1,6 +1,7 @@
 from Reuse import dynatrace_api
 from Reuse import environment
 from Reuse import report_writer
+from Reuse import standards
 
 perform_check_naming_standard = False
 report_naming_standard_violations_only = False
@@ -8,19 +9,21 @@ report_naming_standard_violations_only = False
 
 def summarize(env, token, **kwargs):
     global perform_check_naming_standard
-    perform_check_naming_standard = kwargs.get('perform_check_naming_standard', False)
-    return process_report(env, token, True)
+    if kwargs:
+        perform_check_naming_standard = kwargs.get('perform_check_naming_standard', False)
+    return process_report(env, token, True, **kwargs)
 
 
 def process(env, token, **kwargs):
     global perform_check_naming_standard
     global report_naming_standard_violations_only
-    perform_check_naming_standard = kwargs.get('perform_check_naming_standard', False)
-    report_naming_standard_violations_only = kwargs.get('report_naming_standard_violations_only', False)
-    return process_report(env, token, False)
+    if kwargs:
+        perform_check_naming_standard = kwargs.get('perform_check_naming_standard', False)
+        report_naming_standard_violations_only = kwargs.get('report_naming_standard_violations_only', False)
+    return process_report(env, token, False, **kwargs)
 
 
-def process_report(env, token, summary_mode):
+def process_report(env, token, summary_mode, **kwargs):
     rows = []
     summary = []
 
@@ -58,12 +61,13 @@ def process_report(env, token, summary_mode):
             standard_string = 'N/A'
             standard_met = True
             if perform_check_naming_standard:
-                standard_met, reason = check_naming_standard(env, name)
+                standard_met, reason = check_naming_standard(name, **kwargs)
                 if standard_met:
                     standard_string = 'Meets naming standards'
                     count_naming_standard_pass += 1
                 else:
                     standard_string = f'Does not meet naming standards because {reason}'
+                    # print(name, standard_string)
                     count_naming_standard_fail += 1
 
             if not summary_mode:
@@ -74,6 +78,7 @@ def process_report(env, token, summary_mode):
             count_total += 1
 
     summary.append(f'There are {count_total} management zones currently defined.')
+
     if perform_check_naming_standard:
         summary.append(f'There are {count_naming_standard_pass} management zones currently defined that meet the naming standard.')
         summary.append(f'There are {count_naming_standard_fail} management zones currently defined that do not meet the naming standard.')
@@ -250,19 +255,17 @@ def format_dimensional_rules(dimensional_rules):
     return str(formatted_dimensional_rules)
 
 
-def check_naming_standard(env, name):
-    name_split_list = name.split('-')
-    if len(name_split_list) != 2:
-        return False, 'Name must have one hyphen'
-    else:
-        if env.startswith('https://p'):
-            if name_split_list[1] not in ['PROD', 'DR']:
-                return False, 'Production name must end with "-PROD" or "-DR"'
-        else:
-            if name_split_list[1] not in ['DEV', 'SIT', 'XXX']:
-                return False, 'Non-Production name must end with "-DEV", "-SIT", etc.'
+def check_naming_standard(name, **kwargs):
+    env_name = kwargs.get('env_name')
+    if not env_name:
+        return False, 'Environment name ("env_name") must be passed'
 
-    return True, 'Name meets standards'
+    configuration_object = environment.get_configuration_object('configurations.yaml')
+
+    if not configuration_object:
+        return False, 'Configuration object ("configuration_object") could not be loaded'
+
+    return standards.check_naming_standard(env_name, name, configuration_object, 'management zone')
 
 
 def main():
@@ -276,8 +279,9 @@ def main():
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'Demo'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
-    process(env, token)
-    # print(summarize(env, token, perform_check_naming_standard=True))
+    # process(env, token)
+    # process(env, token, env_name=env_name_supplied, perform_check_naming_standard=True)
+    print(summarize(env, token, env_name=env_name_supplied, perform_check_naming_standard=True))
 
     
 if __name__ == '__main__':

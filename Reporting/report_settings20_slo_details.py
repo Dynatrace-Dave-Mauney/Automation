@@ -15,7 +15,7 @@ def process(env, token):
 
 
 def process_report(env, token, summary_mode):
-    customer_specific_management_zone_names = environment.get_configuration('report_settings20_slo_details.management_zone_names')
+    # customer_specific_management_zone_names = environment.get_configuration('report_settings20_slo_details.management_zone_names')
 
     rows = []
     summary = []
@@ -50,10 +50,10 @@ def process_report(env, token, summary_mode):
                     count_has_management_zone_filter += 1
                 else:
                     management_zone_name = ''
-                    if customer_specific_management_zone_names:
-                        management_zone_name = customer_specific_management_zone_names.get(name, '')
-                    if management_zone_name == '':
-                        print(f'Management zone missing for {name}: {slo_filter}: {item}')
+                    # if customer_specific_management_zone_names:
+                    #     management_zone_name = customer_specific_management_zone_names.get(name, '')
+                    # if management_zone_name == '':
+                    #     print(f'Management zone missing for {name}: {slo_filter}: {item}')
                     count_has_no_management_zone_filter += 1
 
                 if not summary_mode:

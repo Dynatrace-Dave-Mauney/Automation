@@ -28,8 +28,8 @@ def process_report(env, token, summary_mode):
             entity_id = inner_entities_json.get('entityId')
             display_name = inner_entities_json.get('displayName')
 
-            if 'PRD' not in display_name.upper():
-                continue
+            # if 'PRD' not in display_name.upper():
+            #     continue
 
             properties = inner_entities_json.get('properties')
             number_of_steps = "0"

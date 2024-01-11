@@ -3,6 +3,8 @@ import urllib.parse
 from Reuse import dynatrace_api
 from Reuse import environment
 from Reuse import report_writer
+from Reuse import standards
+
 
 perform_check_naming_standard = False
 report_naming_standard_violations_only = False
@@ -10,19 +12,21 @@ report_naming_standard_violations_only = False
 
 def summarize(env, token, **kwargs):
     global perform_check_naming_standard
-    perform_check_naming_standard = kwargs.get('perform_check_naming_standard', False)
-    return process_report(env, token, True)
+    if kwargs:
+        perform_check_naming_standard = kwargs.get('perform_check_naming_standard', False)
+    return process_report(env, token, True, **kwargs)
 
 
 def process(env, token, **kwargs):
     global perform_check_naming_standard
     global report_naming_standard_violations_only
-    perform_check_naming_standard = kwargs.get('perform_check_naming_standard', False)
-    report_naming_standard_violations_only = kwargs.get('report_naming_standard_violations_only', False)
-    return process_report(env, token, False)
+    if kwargs:
+        perform_check_naming_standard = kwargs.get('perform_check_naming_standard', False)
+        report_naming_standard_violations_only = kwargs.get('report_naming_standard_violations_only', False)
+    return process_report(env, token, False, **kwargs)
 
 
-def process_report(env, token, summary_mode):
+def process_report(env, token, summary_mode, **kwargs):
     rows = []
     summary = []
 
@@ -58,7 +62,7 @@ def process_report(env, token, summary_mode):
             standard_string = 'N/A'
             standard_met = True
             if perform_check_naming_standard:
-                standard_met, reason = check_naming_standard(env, display_name)
+                standard_met, reason = check_naming_standard(display_name, **kwargs)
                 if standard_met:
                     standard_string = 'Meets naming standards'
                     count_naming_standard_pass += 1
@@ -77,7 +81,7 @@ def process_report(env, token, summary_mode):
 
     rows = sorted(rows)
 
-    summary.append('There are ' + str(count_total) + ' hosts groups currently defined.  ')
+    summary.append('There are ' + str(count_total) + ' hosts groups currently defined.')
     if count_total > 0:
         summary.append(f'{count_total_hosts_in_groups} hosts currently belong to a host group.')
         summary.append(f'{count_total_host_groups_without_hosts} host groups contain no hosts.')
@@ -106,31 +110,24 @@ def write_strings(string_list):
     report_writer.write_plain_text(None, string_list)
 
 
-def check_naming_standard(env, name):
-    name_split_list = name.split('-')
-    name_hyphen_count = len(name_split_list) - 1
-    if name_hyphen_count == 0 or name_hyphen_count > 2:
-        # print('Rule 1', name, name_hyphen_count, name_split_list)
-        return False, 'Name must have one or two hyphens'
-    else:
-        if env.startswith('https://p'):
-            if name_split_list[1].upper() not in ['PROD', 'DR']:
-                # print('Rule 2', name, name_hyphen_count, name_split_list)
-                return False, 'Production name must end with "-PROD" or "-DR"'
-        else:
-            if name_split_list[1].upper() not in ['DEV', 'SIT', 'UAT', 'QA', 'STG', 'IAT', 'SAND', 'TEST', 'NPRD', 'RST', 'GW', 'STG1', 'STG2', 'STG3', 'UAT1', 'UAT2', 'UAT3', 'DEV1', 'DEV2', 'DEV3']:
-                # print('Rule 3', name, name_hyphen_count, name_split_list)
-                return False, 'Non-Production name must end with "-DEV", "-SIT", etc.'
+def check_naming_standard(name, **kwargs):
+    env_name = kwargs.get('env_name')
+    if not env_name:
+        return False, 'Environment name ("env_name") must be passed'
 
-    # print('Rule 4', name, name_hyphen_count, name_split_list)
-    return True, 'Name meets standards'
+    configuration_object = environment.get_configuration_object('configurations.yaml')
+
+    if not configuration_object:
+        return False, 'Configuration object ("configuration_object") could not be loaded'
+
+    return standards.check_naming_standard(env_name, name, configuration_object, 'management zone')
 
 
 def main():
     friendly_function_name = 'Dynatrace Automation Reporting'
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
-    env_name_supplied = 'Prod'
+    # env_name_supplied = 'Prod'
     # env_name_supplied = 'NonProd'
     # env_name_supplied = 'Prep'
     # env_name_supplied = 'Dev'
@@ -138,7 +135,10 @@ def main():
     # env_name_supplied = 'Demo'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
     # process(env, token)
-    process(env, token, perform_check_naming_standard=True, report_naming_standard_violations_only=True)
+    # process(env, token, perform_check_naming_standard=False, report_naming_standard_violations_only=False)
+    # print(summarize(env, token, perform_check_naming_standard=False, report_naming_standard_violations_only=False))
+    # process(env, token, env_name=env_name_supplied, perform_check_naming_standard=True)
+    print(summarize(env, token, env_name=env_name_supplied, perform_check_naming_standard=True))
 
     
 if __name__ == '__main__':

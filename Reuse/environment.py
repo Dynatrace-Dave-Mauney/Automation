@@ -214,7 +214,14 @@ def get_boolean_environment_variable(key, default_value):
 
 
 def get_configuration(configuration_key, **kwargs):
+    # Caller can pass either configuration file or configuration object
+    # If configuration object is preset, ignore any configuration file that may be passed
     configuration_file = kwargs.get('configuration_file')
+    configuration_object = kwargs.get('configuration_object')
+
+    if configuration_object:
+        yaml_value = configuration_object.get(configuration_key)
+        return yaml_value
 
     # Configuration file path order of precedence:
     # 1. Method Argument
@@ -238,6 +245,27 @@ def get_configuration(configuration_key, **kwargs):
         return yaml_value
     else:
         return None
+
+
+def get_configuration_object(configuration_file):
+    # Configuration file path order of precedence:
+    # 1. Method Argument
+    # 2. Command line argument
+    # 3. Environment variable
+    if not configuration_file:
+        args = args_parser()
+        if args.configuration_file:
+            configuration_file = args.configuration_file
+        else:
+            config_file_environment_variable_key = 'DYNATRACE_AUTOMATION_CONFIG_FILE'
+            configuration_file = os.getenv(config_file_environment_variable_key, default_configuration_file)
+            if not configuration_file:
+                print(f'Neither "configuration_file" method argument or command line argument, or environment variable {config_file_environment_variable_key} contain a configuration file name')
+                print(f'Using default configuration file name of "{default_configuration_file}"')
+
+    yaml_data = read_yaml(configuration_file)
+
+    return yaml_data
 
 
 def read_yaml(yaml_file):

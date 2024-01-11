@@ -2,7 +2,8 @@
 def get_findings_dictionary(env):
 	findings = {}
 
-	file_name = '../$Input/Reporting/findings_' + env + '.txt'
+	file_name = 'findings_' + env + '.txt'
+
 	try:
 		file = open(file_name, 'r')
 	except FileNotFoundError:
@@ -21,27 +22,32 @@ def get_findings_dictionary(env):
 	current_finding_values = []
 	if file:
 		for line in file:
-			if "Summary:" in line:
-				if current_finding_key != '':
-					findings[current_finding_key] = current_finding_values
-					current_finding_key = line.replace(':\n', '')
-					current_finding_values = []
+			line_stripped = line.strip()
+
+			# Ignore Section Headers
+			if not line_stripped.endswith('Section'):
+				if line_stripped.endswith('Summary'):
+					if current_finding_key != '':
+						findings[current_finding_key] = current_finding_values
+						current_finding_key = line_stripped
+						current_finding_values = []
+					else:
+						current_finding_key = line_stripped
 				else:
-					current_finding_key = line.replace(':\n', '')
-			else:
-				if current_finding_key != '':
-					current_finding_values.append(line)
+					if current_finding_key != '':
+						if line_stripped > '':
+							current_finding_values.append(line)
 		file.close()
 
 	# Handle the last summary section before EOF
 	if current_finding_key != '':
 		findings[current_finding_key] = current_finding_values
 
-	# print(findings)
-	# print(findings.keys())
 	return findings
 
+
 # Test locally:
-# dict = get_findings_dictionary("Prod")
-# print(dict)
-# print(dict.keys())
+results = get_findings_dictionary("Personal")
+print(results)
+for results_key in results.keys():
+	print(results_key, results[results_key])

@@ -1,3 +1,10 @@
+# TODO:
+# Alerting Profiles: check naming standard
+# Notification Integrations: check naming standard, check for one-to-one mapping to Alerting Profile by same name
+# Move mobile application settings comment to mobile applications section
+# Management Zones: report when there are no covered entities
+
+
 import sys
 from datetime import date
 import findings_loader
@@ -69,7 +76,7 @@ env_name_supplied = environment.get_env_name(friendly_function_name)
 # env_name_supplied = 'NonProd'
 # env_name_supplied = 'Prep'
 # env_name_supplied = 'Dev'
-# env_name_supplied = 'Personal'
+env_name_supplied = 'Personal'
 # env_name_supplied = 'Demo'
 env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 
@@ -214,7 +221,7 @@ def process():
 		write_h1_heading('Environment Summary For ' + env_name + ' Environment As Of ' + report_date)
 
 		# Write the Architecture summary header
-		write_h2_heading('Architecture/Platform')
+		write_h2_heading('Architecture/Platform Section')
 
 		heading = 'Cluster Summary'
 		write_h3_heading(heading)
@@ -242,8 +249,8 @@ def process():
 		write_blank_line()
 		write_findings(heading)
 
-		# Write the Topology summary header
-		write_h2_heading('Topology')
+		# Write the Topology Section header
+		write_h2_heading('Topology Section')
 
 		heading = 'Web Applications Summary'
 		write_h3_heading(heading)
@@ -311,7 +318,7 @@ def process():
 		write_findings(heading)
 
 		# Write the Extensions/Plugins/Integrations summary header
-		write_h2_heading('Topology')
+		write_h2_heading('Extensions and Integrations Section')
 
 		heading = 'Extension V2 Summary'
 		write_h3_heading(heading)
@@ -352,7 +359,7 @@ def process():
 		write_findings(heading)
 
 		# Write the Settings summary header
-		write_h2_heading('Settings')
+		write_h2_heading('Settings Section')
 
 		heading = 'Management Zones Summary'
 		write_h3_heading(heading)
@@ -458,6 +465,12 @@ def process():
 		write_blank_line()
 		write_findings(heading)
 
+		heading = 'Anomaly Detection For Disk Events Summary'
+		write_h3_heading(heading)
+		write_summary(report_anomaly_detection_disk_events_details.summarize)
+		write_blank_line()
+		write_findings(heading)
+
 		heading = 'Anomaly Detection For VMWare Summary'
 		write_h3_heading(heading)
 		write_summary(report_anomaly_detection_vmware_details.summarize)
@@ -475,12 +488,6 @@ def process():
 		heading = 'Problems Summary'
 		write_h3_heading(heading)
 		write_summary(report_ongoing_problems.summarize)
-		write_blank_line()
-		write_findings(heading)
-
-		heading = 'Anomaly Detection For Disk Events Summary'
-		write_h3_heading(heading)
-		write_summary(report_anomaly_detection_disk_events_details.summarize)
 		write_blank_line()
 		write_findings(heading)
 
