@@ -39,36 +39,37 @@ def save(path, file, content):
 def save_dashboards(env, token, path):
 	endpoint = '/api/config/v1/dashboards'
 	download_count = 0
-	r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
-	dashboard_json = r.json()
-	for entry in dashboard_json.get('dashboards'):
-		dashboard_name = entry.get('name')
-		dashboard_id = entry.get('id')
-		dashboard_owner = entry.get('owner')
-		print(dashboard_id, dashboard_name, dashboard_owner)
-		# if dashboard_id.startswith('00000000-dddd-bbbb-ffff-0000000000'):
-		# if ((dashboard_name.startswith('Prod:') or dashboard_name.startswith('Prep:')) and dashboard_id.startswith('00000000-dddd-bbbb-ffff-0000000000')):
-		# if dashboard_owner == 'Dynatrace' and dashboard_name.startswith('A'):
-		# if dashboard_owner == 'nobody@example.com':
-		# if dashboard_owner == 'Dynatrace':
-		# if dashboard_owner == 'dave.mauney@dynatrace.com' and 'SLO' in dashboard_name:
-		# if 'TEMPLATE: Oracle' in dashboard_name:
-		endpoint = '/api/config/v1/dashboards'
-		if dashboard_id not in known_collisions and dashboard_name != 'Home':
-			r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{dashboard_id}', token)
-			dashboard = r.json()
-			# dashboard_metadata = dashboard.get('dashboardMetadata')
-			# dashboard_preset = dashboard_metadata.get('preset')
-			# if 'ism74021' in str(dashboard):
-			# aaaaaaaa-bbbb-cccc-dddd-1
-			# aaaaaaaa-bbbb-cccc-eeee-f
-			# if dashboard_preset:
-			# if dashboard_preset and (dashboard_id.startswith('aaaaaaaa-bbbb-cccc-abcd-0000000000') or dashboard_id.startswith('aaaaaaaa-bbbb-cccc-eeee-f')):
-			if True:
-				clean_filename = re.sub(r"[/\\?%*:|\"<>\x7F\x00-\x1F]", "-", f'{dashboard_id}.json')
-				print(f'Saving {dashboard_name} ({dashboard_id}) owned by {dashboard_owner} to {clean_filename}')
-				save(path, clean_filename, dashboard)
-				download_count += 1
+	dashboard_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
+	for dashboard_json in dashboard_json_list:
+		for entry in dashboard_json.get('dashboards'):
+			dashboard_name = entry.get('name')
+			dashboard_id = entry.get('id')
+			dashboard_owner = entry.get('owner')
+			endpoint = '/api/config/v1/dashboards'
+			# if dashboard_id.startswith('00000000-dddd-bbbb-ffff-0000000000'):
+			# if ((dashboard_name.startswith('Prod:') or dashboard_name.startswith('Prep:')) and dashboard_id.startswith('00000000-dddd-bbbb-ffff-0000000000')):
+			# if dashboard_owner == 'Dynatrace' and dashboard_name.startswith('A'):
+			# if dashboard_owner == 'nobody@example.com':
+			# if dashboard_owner == 'Dynatrace':
+			# if dashboard_owner == 'dave.mauney@dynatrace.com' and 'SLO' in dashboard_name:
+			# if 'TEMPLATE: Oracle' in dashboard_name:
+			# if dashboard_id not in known_collisions and dashboard_name != 'Home':
+			if dashboard_id.startswith('00000000-dddd-bbbb-ffff-00000000'):
+				print(dashboard_id, dashboard_name, dashboard_owner)
+				r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{dashboard_id}', token)
+				dashboard = r.json()
+				# dashboard_metadata = dashboard.get('dashboardMetadata')
+				# dashboard_preset = dashboard_metadata.get('preset')
+				# if 'ism74021' in str(dashboard):
+				# aaaaaaaa-bbbb-cccc-dddd-1
+				# aaaaaaaa-bbbb-cccc-eeee-f
+				# if dashboard_preset:
+				# if dashboard_preset and (dashboard_id.startswith('aaaaaaaa-bbbb-cccc-abcd-0000000000') or dashboard_id.startswith('aaaaaaaa-bbbb-cccc-eeee-f')):
+				if True:
+					clean_filename = re.sub(r"[/\\?%*:|\"<>\x7F\x00-\x1F]", "-", f'{dashboard_id}.json')
+					print(f'Saving {dashboard_name} ({dashboard_id}) owned by {dashboard_owner} to {clean_filename}')
+					save(path, clean_filename, dashboard)
+					download_count += 1
 
 	print(f'Downloaded {download_count} dashboards to {path}')
 
@@ -102,7 +103,7 @@ def main(arguments):
 	# env_name_supplied = 'Demo'
 	env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 
-	path = f'../$Output/Dashboards/Downloads/{env_name}'
+	path = f'../$Output/Dashboards/Downloads/{env_name}_DBF_BKP'
 
 	print(f'Downloading dashboards for {env_name} to {path}')
 

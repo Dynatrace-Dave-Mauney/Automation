@@ -3,11 +3,11 @@
         "configurationVersions": [
             3
         ],
-        "clusterVersion": "1.278.65.20231023-153505"
+        "clusterVersion": "1.281.79.20231208-113952"
     },
     "id": "aaaaaaaa-bbbb-cccc-dddd-000000000188",
     "dashboardMetadata": {
-        "name": "SAP HANA Database Extension",
+        "name": "Redis 1",
         "shared": false,
         "owner": "nobody@example.com",
         "sharingDetails": {
@@ -27,7 +27,7 @@
     },
     "tiles": [
         {
-            "name": "Previous Backup Duration",
+            "name": "Database average key TTL",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -37,15 +37,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Previous Backup Duration",
+            "customName": "Database average key TTL",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.backupDurationByType",
+                    "metric": "builtin:tech.redis.avg_ttl",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -98,7 +98,7 @@
             }
         },
         {
-            "name": "Backup Failures",
+            "name": "Blocked clients",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -108,15 +108,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Backup Failures",
+            "customName": "Blocked clients",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.backupFailuresByType",
+                    "metric": "builtin:tech.redis.blocked_clients",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -169,7 +169,7 @@
             }
         },
         {
-            "name": "Time Since Previous Backup",
+            "name": "Connected clients",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -179,15 +179,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Time Since Previous Backup",
+            "customName": "Connected clients",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.backupTimeSincePreviousByType",
+                    "metric": "builtin:tech.redis.connected_clients",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -240,7 +240,7 @@
             }
         },
         {
-            "name": "Blocked Transactions",
+            "name": "Connected replicas",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -250,15 +250,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Blocked Transactions",
+            "customName": "Connected replicas",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.blockedTransactions",
+                    "metric": "builtin:tech.redis.connected_slaves",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -311,7 +311,7 @@
             }
         },
         {
-            "name": "Column Tables Memory Used",
+            "name": "Evicted keys",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -321,15 +321,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Column Tables Memory Used",
+            "customName": "Evicted keys",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.columnTablesMemoryUsedByHostServiceName",
+                    "metric": "builtin:tech.redis.evicted_keys",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -382,7 +382,7 @@
             }
         },
         {
-            "name": "Host CPU Utilization",
+            "name": "Expired keys",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -392,15 +392,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Host CPU Utilization",
+            "customName": "Expired keys",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.cpuUtilizationByHost",
+                    "metric": "builtin:tech.redis.expired_keys",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -453,7 +453,7 @@
             }
         },
         {
-            "name": "Current Transaction Locks",
+            "name": "Database expired keys",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -463,15 +463,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Current Transaction Locks",
+            "customName": "Database expired keys",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.currentTransactionLocks",
+                    "metric": "builtin:tech.redis.expires",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -524,7 +524,7 @@
             }
         },
         {
-            "name": "Disk I/0 Read Speed",
+            "name": "Cache hit ratio",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -534,15 +534,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Disk I/0 Read Speed",
+            "customName": "Cache hit ratio",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.diskIOReadSpeedByHostServiceNameType",
+                    "metric": "builtin:tech.redis.hit_ratio",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -595,7 +595,7 @@
             }
         },
         {
-            "name": "Disk I/0 Write Speed",
+            "name": "Database keys",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -605,15 +605,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Disk I/0 Write Speed",
+            "customName": "Database keys",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.diskIOWriteSpeedByHostServiceNameType",
+                    "metric": "builtin:tech.redis.keys",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -666,7 +666,7 @@
             }
         },
         {
-            "name": "Disk Usage",
+            "name": "Keyspace hits",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -676,15 +676,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Disk Usage",
+            "customName": "Keyspace hits",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.diskUsageByHost",
+                    "metric": "builtin:tech.redis.keyspace_hits",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -737,7 +737,7 @@
             }
         },
         {
-            "name": "Expensive Statements exceeding Duration Limit",
+            "name": "Keyspace misses",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -747,15 +747,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Expensive Statements exceeding Duration Limit",
+            "customName": "Keyspace misses",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.expensiveStatementsExceedingDurationLimit",
+                    "metric": "builtin:tech.redis.keyspace_misses",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -808,7 +808,7 @@
             }
         },
         {
-            "name": "Expensive Statements exceeding Memory Limit",
+            "name": "Last interaction with master",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -818,15 +818,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Expensive Statements exceeding Memory Limit",
+            "customName": "Last interaction with master",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.expensiveStatementsExceedingMemoryLimit",
+                    "metric": "builtin:tech.redis.master_last_io_seconds_ago",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -879,7 +879,7 @@
             }
         },
         {
-            "name": "Full Sync",
+            "name": "Max memory",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -889,15 +889,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Full Sync",
+            "customName": "Max memory",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.fullSyncByHostsServiceName",
+                    "metric": "builtin:tech.redis.maxmemory",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -950,7 +950,7 @@
             }
         },
         {
-            "name": "Global Memory Allocation Limit",
+            "name": "Memory fragmentation",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -960,15 +960,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Global Memory Allocation Limit",
+            "customName": "Memory fragmentation",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.globalMemoryAllocationLimitByHost",
+                    "metric": "builtin:tech.redis.mem_fragmentation_ratio",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1021,7 +1021,7 @@
             }
         },
         {
-            "name": "Heap - Temporary Memory Used",
+            "name": "Memory usage",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1031,15 +1031,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Heap - Temporary Memory Used",
+            "customName": "Memory usage",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.heapTemporaryMemoryUsedByHost",
+                    "metric": "builtin:tech.redis.memory_usage",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1092,7 +1092,7 @@
             }
         },
         {
-            "name": "Host Used Physical Memory",
+            "name": "Rejected connections",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1102,15 +1102,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Host Used Physical Memory",
+            "customName": "Rejected connections",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.hostUsedPhysicalMemoryByHost",
+                    "metric": "builtin:tech.redis.rejected_connections",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1163,7 +1163,7 @@
             }
         },
         {
-            "name": "Max Heap Memory Usage",
+            "name": "Response time",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1173,15 +1173,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Max Heap Memory Usage",
+            "customName": "Response time",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.maxHeapMemoryUsageByHostCategory",
+                    "metric": "builtin:tech.redis.responsiveness",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1234,7 +1234,7 @@
             }
         },
         {
-            "name": "Max MergeDog Thread Duration",
+            "name": "Replica status",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1244,15 +1244,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Max MergeDog Thread Duration",
+            "customName": "Replica status",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.maxMergeDogThreadDuration",
+                    "metric": "builtin:tech.redis.slave_state",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1305,7 +1305,7 @@
             }
         },
         {
-            "name": "Max Redo Size",
+            "name": "Slow queries",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1315,15 +1315,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Max Redo Size",
+            "customName": "Slow queries",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.maxRedoSize",
+                    "metric": "builtin:tech.redis.slowlog_len",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1376,7 +1376,7 @@
             }
         },
         {
-            "name": "Max Undo Size",
+            "name": "Total commands processed",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1386,15 +1386,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Max Undo Size",
+            "customName": "Total commands processed",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.maxUndoSize",
+                    "metric": "builtin:tech.redis.total_commands_processed",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1447,7 +1447,7 @@
             }
         },
         {
-            "name": "Min SQL PLan Cache Hit Ratio",
+            "name": "Total connections received",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1457,15 +1457,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Min SQL PLan Cache Hit Ratio",
+            "customName": "Total connections received",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.minSQLPlanCacheHitRatio",
+                    "metric": "builtin:tech.redis.total_connections_received",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1518,7 +1518,7 @@
             }
         },
         {
-            "name": "Network Traffic Received Rate",
+            "name": "Used memory",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1528,1506 +1528,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Network Traffic Received Rate",
+            "customName": "Used memory",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.networkTrafficReceivedRateByHostInterface",
+                    "metric": "builtin:tech.redis.used_memory",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Network Traffic Transmit Rate",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 912,
-                "left": 1216,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Network Traffic Transmit Rate",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.networkTrafficTransmitRateByHostInterface",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.custom_device"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Oldest Replication Snapshot",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 912,
-                "left": 1520,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Oldest Replication Snapshot",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.oldestReplicationSnapshot",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.custom_device"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Open Connections",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 1216,
-                "left": 0,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Open Connections",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.openConnections",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.custom_device"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Replication Log Shipping Delay",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 1216,
-                "left": 304,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Replication Log Shipping Delay",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.repLogShippingDelayByHostsServiceName",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.custom_device"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Replication Errors",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 1216,
-                "left": 608,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Replication Errors",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.replicationErrors",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.custom_device"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Replication Mode",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 1216,
-                "left": 912,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Replication Mode",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.replicationModeByHostsServiceName",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.custom_device"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Replication Status",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 1216,
-                "left": 1216,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Replication Status",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.replicationStatusByHostsServiceName",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.custom_device"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Row Store Allocated Size",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 1216,
-                "left": 1520,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Row Store Allocated Size",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.rowStoreAllocatedSizeByHostServiceName",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.custom_device"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Savepoints",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 1520,
-                "left": 0,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Savepoints",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.savepoints",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.custom_device"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Savepoints Critical Phase Duration",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 1520,
-                "left": 304,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Savepoints Critical Phase Duration",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.savepointsCriticalPhaseDurationByServiceName",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.custom_device"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Time Since Previous Savepoint",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 1520,
-                "left": 608,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Time Since Previous Savepoint",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.savepointsTimeSincePrevious",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.custom_device"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Secondary Failover Count",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 1520,
-                "left": 912,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Secondary Failover Count",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.secondaryFailoverCountByHostsServiceName",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.custom_device"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Service CPU Utilization",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 1520,
-                "left": 1216,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Service CPU Utilization",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.serviceCPUUtilizationByHostServiceName",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.custom_device"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Service Memory Usage",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 1520,
-                "left": 1520,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Service Memory Usage",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.serviceMemoryUsageByHostServiceName",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.custom_device"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Service Response Time",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 1824,
-                "left": 0,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Service Response Time",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.serviceResponseTimeByHostServiceName",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.custom_device"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Service Status",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 1824,
-                "left": 304,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Service Status",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.serviceStatusByHostServiceName",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.custom_device"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Services Unknown Replication Count",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 1824,
-                "left": 608,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Services Unknown Replication Count",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.servicesUnknownReplicationCount",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.custom_device"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Unloads Due To Low Memory",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 1824,
-                "left": 912,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Unloads Due To Low Memory",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.unloadsDueToLowMemory",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.custom_device"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Host Used Memory",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 1824,
-                "left": 1216,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Host Used Memory",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.usedMemoryByHost",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.custom_device"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "License Status",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 1824,
-                "left": 1520,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "License Status",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.validLicenseBySystemID",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.custom_device"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Waiting Threads",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 2128,
-                "left": 0,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Waiting Threads",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "ext:tech.SAP_HANADB.databases.waitingThreads",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",

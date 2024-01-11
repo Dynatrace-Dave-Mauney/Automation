@@ -7,6 +7,7 @@ Determine which metrics in the metrics.json file are not covered by a rule in th
 import json
 import yaml
 
+
 def main():
 
     metric_list = []
@@ -38,6 +39,7 @@ def main():
                     match_found = True
         if not match_found:
             print(f'{metric} lacks coverage')
+
 
 if __name__ == '__main__':
     main()

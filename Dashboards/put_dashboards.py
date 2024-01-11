@@ -21,7 +21,7 @@ def run():
 
     # Default prefix.
     # Override it here or in the put_dashboard call, if needed.
-    prefix = ''
+    # prefix = ''
 
     # Put dashboard(s) to the environment name, path, prefix and owner specified.
     # Wildcards like "?" to signify any single character or "*" to signify any number of characters may be used.
@@ -229,7 +229,14 @@ def run():
     # put_dashboards('Prod', '../DynatraceDashboardGenerator/aaaaaaaa-*.json', 'PROD', owner)
     # put_dashboards('Prod', '../DynatraceDashboardGenerator/aaaaaaaa-*-000000000000.json', 'PROD', owner)
 
-    put_dashboards('Personal', '../$Output/Dashboards/Downloads/Prod/*.json', None, owner)
+    # put_dashboards('Personal', '../$Output/Dashboards/Downloads/Prod/*.json', None, owner)
+    # put_dashboards('Prod', '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000101.json', 'PROD', owner)
+    # put_dashboards('Prod', '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000102.json', 'PROD', owner)
+
+    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000122.json', 'Prod', owner)
+    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000123.json', 'Prod', owner)
+    put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000001-v2.json', 'Prod', owner)
+
 
 def put_dashboards(env_name, path, prefix, owner):
     print('Prefix: ' + str(prefix))
