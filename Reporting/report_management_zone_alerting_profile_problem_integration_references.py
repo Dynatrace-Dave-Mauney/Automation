@@ -103,13 +103,16 @@ def count_problem_notification_references(env, token, management_zone_dict, aler
             notification_type = notification.get('type')
 
             notification_reference_type = 'NotifyOtherRefs'
-            if notification_type == 'WEBHOOK':
-                url = notification.get('url')
-                if url and 'pagerduty' in url:
-                    notification_reference_type = 'NotifyPagerDutyRefs'
+            if notification_type == 'PAGER_DUTY':
+                notification_reference_type = 'NotifyPagerDutyRefs'
             else:
-                if notification_type == 'EMAIL':
-                    notification_reference_type = 'NotifyEmailRefs'
+                if notification_type == 'WEBHOOK':
+                    url = notification.get('url')
+                    if url and 'pagerduty' in url:
+                        notification_reference_type = 'NotifyPagerDutyRefs'
+                else:
+                    if notification_type == 'EMAIL':
+                        notification_reference_type = 'NotifyEmailRefs'
 
             management_zone_id = alerting_profile_references_dict.get(alerting_profile, None)
             # print(name, notification_reference_type, alerting_profile, management_zone_id)
