@@ -235,8 +235,40 @@ def run():
 
     # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000122.json', 'Prod', owner)
     # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000123.json', 'Prod', owner)
-    put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000001-v2.json', 'Prod', owner)
+    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000001-v2.json', 'Prod', owner)
 
+    # Current Customer
+    # Prod (Use None for Prefix when putting from Custom since it has the prefix already set correctly)
+    # Overwrite the version-specific dashboards
+    # put_dashboards('Prod', 'Custom/Overview-Prod/00000000-dddd-bbbb-ffff-*.json', None, owner)
+    # put_dashboards('Prod', 'Custom/Overview-Prod/00000000-dddd-bbbb-ffff-000000000001-v3.json', None, owner)
+    # put_dashboards('Prod', 'Custom/Overview-Prod/00000000-dddd-bbbb-ffff-000000000014-v1.json', None, owner)
+    # put_dashboards('Prod', 'Custom/Overview-Prod/00000000-dddd-bbbb-ffff-000000000800-v1.json', None, owner)
+    # put_dashboards('Prod', 'Custom/Overview-Prod/00000000-dddd-bbbb-ffff-000000000900-v1.json', None, owner)
+
+    # PreProd (Use None for Prefix when putting from Custom since it has the prefix already set correctly)
+    # Overwrite the version-specific dashboards
+    # put_dashboards('PreProd', 'Custom/Overview-PreProd/00000000-dddd-bbbb-ffff-*.json', None, owner)
+    # put_dashboards('PreProd', 'Custom/Overview-PreProd/00000000-dddd-bbbb-ffff-000000000001-v3.json', None, owner)
+    # put_dashboards('PreProd', 'Custom/Overview-PreProd/00000000-dddd-bbbb-ffff-000000000014-v1.json', None, owner)
+    # put_dashboards('PreProd', 'Custom/Overview-PreProd/00000000-dddd-bbbb-ffff-000000000800-v1.json', None, owner)
+    # put_dashboards('PreProd', 'Custom/Overview-PreProd/00000000-dddd-bbbb-ffff-000000000900-v1.json', None, owner)
+
+    # Dev (Use None for Prefix when putting from Custom since it has the prefix already set correctly)
+    # Overwrite the version-specific dashboards
+    put_dashboards('Dev', 'Custom/Overview-Dev/00000000-dddd-bbbb-ffff-*.json', None, owner)
+    put_dashboards('Dev', 'Custom/Overview-Dev/00000000-dddd-bbbb-ffff-000000000001-v3.json', None, owner)
+    put_dashboards('Dev', 'Custom/Overview-Dev/00000000-dddd-bbbb-ffff-000000000014-v1.json', None, owner)
+    put_dashboards('Dev', 'Custom/Overview-Dev/00000000-dddd-bbbb-ffff-000000000800-v1.json', None, owner)
+    put_dashboards('Dev', 'Custom/Overview-Dev/00000000-dddd-bbbb-ffff-000000000900-v1.json', None, owner)
+
+
+    '''
+    WIP: .NET: aaaaaaaa-bbbb-cccc-dddd-000000000001.json
+    Why are .NET metrics broken?
+    Could be due to lack of full stack on .NET processes...
+    '''
+    # put_dashboards('Prod', '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000001.json', 'Prod', owner)
 
 def put_dashboards(env_name, path, prefix, owner):
     print('Prefix: ' + str(prefix))
@@ -310,7 +342,7 @@ def put_dashboards(env_name, path, prefix, owner):
 
 
 def get_owner():
-    return os.environ.get('DASHBOARD_OWNER_EMAIL', 'nobody@example.com')
+    return os.environ.get('DYNATRACE_DASHBOARD_OWNER', 'nobody@example.com')
 
 
 def put_dashboard(env, token, dashboard_id, payload):

@@ -127,9 +127,40 @@ def write_markdown_menus(dashboard_lookup):
         'WebSphere',
     ]
 
+    # Customer3-specific list
+    menu_item_list_v3 = [
+        '.NET',
+        'Administration',
+        'Application Overview - Home',
+        'Backend Overview',
+        'Containers',
+        'Detailed Drilldowns Menu',
+        'Full Stack Overview',
+        'Go',
+        'Hosts (Detailed)',
+        'Java',
+        'Java Memory',
+        'Key Requests',
+        'Kubernetes - Home',
+        'Monitoring Overview',
+        'Network (Host-Level Details)',
+        'Network (Process-Level Details)',
+        'Node.js',
+        'Processes',
+        'Service Errors',
+        'Service HTTP Errors',
+        'Suspicious Activity Audit',
+        'Synthetics: Browser Monitor Events',
+        'Tomcat',
+        'Web Servers',
+        'WebLogic by Name',
+        'WebLogic by Process',
+    ]
+
     markdown_menu = '			"markdown": "More Details\\n\\n'
     # for menu_item in menu_item_list_v1:
-    for menu_item in menu_item_list_v2:
+    # for menu_item in menu_item_list_v2:
+    for menu_item in menu_item_list_v3:
     # for menu_item in menu_item_list:
         markdown_item_id = dashboard_lookup.get(menu_item)
         if not markdown_item_id:

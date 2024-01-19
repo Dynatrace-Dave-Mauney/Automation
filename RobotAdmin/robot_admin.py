@@ -207,10 +207,8 @@ def process():
     # For when everything is commented out below...
     pass
 
-    put_request_attribute('x-dynatrace (client-side)', 'REQUEST_HEADER', 'x-dynatrace')
-    put_request_attribute('x-dynatrace', 'REQUEST_HEADER', 'x-dynatrace')
-
-    # process_current_customer_specific_auto_tags()
+    process_customer_specific_auto_tags()
+    process_customer_specific_request_attributes()
 
     # Run a sanity test, if pointed to 'Personal' or 'Demo' environment only
     # sanity_test()
@@ -308,20 +306,6 @@ def sanity_test():
     process_all_conditional_naming_rules()
 
 
-def process_current_customer_specific_auto_tags():
-    ###################################################################################################################
-    # current_customer_specific: Auto Tags
-    ###################################################################################################################
-    pass
-    # put_request_attribute('User-Agent', 'REQUEST_HEADER', 'User-Agent')
-    # put_request_attribute_with_value_processing_control('User Agent Type', 'REQUEST_HEADER', 'User-Agent', {'extractSubstring': {'delimiter': '/', 'position': 'BEFORE'}, 'splitAt': '', 'trim': False})
-    # put_request_attribute_tenable_client_ip()
-    # put_health_check_request_naming_rules_user_agent()
-    # put_health_check_request_naming_rules_urls()
-    # put_request_attribute_with_value_processing_control('Non-Synthetic', 'REQUEST_HEADER', 'User-Agent', {'splitAt': '', 'trim': False, 'valueCondition': {'negate': True, 'operator': 'BEGINS_WITH', 'value': 'DynatraceSynthetic'}})
-    # put_request_attribute_with_value_processing_control('Synthetic', 'REQUEST_HEADER', 'User-Agent', {'splitAt': '', 'trim': False, 'valueCondition': {'negate': False, 'operator': 'BEGINS_WITH', 'value': 'DynatraceSynthetic'}})
-
-
 def process_customer_specific_auto_tags():
     ###################################################################################################################
     # customer_specific: Auto Tags
@@ -331,7 +315,7 @@ def process_customer_specific_auto_tags():
     process_auto_tags_process()
     process_auto_tags_service()
     process_auto_tags_database()
-    process_auto_tags_aws()
+    # process_auto_tags_aws()
     process_auto_tags_kubernetes()
     process_auto_tags_java()
     process_auto_tags_springboot()
@@ -340,9 +324,10 @@ def process_customer_specific_auto_tags():
     process_auto_tags_apache_http()
     process_auto_tags_iis()
     process_auto_tags_dotnet()
-    process_auto_tags_websphere()
     process_auto_tags_weblogic()
-    process_auto_tags_iib()
+    # process_auto_tags_websphere()
+    # process_auto_tags_iib()
+    process_auto_tags_google_cloud_platform()
     print('customer_specific Auto Tags Complete')
 
 
@@ -352,6 +337,7 @@ def process_all_auto_tags():
     ###################################################################################################################
     process_auto_tags_basics()
     process_auto_tags_host()
+    process_auto_tags_vmware()
     process_auto_tags_process()
     process_auto_tags_service()
     process_auto_tags_database()
@@ -384,6 +370,36 @@ def process_all_auto_tags():
     process_auto_tags_ruby()
     process_auto_tags_varnish()
     print('All Auto Tags Complete')
+
+
+def process_customer_specific_request_attributes():
+    put_request_attribute('Client IP Address', 'CLIENT_IP', None)
+    put_request_attribute('SOAPAction', 'REQUEST_HEADER', 'SOAPAction')
+    put_request_attribute('User-Agent', 'REQUEST_HEADER', 'User-Agent')
+    put_request_attribute('aspxerrorpath', 'REQUEST_HEADER', 'aspxerrorpath')
+    put_request_attribute('content-length', 'REQUEST_HEADER', 'content-length')
+    put_request_attribute('content-type', 'REQUEST_HEADER', 'content-type')
+    put_request_attribute('sm_user', 'REQUEST_HEADER', 'sm_user')
+    put_request_attribute('x-client-ip', 'REQUEST_HEADER', 'x-client-ip')
+    put_request_attribute('x-dynatrace (client-side)', 'REQUEST_HEADER', 'x-dynatrace')
+    put_request_attribute('x-dynatrace', 'REQUEST_HEADER', 'x-dynatrace')
+    put_request_attribute('x-dynatrace-application', 'REQUEST_HEADER', 'x-dynatrace-application')
+    put_request_attribute('x-forwarded-for', 'REQUEST_HEADER', 'x-forwarded-for')
+    put_request_attribute('x-forwarded-host', 'REQUEST_HEADER', 'x-forwarded-host')
+    put_request_attribute('x-forwarded-server', 'REQUEST_HEADER', 'x-forwarded-server')
+    put_request_attribute('x-ibm-client-id', 'REQUEST_HEADER', 'x-ibm-client-id')
+
+    put_request_attribute_with_value_processing_control('Non-Synthetic', 'REQUEST_HEADER', 'User-Agent', {'splitAt': '', 'trim': False, 'valueCondition': {'negate': True, 'operator': 'BEGINS_WITH', 'value': 'DynatraceSynthetic'}})
+    put_request_attribute_with_value_processing_control('Synthetic', 'REQUEST_HEADER', 'User-Agent', {'splitAt': '', 'trim': False, 'valueCondition': {'negate': False, 'operator': 'BEGINS_WITH', 'value': 'DynatraceSynthetic'}})
+    put_request_attribute_with_value_processing_control('User Agent Type', 'REQUEST_HEADER', 'User-Agent', {'extractSubstring': {'delimiter': '/', 'position': 'BEFORE'}, 'splitAt': '', 'trim': False})
+
+    # Request Attributes for Load Testing
+    put_request_attribute('x-dynatrace-test', 'REQUEST_HEADER', 'x-dynatrace-test')
+    put_request_attribute_load_testing('Load Test LSN', 'REQUEST_HEADER', 'x-dynatrace-test', 'LSN=', ';', 'BETWEEN')
+    put_request_attribute_load_testing('Load Test LTN', 'REQUEST_HEADER', 'x-dynatrace-test', 'LTN=', ';', 'BETWEEN')
+    put_request_attribute_load_testing('Load Test PC', 'REQUEST_HEADER', 'x-dynatrace-test', 'PC=', ';', 'BETWEEN')
+    put_request_attribute_load_testing('Load Test TSN', 'REQUEST_HEADER', 'x-dynatrace-test', 'TSN=', ';', 'BETWEEN')
+    put_request_attribute_load_testing('Load Test VU', 'REQUEST_HEADER', 'x-dynatrace-test', 'VU=', ';', 'BETWEEN')
 
 
 def process_all_request_attributes():
@@ -456,7 +472,6 @@ def process_auto_tags_basics():
 
     # "Special" Tags: Location-oriented
     put_auto_tag('Geolocation', 'OPENSTACK_REGION_NAME', 'EXISTS', '{GeolocationSite:Name}', 'PROCESS_GROUP')
-    put_auto_tag_aws_region()
     put_auto_tag_data_center()
 
     # "Special" Tags: Miscellaneous
@@ -466,9 +481,12 @@ def process_auto_tags_basics():
 
 def process_auto_tags_host():
     put_auto_tag('Host CPU Cores', 'HOST_DETECTED_NAME', 'EXISTS', '{Host:CpuCores}', 'HOST')
+    put_auto_tag_host_technology()
+
+
+def process_auto_tags_vmware():
     put_auto_tag('VMWare Data Center Name', 'VMWARE_DATACENTER_NAME', 'EXISTS', '{VmwareDatacenter:Name}', 'HOST')
     put_auto_tag('VMWare VM Name', 'VMWARE_VM_NAME', 'EXISTS', '{VmwareVm:Name}', 'HOST')
-    put_auto_tag_host_technology()
 
 
 def process_auto_tags_process():
@@ -492,6 +510,7 @@ def process_auto_tags_database():
 
 
 def process_auto_tags_aws():
+    put_auto_tag_aws_region()
     put_auto_tag('AWS Availability Zone', 'AWS_AVAILABILITY_ZONE_NAME', 'EXISTS', '{AwsAvailabilityZone:Name}', 'PROCESS_GROUP')
     put_auto_tag_typical_process_group_dynamic_key('Amazon ECR Image Account Id', 'AMAZON_ECR_IMAGE_ACCOUNT_ID', '{ProcessGroup:AmazonECRImageAccountId}')
     put_auto_tag_typical_process_group_dynamic_key('Amazon ECR Image Region', 'AMAZON_ECR_IMAGE_REGION', '{ProcessGroup:AmazonECRImageRegion}')

@@ -84,7 +84,7 @@ def verify_dashboard(filename):
                 print(f'{dashboard_name}|{dashboard_id}|{dashboard_owner}| has bad {violations}')
 
         except JSONDecodeError:
-            print(f'Skipping non-JSON file: {filename}')
+            print(f'Skipping non-JSON file (or non-parsable JSON file): {filename}')
 
 
 def main():

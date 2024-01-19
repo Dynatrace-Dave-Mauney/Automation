@@ -23,6 +23,10 @@ def process_report(env, token, summary_mode):
     count_key_only = 0
     count_key_value = 0
 
+    counts_entity_type = {}
+    counts_entity_type_key_only = {}
+    counts_entity_type_key_value = {}
+
     endpoint = '/api/v2/tags'
     
     # Skipping for now: 'ESXi', 'AWS', 'Azure scale set', 'Custom device', 'Custom device group'
@@ -31,11 +35,11 @@ def process_report(env, token, summary_mode):
     for taggable_entity in taggable_entity_list:
         entity_type = taggable_entity[0]
         entity_name = taggable_entity[1]
-        
+
         raw_params = f'entitySelector=type({entity_type})'
         params = urllib.parse.quote(raw_params, safe='/,&=')
         manual_tags_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
-    
+
         for manual_tags_json in manual_tags_json_list:
             inner_manual_tags_json_list = manual_tags_json.get('tags')
             for inner_manual_tags_json in inner_manual_tags_json_list:
@@ -45,16 +49,26 @@ def process_report(env, token, summary_mode):
     
                 if not summary_mode:
                     rows.append((key, value, string_representation, entity_name, entity_type))
-    
+
                 count_total += 1
-    
+                counts_entity_type[entity_type] = counts_entity_type.get(entity_type, 0) + 1
+
                 if value == '':
                     count_key_only += 1
+                    counts_entity_type_key_only[entity_type] = counts_entity_type_key_only.get(entity_type, 0) + 1
                 else:
                     count_key_value += 1
-    
-        summary.append('There are ' + str(count_total) + ' manual tags currently defined for ' + entity_name + '.  ' +
-                       str(count_key_only) + ' are key only and ' + str(count_key_value) + ' are key/value pairs.')
+                    counts_entity_type_key_value[entity_type] = counts_entity_type_key_value.get(entity_type, 0) + 1
+
+        count_entity_type = counts_entity_type.get(entity_type, 0)
+        count_entity_type_key_only = counts_entity_type_key_only.get(entity_type, 0)
+        count_entity_type_key_value = counts_entity_type_key_value.get(entity_type, 0)
+
+        count_entity_type_message = f'There are {count_entity_type} manual tags currently defined for {entity_name}'
+        if count_entity_type > 0:
+            summary.append(f'{count_entity_type_message}.  {count_entity_type_key_only} are key only and {count_entity_type_key_value} are key/value pairs.')
+        else:
+            summary.append(f'{count_entity_type_message}.')
 
     if not summary_mode:
         report_name = 'Custom Tags'
@@ -81,7 +95,7 @@ def main():
     friendly_function_name = 'Dynatrace Automation Reporting'
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
-    # env_name_supplied = 'Prod'
+    env_name_supplied = 'Prod'
     # env_name_supplied = 'NonProd'
     # env_name_supplied = 'Prep'
     # env_name_supplied = 'Dev'

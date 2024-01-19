@@ -47,7 +47,8 @@ def get_findings_dictionary(env):
 
 
 # Test locally:
-results = get_findings_dictionary("Personal")
-print(results)
-for results_key in results.keys():
-	print(results_key, results[results_key])
+if __name__ == '__main__':
+	results = get_findings_dictionary("Prod")
+	print(results)
+	for results_key in results.keys():
+		print(results_key, results[results_key])

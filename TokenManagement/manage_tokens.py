@@ -29,7 +29,7 @@ def process():
 
 	# Create some tokens!
 	# These are the most important ones for the "Automation" project...
-	# post_dynatrace_automation_token()
+	post_dynatrace_automation_token()
 	# post_reporting_token()
 	# post_tools_token()
 

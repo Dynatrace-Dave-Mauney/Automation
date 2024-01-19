@@ -71,7 +71,7 @@ def get_client_environment_for_function_print_control(env_name, friendly_functio
         tenant = args.environment
         tenant_source = 'Command Line Argument "-e" or "--environment"'
     else:
-        tenant_key = f'{env_name.upper()}_TENANT'
+        tenant_key = f'DYNATRACE_{env_name.upper()}_TENANT'
         tenant = os.environ.get(tenant_key)
         tenant_source = f'Environment Variable "{tenant_key}"'
 
@@ -152,7 +152,7 @@ def get_environment_for_function_print_control(env_name, friendly_function_name,
         tenant = args.environment
         tenant_source = 'Command Line Argument "-e" or "--environment"'
     else:
-        tenant_key = f'{env_name.upper()}_TENANT'
+        tenant_key = f'DYNATRACE_{env_name.upper()}_TENANT'
         tenant = os.environ.get(tenant_key)
         tenant_source = f'Environment Variable "{tenant_key}"'
 

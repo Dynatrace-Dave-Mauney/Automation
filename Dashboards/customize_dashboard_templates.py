@@ -6,22 +6,26 @@ import shutil
 import yaml
 from inspect import currentframe
 
-PREFIX = 'Prod:'
-DASHBOARD_CUSTOM_PATH = 'Custom/Overview-Customer2-Prod'
-DASHBOARD_TEMPLATE_PATH = 'Templates/Overview'
-
-# PREFIX = 'NonProd:'
-# DASHBOARD_CUSTOM_PATH = 'Custom/Overview-Customer2-NonProd (With Prod Tags)'
+# PREFIX = 'Prod:'
+# DASHBOARD_CUSTOM_PATH = 'Custom/Overview-Prod'
 # DASHBOARD_TEMPLATE_PATH = 'Templates/Overview'
+
+# PREFIX = 'PreProd:'
+# DASHBOARD_CUSTOM_PATH = 'Custom/Overview-PreProd'
+# DASHBOARD_TEMPLATE_PATH = 'Templates/Overview'
+
+PREFIX = 'Dev:'
+DASHBOARD_CUSTOM_PATH = 'Custom/Overview-Dev'
+DASHBOARD_TEMPLATE_PATH = 'Templates/Overview'
 
 # PREFIX = 'DEMO:'
 # DASHBOARD_CUSTOM_PATH = 'Custom/Overview-Demo'
 # DASHBOARD_TEMPLATE_PATH = 'Templates/Overview'
 
 
-# OWNER = os.environ.get('DASHBOARD_OWNER_EMAIL', 'nobody@example.com')
+OWNER = os.environ.get('DYNATRACE_DASHBOARD_OWNER', 'nobody@example.com')
 # OWNER = 'nobody@example.com'
-OWNER = 'dave.mauney@dynatrace.com'
+# OWNER = 'dave.mauney@dynatrace.com'
 SHARED = True
 PRESET = True
 MENU_PRESET = True

@@ -99,9 +99,9 @@ Unless you also plan to use PyCharm, continue to the "Configure Automation Proje
 
 rem Be sure to restart your PyCharm IDE after this script runs to use the new environment variable settings
 
-setx PROD_TENANT prd12345
-setx PREP_TENANT prp12345
-setx DEV_TENANT dev12345
+setx DYNATRACE_PROD_TENANT prd12345
+setx DYNATRACE_PREP_TENANT prp12345
+setx DYNATRACE_DEV_TENANT dev12345
 
 setx ROBOT_ADMIN_PROD_TOKEN dt0c01.*
 setx ROBOT_ADMIN_PREP_TOKEN dt0c01.*
@@ -111,7 +111,7 @@ setx TOKEN_MANAGEMENT_PROD_TOKEN dt0c01.*
 setx TOKEN_MANAGEMENT_PREP_TOKEN dt0c01.*
 setx TOKEN_MANAGEMENT_DEV_TOKEN dt0c01.*
 
-setx DASHBOARD_OWNER_EMAIL somebody.important@example.com
+setx DYNATRACE_DASHBOARD_OWNER somebody.important@example.com
 ```
 
 - Robot Admin Permissions

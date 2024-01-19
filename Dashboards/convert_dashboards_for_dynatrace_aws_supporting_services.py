@@ -10,7 +10,7 @@ import glob
 import json
 import os
 
-OWNER = os.environ.get('DASHBOARD_OWNER_EMAIL', 'nobody@example.com')
+OWNER = os.environ.get('DYNATRACE_DASHBOARD_OWNER', 'nobody@example.com')
 
 DASHBOARD_INPUT_PATH = '../$Output/Dashboards/AWSSupportingServices/DataExplorer'
 DASHBOARD_OUTPUT_PATH = '../$Output/Dashboards/AWSSupportingServices/Final'
