@@ -35,7 +35,7 @@ def run():
     #   'Sandbox/*.json' # Lenient reference
 
     # put_dashboards('Prod', '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json', 'Prod', owner)
-    # put_dashboards('Prep', '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json', 'Prep', owner)
+    # put_dashboards('PreProd', '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json', 'PreProd', owner)
     # put_dashboards('Dev', '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json', 'Dev', owner)
     # put_dashboards('Personal', '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json', 'Personal', owner)
     # put_dashboards('Demo', '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json', 'Demo', owner)
@@ -46,7 +46,7 @@ def run():
     # owner = 'xxxxxx@xxxxxxx.com'
     # put_dashboards('Personal', 'Templates/Overview/00000000-dddd-bbbb-ffff-00000000????.json', 'Personal', owner)
     # put_dashboards('Dev', 'Templates/Overview/00000000-dddd-bbbb-ffff-00000000????.json', 'Dev', owner)
-    # put_dashboards('Prep', 'Templates/Overview/00000000-dddd-bbbb-ffff-00000000????.json', 'Prep', owner)
+    # put_dashboards('PreProd', 'Templates/Overview/00000000-dddd-bbbb-ffff-00000000????.json', 'PreProd', owner)
     # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-00000000????.json', 'Prod', owner)
 
     # owner = 'xxxxx@xxxxxxx.com'

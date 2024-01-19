@@ -21,7 +21,7 @@ default_configuration_file = 'C:\\Users\\dave.mauney\\PycharmProjects\\Automatio
 # Dynatrace Automation Token Management
 # Dynatrace Platform Document
 
-supported_environments = ['Prod', 'NonProd', 'Prep', 'Dev', 'Personal', 'Demo']
+supported_environments = ['Prod', 'NonProd', 'PreProd', 'Dev', 'Personal', 'Demo']
 
 
 def get_env_name(function_name):

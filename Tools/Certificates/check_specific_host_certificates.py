@@ -124,7 +124,7 @@ def get_config():
 
 
 def main():
-    supported_environments = ['Prod', 'NonProd', 'Prep', 'Dev', 'Personal', 'Demo']
+    supported_environments = ['Prod', 'NonProd', 'PreProd', 'Dev', 'Personal', 'Demo']
     args = sys.argv[1:]
     if args and args[0] in supported_environments:
         env_name, env, token = environment.get_environment(args[0])
@@ -134,7 +134,7 @@ def main():
         # For easy control from IDE
         # env_name_supplied = 'Prod'
         # env_name_supplied = 'NonProd'
-        # env_name_supplied = 'Prep'
+        # env_name_supplied = 'PreProd'
         # env_name_supplied = 'Dev'
         # env_name_supplied = 'Personal'
         # env_name_supplied = 'Demo'

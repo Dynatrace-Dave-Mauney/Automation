@@ -9,7 +9,7 @@ env_name_supplied = environment.get_env_name(friendly_function_name)
 # For easy control from IDE
 # env_name_supplied = 'Prod'
 # env_name_supplied = 'NonProd'
-# env_name_supplied = 'Prep'
+# env_name_supplied = 'PreProd'
 # env_name_supplied = 'Dev'
 env_name_supplied = 'Personal'
 # env_name_supplied = 'Demo'
@@ -236,7 +236,7 @@ def process():
 		('Windows', 'description', 'DEPRECATED: Use OS:Windows'),
 	]
 
-	if env_name in ['Prod', 'Prep', 'Dev']:
+	if env_name in ['Prod', 'PreProd', 'Dev']:
 		name_prefix = ''
 		description_suffix = '(generated with RobotAdmin)'
 		update_auto_tag_list(name_prefix, description_suffix, auto_tag_updates)

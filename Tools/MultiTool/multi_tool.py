@@ -22,13 +22,13 @@ save_content = ''
 # supported_environments = {
 #     'Prod': ('PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN'),
 #     'NonProd': ('NONPROD_TENANT', 'ROBOT_ADMIN_NONPROD_TOKEN'),
-#     # 'Prep': ('PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN'),
+#     # 'PreProd': ('PREP_TENANT', 'ROBOT_ADMIN_PREP_TOKEN'),
 #     # 'Dev': ('DEV_TENANT', 'ROBOT_ADMIN_DEV_TOKEN'),
 #     'Personal': ('PERSONAL_TENANT', 'ROBOT_ADMIN_PERSONAL_TOKEN'),
 #     'Demo': ('DEMO_TENANT', 'ROBOT_ADMIN_DEMO_TOKEN'),
 # }
 
-# supported_environments = ['Prod', 'NonProd', 'Prep', 'Dev', 'Personal', 'Demo']
+# supported_environments = ['Prod', 'NonProd', 'PreProd', 'Dev', 'Personal', 'Demo']
 supported_environments = ['Prod', 'NonProd']
 supported_environments = ['Prod', 'PreProd', 'Dev']
 
@@ -658,7 +658,7 @@ def run():
     # For easy control from IDE
     # env_name_supplied = 'Prod'
     # env_name_supplied = 'NonProd'
-    # env_name_supplied = 'Prep'
+    # env_name_supplied = 'PreProd'
     # env_name_supplied = 'Dev'
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'Demo'
