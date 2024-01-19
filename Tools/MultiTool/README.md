@@ -6,7 +6,7 @@ Use MultiTool to make API calls to the config, environment v1/v2, events, metric
 Modify the supported environments as needed: 
 
 ```  
-supported_environments = ['Prod', 'NonProd']
+supported_environments = ['Prod', 'PreProd', 'Dev']
 ```
 
 Modify the default environments as needed: 
