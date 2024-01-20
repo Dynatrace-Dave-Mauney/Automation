@@ -172,7 +172,7 @@ def write_summary(func):
 def write_summary_results(summary_list):
 	if write_summary_switch:
 		for line in summary_list:
-			line = line.replace('are 0', 'are no')
+			line = line.replace('are 0 ', 'are no ')
 			line = line.replace('.  0 are', '.  None are')
 			line = line.replace(' 0 are', ' none are')
 			outfile.write(line)
@@ -338,17 +338,17 @@ def process():
 		write_blank_line()
 		write_findings(heading)
 
-		heading = 'AWS Configuration Summary'
-		write_h3_heading(heading)
-		write_summary(report_aws_credential_details.summarize)
-		write_blank_line()
-		write_findings(heading)
+		# heading = 'AWS Configuration Summary'
+		# write_h3_heading(heading)
+		# write_summary(report_aws_credential_details.summarize)
+		# write_blank_line()
+		# write_findings(heading)
 
-		heading = 'Azure Configuration Summary'
-		write_h3_heading(heading)
-		write_summary(report_azure_credential_details.summarize)
-		write_blank_line()
-		write_findings(heading)
+		# heading = 'Azure Configuration Summary'
+		# write_h3_heading(heading)
+		# write_summary(report_azure_credential_details.summarize)
+		# write_blank_line()
+		# write_findings(heading)
 
 		heading = 'Kubernetes Configuration Summary'
 		write_h3_heading(heading)

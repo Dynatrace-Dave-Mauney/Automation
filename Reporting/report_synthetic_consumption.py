@@ -74,7 +74,10 @@ def process_report(env, token, summary_mode):
             # if count_total >= 50:
             #     break
 
-        average_dem_units_per_hour = count_total_dem_units_per_hour/count_total
+        if count_total > 0:
+            average_dem_units_per_hour = count_total_dem_units_per_hour / count_total
+        else:
+            average_dem_units_per_hour = 0
 
         summary.append(f'There are {count_total} synthetic tests currently defined.')
         summary.append(f'There are {count_too_many_dem_units} synthetic tests currently defined using more than {too_many_dem_units_threshold} DEM units per hour.')
