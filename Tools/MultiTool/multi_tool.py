@@ -29,8 +29,8 @@ save_content = ''
 # }
 
 # supported_environments = ['Prod', 'NonProd', 'PreProd', 'Dev', 'Personal', 'Demo']
-supported_environments = ['Prod', 'NonProd']
-supported_environments = ['Prod', 'PreProd', 'Dev']
+# supported_environments = ['Prod', 'NonProd']
+supported_environments = ['e Prod', 'PreProd', 'Dev']
 
 supported_modes = ['configs', 'entities', 'entities_v1', 'events', 'metrics', 'settings20']
 
@@ -832,10 +832,16 @@ def run():
                     with open(put_file_name, 'r', encoding='utf-8') as file:
                         payload = file.read()
                         json_data = json.loads(payload)
-                        config_id = json_data.get('id')
+
+                        id_key = 'id'
+                        if api == 'applications/web':
+                            id_key = 'identifier'
+
+                        config_id = json_data.get(id_key)
                         if not config_id:
                             print('Unable to extract id from payload:')
                             print(json_data)
+
                         config_object = get_config(config_id, env, token)
                         if config_object:
                             save_path = f'{PATH}/{env_name}/PUT/Backup/Config/{api}'
