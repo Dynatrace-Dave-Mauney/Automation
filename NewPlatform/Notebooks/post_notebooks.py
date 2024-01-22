@@ -29,7 +29,7 @@ def run():
 
 
 def post_notebooks(env_name, path):
-    friendly_function_name = 'Dynatrace Platform Document'
+    friendly_function_name = 'Dynatrace Automation'
     _, env, client_id, client_secret = environment.get_client_environment_for_function(env_name, friendly_function_name)
     oauth_bearer_token = new_platform_api.get_oauth_bearer_token(client_id, client_secret, scope='document:documents:write')
     for filename in glob.glob(path):

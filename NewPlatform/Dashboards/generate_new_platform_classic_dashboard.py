@@ -120,7 +120,7 @@ def write_dashboard(dashboard_json):
 
 
 def main():
-    friendly_function_name = 'Dynatrace Platform Document'
+    friendly_function_name = 'Dynatrace Automation'
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
     # env_name_supplied = 'Prod'
