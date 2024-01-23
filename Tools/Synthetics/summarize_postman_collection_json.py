@@ -69,11 +69,11 @@ def post_http_check_synthetic(env, token, name, url, method, body, header_list):
 
     endpoint = '/api/v1/synthetic/monitors'
     print(f'Posting HTTP Check Synthetic "{name}" to {env}{endpoint}')
-    # r = dynatrace_api.post_object(f'{env}{endpoint}', token, formatted_json)
-    # print(f'HTTP Check Synthetic Response: {r.text}')
-    # monitor_id = json.loads(r.text).get('entityId')
-    # print(f'Verify: {env}/ui/http-monitor/{monitor_id}')
-    # exit(1111)
+    r = dynatrace_api.post_object(f'{env}{endpoint}', token, formatted_json)
+    print(f'HTTP Check Synthetic Response: {r.text}')
+    monitor_id = json.loads(r.text).get('entityId')
+    print(f'Verify: {env}/ui/http-monitor/{monitor_id}')
+    exit(1111)
 
 
 def process_item_list(item_list):
