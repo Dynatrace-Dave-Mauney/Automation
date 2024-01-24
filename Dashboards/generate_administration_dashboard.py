@@ -4,16 +4,20 @@ Generate "Administration Menu" Dashboard JSON.
 
 import json
 
-directory_path = '../../Dashboards/Templates/Overview'
-dashboard_name = '00000000-dddd-bbbb-ffff-000000000800.json'
+directory_path = 'Templates/Overview'
+dashboard_name = '00000000-dddd-bbbb-ffff-000000000800-v2.json'
 
 def main():
 	dashboard_links = [
+		('Dynatrace Usage and Billing', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000812'),
+		('DPS Usage Details', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000811'),
 		('Licensing Overview', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000801'),
 		('Billing', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000805'),
-		('Dynatrace Self-Monitoring', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000806'),
 		('Host Health Breakdown', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000807'),
+		('Problem Notifications Health Overview', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000809'),
 		('3rd Party XHR Detection', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000808'),
+		('Dynatrace Self-Monitoring', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000806'),
+		('OneAgent Health Overview', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000810'),
 	]
 
 	view_links = [
@@ -31,7 +35,8 @@ def main():
 
 	setting_links = [
 		('Settings', '#settings'),
-		('AWS', '#settings/awsmonitoring'),
+		# 800-v2 has no AWS
+		# ('AWS', '#settings/awsmonitoring'),
 		('Application Detection', '/ui/settings/builtin:rum.web.app-detection'),
 		('Automatically applied tags', '/ui/settings/builtin:tags.auto-tagging'),
 		('Calculated Service Metrics', '#settings/serviceMetrics'),
@@ -60,9 +65,8 @@ def main():
   "dashboardMetadata": {
     "name": "TEMPLATE: Administration",
     "shared": true,
-    "owner": "nobody@example.com",
     "preset": true,
-    "popularity": 1
+    "owner": "nobody@example.com"
   },
   "tiles": [
     {

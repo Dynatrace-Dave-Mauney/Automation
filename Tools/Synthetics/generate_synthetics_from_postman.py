@@ -36,6 +36,8 @@ def post_http_check_synthetic(env, token, name, url, method, body, header_list):
     locations = ['GEOLOCATION-9999453BE4BDB3CD']
 
     data['locations'] = locations
+    data['tags'] = [{"source": "USER", "context": "CONTEXTLESS", "key": "RobotAdmin"}]
+
     # monitor_http_statuses = '2xx, 3xx, 401, 403'
     monitor_http_statuses = '2xx'
     monitor_request_template = data['script']['requests'][0]
@@ -56,6 +58,7 @@ def post_http_check_synthetic(env, token, name, url, method, body, header_list):
     url_short_name = url.lower().strip().replace('https://', '')
     monitor_request['description'] = f'{name}:{url_short_name}'
     monitor_request['method'] = method
+    monitor_request['requestBody'] = body
     monitor_requests_validation_rules = monitor_request['validation']['rules'][0]
     monitor_requests_validation_rules['value'] = monitor_http_statuses
     monitor_configuration = monitor_request['configuration']
@@ -73,24 +76,23 @@ def post_http_check_synthetic(env, token, name, url, method, body, header_list):
     print(f'HTTP Check Synthetic Response: {r.text}')
     monitor_id = json.loads(r.text).get('entityId')
     print(f'Verify: {env}/ui/http-monitor/{monitor_id}')
-    exit(1111)
 
 
-def process_item_list(item_list):
+def process_item_list(env, token, item_list):
     for item in item_list:
         inner_item_list = item.get('item')
 
         if inner_item_list:
             inner_item_name = item.get('name')
             print('', 'BRANCH', inner_item_name)
-            process_item_list(inner_item_list)
+            process_item_list(env, token, inner_item_list)
         else:
             # inner_item_name = item.get('name')
             # print('', 'LEAF', inner_item_name)
-            process_item(item)
+            process_item(env, token, item)
 
 
-def process_item(item):
+def process_item(env, token, item):
     global request_count
 
     item_name = item.get('name')
@@ -107,14 +109,6 @@ def process_item(item):
 
     print(' ', 'LEAF', item_name, item_request_method, item_request_url_raw, header_list, item_request_body_raw)
 
-    friendly_function_name = 'Dynatrace Automation'
-    env_name_supplied = environment.get_env_name(friendly_function_name)
-    # For easy control from IDE
-    # env_name_supplied = 'Prod'
-    # env_name_supplied = 'PreProd'
-    # env_name_supplied = 'Dev'
-    env_name_supplied = 'Personal'
-    env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
     post_http_check_synthetic(env, token, item_name, item_request_url_raw, item_request_method, item_request_body_raw, header_list)
 
     request_count += 1
@@ -128,21 +122,30 @@ def replace_placeholders(string):
 
 
 def main():
+    friendly_function_name = 'Dynatrace Automation'
+    env_name_supplied = environment.get_env_name(friendly_function_name)
+    # For easy control from IDE
+    # env_name_supplied = 'Prod'
+    # env_name_supplied = 'PreProd'
+    # env_name_supplied = 'Dev'
+    env_name_supplied = 'Personal'
+    env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
+
     try:
         input_glob_pattern = "C:\\Dynatrace\\Customers\\ODFL\\Synthetics\\IPL Web & API Tests.postman_collection.json"
 
         for file_name in glob.glob(input_glob_pattern, recursive=True):
             base_file_name = os.path.basename(file_name)
-            print(base_file_name)
+            print(f'Processing input postman collection file: {base_file_name}')
             if os.path.isfile(file_name) and file_name.endswith('.json'):
                 with open(file_name, 'r', encoding='utf-8') as infile:
                     input_json = json.loads(infile.read())
                     # formatted_json = json.dumps(input_json, indent=4, sort_keys=False)
                     info = input_json.get('info')
                     collection_name = info.get('name')
-                    print(collection_name)
+                    print(f'Processing collection: {collection_name}')
                     item_list = input_json.get('item')
-                    process_item_list(item_list)
+                    process_item_list(env, token, item_list)
     except FileNotFoundError:
         print('The directory name does not exist')
 

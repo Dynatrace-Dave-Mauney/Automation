@@ -16,12 +16,27 @@ def run():
 
     # Use the owner stored in properties by default.
     # Override it here or in the put_dashboard call, if needed.
-    owner = get_owner()
     # owner = 'nobody@example.com'
+    owner = get_owner()
 
     # Default prefix.
     # Override it here or in the put_dashboard call, if needed.
     # prefix = ''
+
+    current_customer_skip_list = [
+        ': AWS',
+        ': Azure',
+        ': DB2',
+        ': F5',
+        ': IBM',
+        ': Kafka',
+        ': Microsoft',
+        ': Oracle',
+        ': SAP',
+        ': SOLR',
+        ': VMware',
+        ': WebSphere',
+    ]
 
     # Put dashboard(s) to the environment name, path, prefix and owner specified.
     # Wildcards like "?" to signify any single character or "*" to signify any number of characters may be used.
@@ -34,251 +49,50 @@ def run():
     #   'Sandbox/00000000-dddd-bbbb-aaaa-????????????.json' # Strict reference
     #   'Sandbox/*.json' # Lenient reference
 
-    # put_dashboards('Prod', '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json', 'Prod', owner)
-    # put_dashboards('PreProd', '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json', 'PreProd', owner)
-    # put_dashboards('Dev', '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json', 'Dev', owner)
-    # put_dashboards('Personal', '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json', 'Personal', owner)
-    # put_dashboards('Demo', '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json', 'Demo', owner)
+    # Example Paths
+    # '../$Input/Dashboards/Examples/00000000-0000-0000-0000-000000000000.json'
+    # 'Sandbox/00000000-dddd-bbbb-aaaa-???????????1.json'
+    # 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000807-v1.json'
+    # 'Curated/Extensions/SQLServer/*SQL Server*.json'
+    # '../DynatraceDashboardGenerator/aaaaaaaa-aaaa-aaaa-aaaa-00000000000?.json'
+    # '../$Output/Dashboards/Downloads/Prod/*.json'
 
-    # put_dashboards('Personal', 'Sandbox/00000000-dddd-bbbb-aaaa-???????????1.json', 'Personal', owner)
-
-    # owner = get_owner()
-    # owner = 'xxxxxx@xxxxxxx.com'
-    # put_dashboards('Personal', 'Templates/Overview/00000000-dddd-bbbb-ffff-00000000????.json', 'Personal', owner)
-    # put_dashboards('Dev', 'Templates/Overview/00000000-dddd-bbbb-ffff-00000000????.json', 'Dev', owner)
-    # put_dashboards('PreProd', 'Templates/Overview/00000000-dddd-bbbb-ffff-00000000????.json', 'PreProd', owner)
-    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-00000000????.json', 'Prod', owner)
-
-    # owner = 'xxxxx@xxxxxxx.com'
-    # put_dashboards('Personal', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000001.json', 'Personal', owner)
-    # put_dashboards('Personal', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000807-v1.json', 'Personal', owner)
-
-    # Customer2 Prod (Use None for Prefix when putting from Custom since it has the prefix already set correctly)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000001-v2.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000002.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000003.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000004.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000005.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000006.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000007.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000008.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000009.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000010.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000011.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000012.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000013.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000014-v1.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000017.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000018.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000019.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000020.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000021.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000029.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000030.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000040.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000041.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000042.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000043.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000044.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000045.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000047.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000067.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000068.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000069.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000070.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000071.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000072.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000073.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000074.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000075.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000076.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000077.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000078.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000079.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000080.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000081.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000082.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000083.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000084.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000090.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000091.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000092.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000093.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000094.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000095.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000096.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000100.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000101.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000102.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000103.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000104.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000110.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000111.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000120.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000121.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000800.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000801.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000802.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000803.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000804.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000805.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000806.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000807.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000808.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000809.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000810.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Customer2-Prod/00000000-dddd-bbbb-ffff-000000000900-v1.json', None, owner)
-
-    # Customer2 NonProd (Use None for Prefix when putting from Custom since it has the prefix already set correctly)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000001-v2.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000002.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000003.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000004.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000005.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000006.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000007.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000008.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000009.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000010.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000011.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000012.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000013.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000014-v1.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000017.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000018.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000019.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000020.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000021.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000029.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000030.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000040.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000041.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000042.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000043.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000044.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000045.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000047.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000067.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000068.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000069.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000070.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000071.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000072.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000073.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000074.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000075.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000076.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000077.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000078.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000079.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000080.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000081.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000082.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000083.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000084.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000090.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000091.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000092.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000093.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000094.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000095.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000096.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000100.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000101.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000102.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000103.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000104.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000110.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000111.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000120.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000121.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000800.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000801.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000802.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000803.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000804.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000805.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000806.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000807.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000808.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000809.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000810.json', None, owner)
-    # put_dashboards('NonProd', 'Custom/Overview-Customer2-NonProd (With Prod Tags)/00000000-dddd-bbbb-ffff-000000000900-v1.json', None, owner)
-
-    #
-    # Development Area Below Here...
-    #
-
-    # Database Extensions Work
-    # put_dashboards('Prod', 'Curated/Extensions/SQLServer/*SQL Server*.json', 'Prod', owner)
-    # put_dashboards('NonProd', 'Curated/Extensions/SQLServer/*SQL Server*.json', 'NonProd', owner)
-    # put_dashboards('Prod', '../DynatraceDashboardGenerator/aaaaaaaa-aaaa-aaaa-aaaa-00000000000?.json', 'TEMP', owner)
-    # put_dashboards('Prod', '../DynatraceDashboardGenerator/aaaaaaaa-aaaa-aaaa-aaaa-00000000000?.json', 'TEMP', owner)
-    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000077.json', 'Prod', owner)
-    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000085.json', 'Prod', owner)
-    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000086.json', 'Prod', owner)
-    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000087.json', 'Prod', owner)
-    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000088.json', 'Prod', owner)
-    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000089.json', 'Prod', owner)
-    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000090.json', 'Prod', owner)
-    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000097.json', 'Prod', owner)
-
-    # put_dashboards('Prod', '/Users/dave.mauney/PycharmProjects/Automation/$Output/Dashboards/Downloads/TMP/*.json', None, None)
-    # put_dashboards('Prod', '../DynatraceDashboardGenerator/aaaaaaaa-aaaa-aaaa-aaaa-00000000000?.json', 'TEMP', owner)
-    # put_dashboards('Personal', '../NewPlatform/Dashboards/new_platform_dashboard.json', None, owner)
-    # put_dashboards('Prod', '../DynatraceDashboardGenerator/aaaaaaaa-*.json', 'PROD', owner)
-    # put_dashboards('Prod', '../DynatraceDashboardGenerator/aaaaaaaa-*-000000000000.json', 'PROD', owner)
-
-    # put_dashboards('Personal', '../$Output/Dashboards/Downloads/Prod/*.json', None, owner)
-    # put_dashboards('Prod', '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000101.json', 'PROD', owner)
-    # put_dashboards('Prod', '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000102.json', 'PROD', owner)
-
-    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000122.json', 'Prod', owner)
-    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000123.json', 'Prod', owner)
-    # put_dashboards('Prod', 'Templates/Overview/00000000-dddd-bbbb-ffff-000000000001-v2.json', 'Prod', owner)
-
-    # Current Customer
-    # Prod (Use None for Prefix when putting from Custom since it has the prefix already set correctly)
-    # Overwrite the version-specific dashboards
-    # put_dashboards('Prod', 'Custom/Overview-Prod/00000000-dddd-bbbb-ffff-*.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Prod/00000000-dddd-bbbb-ffff-000000000001-v3.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Prod/00000000-dddd-bbbb-ffff-000000000014-v1.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Prod/00000000-dddd-bbbb-ffff-000000000800-v1.json', None, owner)
-    # put_dashboards('Prod', 'Custom/Overview-Prod/00000000-dddd-bbbb-ffff-000000000900-v1.json', None, owner)
-
-    # PreProd (Use None for Prefix when putting from Custom since it has the prefix already set correctly)
-    # Overwrite the version-specific dashboards
-    # put_dashboards('PreProd', 'Custom/Overview-PreProd/00000000-dddd-bbbb-ffff-*.json', None, owner)
-    # put_dashboards('PreProd', 'Custom/Overview-PreProd/00000000-dddd-bbbb-ffff-000000000001-v3.json', None, owner)
-    # put_dashboards('PreProd', 'Custom/Overview-PreProd/00000000-dddd-bbbb-ffff-000000000014-v1.json', None, owner)
-    # put_dashboards('PreProd', 'Custom/Overview-PreProd/00000000-dddd-bbbb-ffff-000000000800-v1.json', None, owner)
-    # put_dashboards('PreProd', 'Custom/Overview-PreProd/00000000-dddd-bbbb-ffff-000000000900-v1.json', None, owner)
-
-    # Dev (Use None for Prefix when putting from Custom since it has the prefix already set correctly)
-    # Overwrite the version-specific dashboards
-    put_dashboards('Dev', 'Custom/Overview-Dev/00000000-dddd-bbbb-ffff-*.json', None, owner)
-    put_dashboards('Dev', 'Custom/Overview-Dev/00000000-dddd-bbbb-ffff-000000000001-v3.json', None, owner)
-    put_dashboards('Dev', 'Custom/Overview-Dev/00000000-dddd-bbbb-ffff-000000000014-v1.json', None, owner)
-    put_dashboards('Dev', 'Custom/Overview-Dev/00000000-dddd-bbbb-ffff-000000000800-v1.json', None, owner)
-    put_dashboards('Dev', 'Custom/Overview-Dev/00000000-dddd-bbbb-ffff-000000000900-v1.json', None, owner)
+    # env_name = 'Prod'
+    # env_name = 'PreProd'
+    # env_name = 'Dev'
+    # env_name = 'Personal'
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-*.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000001-v3.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000014-v1.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000800-v2.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000900-v1.json', owner=owner, skip_list=current_customer_skip_list)
 
 
-    '''
-    WIP: .NET: aaaaaaaa-bbbb-cccc-dddd-000000000001.json
-    Why are .NET metrics broken?
-    Could be due to lack of full stack on .NET processes...
-    '''
-    # put_dashboards('Prod', '../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000001.json', 'Prod', owner)
+def put_dashboards(env_name, path, **kwargs):
+    prefix = kwargs.get('prefix')
+    owner = kwargs.get('owner')
+    skip_list = kwargs.get('skip_list', [])
 
-def put_dashboards(env_name, path, prefix, owner):
-    print('Prefix: ' + str(prefix))
-    print('Owner:  ' + str(owner))
+    print(f'Prefix:    {prefix}')
+    print(f'Owner:     {owner}')
+    print(f'Skip List: {skip_list}')
+
     for filename in glob.glob(path):
         with codecs.open(filename, encoding='utf-8') as f:
             dashboard = f.read()
             dashboard_json = json.loads(dashboard)
             dashboard_id = dashboard_json.get('id')
             dashboard_name = dashboard_json.get('dashboardMetadata').get('name')
+
+            # Skip any dashboards that are in the "skip list"
+            skip_dashboard = False
+            for skip in skip_list:
+                if skip in dashboard_name:
+                    print(f'Skipping {dashboard_name} due to match found in skip list')
+                    skip_dashboard = True
+                    break
+            if skip_dashboard:
+                continue
 
             if prefix:
                 # Replace well-known placeholder prefixes or add a prefix, as needed
@@ -338,7 +152,7 @@ def put_dashboards(env_name, path, prefix, owner):
 
             put_dashboard(env, token, dashboard_id, json.dumps(dashboard_json))
 
-            print(env + '/#dashboard;id=' + dashboard_id)
+            print(f'{env}/#dashboard;id={dashboard_id}')
 
 
 def get_owner():
@@ -375,7 +189,7 @@ def main(arguments):
         print('1.0')
     else:
         if len(arguments) == 4:
-            put_dashboards(arguments[1], arguments[2], arguments[3], arguments[3])
+            put_dashboards(arguments[1], arguments[2], prefix=arguments[3], owner=arguments[3])
         else:
             print(usage)
             raise ValueError('Incorrect arguments!')

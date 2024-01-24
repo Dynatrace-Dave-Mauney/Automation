@@ -28,6 +28,8 @@ def process(env_name, env, token):
 
 			# Clean of 'Prod' environment
 			# if owner == 'dave.mauney@dynatrace.com':
+			# print(owner, dashboard_id)
+			# if 'mauney' in owner.lower() or 'capes' in owner.lower():
 			if 'mauney' in owner.lower():
 				# print(name)
 				# if dashboard_id.startswith('aaaaaaaa'):
@@ -35,7 +37,8 @@ def process(env_name, env, token):
 				# if 'SQL Server' in name and not dashboard_id.startswith('00000000-dddd-bbbb-ffff-0000000000'):
 				# if not name.startswith('Prod:') and not name.startswith('TEMP:'):
 				# if dashboard_id.startswith('aaaaaaaa-bbbb-cccc-dddd-'):
-				if name.startswith('Fake'):
+				# Mass cleanup of Overview Framework Dashboards not needed for current customer
+				if ': AWS' in name or ': Azure' in name or ': DB2' in name or ': F5' in name or ': Kafka' in name or ': IBM' in name or ': Microsoft' in name or ': Oracle' in name or ': VMware' in name or ': WebSphere' in name or ': SAP' in name or ': SOLR' in name:
 					delete_list.append(dashboard_id + ': ' + name + ': ' + owner)
 
 			# Full clean of 'Personal' environment
@@ -74,13 +77,14 @@ def process(env_name, env, token):
 			# 	delete_list.append(dashboard_id + ': ' + name + ': ' + owner)
 
 	delete_list = sorted(delete_list)
+	delete_count = len(delete_list)
 
-	if len(delete_list) > 0:
+	if delete_count > 0:
 		print('DASHBOARDS TO BE DELETED: ')
 		for line in delete_list:
 			print(line)
 
-		msg = 'PROCEED WITH DELETE OF LISTED DASHBOARDS?'
+		msg = f'PROCEED WITH DELETE OF {delete_count} LISTED DASHBOARDS?'
 		proceed = input("%s (Y/n) " % msg).upper() == 'Y'
 
 		if proceed:

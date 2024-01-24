@@ -6,26 +6,20 @@ import shutil
 import yaml
 from inspect import currentframe
 
-# PREFIX = 'Prod:'
-# DASHBOARD_CUSTOM_PATH = 'Custom/Overview-Prod'
-# DASHBOARD_TEMPLATE_PATH = 'Templates/Overview'
+env_name = 'Prod'
+# env_name = 'PreProd'
+# env_name = 'Dev'
+# env_name = 'Personal'
+# env_name = 'Demo'
 
-# PREFIX = 'PreProd:'
-# DASHBOARD_CUSTOM_PATH = 'Custom/Overview-PreProd'
-# DASHBOARD_TEMPLATE_PATH = 'Templates/Overview'
-
-PREFIX = 'Dev:'
-DASHBOARD_CUSTOM_PATH = 'Custom/Overview-Dev'
+PREFIX = f'{env_name}:'
+DASHBOARD_CUSTOM_PATH = f'Custom/Overview-{env_name}'
 DASHBOARD_TEMPLATE_PATH = 'Templates/Overview'
-
-# PREFIX = 'DEMO:'
-# DASHBOARD_CUSTOM_PATH = 'Custom/Overview-Demo'
-# DASHBOARD_TEMPLATE_PATH = 'Templates/Overview'
-
 
 OWNER = os.environ.get('DYNATRACE_DASHBOARD_OWNER', 'nobody@example.com')
 # OWNER = 'nobody@example.com'
 # OWNER = 'dave.mauney@dynatrace.com'
+
 SHARED = True
 PRESET = True
 MENU_PRESET = True
@@ -413,7 +407,7 @@ def load_tag_filters_from_yaml():
     global DATABASE_SERVICE_TAGS
     global IIS_TAGS
 
-    input_filename = 'dynamic_tag_filters.yaml'
+    input_filename = f'dynamic_tag_filters_{env_name}.yaml'
 
     try:
         yaml_dict = read_yaml(input_filename)

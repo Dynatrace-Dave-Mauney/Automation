@@ -4,6 +4,8 @@ import yaml
 from Reuse import dynatrace_api
 from Reuse import environment
 
+yaml_file_name = 'dynamic_tag_filters_UNSET.yaml'
+
 
 def process(env, token, entity_types):
     used_tags_by_entity_type = {}
@@ -32,7 +34,6 @@ def process(env, token, entity_types):
         tags = process_entity_type(env, token, entity_type)
         used_tags_by_entity_type[entity_type] = tags
 
-    yaml_file_name = 'dynamic_tag_filters.yaml'
     write_yaml(yaml_file_name, used_tags_by_entity_type)
     print(f'{yaml_file_name} created')
 
@@ -91,8 +92,12 @@ def main():
     # env_name_supplied = 'PreProd'
     # env_name_supplied = 'Dev'
     # env_name_supplied = 'Personal'
-    # env_name_supplied = 'Demo'
+    env_name_supplied = 'Demo'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
+
+    global yaml_file_name
+    yaml_file_name = f'dynamic_tag_filters_{env_name}.yaml'
+    print(f'Generating file named {yaml_file_name}')
 
     # To process specific entity types, pass a list
     process(env, token, ['HOST', 'SERVICE', 'DATABASE_SERVICE', 'PROCESS_GROUP', 'APPLICATION', 'KUBERNETES_CLUSTER', 'KUBERNETES_NODE', 'KUBERNETES_SERVICE'])
