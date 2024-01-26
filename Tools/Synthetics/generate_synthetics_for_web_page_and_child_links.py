@@ -40,6 +40,8 @@ def post_http_check_synthetic(env, token, root_page, child_pages):
     name = f'Check Root and Children for {root_page}'
     data['name'] = name
     data['locations'] = ['GEOLOCATION-9999453BE4BDB3CD']
+    '''N. Virginia: GEOLOCATION-9999453BE4BDB3CD'''
+    '''Ohio: GEOLOCATION-716844F67F8B2CA0'''
     data['tags'] = [{"source": "USER", "context": "CONTEXTLESS", "key": "RobotAdmin"}]
 
     monitor_request_template = data['script']['requests'][0]
