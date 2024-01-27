@@ -178,6 +178,9 @@ f = open('config_v1_spec3.json',)
 data = json.load(f)
 print_header()
 
+dump_monitored_entity_filters()
+exit(1)
+
 dump_auto_tag_placeholder_list()
 dump_endpoint_methods()
 dump_endpoint_get_methods()
@@ -189,7 +192,7 @@ dump_maturity_of_endpoints()
 dump_management_zone_entities()
 dump_monitored_entity_filters()
 
-exit(1234)
+exit(2)
 
 # This is where we get all the possible placeholders to use in conditions for process group tag rules
 # dump_auto_tag_placeholder_list()
