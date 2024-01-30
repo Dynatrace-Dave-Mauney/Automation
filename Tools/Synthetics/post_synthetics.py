@@ -44,8 +44,8 @@ def post_http_check(target_env_name, monitor_name, monitor_urls):
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
     # env_name_supplied = 'Prod'
-    # env_name_supplied = 'NonProd'
     # env_name_supplied = 'PreProd'
+    # env_name_supplied = 'Sandbox'
     # env_name_supplied = 'Dev'
     # env_name_supplied = 'Personal'
     env_name_supplied = 'Demo'

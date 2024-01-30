@@ -7,10 +7,10 @@ friendly_function_name = 'Dynatrace Automation Token Management'
 env_name_supplied = environment.get_env_name(friendly_function_name)
 # For easy control from IDE
 # env_name_supplied = 'Prod'
-# env_name_supplied = 'NonProd'
 # env_name_supplied = 'PreProd'
+# env_name_supplied = 'Sandbox'
 # env_name_supplied = 'Dev'
-env_name_supplied = 'Personal'
+# env_name_supplied = 'Personal'
 # env_name_supplied = 'Demo'
 env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 
