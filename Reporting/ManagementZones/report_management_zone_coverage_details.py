@@ -8,18 +8,24 @@ from Reuse import report_writer
 entity_types_of_interest = [
     'APPLICATION',
     'CLOUD_APPLICATION',
-    'CLOUD_APPLICATION_INSTANCE',
+    # 'CLOUD_APPLICATION_INSTANCE',
     'CLOUD_APPLICATION_NAMESPACE',
     'CONTAINER_GROUP',
-    'CONTAINER_GROUP_INSTANCE',
+    # 'CONTAINER_GROUP_INSTANCE',
     # 'DATABASE_SERVICE',
     'HOST',
     'KUBERNETES_CLUSTER',
     'KUBERNETES_NODE',
     'KUBERNETES_SERVICE',
     'PROCESS_GROUP',
-    'PROCESS_GROUP_INSTANCE',
+    # 'PROCESS_GROUP_INSTANCE',
     'SERVICE',
+]
+
+openshift_admin_ignore_list = [
+    'CLOUD_APPLICATION',
+    'CONTAINER_GROUP',
+    'PROCESS_GROUP',
 ]
 
 
@@ -44,10 +50,14 @@ def process(env, token):
 
                 management_zone_list = inner_entities_json.get('managementZones')
                 for management_zone in management_zone_list:
+                    management_zone_name = management_zone.get('name')
                     if entity_type == 'SERVICE' and inner_entities_json.get('properties').get('serviceType') == 'DATABASE_SERVICE':
-                        rows.append((management_zone.get('name'), 'DATABASE_SERVICE', entity_display_name))
+                        rows.append((management_zone_name, 'DATABASE_SERVICE', entity_display_name))
                     else:
-                        rows.append((management_zone.get('name'), entity_type, entity_display_name))
+                        if management_zone_name == 'OPENSHIFT_ADMIN' and entity_type in openshift_admin_ignore_list:
+                            continue
+                        else:
+                            rows.append((management_zone_name, entity_type, entity_display_name))
 
     rows = remove_duplicates(sorted(rows))
 
