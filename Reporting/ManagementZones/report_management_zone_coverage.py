@@ -697,6 +697,10 @@ monitored_entity_filters = [
 
 
 def process(env, token):
+    if 'DATABASE_SERVICE' in entity_types_of_interest and 'SERVICE' not in entity_types_of_interest:
+        print('The "entity_types_of_interest" list must include "SERVICE" if "DATABASE_SERVICE" is included.')
+        exit(1)
+
     mz_coverage_dict = {}
 
     counts_by_entity_type_template = {}
@@ -734,6 +738,7 @@ def process(env, token):
 
 def get_mz_coverage_for_entity_type(env, token, entity_type, mz_coverage_dict):
     # Skip special entity types used for counting only
+    # Database services will be counted when the SERVICE entity type is processed
     if entity_type == 'DATABASE_SERVICE':
         return
 
@@ -750,10 +755,10 @@ def get_mz_coverage_for_entity_type(env, token, entity_type, mz_coverage_dict):
         for inner_entities_json in inner_entities_json_list:
             management_zone_list = inner_entities_json.get('managementZones')
             if management_zone_list:
-                increment_mz_coverage_dict_counts(entity_type, management_zone_list, mz_coverage_dict)
-                if entity_type == 'SERVICE' and inner_entities_json.get('properties').get('serviceType') == 'DATABASE_SERVICE':
-                    if 'DATABASE_SERVICE' in entity_types_of_interest:
-                        increment_mz_coverage_dict_counts('DATABASE_SERVICE', management_zone_list, mz_coverage_dict)
+                if entity_type == 'SERVICE' and inner_entities_json.get('properties').get('serviceType') == 'DATABASE_SERVICE' and 'DATABASE_SERVICE' in entity_types_of_interest:
+                    increment_mz_coverage_dict_counts('DATABASE_SERVICE', management_zone_list, mz_coverage_dict)
+                else:
+                    increment_mz_coverage_dict_counts(entity_type, management_zone_list, mz_coverage_dict)
 
 
 def increment_mz_coverage_dict_counts(entity_type, management_zone_list, mz_coverage_dict):
@@ -767,8 +772,8 @@ def main():
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
     # env_name_supplied = 'Prod'
-    # env_name_supplied = 'NonProd'
     # env_name_supplied = 'PreProd'
+    # env_name_supplied = 'Sandbox'
     # env_name_supplied = 'Dev'
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'Demo'
