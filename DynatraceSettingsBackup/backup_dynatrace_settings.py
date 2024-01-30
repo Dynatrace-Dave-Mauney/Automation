@@ -40,7 +40,7 @@ env_name, env, token = environment.get_environment_for_function(env_name_supplie
 
 # backup_directory_path = f'../$Output/DynatraceSettingsBackup/{env_name}'
 # To help with file names that are too long, use a very short directory name
-backup_directory_path = f'/tmp'
+backup_directory_path = '/tmp'
 
 settings20_yaml_file_name = 'settings20.yaml'
 config_yaml_file_name = 'config.yaml'
