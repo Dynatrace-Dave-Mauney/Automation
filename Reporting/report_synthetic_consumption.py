@@ -97,7 +97,7 @@ def process_report(env, token, summary_mode):
             write_string(f'Maximum DEM units per hour consumption by a Synthetic: {maximum_dem_units_per_hour}')
             write_string(f'Average DEM units per hour consumption by all Synthetics: {average_dem_units_per_hour}')
             write_strings(summary)
-            report_writer.write_xlsx(None, report_name, report_headers, sorted_rows, header_format=None, auto_filter=(0, len(report_headers)))
+            report_writer.write_xlsx(None, report_name, report_headers, sorted_rows, header_format=None, auto_filter=(0, len(report_headers) - 1))
             report_writer.write_html(None, report_name, report_headers, sorted_rows)
 
     return summary

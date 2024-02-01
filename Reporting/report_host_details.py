@@ -41,6 +41,9 @@ def process_report(env, token, summary_mode):
     for entities_json in entities_json_list:
         inner_entities_json_list = entities_json.get('entities')
         for inner_entities_json in inner_entities_json_list:
+            # import json
+            # formatted_json = json.dumps(inner_entities_json, indent=4, sort_keys=False)
+            # print(formatted_json)
             entity_id = inner_entities_json.get('entityId', '')
             display_name = inner_entities_json.get('displayName', '')
 

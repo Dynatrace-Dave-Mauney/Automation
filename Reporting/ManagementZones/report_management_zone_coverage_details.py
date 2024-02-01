@@ -66,7 +66,7 @@ def process(env, token):
     report_headers = ['Management Zone', 'Entity Type', 'Entity Display Name']
     report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
     report_writer.write_console(report_name, report_headers, rows, delimiter='|')
-    report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=(0, len(report_headers)))
+    report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=(0, len(report_headers) - 1))
     report_writer.write_html(None, report_name, report_headers, rows)
 
 

@@ -13,6 +13,9 @@ def process(env, token):
     for oneagents_json in oneagents_json_list:
         inner_oneagents_json_list = oneagents_json.get('hosts')
         for inner_oneagents_json in inner_oneagents_json_list:
+            # import json
+            # formatted_json = json.dumps(inner_oneagents_json, indent=4, sort_keys=False)
+            # print(formatted_json)
             host_info = inner_oneagents_json.get('hostInfo')
             entity_id = host_info.get('entityId')
             display_name = host_info.get('displayName')
