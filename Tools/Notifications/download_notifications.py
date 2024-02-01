@@ -1,5 +1,5 @@
 """
-Download automatic tags from the tenant to the path indicated below.
+Download problem notification integrations from the tenant to the path indicated below.
 """
 
 from Reuse import download_entity
@@ -7,8 +7,8 @@ from Reuse import environment
 
 
 download_path = 'downloads'
-entity_type = 'autoTags'
-endpoint = f'/api/config/v1/{entity_type}'
+entity_type = 'notifications'
+endpoint = '/api/config/v1/notifications'
 
 
 def main():

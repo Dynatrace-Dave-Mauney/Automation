@@ -1,5 +1,5 @@
 """
-Download automatic tags from the tenant to the path indicated below.
+Download synthetics from the tenant to the path indicated below.
 """
 
 from Reuse import download_entity
@@ -7,8 +7,8 @@ from Reuse import environment
 
 
 download_path = 'downloads'
-entity_type = 'autoTags'
-endpoint = f'/api/config/v1/{entity_type}'
+entity_type = 'synthetics'
+endpoint = '/api/v1/synthetic/monitors'
 
 
 def main():
@@ -22,7 +22,7 @@ def main():
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'Demo'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
-    download_entity.download(env_name, env, token, entity_type, endpoint, download_path)
+    download_entity.download(env_name, env, token, entity_type, endpoint, download_path, values_key='monitors', id_key='entityId')
 
 
 if __name__ == '__main__':
