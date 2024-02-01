@@ -31,8 +31,8 @@ openshift_admin_ignore_list = [
 
 
 def process(env, token):
-    problem_notification_lookup = get_problem_notification_lookup(env, token)
     alerting_profile_lookup = get_alerting_profile_lookup(env, token)
+    problem_notification_lookup = get_problem_notification_lookup(env, token)
     host_group_lookup = get_host_group_lookup(env, token)
     process_group_lookup = get_process_group_lookup(env, token)
     cloud_application_namespace_lookup = get_cloud_application_namespace_lookup(env, token)
@@ -72,60 +72,82 @@ def process(env, token):
                 for management_zone in management_zone_list:
                     management_zone_name = management_zone.get('name')
                     management_zone_id = management_zone.get('id')
-                    alerting_profile_dict = alerting_profile_lookup.get(management_zone_id)
-                    if alerting_profile_dict:
-                        alerting_profile_name = alerting_profile_dict.get('name')
-                        alerting_profile_id = alerting_profile_dict.get('id')
-                        problem_notification_name = problem_notification_lookup.get(alerting_profile_id)
+
+                    # Skip specified entity types for the OPENSHIFT_ADMIN management zone
+                    if management_zone_name == 'OPENSHIFT_ADMIN' and entity_type in openshift_admin_ignore_list:
+                        continue
+
+                    alerting_profile_dict_list = alerting_profile_lookup.get(management_zone_id)
+
+                    if alerting_profile_dict_list:
+                        alerting_profile_name_list = []
+                        alerting_profile_id_list = []
+                        for alerting_profile_dict in alerting_profile_dict_list:
+                            alerting_profile_name = alerting_profile_dict.get('name')
+                            alerting_profile_id = alerting_profile_dict.get('id')
+                            alerting_profile_name_list.append(alerting_profile_name)
+                            alerting_profile_id_list.append(alerting_profile_id)
+
+                        alerting_profile_name = report_writer.stringify_list(alerting_profile_name_list)
+
+                        problem_notification_name_list = []
+                        for alerting_profile_id in alerting_profile_id_list:
+                            problem_notification_name = problem_notification_lookup.get(alerting_profile_id)
+                            problem_notification_name_list.append(problem_notification_name)
+
+                        problem_notification_name = report_writer.stringify_list(problem_notification_name_list)
+
+                    entity_type_string = entity_type
+
                     if entity_type == 'SERVICE' and inner_entities_json.get('properties').get('serviceType') == 'DATABASE_SERVICE':
-                        rows.append((management_zone_name, 'DATABASE_SERVICE', entity_display_name, host_group_name, monitoring_mode, process_group_name, cloud_application_namespace_name, alerting_profile_name, problem_notification_name))
-                    else:
-                        if management_zone_name == 'OPENSHIFT_ADMIN' and entity_type in openshift_admin_ignore_list:
-                            continue
-                        else:
-                            if entity_type == 'HOST':
-                                properties = inner_entities_json.get('properties')
-                                monitoring_mode = properties.get('monitoringMode')
-                                from_relationship = inner_entities_json.get('fromRelationships', {})
-                                is_instance_of_list = from_relationship.get('isInstanceOf', [])
-                                for is_instance_of in is_instance_of_list:
-                                    instance_id = is_instance_of.get('id')
-                                    if instance_id.startswith('HOST_GROUP'):
-                                        host_group_name = host_group_lookup.get(instance_id, 'Not Found')
-                            if entity_type == 'PROCESS_GROUP':
-                                to_relationship = inner_entities_json.get('toRelationships', {})
-                                is_host_group_of_list = to_relationship.get('isHostGroupOf', [])
-                                for is_host_group_of in is_host_group_of_list:
-                                    host_group_id = is_host_group_of.get('id')
-                                    host_group_name = host_group_lookup.get(host_group_id, 'Not Found')
-                            if entity_type == 'SERVICE':
-                                from_relationship = inner_entities_json.get('fromRelationships', {})
-                                runs_on_list = from_relationship.get('runsOn', [])
-                                for runs_on in runs_on_list:
-                                    process_group_id = runs_on.get('id')
-                                    if process_group_id.startswith('PROCESS_GROUP'):
-                                        process_group_name = process_group_lookup.get(process_group_id, 'Not Found')
-                            # These are not needed by the current customer...
-                            # if entity_type == 'CLOUD_APPLICATION' or entity_type == 'KUBERNETES_SERVICE':
-                            #     if entity_type == 'CLOUD_APPLICATION':
-                            #         to_relationship_key = 'isNamespaceOfCa'
-                            #     if entity_type == 'KUBERNETES_SERVICE':
-                            #         to_relationship_key = 'isNamespaceOfKubernetesSvc'
-                            #     to_relationship = inner_entities_json.get('toRelationships', {})
-                            #     is_namespace_of_list = to_relationship.get(to_relationship_key, [])
-                            #     for is_namespace_of in is_namespace_of_list:
-                            #         cloud_application_namespace_id = is_namespace_of.get('id')
-                            #         if cloud_application_namespace_id.startswith('CLOUD_APPLICATION_NAMESPACE'):
-                            #             cloud_application_namespace_name = cloud_application_namespace_lookup.get(cloud_application_namespace_id)
-                            if entity_type == 'CONTAINER_GROUP':
-                                properties = inner_entities_json.get('properties', {})
-                                meta_data_list = properties.get('metadata', [])
-                                for meta_data in meta_data_list:
-                                    if 'KUBERNETES_NAMESPACE' in str(meta_data):
-                                        cloud_application_namespace_name = meta_data.get('value')
-                                        break
-                                # print(entity_type, cloud_application_namespace_name, meta_data_list)
-                            rows.append((management_zone_name, entity_type, entity_display_name, host_group_name, monitoring_mode, process_group_name, cloud_application_namespace_name, alerting_profile_name, problem_notification_name))
+                        entity_type_string = 'DATABASE_SERVICE'
+
+                    if entity_type == 'HOST':
+                        properties = inner_entities_json.get('properties')
+                        monitoring_mode = properties.get('monitoringMode')
+                        from_relationship = inner_entities_json.get('fromRelationships', {})
+                        is_instance_of_list = from_relationship.get('isInstanceOf', [])
+                        for is_instance_of in is_instance_of_list:
+                            instance_id = is_instance_of.get('id')
+                            if instance_id.startswith('HOST_GROUP'):
+                                host_group_name = host_group_lookup.get(instance_id, 'Not Found')
+
+                    if entity_type == 'PROCESS_GROUP':
+                        to_relationship = inner_entities_json.get('toRelationships', {})
+                        is_host_group_of_list = to_relationship.get('isHostGroupOf', [])
+                        for is_host_group_of in is_host_group_of_list:
+                            host_group_id = is_host_group_of.get('id')
+                            host_group_name = host_group_lookup.get(host_group_id, 'Not Found')
+
+                    if entity_type == 'SERVICE':
+                        from_relationship = inner_entities_json.get('fromRelationships', {})
+                        runs_on_list = from_relationship.get('runsOn', [])
+                        for runs_on in runs_on_list:
+                            process_group_id = runs_on.get('id')
+                            if process_group_id.startswith('PROCESS_GROUP'):
+                                process_group_name = process_group_lookup.get(process_group_id, 'Not Found')
+
+                    if entity_type == 'CLOUD_APPLICATION' or entity_type == 'KUBERNETES_SERVICE':
+                        if entity_type == 'CLOUD_APPLICATION':
+                            to_relationship_key = 'isNamespaceOfCa'
+                        if entity_type == 'KUBERNETES_SERVICE':
+                            to_relationship_key = 'isNamespaceOfKubernetesSvc'
+                        to_relationship = inner_entities_json.get('toRelationships', {})
+                        is_namespace_of_list = to_relationship.get(to_relationship_key, [])
+                        for is_namespace_of in is_namespace_of_list:
+                            cloud_application_namespace_id = is_namespace_of.get('id')
+                            if cloud_application_namespace_id.startswith('CLOUD_APPLICATION_NAMESPACE'):
+                                cloud_application_namespace_name = cloud_application_namespace_lookup.get(cloud_application_namespace_id)
+
+                    if entity_type == 'CONTAINER_GROUP':
+                        properties = inner_entities_json.get('properties', {})
+                        meta_data_list = properties.get('metadata', [])
+                        for meta_data in meta_data_list:
+                            if 'KUBERNETES_NAMESPACE' in str(meta_data):
+                                cloud_application_namespace_name = meta_data.get('value')
+                                break
+
+                    rows.append((management_zone_name, entity_type_string, entity_display_name, host_group_name, monitoring_mode, process_group_name, cloud_application_namespace_name, alerting_profile_name, problem_notification_name))
 
     rows = remove_duplicates(sorted(rows))
 
@@ -207,8 +229,11 @@ def get_alerting_profile_lookup(env, token):
             management_zone_id = alerting_profile.get('mzId')
             if management_zone_id:
                 display_name = alerting_profile.get('displayName')
-                # alerting_profile_lookup[management_zone_id] = display_name
-                alerting_profile_lookup[management_zone_id] = {'name': display_name, 'id': entity_id}
+                alerting_profile_dict = {'name': display_name, 'id': entity_id}
+                if management_zone_id in alerting_profile_lookup:
+                    alerting_profile_lookup[management_zone_id].append(alerting_profile_dict)
+                else:
+                    alerting_profile_lookup[management_zone_id] = [alerting_profile_dict]
 
     return alerting_profile_lookup
 
@@ -224,11 +249,16 @@ def get_problem_notification_lookup(env, token):
             r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{entity_id}', token)
             problem_notification = json.loads(r.text)
             # print(json.dumps(problem_notification, indent=4, sort_keys=False))
-            problem_notification_name = problem_notification.get('name')
             alerting_profile_id = problem_notification.get('alertingProfile')
-            problem_notification_lookup[alerting_profile_id] = problem_notification_name
+            problem_notification_name = problem_notification.get('name')
+            problem_notification_type = problem_notification.get('type', '')
+            problem_notification_email_receivers = problem_notification.get('receivers')
+            if problem_notification_type == 'EMAIL' and problem_notification_email_receivers:
+                name_string = f'{problem_notification_name} (Email to {report_writer.stringify_list(problem_notification_email_receivers)})'
+            else:
+                name_string = problem_notification_name
 
-    # print(problem_notification_lookup)
+            problem_notification_lookup[alerting_profile_id] = name_string
 
     return problem_notification_lookup
 
