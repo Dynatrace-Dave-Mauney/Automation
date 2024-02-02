@@ -31,6 +31,8 @@ openshift_admin_ignore_list = [
 
 
 def process(env, token):
+    management_zone_lookup = get_management_zone_lookup(env, token)
+    metric_event_lookup = get_metric_event_lookup(env, token)
     alerting_profile_lookup = get_alerting_profile_lookup(env, token)
     problem_notification_lookup = get_problem_notification_lookup(env, token)
     host_group_lookup = get_host_group_lookup(env, token)
@@ -149,6 +151,13 @@ def process(env, token):
 
                     rows.append((management_zone_name, entity_type_string, entity_display_name, host_group_name, monitoring_mode, process_group_name, cloud_application_namespace_name, alerting_profile_name, problem_notification_name))
 
+    for key in metric_event_lookup:
+        metric_event_dict = metric_event_lookup.get(key)
+        management_zone_id = metric_event_dict.get('managementZone')
+        management_zone_name = management_zone_lookup.get(management_zone_id, 'UNKNOWN')
+        summary = metric_event_dict.get('summary', 'UNKNOWN')
+        rows.append((management_zone_name, 'Metric Event', summary, '', '', '', '', '', ''))
+
     rows = remove_duplicates(sorted(rows))
 
     report_writer.initialize_text_file(None)
@@ -215,7 +224,6 @@ def get_cloud_application_namespace_lookup(env, token):
 
 
 def get_alerting_profile_lookup(env, token):
-    # TODO: Handle more than one Alerting Profile per Management Zone
     alerting_profile_lookup = {}
     endpoint = '/api/config/v1/alertingProfiles'
     alerting_profiles_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
@@ -261,6 +269,45 @@ def get_problem_notification_lookup(env, token):
             problem_notification_lookup[alerting_profile_id] = name_string
 
     return problem_notification_lookup
+
+
+def get_metric_event_lookup(env, token):
+    metric_event_lookup = {}
+
+    endpoint = '/api/v2/settings/objects'
+    schema_ids = 'builtin:anomaly-detection.metric-events'
+    schema_ids_param = f'schemaIds={schema_ids}'
+    raw_params = schema_ids_param + '&scopes=environment&fields=objectId,value,Summary&pageSize=500'
+    params = urllib.parse.quote(raw_params, safe='/,&=')
+    settings_object_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
+
+    for settings_object in settings_object_list:
+        items = settings_object.get('items')
+        for item in items:
+            object_id = item.get('objectId')
+            value = item.get('value')
+            summary = value.get('summary')
+            query_definition = value.get('queryDefinition', {})
+            management_zone = query_definition.get('managementZone')
+            # print(summary, management_zone, object_id)
+            if management_zone:
+                metric_event_lookup[object_id] = {'managementZone': management_zone, 'summary': summary}
+
+    return metric_event_lookup
+
+
+def get_management_zone_lookup(env, token):
+    management_zone_lookup = {}
+    endpoint = '/api/config/v1/managementZones'
+    entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
+    for entities_json in entities_json_list:
+        inner_entities_json_list = entities_json.get('values')
+        for inner_entities_json in inner_entities_json_list:
+            entity_id = inner_entities_json.get('id')
+            name = inner_entities_json.get('name')
+            management_zone_lookup[entity_id] = name
+
+    return management_zone_lookup
 
 
 def main():
