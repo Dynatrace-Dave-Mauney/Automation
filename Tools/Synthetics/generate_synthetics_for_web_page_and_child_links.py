@@ -22,7 +22,7 @@ def process(env, token, root_page):
 
     unique_child_urls = remove_duplicates(sorted(child_url_list))
 
-    # post_http_check_synthetic(env, token, root_page, unique_child_urls)
+    post_http_check_synthetic(env, token, root_page, unique_child_urls)
     post_browser_synthetic(env, token, root_page, unique_child_urls)
 
 
@@ -129,7 +129,7 @@ def main():
     # env_name_supplied = 'Prod'
     # env_name_supplied = 'Sandbox'
     # env_name_supplied = 'Dev'
-    env_name_supplied = 'Personal'
+    # env_name_supplied = 'Personal'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 
     configuration_file = 'configurations.yaml'

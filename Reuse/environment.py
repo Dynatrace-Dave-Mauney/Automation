@@ -24,9 +24,10 @@ default_configuration_file = 'C:\\Users\\dave.mauney\\PycharmProjects\\Automatio
 supported_environments = ['Prod', 'NonProd', 'PreProd', 'Dev', 'Personal', 'Demo']
 
 
-def get_env_name(function_name):
-    # args = sys.argv[1:]
-    args = args_parser()
+def get_env_name(function_name, **kwargs):
+    arg_parser = kwargs.get('arg_parser')
+    args = args_parser(arg_parser=arg_parser)
+    # print(args)
 
     # if args and args[0] in supported_environments:
     if args.environment_name and args.environment_name in supported_environments:
@@ -134,11 +135,11 @@ def get_environment(env_name):
     return get_environment_for_function(env_name, default_friendly_function_name)
 
 
-def get_environment_for_function(env_name, friendly_function_name):
-    return get_environment_for_function_print_control(env_name, friendly_function_name, True)
+def get_environment_for_function(env_name, friendly_function_name, **kwargs):
+    return get_environment_for_function_print_control(env_name, friendly_function_name, True, **kwargs)
 
 
-def get_environment_for_function_print_control(env_name, friendly_function_name, print_mode):
+def get_environment_for_function_print_control(env_name, friendly_function_name, print_mode, **kwargs):
     # Use this method for control over print statements.
     # The norm is to call "get_environment_for_function(env_name, friendly_function_name)" or
     # "get_environment(env_name)" for maximum convenience and with print on.
@@ -147,7 +148,10 @@ def get_environment_for_function_print_control(env_name, friendly_function_name,
     # tenant = tenant_key = tenant_source = token = token_key = token_source = None
     tenant_key = token_key = None
 
-    args = args_parser()
+    arg_parser = kwargs.get('arg_parser')
+    args = args_parser(arg_parser=arg_parser)
+    # print(args)
+    # args = args_parser()
 
     if args.environment:
         tenant = args.environment
@@ -277,10 +281,20 @@ def read_yaml(yaml_file):
         return None
 
 
-def args_parser():
-    arg_parser = argparse.ArgumentParser()
+def args_parser(**kwargs):
+    # print('kwargs:', kwargs)
+    if kwargs:
+        arg_parser = kwargs.get('arg_parser', None)
 
-    arg_parser.add_argument("-n", "--environment_name", help="environment name ('Prod', 'NonProd', etc.")
+    if not kwargs or not arg_parser:
+        arg_parser = argparse.ArgumentParser()
+
+    # print('arg_parser:', arg_parser)
+
+    # args = arg_parser.parse_args()
+    # print(args)
+
+    arg_parser.add_argument("-n", "--environment_name", help="environment name ('Prod', 'PreProd', etc.")
     arg_parser.add_argument("-e", "--environment", help="Tenant (such as 'abcd1234' in 'https://abcd1234.live.dynatrace.com")
     arg_parser.add_argument("-t", "--token", help="API Token")
     arg_parser.add_argument("-ci", "--client_id", help="Client ID")
