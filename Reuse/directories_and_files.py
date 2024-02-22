@@ -1,4 +1,5 @@
 import os
+import re
 import shutil
 
 
@@ -20,3 +21,8 @@ def make_directory(path):
         exit()
     else:
         print('Successfully created the directory %s ' % path)
+
+
+def get_clean_file_name(file_name, delimiter):
+    clean_file_name = re.sub(r"[/\\?%*:|\"<>\x7F\x00-\x1F]", delimiter, file_name)
+    return clean_file_name
