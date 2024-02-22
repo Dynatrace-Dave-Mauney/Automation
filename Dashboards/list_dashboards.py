@@ -20,6 +20,7 @@ def process(env, token):
 		# 		not dashboard_id.startswith('aaaaaaaa-bbbb-cccc-dddd-00000000'):
 		# if dashboard_id.startswith('FF'):
 		# if dashboard_id.startswith('00000001-0000-0000-000'):
+		# if dashboard_id.startswith('00000000-dddd') and not dashboard_id.startswith('00000000-dddd-bbbb'):
 		if True:
 			lines.append(f'{dashboard_name}|{dashboard_id}|{dashboard_owner}')
 
@@ -37,7 +38,7 @@ def run():
 	# env_name_supplied = 'PreProd'
 	# env_name_supplied = 'Sandbox'
 	# env_name_supplied = 'Dev'
-	env_name_supplied = 'Personal'
+	# env_name_supplied = 'Personal'
 	# env_name_supplied = 'Demo'
 	env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 	process(env, token)
