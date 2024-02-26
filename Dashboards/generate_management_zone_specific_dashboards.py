@@ -4,12 +4,11 @@ import urllib.parse
 
 from Reuse import dynatrace_api
 from Reuse import environment
-# from Reuse import report_writer
 
 entity_types_of_interest = [
     # HOST is a proxy for PROCESS...
     # MOBILE_APPLICATION is not needed yet since no MZ is used for the one that exists
-    # TODO: KUBERNETES will be added later.  It is just "side menu" stuff
+    # TODO: KUBERNETES could be added later.  It is just "side menu" stuff
     'APPLICATION',
     'BROWSER',
     'HTTP_CHECK',
@@ -129,10 +128,9 @@ def process(env, token):
         new_tiles.append(new_tile)
 
         dashboard['tiles'] = reformat_dashboard_tiles(new_tiles)
-        # print('New Tiles:', new_tiles)
 
-        # print(dashboard_name, f'{env}/#dashboard;id={mz_dashboard_id}')
-        # dynatrace_api.put_object(f'{env}{endpoint}/{mz_dashboard_id}', token, json.dumps(dashboard))
+        print(dashboard_name, f'{env}/#dashboard;id={mz_dashboard_id}')
+        dynatrace_api.put_object(f'{env}{endpoint}/{mz_dashboard_id}', token, json.dumps(dashboard))
         menu_dashboard_dict[dashboard_name] = [mz_dashboard_id, mz_id_lookup_dict[key]]
 
     menu_dashboard = generate_menu_dashboard(dashboard_template, menu_dashboard_dict)
