@@ -6,31 +6,29 @@ from Reuse import dynatrace_api
 from Reuse import environment
 
 entity_types_of_interest = [
-    # HOST is a proxy for PROCESS...
-    # MOBILE_APPLICATION is not needed yet since no MZ is used for the one that exists
-    # TODO: KUBERNETES could be added later.  It is just "side menu" stuff
+    # DATABASE_SERVICE and EXTERNAL_SERVICE are "pseudo-services"
+    # TODO: KUBERNETES could be added later because it is just "side menu" stuff.  MOBILE_APPLICATION is not needed yet since no MZ is used for the one that exists.
     'APPLICATION',
     'BROWSER',
     'HTTP_CHECK',
     'SERVICE',
+    'EXTERNAL_SERVICE',
     'DATABASE_SERVICE',
+    'PROCESS_GROUP',
     'HOST',
     # 'KUBERNETES_CLUSTER',
     # 'KUBERNETES_NODE',
     # 'KUBERNETES_SERVICE',
 ]
 
-dashboard_row_indexes = {
-    0: [0, 228, 456, 684, 912],
-    38: [0, 228, 456, 684, 912, 1140],
-    266: [0, 456, 912, 1330],
-    532: [0, 456, 912, 1330],
-}
-
 
 def process(env, token):
     if 'DATABASE_SERVICE' in entity_types_of_interest and 'SERVICE' not in entity_types_of_interest:
         print('The "entity_types_of_interest" list must include "SERVICE" if "DATABASE_SERVICE" is included.')
+        exit(1)
+
+    if 'EXTERNAL_SERVICE' in entity_types_of_interest and 'SERVICE' not in entity_types_of_interest:
+        print('The "entity_types_of_interest" list must include "SERVICE" if "EXTERNAL_SERVICE" is included.')
         exit(1)
 
     mz_coverage_dict = {}
@@ -61,18 +59,26 @@ def process(env, token):
     # print('Building Dashboard Tile Template Dictionary')
     dashboard_tile_template_dict = {}
     dashboard_tiles = dashboard_template.get('tiles')
+
+    # TODO: Remove debug code!
+    # sorted_dashboard_tiles = sort_dashboard_tiles(dashboard_tiles)
+    # print('Sorted Dashboard Template Tiles:')
+    # for tile in sorted_dashboard_tiles:
+    #     print('name/top/left:', tile['name'], tile['bounds']['top'], tile['bounds']['left'])
+    # exit(1111)
+
     for dashboard_tile in dashboard_tiles:
         # print('dashboard_tile:', dashboard_tile)
         dashboard_tile_name = dashboard_tile.get('name')
         dashboard_tile_template_dict[dashboard_tile_name] = dashboard_tile
 
-    print('Dashboard Tile Template:', dashboard_tile_template_dict)
+    # print('Dashboard Tile Template:', dashboard_tile_template_dict)
 
     for key in sorted(mz_coverage_dict.keys()):
         entity_type_list = get_entity_type_list(key, mz_coverage_dict)
         mz_id = mz_id_lookup_dict.get(key).zfill(19)
         mz_dashboard_id = convert_mz_id_to_db_id(mz_id)
-        print('Input:', key, mz_id, mz_dashboard_id, entity_type_list)
+        # print('Input:', key, mz_id, mz_dashboard_id, entity_type_list)
 
         dashboard = copy.deepcopy(dashboard_template)
         dashboard['id'] = mz_dashboard_id
@@ -81,53 +87,107 @@ def process(env, token):
         dashboard['dashboardMetadata']['name'] = dashboard_name
         dashboard['dashboardMetadata']['dashboardFilter'] = {"managementZone": {"id": mz_id, "name": key}}
 
+        variable_column_left = 0
+        variable_column_width = 228
+        variable_row_top = 266
+        variable_row_height = 266
+
         new_tiles = []
         for entity_type in entity_type_list:
-            print(entity_type)
+            # print(entity_type)
             if entity_type == 'APPLICATION':
                 new_tile = dashboard_tile_template_dict.get('Applications Markdown')
+                new_tile['bounds']['left'] = variable_column_left
                 new_tiles.append(new_tile)
                 new_tile = dashboard_tile_template_dict.get('Application health')
+                new_tile['bounds']['left'] = variable_column_left
                 new_tiles.append(new_tile)
+                variable_column_left += variable_column_width
             if entity_type == 'BROWSER' or entity_type == 'HTTP_CHECK':
                 new_tile = dashboard_tile_template_dict.get('Synthetics Markdown')
+                new_tile['bounds']['left'] = variable_column_left
                 new_tiles.append(new_tile)
                 new_tile = dashboard_tile_template_dict.get('Synthetic monitor health')
+                new_tile['bounds']['left'] = variable_column_left
                 new_tiles.append(new_tile)
+                variable_column_left += variable_column_width
             if entity_type == 'SERVICE':
                 new_tile = dashboard_tile_template_dict.get('Services Markdown')
+                new_tile['bounds']['left'] = variable_column_left
                 new_tiles.append(new_tile)
                 new_tile = dashboard_tile_template_dict.get('Service health')
+                new_tile['bounds']['left'] = variable_column_left
                 new_tiles.append(new_tile)
                 new_tile = dashboard_tile_template_dict.get('Service Response Time')
+                new_tile['bounds']['top'] = variable_row_top
                 new_tiles.append(new_tile)
                 new_tile = dashboard_tile_template_dict.get('Service Failure Rate')
+                new_tile['bounds']['top'] = variable_row_top
                 new_tiles.append(new_tile)
+                new_tile = dashboard_tile_template_dict.get('Service Request Count')
+                new_tile['bounds']['top'] = variable_row_top
+                new_tiles.append(new_tile)
+                variable_column_left += variable_column_width
+                variable_row_top += variable_row_height
+            if entity_type == 'EXTERNAL_SERVICE':
+                new_tile = dashboard_tile_template_dict.get('Third Party Services Markdown')
+                new_tile['bounds']['left'] = variable_column_left
+                new_tiles.append(new_tile)
+                new_tile = dashboard_tile_template_dict.get('Third Party Service health')
+                new_tile['bounds']['left'] = variable_column_left
+                new_tiles.append(new_tile)
+                variable_column_left += variable_column_width
             if entity_type == 'DATABASE_SERVICE':
                 new_tile = dashboard_tile_template_dict.get('Databases Markdown')
+                new_tile['bounds']['left'] = variable_column_left
                 new_tiles.append(new_tile)
                 new_tile = dashboard_tile_template_dict.get('Database health')
+                new_tile['bounds']['left'] = variable_column_left
                 new_tiles.append(new_tile)
-            if entity_type == 'HOST':
-                new_tile = dashboard_tile_template_dict.get('Hosts Markdown')
-                new_tiles.append(new_tile)
-                new_tile = dashboard_tile_template_dict.get('Host health')
-                new_tiles.append(new_tile)
-                new_tile = dashboard_tile_template_dict.get('Host CPU')
-                new_tiles.append(new_tile)
-                new_tile = dashboard_tile_template_dict.get('Host Memory')
-                new_tiles.append(new_tile)
+                variable_column_left += variable_column_width
+            if entity_type == 'PROCESS_GROUP':
                 new_tile = dashboard_tile_template_dict.get('Process CPU')
+                new_tile['bounds']['top'] = variable_row_top
                 new_tiles.append(new_tile)
                 new_tile = dashboard_tile_template_dict.get('Process Memory')
+                new_tile['bounds']['top'] = variable_row_top
                 new_tiles.append(new_tile)
+                variable_row_top += variable_row_height
+            if entity_type == 'HOST':
+                new_tile = dashboard_tile_template_dict.get('Hosts Markdown')
+                new_tile['bounds']['left'] = variable_column_left
+                new_tiles.append(new_tile)
+                new_tile = dashboard_tile_template_dict.get('Host health')
+                new_tile['bounds']['left'] = variable_column_left
+                new_tiles.append(new_tile)
+                new_tile = dashboard_tile_template_dict.get('Host CPU')
+                new_tile['bounds']['top'] = variable_row_top
+                new_tiles.append(new_tile)
+                new_tile = dashboard_tile_template_dict.get('Host Memory')
+                new_tile['bounds']['top'] = variable_row_top
+                new_tiles.append(new_tile)
+                variable_column_left += variable_column_width
+                variable_row_top += variable_row_height
 
+        new_tile = dashboard_tile_template_dict.get('Problems Markdown')
+        new_tile['bounds']['left'] = variable_column_left
+        new_tiles.append(new_tile)
         new_tile = dashboard_tile_template_dict.get('Problems')
+        new_tile['bounds']['left'] = variable_column_left
+        new_tiles.append(new_tile)
+        variable_column_left += variable_column_width
+
+        new_tile = dashboard_tile_template_dict.get('Management Zone Overview Links Markdown')
+        new_tile['bounds']['top'] = variable_row_top
         new_tiles.append(new_tile)
         new_tile = dashboard_tile_template_dict.get('More Details Markdown')
+        new_tile['bounds']['top'] = variable_row_top
         new_tiles.append(new_tile)
 
-        dashboard['tiles'] = reformat_dashboard_tiles(new_tiles)
+        # for new_tile in new_tiles:
+        #     print(new_tile)
+
+        dashboard['tiles'] = new_tiles
 
         print(dashboard_name, f'{env}/#dashboard;id={mz_dashboard_id}')
         dynatrace_api.put_object(f'{env}{endpoint}/{mz_dashboard_id}', token, json.dumps(dashboard))
@@ -163,36 +223,13 @@ def generate_menu_dashboard(dashboard_template, menu_dashboard_dict):
     return dashboard
 
 
-def reformat_dashboard_tiles(tiles):
-    dashboard_row_index_counts = {0: 0, 38: 0, 266: 0, 532: 0}
-    sorted_tiles = copy.deepcopy(sort_dashboard_tiles(tiles))
-    reformatted_tiles = []
-
-    for tile in sorted_tiles:
-        name = tile.get('name')
-        bounds = tile.get('bounds')
-        top = bounds.get('top')
-        left = bounds.get('left')
-        new_left = dashboard_row_indexes[top][dashboard_row_index_counts[top]]
-        if new_left != left and name != 'More Details Markdown':
-            tile['bounds']['left'] = new_left
-        print('Name/Top/Left/New Left:', name, top, left, new_left)
-        reformatted_tiles.append(tile)
-        dashboard_row_index_counts[top] += 1
-
-    return reformatted_tiles
-
-
 def sort_dashboard_tiles(tiles):
+    # print('sort_dashboard_tiles(tiles): tiles:', tiles)
+    # for tile in tiles:
+    #     print(tile)
+    #     print(tile['bounds'])
     sorted_tiles = sorted(tiles, key=lambda k: (k['bounds']['top'], k['bounds']['left']))
     return sorted_tiles
-
-
-def modify_left(dashboard_tile, dashboard_tile_bounds_top, new_left_list, column):
-    new_left_list.append(dashboard_row_indexes.get(dashboard_tile_bounds_top))
-    new_left = new_left_list[column]
-    dashboard_tile['bounds']['left'] = new_left
-    column += 1
 
 
 def convert_mz_id_to_db_id(mz_id):
@@ -214,6 +251,8 @@ def get_dashboard_template(env, token):
     endpoint = '/api/config/v1/dashboards'
     r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{dashboard_template_id}', token)
     dashboard_template = json.loads(r.text)
+    # for tile in dashboard_template.get('tiles'):
+    #     print(f'Tiles top/left: {tile["bounds"]["top"]},{tile["bounds"]["left"]}')
     return dashboard_template
 
 
@@ -228,16 +267,17 @@ def get_entity_type_list(management_zone_name, mz_coverage_dict):
 
 
 def get_mz_coverage_for_entity_type(env, token, entity_type, mz_coverage_dict):
-    # Skip special entity types used for counting only
-    # Database services will be counted when the SERVICE entity type is processed
-    if entity_type == 'DATABASE_SERVICE':
+    # Skip special entity types covered by a "parent" entity:
+    # Database/External services will be counted when the SERVICE entity type is processed
+    if entity_type == 'DATABASE_SERVICE' or entity_type == 'EXTERNAL_SERVICE':
         return
 
     endpoint = '/api/v2/entities'
     entity_selector = 'type(' + entity_type + ')'
     raw_params = f'&entitySelector={entity_selector}&fields=managementZones'
     if entity_type == 'SERVICE':
-        raw_params += ',properties.serviceType'
+        # raw_params += ',properties.serviceType,properties.isExternalService'
+        raw_params += ',properties'
     params = urllib.parse.quote(raw_params, safe='/,&=')
     entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 
@@ -249,13 +289,20 @@ def get_mz_coverage_for_entity_type(env, token, entity_type, mz_coverage_dict):
                 if entity_type == 'SERVICE' and inner_entities_json.get('properties').get('serviceType') == 'DATABASE_SERVICE' and 'DATABASE_SERVICE' in entity_types_of_interest:
                     increment_mz_coverage_dict_counts('DATABASE_SERVICE', management_zone_list, mz_coverage_dict)
                 else:
-                    increment_mz_coverage_dict_counts(entity_type, management_zone_list, mz_coverage_dict)
+                    if entity_type == 'SERVICE' and inner_entities_json.get('properties').get('isExternalService') and inner_entities_json.get('properties').get('agentTechnologyType') == 'N/A' and inner_entities_json.get('properties').get('publicDomainName') and 'EXTERNAL_SERVICE' in entity_types_of_interest:
+                        print(entity_type, inner_entities_json.get('properties'), management_zone_list)
+                        increment_mz_coverage_dict_counts('EXTERNAL_SERVICE', management_zone_list, mz_coverage_dict)
+                    else:
+                        increment_mz_coverage_dict_counts(entity_type, management_zone_list, mz_coverage_dict)
 
 
 def increment_mz_coverage_dict_counts(entity_type, management_zone_list, mz_coverage_dict):
     for management_zone in management_zone_list:
         mz_name = management_zone.get('name')
-        mz_coverage_dict[mz_name][entity_type] += 1
+        try:
+            mz_coverage_dict[mz_name][entity_type] += 1
+        except KeyError:
+            mz_coverage_dict[mz_name][entity_type] = 0
 
 
 def main():

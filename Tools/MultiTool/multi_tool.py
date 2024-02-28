@@ -667,8 +667,12 @@ def run():
     print_help()
 
     while True:
-        message = '> '
-        input_string = input('%s' % message).rstrip().lstrip()
+        try:
+            message = '> '
+            input_string = input('%s' % message).rstrip().lstrip()
+        except KeyboardInterrupt:
+            print('Exiting per user request')
+            exit()
 
         if input_string.upper() == 'Q':
             print('Exiting per user request')
