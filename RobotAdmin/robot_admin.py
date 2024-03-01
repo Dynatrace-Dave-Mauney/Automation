@@ -14,7 +14,7 @@ from Reuse import environment
 friendly_function_name = 'Dynatrace Automation'
 env_name_supplied = environment.get_env_name(friendly_function_name)
 # For easy control from IDE
-# env_name_supplied = 'Prod'
+env_name_supplied = 'Prod'
 # env_name_supplied = 'PreProd'
 # env_name_supplied = 'Sandbox'
 # env_name_supplied = 'Dev'
@@ -207,8 +207,11 @@ def process():
     # For when everything is commented out below...
     pass
 
-    process_customer_specific_auto_tags()
-    process_customer_specific_request_attributes()
+    # Current Customer: Production
+    process_customer_specific_production()
+
+    # process_customer_specific_auto_tags()
+    # process_customer_specific_request_attributes()
 
     # Run a sanity test, if pointed to 'Personal' or 'Demo' environment only
     # sanity_test()
@@ -304,6 +307,14 @@ def sanity_test():
     process_all_request_naming_rules()
     confirm('Do you want to create all conditional naming rules?')
     process_all_conditional_naming_rules()
+
+
+def process_customer_specific_production():
+    put_request_attribute_tenable_client_ip()
+    put_request_attribute('SOAPAction', 'REQUEST_HEADER', 'SOAPAction')
+    put_request_attribute_with_value_processing_control('User Agent Type', 'REQUEST_HEADER', 'User-Agent', {'extractSubstring': {'delimiter': '/', 'position': 'BEFORE'}, 'splitAt': '', 'trim': False})
+    put_health_check_request_naming_rules_user_agent()
+    put_health_check_request_naming_rules_urls()
 
 
 def process_customer_specific_auto_tags():
@@ -2017,7 +2028,7 @@ def put_health_check_request_naming_rules_urls():
         "negate": False,
         "type": "STRING",
         # "value": "/f5/monitor|/keepalive.htm|/webtest.html|/test.htm$|/webTest$|/health$|/healthCheck$|ping$",
-        "value": "/healthCheck|/health$|/ready$|/readyz$|/heartbeat|/keepalive",
+        "value": "/healthCheck|/health$|/ready$|/readyz$|/heartbeat|/keepalive|/KeepAlive|ping$",
         "values": None
        }
       }

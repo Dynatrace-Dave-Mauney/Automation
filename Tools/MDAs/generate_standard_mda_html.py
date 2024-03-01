@@ -6,7 +6,7 @@ For each MDA you want to save, copy the name, click the link and paste the name 
 
 import os
 
-tenant_keys = ['PROD_TENANT', 'PREP_TENANT', 'DEV_TENANT']
+tenant_keys = ['DYNATRACE_PROD_TENANT', 'DYNATRACE_PREPROD_TENANT', 'DYNATRACE_DEV_TENANT']
 
 mda_url_path = '/ui/diagnostictools/mda'
 
