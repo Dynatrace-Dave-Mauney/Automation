@@ -9,13 +9,15 @@ from Reuse import directories_and_files
 # INPUT_PATH = '/Temp/Monaco'
 # INPUT_PATH = '/tools/monaco20-ODFL-Dev-DOWNLOAD/download_2024-02-12-153329//project_ODFL_Dev/builtinlogmonitoring.log-storage-settings'
 # INPUT_PATH = '/tools/monaco20-ODFL-PreProd-DOWNLOAD//download_2024-02-12-154729/project_ODFL_PreProd/builtinlogmonitoring.log-storage-settings'
-INPUT_PATH = '/tools/monaco20-ODFL-Prod-DOWNLOAD/download_2024-02-12-154942/project_ODFL_Prod/builtinlogmonitoring.log-storage-settings'
-OUTPUT_PATH = '/Temp/Monaco-Renames'
+# INPUT_PATH = '/tools/monaco20-ODFL-Prod-DOWNLOAD/download_2024-02-12-154942/project_ODFL_Prod/builtinlogmonitoring.log-storage-settings'
+# OUTPUT_PATH = '/Temp/Monaco-Renames'
+INPUT_PATH = 'C:\\tools\\monaco20-Dave-MyTenant-DOWNLOAD\\download_2024-03-06-151807\\project_myTenant\\request-attributes'
+OUTPUT_PATH = 'C:\\tools\\monaco20-Dave-MyTenant-DOWNLOAD\\download_2024-03-06-151807\\project_myTenant\\request-attributes-improved'
 
 
 confirmation_required = False
 remove_directory_at_startup = False
-rename_files = False
+rename_files = True
 
 
 def copy_selected_files():
@@ -47,9 +49,14 @@ def process_file(filename):
             infile_content = f.read()
             try:
                 infile_content_json = json.loads(infile_content)
+                print(infile_content_json)
                 # key = infile_content_json.get('key')
                 # key = infile_content_json.get('name')
-                key = infile_content_json.get('config-item-title')
+                # key = infile_content_json.get('config-item-title')
+                data_sources = infile_content_json.get('dataSources')
+                source = data_sources[0].get('source')
+                parameter_name = data_sources[0].get('parameterName', 'None')
+                key = source + '-' + parameter_name
                 if '[Built-in]' not in key:
                     clean_file_name = directories_and_files.get_clean_file_name(key, '-')
                     # print(key)

@@ -1,3 +1,5 @@
+import urllib.parse
+
 from Reuse import dynatrace_api
 from Reuse import environment
 from Reuse import report_writer
@@ -17,36 +19,37 @@ def process_report(env, token, summary_mode):
 
     count_total = 0
 
-    endpoint = '/api/config/v1/service/requestAttributes'
-    request_attributes_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
-
-    for request_attributes_json in request_attributes_json_list:
-        inner_request_attributes_json_list = request_attributes_json.get('values')
-        for inner_request_attributes_json in inner_request_attributes_json_list:
-            entity_id = inner_request_attributes_json.get('id')
-            name = inner_request_attributes_json.get('name')
-
-            # If more details are ever needed
-            endpoint = '/api/config/v1/service/requestAttributes/' + entity_id
-            r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
-            request_attribute = r.json()
-            print(request_attribute)
+    endpoint = '/api/v2/entities'
+    raw_params = 'pageSize=4000&entitySelector=type(CLOUD_APPLICATION_NAMESPACE)&to=-30m'
+    params = urllib.parse.quote(raw_params, safe='/,&=?')
+    entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
+    for entities_json in entities_json_list:
+        inner_entities_json_list = entities_json.get('entities')
+        for inner_entities_json in inner_entities_json_list:
+            import json
+            formatted_json = json.dumps(inner_entities_json, indent=4, sort_keys=False)
+            print(formatted_json)
+            # entity_id = inner_entities_json.get('entityId', '')
+            display_name = inner_entities_json.get('displayName', '')
 
             if not summary_mode:
-                rows.append((name, entity_id))
+                if [display_name] not in rows:
+                    if not display_name.startswith('openshift') and not display_name.startswith('kube') and not display_name.startswith('dynatrace'):
+                        rows.append([display_name])
 
             count_total += 1
 
-    summary.append('There are ' + str(count_total) + ' request attributes currently defined.')
+    summary.append('There are ' + str(count_total) + ' hosts currently being monitored.  ')
 
     if not summary_mode:
         rows = sorted(rows)
-        report_name = 'Request Attributes'
+        report_name = 'Hosts'
         report_writer.initialize_text_file(None)
-        report_headers = ('name', 'id')
+        # report_headers = ('displayName', 'entityId')
+        report_headers = ['displayName']
         report_writer.write_console(report_name, report_headers, rows, delimiter='|')
         report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
-        write_strings(['Total request_attributes: ' + str(count_total)])
+        write_strings(['Total Hosts: ' + str(count_total)])
         write_strings(summary)
         report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
         report_writer.write_html(None, report_name, report_headers, rows)
@@ -64,14 +67,16 @@ def main():
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
     # env_name_supplied = 'Prod'
-    env_name_supplied = 'PreProd'
+    # env_name_supplied = 'PreProd'
     # env_name_supplied = 'Sandbox'
     # env_name_supplied = 'Dev'
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'Demo'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
+
     process(env, token)
-    
+    # print(summarize(env, token))
+
     
 if __name__ == '__main__':
     main()

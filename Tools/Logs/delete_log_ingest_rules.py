@@ -30,8 +30,13 @@ def process(env, token):
 
 			print_list.append(f'{config_item_title} {enabled} {scope} {object_id}')
 
-			if config_item_title.startswith('Include ') or config_item_title.startswith('Exclude '):
+			# CLEANUP ALL NON-BUILT-IN NAMES
+			if not config_item_title.startswith('[Built-in] ') and not config_item_title.startswith('DELETE '):
+				print(config_item_title, enabled, scope, object_id)
 				delete_list.append((config_item_title, object_id))
+
+			# if config_item_title.startswith('Include ') or config_item_title.startswith('Exclude '):
+			# 	delete_list.append((config_item_title, object_id))
 
 			# if config_item_title.startswith('DELETE '):
 			# 	# print(config_item_title, enabled, scope, object_id)
@@ -86,10 +91,10 @@ def main():
 	env_name_supplied = environment.get_env_name(friendly_function_name)
 	# For easy control from IDE
 	# env_name_supplied = 'Prod'
-	# env_name_supplied = 'PreProd'
+	env_name_supplied = 'PreProd'
 	# env_name_supplied = 'Sandbox'
 	# env_name_supplied = 'Dev'
-	env_name_supplied = 'Personal'
+	# env_name_supplied = 'Personal'
 	# env_name_supplied = 'Demo'
 	env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 	process(env, token)

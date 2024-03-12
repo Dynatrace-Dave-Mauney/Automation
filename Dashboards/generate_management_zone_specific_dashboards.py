@@ -21,6 +21,8 @@ entity_types_of_interest = [
     # 'KUBERNETES_SERVICE',
 ]
 
+overview_markdown = '#### [\u21e6 Overview](#dashboard;id=00000000-dddd-bbbb-ffff-000000000001)\n![BackButton]()'
+
 
 def process(env, token):
     if 'DATABASE_SERVICE' in entity_types_of_interest and 'SERVICE' not in entity_types_of_interest:
@@ -98,6 +100,7 @@ def process(env, token):
             if entity_type == 'APPLICATION':
                 new_tile = dashboard_tile_template_dict.get('Applications Markdown')
                 new_tile['bounds']['left'] = variable_column_left
+                new_tile['markdown'] = '[Web Apps](#dashboard;id=00000000-dddd-bbbb-ffff-000000000002)'
                 new_tiles.append(new_tile)
                 new_tile = dashboard_tile_template_dict.get('Application health')
                 new_tile['bounds']['left'] = variable_column_left
@@ -137,6 +140,29 @@ def process(env, token):
                 new_tile['bounds']['left'] = variable_column_left
                 new_tiles.append(new_tile)
                 variable_column_left += variable_column_width
+                # new_tile = dashboard_tile_template_dict.get('Third Party Service Response Time')
+                # new_tile['bounds']['top'] = variable_row_top
+                # new_tiles.append(new_tile)
+                # new_tile = dashboard_tile_template_dict.get('Third Party Service Failure Rate')
+                # new_tile['bounds']['top'] = variable_row_top
+                # new_tiles.append(new_tile)
+                # new_tile = dashboard_tile_template_dict.get('Third Party Service Request Count')
+                # new_tile['bounds']['top'] = variable_row_top
+                # new_tiles.append(new_tile)
+                # variable_row_top += variable_row_height
+                new_tile = dashboard_tile_template_dict.get('Third Party Service Response Time Graph')
+                new_tile['bounds']['top'] = variable_row_top
+                new_tile['name'] = new_tile['name'].replace(' Graph', '')
+                new_tiles.append(new_tile)
+                new_tile = dashboard_tile_template_dict.get('Third Party Service Failure Rate Graph')
+                new_tile['bounds']['top'] = variable_row_top
+                new_tile['name'] = new_tile['name'].replace(' Graph', '')
+                new_tiles.append(new_tile)
+                new_tile = dashboard_tile_template_dict.get('Third Party Service Request Count Graph')
+                new_tile['bounds']['top'] = variable_row_top
+                new_tile['name'] = new_tile['name'].replace(' Graph', '')
+                new_tiles.append(new_tile)
+                variable_row_top += variable_row_height
             if entity_type == 'DATABASE_SERVICE':
                 new_tile = dashboard_tile_template_dict.get('Databases Markdown')
                 new_tile['bounds']['left'] = variable_column_left
@@ -171,6 +197,7 @@ def process(env, token):
 
         new_tile = dashboard_tile_template_dict.get('Problems Markdown')
         new_tile['bounds']['left'] = variable_column_left
+        new_tile['markdown'] = overview_markdown
         new_tiles.append(new_tile)
         new_tile = dashboard_tile_template_dict.get('Problems')
         new_tile['bounds']['left'] = variable_column_left
@@ -290,7 +317,7 @@ def get_mz_coverage_for_entity_type(env, token, entity_type, mz_coverage_dict):
                     increment_mz_coverage_dict_counts('DATABASE_SERVICE', management_zone_list, mz_coverage_dict)
                 else:
                     if entity_type == 'SERVICE' and inner_entities_json.get('properties').get('isExternalService') and inner_entities_json.get('properties').get('agentTechnologyType') == 'N/A' and inner_entities_json.get('properties').get('publicDomainName') and 'EXTERNAL_SERVICE' in entity_types_of_interest:
-                        print(entity_type, inner_entities_json.get('properties'), management_zone_list)
+                        # print(entity_type, inner_entities_json.get('properties'), management_zone_list)
                         increment_mz_coverage_dict_counts('EXTERNAL_SERVICE', management_zone_list, mz_coverage_dict)
                     else:
                         increment_mz_coverage_dict_counts(entity_type, management_zone_list, mz_coverage_dict)
@@ -299,10 +326,12 @@ def get_mz_coverage_for_entity_type(env, token, entity_type, mz_coverage_dict):
 def increment_mz_coverage_dict_counts(entity_type, management_zone_list, mz_coverage_dict):
     for management_zone in management_zone_list:
         mz_name = management_zone.get('name')
-        try:
-            mz_coverage_dict[mz_name][entity_type] += 1
-        except KeyError:
-            mz_coverage_dict[mz_name][entity_type] = 0
+        if mz_name:
+            # print(mz_name, entity_type, management_zone)
+            try:
+                mz_coverage_dict[mz_name][entity_type] += 1
+            except KeyError:
+                mz_coverage_dict[mz_name][entity_type] = 0
 
 
 def main():

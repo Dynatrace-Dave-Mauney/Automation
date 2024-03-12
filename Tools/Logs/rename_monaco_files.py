@@ -12,6 +12,7 @@ from json import JSONDecodeError
 from Reuse import directories_and_files
 
 INPUT_PATH = '/Dynatrace/Customers/ODFL/LogIngestionRules/Repo'
+INPUT_PATH = 'C:\\Temp\\builtinlogmonitoring.log-storage-settings'
 
 
 def load_file_name_lookup():
@@ -60,7 +61,11 @@ def modify_config_file(file_name_lookup):
         new_config = config
         new_config['id'] = new_id
         new_config['config']['name'] = new_id
-        new_config['config']['template'] = new_id + '.json'
+        try:
+            new_config['config']['template'] = new_id + '.json'
+        except TypeError:
+            print(f'Config has no template: {new_config}')
+            exit(1)
         new_configs.append(new_config)
 
     # print(new_configs)

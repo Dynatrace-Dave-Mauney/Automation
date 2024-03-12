@@ -6,25 +6,30 @@ import yaml
 
 
 INPUT_PATH = '/Dynatrace/Customers/ODFL/LogIngestionRules/Repo'
+INPUT_PATH = 'C:\\Temp\\builtinlogmonitoring.log-storage-settings'
 
-env = 'dev'
+# Lower case environment names!
+# env = 'dev'
+env = 'preprod'
+# env = 'prod'
 
 dev_desired_rule_order = [
     'Exclude_log_source__Rapid7_',
     'Exclude_log_content__GET__index.html__for_process_technology__Nginx_',
     'Exclude_log_content__Hibernate_statements_',
     'Exclude_log_content__kube-probe_health_check_requests_',
+    'Exclude_log_content__actuator_health_',
     'Exclude_log_record_level_DEBUG_or_INFO',
     'Exclude_log_content_FINE,_TRACE,_INFO_or_DEBUG',
     'Include_k8s_namespaces',
     'Include_log_content__Jboss_server_started_with_errors_',
 ]
-
 preprod_desired_rule_order = [
     'Exclude_log_source__Rapid7_',
     'Exclude_log_content__GET__index.html__for_process_technology__Nginx_',
     'Exclude_log_content__Hibernate_statements_',
     'Exclude_log_content__kube-probe_health_check_requests_',
+    'Exclude_log_content__actuator_health_',
     'Include_k8s_namespace__weight-inspection_namespace__containers_log_content_ERROR_or_WARN_or_INFO',
     'Include_k8s_namespace__common__container__email-service__log_record_level_ERROR_or_WARN',
     'Include_k8s_namespace__billing__container__bol-core_',
@@ -42,6 +47,7 @@ prod_desired_rule_order = [
     'Exclude_log_content__GET__index.html__for_process_technology__Nginx_',
     'Exclude_log_content__Hibernate_statements_',
     'Exclude_log_content__kube-probe_health_check_requests_',
+    'Exclude_log_content__actuator_health_',
     'Include_k8s_namespace__weight-inspection_namespace__containers_log_content_ERROR_or_WARN_or_INFO',
     'Include_k8s_namespace__common__container__email-service__log_record_level_ERROR_or_WARN',
     'Include_k8s_namespace__billing__container__bol-core_',

@@ -14,7 +14,7 @@ from Reuse import environment
 friendly_function_name = 'Dynatrace Automation'
 env_name_supplied = environment.get_env_name(friendly_function_name)
 # For easy control from IDE
-env_name_supplied = 'Prod'
+# env_name_supplied = 'Prod'
 # env_name_supplied = 'PreProd'
 # env_name_supplied = 'Sandbox'
 # env_name_supplied = 'Dev'
@@ -183,6 +183,45 @@ fixed_request_attribute_ids = {
     'x-callingsysteminstance': 'aaaaaaaa-bbbb-cccc-dddd-000000000904',
     'eap-requestgroupid': 'aaaaaaaa-bbbb-cccc-dddd-000000000905',
     'x-ibm-client-id': 'aaaaaaaa-bbbb-cccc-dddd-000000000906',
+    # Shotgun
+    'post login': 'aaaaaaaa-bbbb-cccc-dddd-100000000001',
+    'post login_user': 'aaaaaaaa-bbbb-cccc-dddd-100000000002',
+    'post login_userid': 'aaaaaaaa-bbbb-cccc-dddd-100000000003',
+    'post login_user_id': 'aaaaaaaa-bbbb-cccc-dddd-100000000004',
+    'post login.user': 'aaaaaaaa-bbbb-cccc-dddd-100000000005',
+    'post login.user.id': 'aaaaaaaa-bbbb-cccc-dddd-100000000006',
+    'login': 'aaaaaaaa-bbbb-cccc-dddd-100000000007',
+    'login_user': 'aaaaaaaa-bbbb-cccc-dddd-100000000008',
+    'login_userid': 'aaaaaaaa-bbbb-cccc-dddd-100000000009',
+    'login_user_id': 'aaaaaaaa-bbbb-cccc-dddd-100000000010',
+    'login.user': 'aaaaaaaa-bbbb-cccc-dddd-100000000011',
+    'login.user.id': 'aaaaaaaa-bbbb-cccc-dddd-100000000012',
+    'user': 'aaaaaaaa-bbbb-cccc-dddd-100000000013',
+    'userid': 'aaaaaaaa-bbbb-cccc-dddd-100000000014',
+    'user_id': 'aaaaaaaa-bbbb-cccc-dddd-100000000015',
+    'user-id': 'aaaaaaaa-bbbb-cccc-dddd-100000000016',
+    'user.id': 'aaaaaaaa-bbbb-cccc-dddd-100000000017',
+    'username': 'aaaaaaaa-bbbb-cccc-dddd-100000000018',
+    'user_name': 'aaaaaaaa-bbbb-cccc-dddd-100000000019',
+    'user-name': 'aaaaaaaa-bbbb-cccc-dddd-100000000020',
+    'user.name': 'aaaaaaaa-bbbb-cccc-dddd-100000000021',
+    'loginid': 'aaaaaaaa-bbbb-cccc-dddd-100000000023',
+    'login_id': 'aaaaaaaa-bbbb-cccc-dddd-100000000024',
+    'login-id': 'aaaaaaaa-bbbb-cccc-dddd-100000000025',
+    'login.id': 'aaaaaaaa-bbbb-cccc-dddd-100000000026',
+    'loginname': 'aaaaaaaa-bbbb-cccc-dddd-100000000027',
+    'login_name': 'aaaaaaaa-bbbb-cccc-dddd-100000000028',
+    'login-name': 'aaaaaaaa-bbbb-cccc-dddd-100000000029',
+    'login.name': 'aaaaaaaa-bbbb-cccc-dddd-100000000030',
+    'logon': 'aaaaaaaa-bbbb-cccc-dddd-100000000031',
+    'logonid': 'aaaaaaaa-bbbb-cccc-dddd-100000000032',
+    'logon_id': 'aaaaaaaa-bbbb-cccc-dddd-100000000033',
+    'logon-id': 'aaaaaaaa-bbbb-cccc-dddd-100000000034',
+    'logon.id': 'aaaaaaaa-bbbb-cccc-dddd-100000000035',
+    'logonname': 'aaaaaaaa-bbbb-cccc-dddd-100000000036',
+    'logon_name': 'aaaaaaaa-bbbb-cccc-dddd-100000000037',
+    'logon-name': 'aaaaaaaa-bbbb-cccc-dddd-100000000038',
+    'logon.name': 'aaaaaaaa-bbbb-cccc-dddd-100000000039',
 }
 
 fixed_request_naming_rules_ids = {
@@ -208,7 +247,10 @@ def process():
     pass
 
     # Current Customer: Production
-    process_customer_specific_production()
+    # process_customer_specific_production()
+    generate_shotgun_request_attributes()
+    # generate_request_attribute_json_payload_extracts('REQUEST_HEADER', 'user', {"employeeId":"","employeeName":"","employeeFullId":"","employeeMenuId":"","forkliftNumber":"","valid":"","supervisor":"","originServiceCenter":"","alternateServiceCenter":"","currentLocationServiceCenter":"","device":"","authorized":0,"tabletSerialNumber":0,"ipAddress":""})
+    exit(9999)
 
     # process_customer_specific_auto_tags()
     # process_customer_specific_request_attributes()
@@ -310,11 +352,145 @@ def sanity_test():
 
 
 def process_customer_specific_production():
-    put_request_attribute_tenable_client_ip()
-    put_request_attribute('SOAPAction', 'REQUEST_HEADER', 'SOAPAction')
-    put_request_attribute_with_value_processing_control('User Agent Type', 'REQUEST_HEADER', 'User-Agent', {'extractSubstring': {'delimiter': '/', 'position': 'BEFORE'}, 'splitAt': '', 'trim': False})
-    put_health_check_request_naming_rules_user_agent()
-    put_health_check_request_naming_rules_urls()
+    pass
+    # put_request_attribute('userid', 'QUERY_PARAMETER', 'userid')
+    # put_request_attribute_tenable_client_ip()
+    # put_request_attribute('SOAPAction', 'REQUEST_HEADER', 'SOAPAction')
+    # put_request_attribute('post login', 'POST_PARAMETER', 'login')
+    # put_request_attribute('post login_user', 'POST_PARAMETER', 'login_user')
+    # put_request_attribute('post login_userid', 'POST_PARAMETER', 'login_userid')
+    # put_request_attribute('post login_user_id', 'POST_PARAMETER', 'login_user_id')
+    # put_request_attribute('post login.user', 'POST_PARAMETER', 'login.user')
+    # put_request_attribute('post login.user.id', 'POST_PARAMETER', 'login.user.id')
+    # put_request_attribute('user', 'REQUEST_HEADER', 'user')
+    # put_request_attribute('userid', 'REQUEST_HEADER', 'userid')
+    # put_request_attribute('user_id', 'REQUEST_HEADER', 'user_id')
+    # put_request_attribute('user-id', 'REQUEST_HEADER', 'user-id')
+    # put_request_attribute('user.id', 'REQUEST_HEADER', 'user.id')
+    # put_request_attribute('username', 'REQUEST_HEADER', 'username')
+    # put_request_attribute('user_name', 'REQUEST_HEADER', 'user_name')
+    # put_request_attribute('user-name', 'REQUEST_HEADER', 'user-name')
+    # put_request_attribute('user.name', 'REQUEST_HEADER', 'user.name')
+    # put_request_attribute('login', 'REQUEST_HEADER', 'login')
+    # put_request_attribute('loginid', 'REQUEST_HEADER', 'loginid')
+    # put_request_attribute('login_id', 'REQUEST_HEADER', 'login_id')
+    # put_request_attribute('login-id', 'REQUEST_HEADER', 'login-id')
+    # put_request_attribute('login.id', 'REQUEST_HEADER', 'login.id')
+    # put_request_attribute('loginname', 'REQUEST_HEADER', 'loginname')
+    # put_request_attribute('login_name', 'REQUEST_HEADER', 'login_name')
+    # put_request_attribute('login-name', 'REQUEST_HEADER', 'login-name')
+    # put_request_attribute('login.name', 'REQUEST_HEADER', 'login.name')
+    # put_request_attribute('loginuser', 'REQUEST_HEADER', 'loginuser')
+    # put_request_attribute('login_user', 'REQUEST_HEADER', 'login_user')
+    # put_request_attribute('login-user', 'REQUEST_HEADER', 'login-user')
+    # put_request_attribute('login.user', 'REQUEST_HEADER', 'login.user')
+    # put_request_attribute('logon', 'REQUEST_HEADER', 'logon')
+    # put_request_attribute('logonid', 'REQUEST_HEADER', 'logonid')
+    # put_request_attribute('logon_id', 'REQUEST_HEADER', 'logon_id')
+    # put_request_attribute('logon-id', 'REQUEST_HEADER', 'logon-id')
+    # put_request_attribute('logon.id', 'REQUEST_HEADER', 'logon.id')
+    # put_request_attribute('logonname', 'REQUEST_HEADER', 'logonname')
+    # put_request_attribute('logon_name', 'REQUEST_HEADER', 'logon_name')
+    # put_request_attribute('logon-name', 'REQUEST_HEADER', 'logon-name')
+    # put_request_attribute('logon.name', 'REQUEST_HEADER', 'logon.name')
+    # put_request_attribute_with_value_processing_control('User Agent Type', 'REQUEST_HEADER', 'User-Agent', {'extractSubstring': {'delimiter': '/', 'position': 'BEFORE'}, 'splitAt': '', 'trim': False})
+    # put_health_check_request_naming_rules_user_agent()
+    # put_health_check_request_naming_rules_urls()
+
+
+def generate_request_attribute_json_payload_extracts(source_type, source_parameter, json_example):
+    request_attribute_id_prefix = 'aaaaaaaa-bbbb-cccc-dddd-9'
+
+    idx = 1
+    for key in json_example.keys():
+        between_key_type = type(json_example.get(key))
+        # print(key, between_key_type)
+        request_attribute_name = f'{source_parameter}({source_type})-{key}'
+        request_attribute_id = request_attribute_id_prefix + str(idx).zfill(11)
+        put_request_attribute(request_attribute_name, source_type, source_parameter, object_id=request_attribute_id, between_key=key, between_key_type=between_key_type)
+        idx += 1
+
+
+def generate_shotgun_request_attributes():
+    # combos = [
+    #     ['user'],
+    #     ['name'],
+    #     ['id'],
+    #     ['login'],
+    #     ['logon'],
+    #     ['user', 'name'],
+    #     ['user', 'id'],
+    #     ['login', 'user'],
+    #     ['login', 'user', 'name'],
+    #     ['login', 'user', 'id'],
+    #     ['login', 'id'],
+    #     ['logon', 'user'],
+    #     ['logon', 'user', 'name'],
+    #     ['logon', 'user', 'id'],
+    #     ['logon', 'id'],
+    # ]
+
+    combos = [
+        ['dyms', 'user'],
+        ['dyms', 'name'],
+        ['dyms', 'id'],
+        ['dyms', 'login'],
+        ['dyms', 'logon'],
+        ['dyms', 'user', 'name'],
+        ['dyms', 'user', 'id'],
+        ['dyms', 'login', 'user'],
+        ['dyms', 'login', 'user', 'name'],
+        ['dyms', 'login', 'user', 'id'],
+        ['dyms', 'login', 'id'],
+        ['dyms', 'logon', 'user'],
+        ['dyms', 'logon', 'user', 'name'],
+        ['dyms', 'logon', 'user', 'id'],
+        ['dyms', 'logon', 'id'],
+    ]
+
+    request_attribute_types = ['QUERY_PARAMETER', 'POST_PARAMETER', 'REQUEST_HEADER', 'RESPONSE_HEADER', 'SESSION_ATTRIBUTE']
+
+    request_attribute_id_prefix = 'aaaaaaaa-bbbb-cccc-dddd-2'
+
+    # id_name_list = []
+
+    idx = 1
+    for combo in combos:
+        permutations = get_permutations(combo)
+        for permutation in permutations:
+            # print(permutation)
+            for request_attribute_type in request_attribute_types:
+                request_attribute_name = f'{permutation}({request_attribute_type})'
+                request_attribute_id = request_attribute_id_prefix + str(idx).zfill(11)
+                put_request_attribute(request_attribute_name, request_attribute_type, permutation, object_id=request_attribute_id)
+                idx += 1
+
+                # id_name_list.append([request_attribute_id, permutation])
+
+    # for id_name in id_name_list:
+    #     print(f'https://yun11465.live.dynatrace.com/ui/diagnostictools/mda?gtf=-24h%20to%20now&metric=REQUEST_COUNT&dimension=%7BRequest:Name%7D%20%7BRequestAttribute:{request_attribute_name}%7D&mergeServices=true&aggregation=COUNT&servicefilter=0%1E15%11{request_attribute_id}')
+
+
+def get_permutations(string_list):
+    delimiters = ['_', '-', '.', '']
+    string_list_length = len(string_list)
+    if string_list_length < 2:
+        return string_list
+
+    permutations = []
+
+    for delimiter in delimiters:
+        # print('delimiter:', delimiter)
+        idx = 0
+        permutation_string = ''
+        for string in string_list:
+            permutation_string += string
+            idx += 1
+            if idx < string_list_length:
+                permutation_string += delimiter
+        permutations.append(permutation_string)
+
+    return permutations
 
 
 def process_customer_specific_auto_tags():
@@ -1803,21 +1979,48 @@ def put_conditional_naming_rules_k8s(rule_type, name, name_format):
         put(endpoint, object_id, payload)
 
 
-def put_request_attribute(name, source, parameter):
-    object_id = fixed_request_attribute_ids.get(name)
+def put_request_attribute(name, source, parameter, **kwargs):
+    if kwargs and kwargs.get('object_id'):
+        object_id = kwargs.get('object_id')
+    else:
+        object_id = fixed_request_attribute_ids.get(name)
 
     if not object_id:
         print('No entry for ' + name + ' found in the "fixed_request_attribute_ids dictionary"!')
         exit(get_line_number())
+
+    if kwargs and kwargs.get('between_key'):
+        between_key = kwargs.get('between_key')
+        between_key_type = kwargs.get('between_key_type', type('string'))
+        extract_substring_key = 'extractSubstring'
+        if between_key_type is str:
+            delimiter_start_suffix = '":"'
+            delimiter_end = '"'
+        else:
+            delimiter_start_suffix = '":'
+            delimiter_end = ','
+        extract_substring = {'position': 'BETWEEN', 'delimiter': f'"{between_key}{delimiter_start_suffix}', 'endDelimiter': delimiter_end}
+    else:
+        extract_substring_key = None
+        extract_substring = None
 
     capturing_and_storage_location = 'CAPTURE_AND_STORE_ON_SERVER'
     if name == 'x-dynatrace (client-side)':
         capturing_and_storage_location = 'CAPTURE_AND_STORE_ON_CLIENT'
 
     if parameter:
-        data_sources = [{"enabled": True, "source": source, "parameterName": parameter, "capturingAndStorageLocation": capturing_and_storage_location, "valueProcessing": {"splitAt": "", "trim": False}}]
+        if source == 'POST_PARAMETER':
+            data_sources = [{'enabled': True, 'source': source, 'valueProcessing': {'splitAt': '', 'trim': False}, 'parameterName': parameter}]
+        else:
+            if source == 'SESSION_ATTRIBUTE':
+                data_sources = [{'enabled': True, 'source': source, 'sessionAttributeTechnology': 'JAVA', 'valueProcessing': {'splitAt': '', 'trim': False}, 'parameterName': parameter}]
+            else:
+                data_sources = [{"enabled": True, "source": source, "parameterName": parameter, "capturingAndStorageLocation": capturing_and_storage_location, "valueProcessing": {"splitAt": "", "trim": False}}]
     else:
         data_sources = [{"enabled": True, "source": source, "valueProcessing": {"splitAt": "", "trim": False}}]
+
+    if extract_substring:
+        data_sources[0]['valueProcessing'][extract_substring_key] = extract_substring
 
     if source == 'CLIENT_IP' or source == 'REQUEST_HEADER':
         skip_personal_data_masking = True
