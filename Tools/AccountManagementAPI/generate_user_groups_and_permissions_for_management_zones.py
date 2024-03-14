@@ -1,3 +1,5 @@
+# Uses "[Owner:abcde]" as the "Management Zone Group" indicator
+
 import json
 import os
 import requests
@@ -140,8 +142,8 @@ def get_management_zones_for_target_environments(target_environment_list):
                 management_zone = r.json()
                 description = management_zone.get('description', '')
                 mzg = None
-                if '[MZG:' in description:
-                    mzg_start = description.find('[') + 5
+                if '[Owner:' in description:
+                    mzg_start = description.find('[') + 7
                     mzg_end = description.find(']')
                     mzg = description[mzg_start:mzg_end]
                 target_management_zone_dict[management_zone_id] = {'name': management_zone_name, 'parent': target_environment, 'mzg': mzg}
