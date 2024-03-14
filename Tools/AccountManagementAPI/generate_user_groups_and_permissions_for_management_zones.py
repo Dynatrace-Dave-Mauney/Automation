@@ -118,7 +118,7 @@ def process():
             mz_id = target_management_zone_by_mzg.get('id')
             mz_id_list.append(mz_id)
         mz_parent = target_management_zone_by_mzg_list[0].get('parent')
-        post_user_group(mz_id_list, target_management_zone_by_mzg_key, mz_parent)
+        post_user_group(mz_id_list, target_management_zone_by_mzg_key, mz_parent, is_mz_group=True)
 
 
 def get_management_zones_for_target_environments(target_environment_list):
@@ -159,6 +159,9 @@ def post_user_group(management_zone_id_list, management_zone_name, management_zo
     oauth_bearer_token = get_oauth_bearer_token()
 
     user_group_name = f'ODFL Log Viewer - {management_zone_name}'
+
+    if is_mz_group:
+        user_group_name += ' (Management Zone Group)'
 
     if is_mz_group:
         desc_mz_literal = 'management zone group'
