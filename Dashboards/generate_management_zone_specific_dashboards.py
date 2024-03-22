@@ -1,3 +1,6 @@
+# NOTE: Be sure to PUT the standard "Overview" dashboard in the tenant
+#       before running this process, which uses that dashboard as a template
+
 import copy
 import json
 import urllib.parse

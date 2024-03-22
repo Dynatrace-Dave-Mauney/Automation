@@ -1,0 +1,1179 @@
+{
+    "metadata": {
+        "configurationVersions": [
+            6
+        ],
+        "clusterVersion": "1.261.134.20230302-084304"
+    },
+    "id": "00000000-dddd-bbbb-ffff-000000000033",
+    "dashboardMetadata": {
+        "name": "Prod: Third Party Services",
+        "shared": true,
+        "owner": "dave.mauney@dynatrace.com",
+        "dashboardFilter": null,
+        "preset": true,
+        "tilesNameSize": "small",
+        "hasConsistentColors": true
+    },
+    "tiles": [
+        {
+            "name": "Failure rate",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 0,
+                "width": 456,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Failure rate",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:service.errors.total.rate",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.service"
+                    ],
+                    "sortBy": "DESC",
+                    "sortByDimension": "",
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [
+                            {
+                                "filter": "dt.entity.service",
+                                "filterType": "ENTITY_ATTRIBUTE",
+                                "filterOperator": "OR",
+                                "entityAttribute": "externalDependency",
+                                "nestedFilters": [],
+                                "criteria": [
+                                    {
+                                        "value": "THIRDPARTY",
+                                        "evaluator": "IN"
+                                    }
+                                ]
+                            }
+                        ],
+                        "criteria": []
+                    },
+                    "limit": 100,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {
+                    "hideLegend": false
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:service.errors.total.rate:filter(and(or(in(\"dt.entity.service\",entitySelector(\"type(service),externalDependency(~\"THIRDPARTY~\")\"))))):splitBy(\"dt.entity.service\"):avg:sort(value(avg,descending)):limit(100)):limit(100):names"
+            ]
+        },
+        {
+            "name": "HTTP 5xx errors",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 456,
+                "width": 456,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "HTTP 5xx errors",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:service.errors.fivexx.count",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.service"
+                    ],
+                    "sortBy": "DESC",
+                    "sortByDimension": "",
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [
+                            {
+                                "filter": "dt.entity.service",
+                                "filterType": "ENTITY_ATTRIBUTE",
+                                "filterOperator": "OR",
+                                "entityAttribute": "externalDependency",
+                                "nestedFilters": [],
+                                "criteria": [
+                                    {
+                                        "value": "THIRDPARTY",
+                                        "evaluator": "IN"
+                                    }
+                                ]
+                            }
+                        ],
+                        "criteria": []
+                    },
+                    "limit": 100,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {
+                    "hideLegend": false
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:service.errors.fivexx.count:filter(and(or(in(\"dt.entity.service\",entitySelector(\"type(service),externalDependency(~\"THIRDPARTY~\")\"))))):splitBy(\"dt.entity.service\"):avg:sort(value(avg,descending)):limit(100)):limit(100):names"
+            ]
+        },
+        {
+            "name": "HTTP 4xx errors",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 912,
+                "width": 456,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "HTTP 4xx errors",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:service.errors.fourxx.count",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.service"
+                    ],
+                    "sortBy": "DESC",
+                    "sortByDimension": "",
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [
+                            {
+                                "filter": "dt.entity.service",
+                                "filterType": "ENTITY_ATTRIBUTE",
+                                "filterOperator": "OR",
+                                "entityAttribute": "externalDependency",
+                                "nestedFilters": [],
+                                "criteria": [
+                                    {
+                                        "value": "THIRDPARTY",
+                                        "evaluator": "IN"
+                                    }
+                                ]
+                            }
+                        ],
+                        "criteria": []
+                    },
+                    "limit": 100,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {
+                    "hideLegend": false
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:service.errors.fourxx.count:filter(and(or(in(\"dt.entity.service\",entitySelector(\"type(service),externalDependency(~\"THIRDPARTY~\")\"))))):splitBy(\"dt.entity.service\"):avg:sort(value(avg,descending)):limit(100)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Markdown",
+            "tileType": "MARKDOWN",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 1368,
+                "width": 152,
+                "height": 38
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "markdown": "#### [\u21e6 Overview](#dashboard;id=00000000-dddd-bbbb-ffff-000000000001)\n![BackButton]()"
+        },
+        {
+            "name": "Failure rate",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 0,
+                "width": 456,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Failure rate",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:service.errors.total.rate",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.service"
+                    ],
+                    "sortBy": "DESC",
+                    "sortByDimension": "",
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [
+                            {
+                                "filter": "dt.entity.service",
+                                "filterType": "ENTITY_ATTRIBUTE",
+                                "filterOperator": "OR",
+                                "entityAttribute": "externalDependency",
+                                "nestedFilters": [],
+                                "criteria": [
+                                    {
+                                        "value": "THIRDPARTY",
+                                        "evaluator": "IN"
+                                    }
+                                ]
+                            }
+                        ],
+                        "criteria": []
+                    },
+                    "limit": 100,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "hideLegend": false
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=null&(builtin:service.errors.total.rate:filter(and(or(in(\"dt.entity.service\",entitySelector(\"type(service),externalDependency(~\"THIRDPARTY~\")\"))))):splitBy(\"dt.entity.service\"):avg:sort(value(avg,descending)):limit(100)):limit(100):names"
+            ]
+        },
+        {
+            "name": "HTTP 5xx errors",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 456,
+                "width": 456,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "HTTP 5xx errors",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:service.errors.fivexx.count",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.service"
+                    ],
+                    "sortBy": "DESC",
+                    "sortByDimension": "",
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [
+                            {
+                                "filter": "dt.entity.service",
+                                "filterType": "ENTITY_ATTRIBUTE",
+                                "filterOperator": "OR",
+                                "entityAttribute": "externalDependency",
+                                "nestedFilters": [],
+                                "criteria": [
+                                    {
+                                        "value": "THIRDPARTY",
+                                        "evaluator": "IN"
+                                    }
+                                ]
+                            }
+                        ],
+                        "criteria": []
+                    },
+                    "limit": 100,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "hideLegend": false
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=null&(builtin:service.errors.fivexx.count:filter(and(or(in(\"dt.entity.service\",entitySelector(\"type(service),externalDependency(~\"THIRDPARTY~\")\"))))):splitBy(\"dt.entity.service\"):avg:sort(value(avg,descending)):limit(100)):limit(100):names"
+            ]
+        },
+        {
+            "name": "HTTP 4xx errors",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 912,
+                "width": 456,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "HTTP 4xx errors",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:service.errors.fourxx.count",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.service"
+                    ],
+                    "sortBy": "DESC",
+                    "sortByDimension": "",
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [
+                            {
+                                "filter": "dt.entity.service",
+                                "filterType": "ENTITY_ATTRIBUTE",
+                                "filterOperator": "OR",
+                                "entityAttribute": "externalDependency",
+                                "nestedFilters": [],
+                                "criteria": [
+                                    {
+                                        "value": "THIRDPARTY",
+                                        "evaluator": "IN"
+                                    }
+                                ]
+                            }
+                        ],
+                        "criteria": []
+                    },
+                    "limit": 100,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "hideLegend": false
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=null&(builtin:service.errors.fourxx.count:filter(and(or(in(\"dt.entity.service\",entitySelector(\"type(service),externalDependency(~\"THIRDPARTY~\")\"))))):splitBy(\"dt.entity.service\"):avg:sort(value(avg,descending)):limit(100)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Response time",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 608,
+                "left": 0,
+                "width": 684,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Response time",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:service.response.time",
+                    "spaceAggregation": "MEDIAN",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.service"
+                    ],
+                    "sortBy": "DESC",
+                    "sortByDimension": "",
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [
+                            {
+                                "filter": "dt.entity.service",
+                                "filterType": "ENTITY_ATTRIBUTE",
+                                "filterOperator": "OR",
+                                "entityAttribute": "externalDependency",
+                                "nestedFilters": [],
+                                "criteria": [
+                                    {
+                                        "value": "THIRDPARTY",
+                                        "evaluator": "IN"
+                                    }
+                                ]
+                            }
+                        ],
+                        "criteria": []
+                    },
+                    "limit": 100,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {
+                    "hideLegend": false
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:service.response.time:filter(and(or(in(\"dt.entity.service\",entitySelector(\"type(service),externalDependency(~\"THIRDPARTY~\")\"))))):splitBy(\"dt.entity.service\"):median:sort(value(median,descending)):limit(100)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Requests",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 608,
+                "left": 684,
+                "width": 684,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Requests",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:service.requestCount.total",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.service"
+                    ],
+                    "sortBy": "DESC",
+                    "sortByDimension": "",
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [
+                            {
+                                "filter": "dt.entity.service",
+                                "filterType": "ENTITY_ATTRIBUTE",
+                                "filterOperator": "OR",
+                                "entityAttribute": "externalDependency",
+                                "nestedFilters": [],
+                                "criteria": [
+                                    {
+                                        "value": "THIRDPARTY",
+                                        "evaluator": "IN"
+                                    }
+                                ]
+                            }
+                        ],
+                        "criteria": []
+                    },
+                    "limit": 100,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {
+                    "hideLegend": false
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:service.requestCount.total:filter(and(or(in(\"dt.entity.service\",entitySelector(\"type(service),externalDependency(~\"THIRDPARTY~\")\"))))):splitBy(\"dt.entity.service\"):avg:sort(value(avg,descending)):limit(100)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Response time",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 912,
+                "left": 0,
+                "width": 684,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Response time",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:service.response.time",
+                    "spaceAggregation": "MEDIAN",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.service"
+                    ],
+                    "sortBy": "DESC",
+                    "sortByDimension": "",
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [
+                            {
+                                "filter": "dt.entity.service",
+                                "filterType": "ENTITY_ATTRIBUTE",
+                                "filterOperator": "OR",
+                                "entityAttribute": "externalDependency",
+                                "nestedFilters": [],
+                                "criteria": [
+                                    {
+                                        "value": "THIRDPARTY",
+                                        "evaluator": "IN"
+                                    }
+                                ]
+                            }
+                        ],
+                        "criteria": []
+                    },
+                    "limit": 100,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "hideLegend": false
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=null&(builtin:service.response.time:filter(and(or(in(\"dt.entity.service\",entitySelector(\"type(service),externalDependency(~\"THIRDPARTY~\")\"))))):splitBy(\"dt.entity.service\"):median:sort(value(median,descending)):limit(100)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Requests",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 912,
+                "left": 684,
+                "width": 684,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Requests",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:service.requestCount.total",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.service"
+                    ],
+                    "sortBy": "DESC",
+                    "sortByDimension": "",
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [
+                            {
+                                "filter": "dt.entity.service",
+                                "filterType": "ENTITY_ATTRIBUTE",
+                                "filterOperator": "OR",
+                                "entityAttribute": "externalDependency",
+                                "nestedFilters": [],
+                                "criteria": [
+                                    {
+                                        "value": "THIRDPARTY",
+                                        "evaluator": "IN"
+                                    }
+                                ]
+                            }
+                        ],
+                        "criteria": []
+                    },
+                    "limit": 100,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "hideLegend": false
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=null&(builtin:service.requestCount.total:filter(and(or(in(\"dt.entity.service\",entitySelector(\"type(service),externalDependency(~\"THIRDPARTY~\")\"))))):splitBy(\"dt.entity.service\"):avg:sort(value(avg,descending)):limit(100)):limit(100):names"
+            ]
+        }
+    ]
+}

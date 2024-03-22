@@ -1,0 +1,1168 @@
+{
+    "metadata": {
+        "configurationVersions": [
+            6
+        ],
+        "clusterVersion": "1.261.134.20230302-084304"
+    },
+    "id": "00000000-dddd-bbbb-ffff-000000000032",
+    "dashboardMetadata": {
+        "name": "Prod: IBM DataPower Overview",
+        "shared": true,
+        "owner": "dave.mauney@dynatrace.com",
+        "preset": true,
+        "tilesNameSize": "small",
+        "hasConsistentColors": true,
+        "dynamicFilters": {
+            "filters": [
+                "CUSTOM_DIMENSION:Custom Device"
+            ]
+        }
+    },
+    "tiles": [
+        {
+            "name": "System Usage",
+            "tileType": "HEADER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 0,
+                "width": 304,
+                "height": 38
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false
+        },
+        {
+            "name": "Services - Availability",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 912,
+                "width": 912,
+                "height": 608
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Services - Availability",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "Service"
+                    ],
+                    "metricSelector": "ext:tech.datapower.Service.status:splitBy(Service):avg:sort(value(avg,descending)):limit(2000)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "HONEYCOMB",
+                "global": {
+                    "hideLegend": false
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "GREEN",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "value": 99.5,
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "value": 0,
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "queryId": "",
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "isThresholdBackgroundAppliedToCell": false
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": true
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(ext:tech.datapower.Service.status:splitBy(Service):avg:sort(value(avg,descending)):limit(2000)):names"
+            ]
+        },
+        {
+            "name": "Markdown",
+            "tileType": "MARKDOWN",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 1824,
+                "width": 152,
+                "height": 38
+            },
+            "tileFilter": {},
+            "markdown": "#### [\u21e6 Overview](#dashboard;id=00000000-dddd-bbbb-ffff-000000000001)\n![BackButton]()"
+        },
+        {
+            "name": "Load",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 38,
+                "left": 0,
+                "width": 456,
+                "height": 266
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Load",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "metricSelector": "ext:tech.datapower.load:splitBy():avg:sort(value(avg,descending)):limit(20)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "SINGLE_VALUE",
+                "global": {
+                    "hideLegend": false
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "unitTransform": "Percent",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "STACKED_AREA"
+                        },
+                        "seriesOverrides": [
+                            {
+                                "name": "Load",
+                                "color": "#2ab6f4"
+                            }
+                        ]
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "singleValueSettings": {
+                    "showTrend": true,
+                    "showSparkLine": true,
+                    "linkTileColorToThreshold": true
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "queryId": "",
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "isThresholdBackgroundAppliedToCell": false
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(ext:tech.datapower.load:splitBy():avg:sort(value(avg,descending)):limit(20)):limit(100):names",
+                "resolution=null&(ext:tech.datapower.load:splitBy():avg:sort(value(avg,descending)):limit(20))"
+            ]
+        },
+        {
+            "name": "Pending messages",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 38,
+                "left": 456,
+                "width": 456,
+                "height": 266
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Pending messages",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:tech.datapower.worklist",
+                    "spaceAggregation": "SUM",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "sortBy": "DESC",
+                    "sortByDimension": "",
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "limit": 20,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "SINGLE_VALUE",
+                "global": {
+                    "hideLegend": false
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": [
+                            {
+                                "name": "Select series",
+                                "color": "#2ab6f4"
+                            }
+                        ]
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "singleValueSettings": {
+                    "showTrend": false,
+                    "showSparkLine": true,
+                    "linkTileColorToThreshold": true
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "value": 0,
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "value": 200,
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "queryId": "",
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "isThresholdBackgroundAppliedToCell": false
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": "",
+                "foldTransformation": "LAST_VALUE"
+            },
+            "metricExpressions": [
+                "resolution=null&(ext:tech.datapower.worklist:splitBy():sum:sort(value(sum,descending)):limit(20)):limit(100):names:last",
+                "resolution=null&(ext:tech.datapower.worklist:splitBy():sum:sort(value(sum,descending)):limit(20))"
+            ]
+        },
+        {
+            "name": "Device",
+            "tileType": "HEADER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 0,
+                "width": 304,
+                "height": 38
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false
+        },
+        {
+            "name": "Availability",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 342,
+                "left": 0,
+                "width": 304,
+                "height": 266
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Availability",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:tech.datapower.connectivity",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "sortBy": "DESC",
+                    "sortByDimension": "",
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "limit": 20,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "SINGLE_VALUE",
+                "global": {
+                    "hideLegend": false
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "unitTransform": "Percent",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": [
+                            {
+                                "name": "Connectivity",
+                                "color": "#2ab6f4"
+                            }
+                        ]
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "singleValueSettings": {
+                    "showTrend": true,
+                    "showSparkLine": true,
+                    "linkTileColorToThreshold": true
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "value": 99.5,
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "value": 0,
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "queryId": "",
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "isThresholdBackgroundAppliedToCell": false
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": "",
+                "foldTransformation": "LAST_VALUE"
+            },
+            "metricExpressions": [
+                "resolution=null&(ext:tech.datapower.connectivity:splitBy():sort(value(auto,descending)):limit(20)):limit(100):names:last",
+                "resolution=null&(ext:tech.datapower.connectivity:splitBy():sort(value(auto,descending)):limit(20))"
+            ]
+        },
+        {
+            "name": "Crypto Engine Status",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 342,
+                "left": 304,
+                "width": 304,
+                "height": 266
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Crypto Engine Status",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "metricSelector": "ext:tech.datapower.cryptoEngineStatus:splitBy():avg:sort(value(avg,descending)):limit(20)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "SINGLE_VALUE",
+                "global": {
+                    "hideLegend": false
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "unitTransform": "Percent",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": [
+                            {
+                                "name": "Crypto Engine Status",
+                                "color": "#2ab6f4"
+                            }
+                        ]
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "singleValueSettings": {
+                    "showTrend": true,
+                    "showSparkLine": true,
+                    "linkTileColorToThreshold": true
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "value": 99.5,
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "value": 0,
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "queryId": "",
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "isThresholdBackgroundAppliedToCell": false
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": "",
+                "foldTransformation": "LAST_VALUE"
+            },
+            "metricExpressions": [
+                "resolution=null&(ext:tech.datapower.cryptoEngineStatus:splitBy():avg:sort(value(avg,descending)):limit(20)):limit(100):names:last",
+                "resolution=null&(ext:tech.datapower.cryptoEngineStatus:splitBy():avg:sort(value(avg,descending)):limit(20))"
+            ]
+        },
+        {
+            "name": "CPU Load",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 342,
+                "left": 608,
+                "width": 304,
+                "height": 266
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "CPU Load",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "metricSelector": "ext:tech.datapower.cpuload:splitBy():avg:sort(value(avg,descending)):limit(20)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "SINGLE_VALUE",
+                "global": {
+                    "hideLegend": false
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "unitTransform": "Percent",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "STACKED_AREA"
+                        },
+                        "seriesOverrides": [
+                            {
+                                "name": "CPU Load",
+                                "color": "#2ab6f4"
+                            }
+                        ]
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "singleValueSettings": {
+                    "showTrend": true,
+                    "showSparkLine": true,
+                    "linkTileColorToThreshold": true
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "value": 0,
+                                "color": "#7dc540"
+                            },
+                            {
+                                "value": 50,
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "value": 75,
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "queryId": "",
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "isThresholdBackgroundAppliedToCell": false
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": "",
+                "foldTransformation": "LAST_VALUE"
+            },
+            "metricExpressions": [
+                "resolution=null&(ext:tech.datapower.cpuload:splitBy():avg:sort(value(avg,descending)):limit(20)):limit(100):names:last",
+                "resolution=null&(ext:tech.datapower.cpuload:splitBy():avg:sort(value(avg,descending)):limit(20))"
+            ]
+        },
+        {
+            "name": "Services",
+            "tileType": "HEADER",
+            "configured": true,
+            "bounds": {
+                "top": 608,
+                "left": 0,
+                "width": 304,
+                "height": 38
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false
+        },
+        {
+            "name": "Services - Response Time (Avg)",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 646,
+                "left": 0,
+                "width": 912,
+                "height": 342
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Services - Response Time (Avg)",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:tech.datapower.Service.httpTransactionsTime",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "Service"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "hideLegend": false
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "STACKED_COLUMN"
+                        },
+                        "seriesOverrides": [
+                            {
+                                "name": "Select series",
+                                "color": "#2ab6f4"
+                            }
+                        ]
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "queryId": "",
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "isThresholdBackgroundAppliedToCell": false
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=null&(ext:tech.datapower.Service.httpTransactionsTime:splitBy(Service):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Services - Calls/Min",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 646,
+                "left": 912,
+                "width": 912,
+                "height": 342
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Services - Calls/Min",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:tech.datapower.Service.httpTransactionThroughput",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "Service"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "hideLegend": false
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": [
+                            {
+                                "name": "Select series",
+                                "color": "#2ab6f4"
+                            }
+                        ]
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "queryId": "",
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "isThresholdBackgroundAppliedToCell": false
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=null&(ext:tech.datapower.Service.httpTransactionThroughput:splitBy(Service):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Services - Response Time (Avg)",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 988,
+                "left": 0,
+                "width": 912,
+                "height": 342
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Response Time (Avg)",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:tech.datapower.Service.httpTransactionsTime",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "Service"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {
+                    "hideLegend": false
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": [
+                            {
+                                "name": "Select series",
+                                "color": "#2ab6f4"
+                            }
+                        ]
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "queryId": "",
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "isThresholdBackgroundAppliedToCell": false
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(ext:tech.datapower.Service.httpTransactionsTime:splitBy(Service):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Services - Calls/Min",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 988,
+                "left": 912,
+                "width": 912,
+                "height": 342
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Response Time (Avg)",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:tech.datapower.Service.httpTransactionThroughput",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "Service"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {
+                    "hideLegend": false
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {},
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(ext:tech.datapower.Service.httpTransactionThroughput:splitBy(Service):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+            ]
+        }
+    ]
+}

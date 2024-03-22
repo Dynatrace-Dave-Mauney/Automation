@@ -1,0 +1,66 @@
+{
+    "metadata": {
+        "configurationVersions": [
+            6
+        ],
+        "clusterVersion": "1.261.134.20230302-084304"
+    },
+    "id": "00000000-dddd-bbbb-ffff-000000000074",
+    "dashboardMetadata": {
+        "name": "Prod: Suspicious Activity Audit",
+        "shared": true,
+        "owner": "dave.mauney@dynatrace.com",
+        "preset": true,
+        "tilesNameSize": "small",
+        "hasConsistentColors": true
+    },
+    "tiles": [
+        {
+            "name": "User Sessions Query",
+            "tileType": "DTAQL",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 0,
+                "width": 380,
+                "height": 646
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "User Actions by IP (Worldwide)",
+            "query": "SELECT usersession.ip as \"Client IP Address\", Count(*) as Count FROM useraction GROUP BY usersession.ip ORDER BY count(*) DESC",
+            "type": "TABLE",
+            "limit": 50
+        },
+        {
+            "name": "User Sessions Query",
+            "tileType": "DTAQL",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 380,
+                "width": 722,
+                "height": 646
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "User Actions by Geolocation (Non-US)",
+            "query": "SELECT usersession.country as Country, usersession.region as Region, usersession.city as City, Count(*) as Count FROM useraction WHERE usersession.country is not \"United States\" GROUP BY usersession.country, usersession.region, usersession.city ORDER BY count(*) DESC",
+            "type": "TABLE",
+            "limit": 50
+        },
+        {
+            "name": "Markdown",
+            "tileType": "MARKDOWN",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 1520,
+                "width": 152,
+                "height": 38
+            },
+            "tileFilter": {},
+            "markdown": "#### [\u21e6 Overview](#dashboard;id=00000000-dddd-bbbb-ffff-000000000001)\n![BackButton]()"
+        }
+    ]
+}

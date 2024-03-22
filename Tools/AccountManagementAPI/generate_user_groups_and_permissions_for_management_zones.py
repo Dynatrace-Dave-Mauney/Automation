@@ -1,4 +1,7 @@
 # Uses "[Owner:abcde]" as the "Management Zone Group" indicator
+# NOTE: BE SURE TO CHANGE TARGETS (ON AROUND LINE 45)
+# EXAMPLE:
+# target_environment_list = [prod_tenant, preprod_tenant, dev_tenant]
 
 import json
 import os
@@ -6,7 +9,7 @@ import requests
 
 from Reuse import dynatrace_api
 from Reuse import environment
-
+from Reuse import user_management_api
 
 account_id = os.getenv('DYNATRACE_AUTOMATION_ACCOUNT_ID')
 client_id = os.getenv('DYNATRACE_AUTOMATION_CLIENT_ID')
@@ -21,14 +24,6 @@ dev_token = os.getenv('DYNATRACE_AUTOMATION_DEV_TOKEN')
 sandbox_tenant = os.getenv('DYNATRACE_SANDBOX_TENANT')
 sandbox_token = os.getenv('DYNATRACE_AUTOMATION_SANDBOX_TOKEN')
 environment_variable_source = 'New Environment Variable Names'
-
-# configuration_path = 'configurations.yaml'
-# if os.path.isfile(configuration_path):
-#     account_id = environment.get_configuration('account_id', configuration_file=configuration_path)
-#     client_id = environment.get_configuration('client_id', configuration_file=configuration_path)
-#     client_secret = environment.get_configuration('client_secret', configuration_file=configuration_path)
-#     skip_slow_api_calls = environment.get_configuration('skip_slow_api_calls', configuration_file=configuration_path)
-#     environment_variable_source = 'Configuration File'
 
 print('Masked environment variables:')
 print(f'account_id: {account_id[:10]}*')
@@ -47,84 +42,40 @@ print(f'environment_variable_source: {environment_variable_source}')
 
 tenant_token_dict = {prod_tenant: prod_token, preprod_tenant: preprod_token, dev_tenant: dev_token, sandbox_tenant: sandbox_token}
 
+target_environment_list = [prod_tenant, preprod_tenant, dev_tenant]
+
+scope = 'account-idm-read account-idm-write'
+
 
 def get_environments():
-    r = get_account_management_api('environments')
+    oauth_bearer_token = user_management_api.get_oauth_bearer_token(client_id, client_secret, scope)
+    r = user_management_api.get_account_management_api(oauth_bearer_token, 'environments', account_id=account_id)
     return r.json()
 
 
-def get_account_management_api(api_type):
-    oauth_bearer_token = get_oauth_bearer_token()
-    url = f'https://api.dynatrace.com/iam/v1/accounts/{account_id}/{api_type}'
-    if api_type in ['environments', 'subscriptions']:
-        url = f'https://api.dynatrace.com/env/v1/accounts/{account_id}/{api_type}'
-    if api_type in ['time-zones', 'regions']:
-        url = f'https://api.dynatrace.com/ref/v1/{api_type}'
-    if api_type == 'permissions':
-        url = 'https://api.dynatrace.com/ref/v1/account/permissions'
-
-    headers = {'accept': 'application/json', 'Authorization': 'Bearer ' + str(oauth_bearer_token)}
-    r = requests.get(url, headers=headers)
-    if r.status_code == 200:
-        # print(r.text)
-        return r
-    else:
-        print(f'GET Request to Account Management API {api_type} Endpoint Failed:')
-        print(f'Response Status Code: {r.status_code}')
-        print(f'Response Reason:      {r.reason}')
-        print(f'Response Text:        {r.text}')
-        print("Exiting Program")
-        exit(1)
-
-
-def get_oauth_bearer_token():
-    headers = {'Content-type': 'application/x-www-form-urlencoded'}
-    r = requests.post(f'https://sso.dynatrace.com/sso/oauth2/token?grant_type=client_credentials&client_id={client_id}&client_secret={client_secret}&scope=account-idm-read account-idm-write&resource=urn:dtaccount:{account_id}', headers=headers)
-    if r.status_code == 200:
-        oauth_bearer_token = r.json()["access_token"]
-        return oauth_bearer_token
-    else:
-        print(f'POST Request to Get OAuth Bearer Token Failed:')
-        print(f'Response Status Code: {r.status_code}')
-        print(f'Response Reason:      {r.reason}')
-        print(f'Response Text:        {r.text}')
-        print("Exiting Program")
-        exit(1)
-
-
 def process():
-    target_environment_list = [sandbox_tenant]
+    user_group_dict = load_user_group_dict()
 
-    target_management_zone_by_mzg_dict = {}
+    # for key in user_group_dict.keys():
+    #     print(key, user_group_dict[key])
+    # exit(1111)
 
-    target_management_zone_dict = get_management_zones_for_target_environments(target_environment_list)
-
-    target_management_zone_keys = target_management_zone_dict.keys()
-    for target_management_zone_key in target_management_zone_keys:
-        management_zone_id = target_management_zone_key
-        management_zone_name = target_management_zone_dict[management_zone_id]['name']
-        management_zone_parent = target_management_zone_dict[management_zone_id]['parent']
-        post_user_group([management_zone_id], management_zone_name, management_zone_parent)
-
-        management_zone_mzg = target_management_zone_dict[management_zone_id]['mzg']
-        if management_zone_mzg:
-            mzg_list = target_management_zone_by_mzg_dict.get(management_zone_mzg, [])
-            mzg_list.append({'id': management_zone_id, 'name': management_zone_name, 'parent': management_zone_parent})
-            # mzg_list.append(management_zone_id)
-            target_management_zone_by_mzg_dict[management_zone_mzg] = mzg_list
-
-    for target_management_zone_by_mzg_key in target_management_zone_by_mzg_dict.keys():
-        mz_id_list = []
-        target_management_zone_by_mzg_list = target_management_zone_by_mzg_dict[target_management_zone_by_mzg_key]
-        for target_management_zone_by_mzg in target_management_zone_by_mzg_list:
-            mz_id = target_management_zone_by_mzg.get('id')
-            mz_id_list.append(mz_id)
-        mz_parent = target_management_zone_by_mzg_list[0].get('parent')
-        post_user_group(mz_id_list, target_management_zone_by_mzg_key, mz_parent, is_mz_group=True)
+    for key in user_group_dict.keys():
+        user_group_name = key
+        r = post_user_group(user_group_name)
+        user_group_uuid = json.loads(r.text)[0].get('uuid')
+        if not user_group_uuid:
+            print(f'Failed to get user group uuid from response object text after post_user_group for group {user_group_name}: {r.text}')
+        else:
+            for management_zone_dict in user_group_dict[key]:
+                management_zone_id = management_zone_dict['id']
+                management_zone_name = management_zone_dict['name']
+                management_zone_parent = management_zone_dict['parent']
+                post_log_viewer_permission(user_group_name, user_group_uuid, management_zone_name, management_zone_id, management_zone_parent)
 
 
-def get_management_zones_for_target_environments(target_environment_list):
-    target_management_zone_dict = {}
+def load_user_group_dict():
+    user_group_dict = {}
 
     endpoint = '/api/config/v1/managementZones'
 
@@ -140,88 +91,76 @@ def get_management_zones_for_target_environments(target_environment_list):
                 endpoint = '/api/config/v1/managementZones'
                 r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{management_zone_id}', token)
                 management_zone = r.json()
+                user_group_name = f'ODFL Log Viewer - {management_zone_name}'
+                upsert_user_group_dict(user_group_name, management_zone_id, management_zone_name, target_environment, user_group_dict)
                 description = management_zone.get('description', '')
-                mzg = None
-                if '[Owner:' in description:
+                if description and '[Owner:' in description:
                     mzg_start = description.find('[') + 7
                     mzg_end = description.find(']')
-                    mzg = description[mzg_start:mzg_end]
-                target_management_zone_dict[management_zone_id] = {'name': management_zone_name, 'parent': target_environment, 'mzg': mzg}
+                    mzg = description[mzg_start:mzg_end].strip()
+                    user_group_name = f'ODFL Log Viewer - {mzg}'
+                    upsert_user_group_dict(user_group_name, management_zone_id, management_zone_name, target_environment, user_group_dict)
 
-    return target_management_zone_dict
+    return user_group_dict
 
 
-def post_user_group(management_zone_id_list, management_zone_name, management_zone_parent, **kwargs):
-
-    is_mz_group = False
-
-    if kwargs:
-        is_mz_group = kwargs.get('is_mz_group', False)
-
-    oauth_bearer_token = get_oauth_bearer_token()
-
-    user_group_name = f'ODFL Log Viewer - {management_zone_name}'
-
-    if is_mz_group:
-        user_group_name += ' (Management Zone Group)'
-
-    if is_mz_group:
-        desc_mz_literal = 'management zone group'
+def upsert_user_group_dict(user_group_name, management_zone_id, management_zone_name, management_zone_parent, user_group_dict):
+    target_management_zone_list_value = {'id': management_zone_id, 'name': management_zone_name, 'parent': management_zone_parent}
+    if user_group_dict.get(user_group_name):
+        user_group_dict[user_group_name].append(target_management_zone_list_value)
     else:
-        desc_mz_literal = 'management zone'
+        user_group_dict[user_group_name] = [target_management_zone_list_value]
+        
+    return user_group_dict
+        
 
+def post_user_group(user_group_name):
     user_group_dict = [{
         "name": user_group_name,
-        "description": f'User Group created for {desc_mz_literal} "{management_zone_name}" via automation',
-        # Claim is not needed
-        # "federatedAttributeValues": [user_group_name]
+        "description": f'User Group created via automation',
     }]
 
-    headers = {'accept': 'application/json', 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + oauth_bearer_token}
+    r = None
     try:
-        r = requests.post(f'https://api.dynatrace.com/iam/v1/accounts/{account_id}/groups', data=json.dumps(user_group_dict), headers=headers)
+        url = f'https://api.dynatrace.com/iam/v1/accounts/{account_id}/groups'
+        oauth_bearer_token = user_management_api.get_oauth_bearer_token(client_id, client_secret, scope)
+        r = user_management_api.post(oauth_bearer_token, url, json.dumps(user_group_dict))
         if 200 < r.status_code < 299:
             print(f'post_user_group for group {user_group_name} response status code: {r.status_code}')
         else:
             if r.status_code == 400:
-                print(f'post_user_group for group {user_group_name} to tenant {management_zone_parent} failed with response status code {r.status_code}: duplicate')
-            else:
-                print(f'post_user_group for group {user_group_name} to tenant {management_zone_parent} failed with response status code {r.status_code}:{r.text}')
+                print(f'post_user_group for group {user_group_name} failed with response status code {r.status_code}: duplicate')
                 r.raise_for_status()
-        if 200 < r.status_code < 299:
-            user_group_id = json.loads(r.text)[0].get('uuid')
-            if user_group_id:
-                put_log_viewer_permission(user_group_name, user_group_id, management_zone_id_list, management_zone_parent)
             else:
-                print(f'Failed to get user group id from response object text after post_user_group to tenant {management_zone_parent} for group {user_group_name}: {r.text}')
+                print(f'post_user_group for group {user_group_name} failed with response status code {r.status_code}:{r.text}')
+                r.raise_for_status()
+        return r
     except requests.exceptions.RequestException as e:
-        print(f'post_user_group for group {user_group_name} to tenant {management_zone_parent} failed with response status code: {r.status_code}')
+        print(f'post_user_group for group {user_group_name} failed with response status code: {r.status_code}')
         print("Please check the following HTTP response to troubleshoot the issue: ")
         print(r.text)
         print("Exiting Program")
         raise SystemExit(e)
 
 
-def put_log_viewer_permission(user_group_name, user_group_id, management_zone_id_list, management_zone_parent):
-    oauth_bearer_token = get_oauth_bearer_token()
+def post_log_viewer_permission(user_group_name, user_group_id, management_zone_name, management_zone_id, management_zone_parent):
+    print(f'post_log_viewer_permission({user_group_name}, {user_group_id}, {management_zone_name}, {management_zone_id}, {management_zone_parent}')
+    permission_scope = f'{management_zone_parent}:{management_zone_id}'
+    permissions_list = [
+            {'permissionName': 'tenant-logviewer', 'scope': permission_scope, 'scopeType': 'management-zone'},
+            {'permissionName': 'tenant-viewer', 'scope': permission_scope, 'scopeType': 'management-zone'}
+    ]
 
-    permissions_list = []
-
-    for management_zone_id in management_zone_id_list:
-        scope = f'{management_zone_parent}:{management_zone_id}'
-        permissions_list.append({'permissionName': 'tenant-logviewer', 'scope': scope, 'scopeType': 'management-zone'})
-        permissions_list.append({'permissionName': 'tenant-viewer', 'scope': scope, 'scopeType': 'management-zone'})
-
-    # print(management_zone_id_list, permissions_list)
-
-    headers = {'accept': '*/*', 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + oauth_bearer_token}
+    r = None
 
     try:
-        r = requests.post(f'https://api.dynatrace.com/iam/v1/accounts/{account_id}/groups/{user_group_id}/permissions', data=json.dumps(permissions_list), headers=headers)
+        url = f'https://api.dynatrace.com/iam/v1/accounts/{account_id}/groups/{user_group_id}/permissions'
+        oauth_bearer_token = user_management_api.get_oauth_bearer_token(client_id, client_secret, scope)
+        r = user_management_api.post(oauth_bearer_token, url, json.dumps(permissions_list))
         r.raise_for_status()
-        print(f'put_log_viewer_permission for group {user_group_name} response status code: {r.status_code}')
+        print(f'post_log_viewer_permission for group/management zone {user_group_name}/{management_zone_name} response status code: {r.status_code}')
     except requests.exceptions.RequestException as e:
-        print(f'put_log_viewer_permission for group {user_group_name} to tenant {management_zone_parent}  failed with response status code: {r.status_code}')
+        print(f'post_log_viewer_permission for group/management zone {user_group_name}/{management_zone_name} failed with response status code: {r.status_code}')
         print("Please check the following HTTP response to troubleshoot the issue: ")
         print(r.text)
         print("Exiting Program")

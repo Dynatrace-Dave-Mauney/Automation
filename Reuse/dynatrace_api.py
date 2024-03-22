@@ -359,9 +359,21 @@ def retry_with_backoff(fn, retries=5, backoff_in_seconds=1):
     with minor modifications (specify exceptions handled, modified formatting)"""
     x = 0
     while True:
+        retry = False
+        r = None
         try:
-            return fn()
-        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout, ConnectionError, ConnectionResetError, TimeoutError, RateLimitException):
+            r = fn()
+            if r.status_code == 504:
+                print('Retry due to 504: Gateway Timeout')
+                retry = True
+            if r.status_code == 500 and ('ECONNRESET' in r.text or 'socket hang up' in r.text):
+                print(f'Retry due to 500: {r.text}')
+                retry = True
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout, ConnectionError, ConnectionResetError, TimeoutError):
+            print('Retry due to an exception')
+            retry = True
+
+        if retry:
             if x == retries:
                 print(f'Retried with exponential backoff {retries} times, but could not recover.')
                 raise
@@ -369,6 +381,9 @@ def retry_with_backoff(fn, retries=5, backoff_in_seconds=1):
             sleep = (backoff_in_seconds * 2 ** x + random.uniform(0, 1))
             time.sleep(sleep)
             x += 1
+            print(f'Retry number {x} with backoff of {sleep} seconds...')
+        else:
+            return r
 
 
 # Wrapper for requests that converts HTTP Status Code 429 to RateLimitException

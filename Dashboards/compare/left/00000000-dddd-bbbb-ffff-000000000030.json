@@ -1,0 +1,1211 @@
+{
+    "metadata": {
+        "configurationVersions": [
+            6
+        ],
+        "clusterVersion": "1.261.134.20230302-084304"
+    },
+    "id": "00000000-dddd-bbbb-ffff-000000000030",
+    "dashboardMetadata": {
+        "name": "Prod: WebLogic by Process",
+        "shared": true,
+        "owner": "dave.mauney@dynatrace.com",
+        "dashboardFilter": null,
+        "preset": true,
+        "tilesNameSize": "small",
+        "hasConsistentColors": true,
+        "dynamicFilters": {
+            "filters": [
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:BUSINESS_PURPOSE",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:DATACENTER",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:GIS",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:IBI",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:JBOSS",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:JBOSS_DOMAIN",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:MERGED_SERVICE",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:OCP_NAMESPACE",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:OCP_NODE_TYPE",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:ODI",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:Tier",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:api",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:app",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:app.kubernetes.io/component",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:app.kubernetes.io/managed-by",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:app.kubernetes.io/name",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:app.kubernetes.io/part-of",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:app.kubernetes.io/version",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:chart",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:cluster-autoscaler",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:component",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:control-plane",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:controller-manager",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:heritage",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:k8s-app",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:kubernetes.io/os",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:name",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:namespace",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:oauth-openshift-anti-affinity",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:openshift-route-controller-manager-anti-affinity",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:openshift.io/component",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:release",
+                "PROCESS_GROUP_INSTANCE_TAG_KEY:type"
+            ]
+        }
+    },
+    "tiles": [
+        {
+            "name": "Active connections",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 0,
+                "width": 342,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Active connections",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.weblogic.connectionPool.ActiveConnectionsCurrentCount",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {},
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&(builtin:tech.weblogic.connectionPool.ActiveConnectionsCurrentCount:splitBy(\"dt.entity.process_group_instance\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Available connections (idle)",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 342,
+                "width": 342,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Available connections (idle)",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.weblogic.connectionPool.NumAvailable",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {},
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&(builtin:tech.weblogic.connectionPool.NumAvailable:splitBy(\"dt.entity.process_group_instance\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Leaked connections",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 684,
+                "width": 342,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Leaked connections",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.weblogic.connectionPool.LeakedConnectionCount",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {},
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&(builtin:tech.weblogic.connectionPool.LeakedConnectionCount:splitBy(\"dt.entity.process_group_instance\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Requests for connections",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 1026,
+                "width": 342,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Requests for connections",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.weblogic.connectionPool.ReserveRequestCount",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {},
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&(builtin:tech.weblogic.connectionPool.ReserveRequestCount:splitBy(\"dt.entity.process_group_instance\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Markdown",
+            "tileType": "MARKDOWN",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 1368,
+                "width": 152,
+                "height": 38
+            },
+            "tileFilter": {},
+            "markdown": "#### [\u21e6 Overview](#dashboard;id=00000000-dddd-bbbb-ffff-000000000001)\n![BackButton]()"
+        },
+        {
+            "name": "Markdown",
+            "tileType": "MARKDOWN",
+            "configured": true,
+            "bounds": {
+                "top": 38,
+                "left": 1368,
+                "width": 152,
+                "height": 266
+            },
+            "tileFilter": {},
+            "markdown": "WebLogic By\n\n[Name](#dashboard;id=00000000-dddd-bbbb-ffff-000000000029)  \n\n"
+        },
+        {
+            "name": "Waiting for connections",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 0,
+                "width": 342,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Waiting for connections",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.weblogic.connectionPool.WaitingForConnectionCurrentCount",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {},
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&(builtin:tech.weblogic.connectionPool.WaitingForConnectionCurrentCount:splitBy(\"dt.entity.process_group_instance\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Statement cache hits",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 342,
+                "width": 342,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Statement cache hits",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.weblogic.connectionPool.PrepStmtCacheHitCount",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {},
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&(builtin:tech.weblogic.connectionPool.PrepStmtCacheHitCount:splitBy(\"dt.entity.process_group_instance\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Statement cache misses",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 684,
+                "width": 342,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Statement cache misses",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.weblogic.connectionPool.PrepStmtCacheMissCount",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {},
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&(builtin:tech.weblogic.connectionPool.PrepStmtCacheMissCount:splitBy(\"dt.entity.process_group_instance\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Statement cache size",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 1026,
+                "width": 342,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Statement cache size",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.weblogic.connectionPool.PrepStmtCacheCurrentSize",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {},
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&(builtin:tech.weblogic.connectionPool.PrepStmtCacheCurrentSize:splitBy(\"dt.entity.process_group_instance\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Current capacity",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 608,
+                "left": 0,
+                "width": 342,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Current capacity",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.weblogic.connectionPool.CurrCapacity",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {},
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&(builtin:tech.weblogic.connectionPool.CurrCapacity:splitBy(\"dt.entity.process_group_instance\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Max capacity",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 608,
+                "left": 342,
+                "width": 342,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Max capacity",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.weblogic.connectionPool.MaxCapacity",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {},
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&(builtin:tech.weblogic.connectionPool.MaxCapacity:splitBy(\"dt.entity.process_group_instance\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Failed connection requests",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 608,
+                "left": 684,
+                "width": 342,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Failed connection requests",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.weblogic.connectionPool.FailedReserveRequestCount",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {},
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&(builtin:tech.weblogic.connectionPool.FailedReserveRequestCount:splitBy(\"dt.entity.process_group_instance\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Reconnection failures",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 608,
+                "left": 1026,
+                "width": 342,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Reconnection failures",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.weblogic.connectionPool.FailuresToReconnectCount",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {},
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&(builtin:tech.weblogic.connectionPool.FailuresToReconnectCount:splitBy(\"dt.entity.process_group_instance\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+            ]
+        }
+    ]
+}

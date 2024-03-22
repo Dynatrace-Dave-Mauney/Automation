@@ -1,6 +1,10 @@
-import json
+# import json
+import random
 import requests
 import ssl
+import time
+
+from functools import partial
 
 # Creating an OAuth Client:
 # Old UI: Person Icon > Account Settings > Pick Account if needed > Identity & access management > OAuth Clients > "Create client" button
@@ -17,7 +21,9 @@ def get_oauth_bearer_token(client_id, client_secret, scope):
         'scope': scope
     }
 
-    r = requests.post(url, headers=headers, data=data)
+    # r = requests.post(url, headers=headers, data=data)
+    fn = partial(requests.post, url, headers=headers, data=data)
+    r = retry_with_backoff(fn)
     if r.status_code == 200:
         oauth_bearer_token = r.json()['access_token']
         return oauth_bearer_token
@@ -32,7 +38,10 @@ def get_oauth_bearer_token(client_id, client_secret, scope):
 
 def get(oauth_bearer_token, api_url, params):
     headers = {'accept': 'application/json', 'Authorization': 'Bearer ' + str(oauth_bearer_token)}
-    r = requests.get(api_url, headers=headers, params=params)
+    # r = requests.get(api_url, headers=headers, params=params)
+    fn = partial(requests.get, api_url, headers=headers, params=params)
+    r = retry_with_backoff(fn)
+
     if r.status_code == 200:
         # print(r.text)
         return r
@@ -47,7 +56,10 @@ def get(oauth_bearer_token, api_url, params):
 
 def post_multipart_form_data(api_url, files, params, headers):
     try:
-        r = requests.post(api_url, files=files, params=params, headers=headers)
+        # r = requests.post(api_url, files=files, params=params, headers=headers)
+        fn = partial(requests.post, api_url, files=files, headers=headers, params=params)
+        r = retry_with_backoff(fn)
+
         if r.status_code not in [200, 201, 204]:
             print('Status Code: %d' % r.status_code)
             print('Reason: %s' % r.reason)
@@ -64,7 +76,9 @@ def post_multipart_form_data(api_url, files, params, headers):
 def delete(oauth_bearer_token, api_url, params):
     headers = {'accept': 'application/json', 'Authorization': 'Bearer ' + str(oauth_bearer_token)}
     try:
-        r = requests.delete(api_url, headers=headers, params=params)
+        # r = requests.delete(api_url, headers=headers, params=params)
+        fn = partial(requests.delete, api_url, headers=headers, params=params)
+        r = retry_with_backoff(fn)
         return r
     except ssl.SSLError:
         print('Error in "new_platform_api.delete(oauth_bearer_token, api_url, object_id)" method')
@@ -74,7 +88,10 @@ def delete(oauth_bearer_token, api_url, params):
 def post(oauth_bearer_token, api_url, payload):
     headers = {'Content-type': 'application/json', 'Authorization': 'Bearer ' + str(oauth_bearer_token)}
     try:
-        r = requests.post(api_url, payload, headers=headers)
+        # r = requests.post(api_url, payload, headers=headers)
+        fn = partial(requests.post, api_url, payload, headers=headers)
+        r = retry_with_backoff(fn)
+
         if r.status_code not in [200, 201, 204]:
             print('Status Code: %d' % r.status_code)
             print('Reason: %s' % r.reason)
@@ -96,6 +113,38 @@ def post(oauth_bearer_token, api_url, payload):
     except ssl.SSLError:
         print('Error in "new_platform_api.post(oauth_bearer_token, api_url, payload)" method')
         raise
+
+
+def retry_with_backoff(fn, retries=5, backoff_in_seconds=1):
+    """Simple exponential backoff implementation from https://keestalkstech.com/2021/03/python-utility-function-retry-with-exponential-backoff/
+    with minor modifications (specify exceptions handled, modified formatting)"""
+    x = 0
+    while True:
+        retry = False
+        r = None
+        try:
+            r = fn()
+            if r.status_code == 504:
+                print('Retry due to 504: Gateway Timeout')
+                retry = True
+            if r.status_code == 500 and ('ECONNRESET' in r.text or 'socket hang up' in r.text):
+                print(f'Retry due to 500: {r.text}')
+                retry = True
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout, ConnectionError, ConnectionResetError, TimeoutError):
+            print('Retry due to an exception')
+            retry = True
+
+        if retry:
+            if x == retries:
+                print(f'Retried with exponential backoff {retries} times, but could not recover.')
+                raise
+
+            sleep = (backoff_in_seconds * 2 ** x + random.uniform(0, 1))
+            time.sleep(sleep)
+            x += 1
+            print(f'Retry number {x} with backoff of {sleep} seconds...')
+        else:
+            return r
 
 
 if __name__ == '__main__':

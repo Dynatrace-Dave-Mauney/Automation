@@ -1,0 +1,5403 @@
+{
+    "metadata": {
+        "configurationVersions": [
+            6
+        ],
+        "clusterVersion": "1.261.134.20230302-084304"
+    },
+    "id": "00000000-dddd-bbbb-ffff-000000000111",
+    "dashboardMetadata": {
+        "name": "Prod: Azure Monitoring Overview",
+        "shared": true,
+        "owner": "dave.mauney@dynatrace.com",
+        "preset": true,
+        "tilesNameSize": "small",
+        "hasConsistentColors": true
+    },
+    "tiles": [
+        {
+            "name": "Azure Virtual Machine (Scale Sets)",
+            "tileType": "HEADER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 0,
+                "width": 608,
+                "height": 38
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false
+        },
+        {
+            "name": "Azure App Services",
+            "tileType": "HEADER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 646,
+                "width": 608,
+                "height": 38
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false
+        },
+        {
+            "name": "Azure Functions",
+            "tileType": "HEADER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 1292,
+                "width": 608,
+                "height": 38
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false
+        },
+        {
+            "name": "",
+            "tileType": "SERVICES",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 1900,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "filterConfig": {
+                "type": "SERVICE",
+                "customName": "",
+                "defaultName": "SERVICE",
+                "chartConfig": {
+                    "legendShown": true,
+                    "type": "TIMESERIES",
+                    "series": [],
+                    "resultMetadata": {}
+                },
+                "filtersPerEntityType": {}
+            },
+            "chartVisible": true
+        },
+        {
+            "name": "Markdown",
+            "tileType": "MARKDOWN",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 2204,
+                "width": 152,
+                "height": 38
+            },
+            "tileFilter": {},
+            "markdown": "#### [\u21e6 Overview](#dashboard;id=00000000-dddd-bbbb-ffff-000000000001)\n![BackButton]()"
+        },
+        {
+            "name": "",
+            "tileType": "HOSTS",
+            "configured": true,
+            "bounds": {
+                "top": 38,
+                "left": 0,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "filterConfig": {
+                "type": "HOST",
+                "customName": "Azure Hosts",
+                "defaultName": "Azure Hosts",
+                "chartConfig": {
+                    "legendShown": true,
+                    "type": "TIMESERIES",
+                    "series": [],
+                    "resultMetadata": {}
+                },
+                "filtersPerEntityType": {
+                    "HOST": {
+                        "HOST_VIRTUALIZATION": [
+                            "7"
+                        ]
+                    }
+                }
+            },
+            "chartVisible": true
+        },
+        {
+            "name": "CPU usage %",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 38,
+                "left": 304,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "CPU usage %",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:host.cpu.usage",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.host"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [
+                            {
+                                "filter": "dt.entity.host",
+                                "filterType": "ENTITY_ATTRIBUTE",
+                                "filterOperator": "OR",
+                                "entityAttribute": "hostvirtualizationtype",
+                                "nestedFilters": [],
+                                "criteria": [
+                                    {
+                                        "value": "AZURE_VM",
+                                        "evaluator": "IN"
+                                    }
+                                ]
+                            }
+                        ],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:host.cpu.usage:filter(and(or(in(\"dt.entity.host\",entitySelector(\"type(host),hostvirtualizationtype(~\"AZURE_VM~\")\"))))):splitBy(\"dt.entity.host\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Markdown",
+            "tileType": "MARKDOWN",
+            "configured": true,
+            "bounds": {
+                "top": 38,
+                "left": 646,
+                "width": 152,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "markdown": "[Web Requests](/ui/diagnostictools/mda?mdaId=topweb&metric=REQUEST_COUNT&dimension=All%20requests&mergeServices=false&aggregation=COUNT&percentile=80&chart=COLUMN&servicefilter=0%1E26%112%1026%111%1048%11Azure%14App%20Service)\n\n[Exceptions](#exceptionsoverview;servicefilter=0%1E48%11Azure%14App%20Service)\n\n[Slow Transactions](/ui/diagnostictools/purepaths?servicefilter=0%1E0%11500000%144611686018427387%1048%11Azure%14App%20Service)\n\n[HTTP 5XX Errors](/ui/diagnostictools/mda?mdaId=topweb&metric=HTTP_5XX_ERROR_COUNT&dimension=All%20requests&mergeServices=false&aggregation=COUNT&percentile=80&chart=COLUMN&servicefilter=0%1E26%112%1026%111%1048%11Azure%14App%20Service)"
+        },
+        {
+            "name": "",
+            "tileType": "SERVICES",
+            "configured": true,
+            "bounds": {
+                "top": 38,
+                "left": 798,
+                "width": 152,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "filterConfig": {
+                "type": "SERVICE",
+                "customName": "Azure App Service",
+                "defaultName": "Azure App Service",
+                "chartConfig": {
+                    "legendShown": true,
+                    "type": "TIMESERIES",
+                    "series": [],
+                    "resultMetadata": {}
+                },
+                "filtersPerEntityType": {
+                    "SERVICE": {
+                        "AUTO_TAGS": [
+                            "Azure:App Service"
+                        ]
+                    }
+                }
+            },
+            "chartVisible": true
+        },
+        {
+            "name": "Requests throughput",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 38,
+                "left": 950,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Requests throughput",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "metricSelector": "builtin:cloud.azure.appService.traffic.requests:splitBy(\"dt.entity.azure_web_app\"):value:rate(m):auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&(builtin:cloud.azure.appService.traffic.requests:splitBy(\"dt.entity.azure_web_app\"):value:rate(1m):auto:sort(value(sum,descending)):limit(10)):limit(100):names:fold(auto)"
+            ]
+        },
+        {
+            "name": "Markdown",
+            "tileType": "MARKDOWN",
+            "configured": true,
+            "bounds": {
+                "top": 38,
+                "left": 1292,
+                "width": 152,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "markdown": "[Web Requests](/ui/diagnostictools/mda?mdaId=topweb&metric=REQUEST_COUNT&dimension=All%20requests&mergeServices=false&aggregation=COUNT&percentile=80&chart=COLUMN&servicefilter=0%1E26%112%1026%111%1048%11Azure%14Function)\n\n[Exceptions](#exceptionsoverview;servicefilter=0%1E48%11Azure%14Function)\n\n[Slow Transactions](/ui/diagnostictools/purepaths?servicefilter=0%1E0%11500000%144611686018427387%1048%11Azure%14Function)\n\n[HTTP 5XX Errors](/ui/diagnostictools/mda?mdaId=topweb&metric=HTTP_5XX_ERROR_COUNT&dimension=All%20requests&mergeServices=false&aggregation=COUNT&percentile=80&chart=COLUMN&servicefilter=0%1E26%112%1026%111%1048%11Azure%14Function)"
+        },
+        {
+            "name": "",
+            "tileType": "SERVICES",
+            "configured": true,
+            "bounds": {
+                "top": 38,
+                "left": 1444,
+                "width": 152,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "filterConfig": {
+                "type": "SERVICE",
+                "customName": "Azure Function",
+                "defaultName": "Azure Function",
+                "chartConfig": {
+                    "legendShown": true,
+                    "type": "TIMESERIES",
+                    "series": [],
+                    "resultMetadata": {}
+                },
+                "filtersPerEntityType": {
+                    "SERVICE": {
+                        "AUTO_TAGS": [
+                            "Azure:Function"
+                        ]
+                    }
+                }
+            },
+            "chartVisible": true
+        },
+        {
+            "name": "Requests throughput",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 38,
+                "left": 1596,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Requests throughput",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "metricSelector": "builtin:cloud.azure.appService.functions.execution.count:splitBy(\"dt.entity.azure_function_app\"):value:rate(m):auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&(builtin:cloud.azure.appService.functions.execution.count:splitBy(\"dt.entity.azure_function_app\"):value:rate(1m):auto:sort(value(sum,descending)):limit(10)):limit(100):names:fold(auto)"
+            ]
+        },
+        {
+            "name": "Active VMs per Subscription",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 266,
+                "left": 0,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Active VMs per Subscription",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:cloud.azure.region.vms.running",
+                    "spaceAggregation": "MAX",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_subscription"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.region.vms.running:splitBy(\"dt.entity.azure_subscription\"):max:sort(value(max,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Memory used %",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 266,
+                "left": 304,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Memory used %",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:host.mem.usage",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.host"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [
+                            {
+                                "filter": "dt.entity.host",
+                                "filterType": "ENTITY_ATTRIBUTE",
+                                "filterOperator": "OR",
+                                "entityAttribute": "hostvirtualizationtype",
+                                "nestedFilters": [],
+                                "criteria": [
+                                    {
+                                        "value": "AZURE_VM",
+                                        "evaluator": "IN"
+                                    }
+                                ]
+                            }
+                        ],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:host.mem.usage:filter(and(or(in(\"dt.entity.host\",entitySelector(\"type(host),hostvirtualizationtype(~\"AZURE_VM~\")\"))))):splitBy(\"dt.entity.host\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Response time avg",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 266,
+                "left": 646,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Response time avg",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:cloud.azure.appService.response.avg",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_web_app"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.appService.response.avg:splitBy(\"dt.entity.azure_web_app\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "HTTP 5xx Errors",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 266,
+                "left": 950,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "HTTP 5xx Errors",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_web_app"
+                    ],
+                    "metricSelector": "builtin:cloud.azure.appService.http.status.http5xx:splitBy(\"dt.entity.azure_web_app\"):value:auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.appService.http.status.http5xx:splitBy(\"dt.entity.azure_web_app\"):value:auto:sort(value(sum,descending)):limit(10)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Response time",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 266,
+                "left": 1292,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Response time",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:service.response.time",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.service"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [
+                            {
+                                "filter": "dt.entity.service",
+                                "filterType": "TAG",
+                                "filterOperator": "OR",
+                                "nestedFilters": [],
+                                "criteria": [
+                                    {
+                                        "value": "Azure:Function",
+                                        "evaluator": "IN"
+                                    }
+                                ]
+                            }
+                        ],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:service.response.time:filter(and(or(in(\"dt.entity.service\",entitySelector(\"type(service),tag(~\"Azure:Function~\")\"))))):splitBy(\"dt.entity.service\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "HTTP 5xx Errors",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 266,
+                "left": 1596,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "HTTP 5xx Errors",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_function_app"
+                    ],
+                    "metricSelector": "builtin:cloud.azure.appService.functions.http.status.http5xx:splitBy(\"dt.entity.azure_function_app\"):value:auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.appService.functions.http.status.http5xx:splitBy(\"dt.entity.azure_function_app\"):value:auto:sort(value(sum,descending)):limit(10)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Azure Event Hub",
+            "tileType": "HEADER",
+            "configured": true,
+            "bounds": {
+                "top": 532,
+                "left": 0,
+                "width": 456,
+                "height": 38
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false
+        },
+        {
+            "name": "Azure Storage Blob",
+            "tileType": "HEADER",
+            "configured": true,
+            "bounds": {
+                "top": 532,
+                "left": 646,
+                "width": 456,
+                "height": 38
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false
+        },
+        {
+            "name": "Azure Service Bus",
+            "tileType": "HEADER",
+            "configured": true,
+            "bounds": {
+                "top": 532,
+                "left": 1292,
+                "width": 456,
+                "height": 38
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false
+        },
+        {
+            "name": "Incoming messages per Hub",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 570,
+                "left": 0,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Incoming messages per Hub",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_event_hub"
+                    ],
+                    "metricSelector": "builtin:cloud.azure.eventHub.traffic.msgIn:splitBy(\"dt.entity.azure_event_hub\"):value:auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.eventHub.traffic.msgIn:splitBy(\"dt.entity.azure_event_hub\"):value:auto:sort(value(sum,descending)):limit(10)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Outgoing messages per Hub",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 570,
+                "left": 304,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Outgoing messages per Hub",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_event_hub"
+                    ],
+                    "metricSelector": "builtin:cloud.azure.eventHub.traffic.msgOut:splitBy(\"dt.entity.azure_event_hub\"):value:auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.eventHub.traffic.msgOut:splitBy(\"dt.entity.azure_event_hub\"):value:auto:sort(value(sum,descending)):limit(10)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Transactions count per Blob Account",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 570,
+                "left": 646,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Transactions count per Blob Account",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "metricSelector": "builtin:cloud.azure.storage.blob.transactions:splitBy(\"dt.entity.azure_storage_account\"):value:rate(m):auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&(builtin:cloud.azure.storage.blob.transactions:splitBy(\"dt.entity.azure_storage_account\"):value:rate(1m):auto:sort(value(sum,descending)):limit(10)):limit(100):names:fold(auto)"
+            ]
+        },
+        {
+            "name": "Blob capacity per Blob Account",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 570,
+                "left": 950,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Blob capacity per Blob Account",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:cloud.azure.storage.blob.capacity",
+                    "spaceAggregation": "MAX",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_storage_account"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.storage.blob.capacity:splitBy(\"dt.entity.azure_storage_account\"):max:sort(value(max,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Incoming messages per Queue",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 570,
+                "left": 1292,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Incoming messages per Queue",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_service_bus_queue"
+                    ],
+                    "metricSelector": "builtin:cloud.azure.serviceBus.queue.messages.incoming:splitBy(\"dt.entity.azure_service_bus_queue\"):value:auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.serviceBus.queue.messages.incoming:splitBy(\"dt.entity.azure_service_bus_queue\"):value:auto:sort(value(sum,descending)):limit(10)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Outgoing messages per Queue",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 570,
+                "left": 1596,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Outgoing messages per Queue",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_service_bus_queue"
+                    ],
+                    "metricSelector": "builtin:cloud.azure.serviceBus.queue.messages.outgoing:splitBy(\"dt.entity.azure_service_bus_queue\"):value:auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.serviceBus.queue.messages.outgoing:splitBy(\"dt.entity.azure_service_bus_queue\"):value:auto:sort(value(sum,descending)):limit(10)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Incoming requests per Hub",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 798,
+                "left": 0,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Incoming requests per Hub",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "metricSelector": "builtin:cloud.azure.eventHub.requests.incoming:splitBy(\"dt.entity.azure_event_hub\"):value:rate(m):auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&(builtin:cloud.azure.eventHub.requests.incoming:splitBy(\"dt.entity.azure_event_hub\"):value:rate(1m):auto:sort(value(sum,descending)):limit(10)):limit(100):names:fold(auto)"
+            ]
+        },
+        {
+            "name": "Successful requests per Hub",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 798,
+                "left": 304,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Successful requests per Hub",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_event_hub"
+                    ],
+                    "metricSelector": "builtin:cloud.azure.eventHub.requests.successful:splitBy(\"dt.entity.azure_event_hub\"):value:auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.eventHub.requests.successful:splitBy(\"dt.entity.azure_event_hub\"):value:auto:sort(value(sum,descending)):limit(10)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Ingress bytes per Blob Account",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 798,
+                "left": 646,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Ingress bytes per Blob Account",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "metricSelector": "builtin:cloud.azure.storage.blob.transactions.network.ingress:splitBy(\"dt.entity.azure_storage_account\"):value:rate(m):auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&(builtin:cloud.azure.storage.blob.transactions.network.ingress:splitBy(\"dt.entity.azure_storage_account\"):value:rate(1m):auto:sort(value(sum,descending)):limit(10)):limit(100):names:fold(auto)"
+            ]
+        },
+        {
+            "name": "Egress bytes per Blob Account",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 798,
+                "left": 950,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Egress bytes per Blob Account",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "metricSelector": "builtin:cloud.azure.storage.blob.transactions.network.egress:splitBy(\"dt.entity.azure_storage_account\"):value:rate(m):auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&(builtin:cloud.azure.storage.blob.transactions.network.egress:splitBy(\"dt.entity.azure_storage_account\"):value:rate(1m):auto:sort(value(sum,descending)):limit(10)):limit(100):names:fold(auto)"
+            ]
+        },
+        {
+            "name": "Incoming requests per Queue",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 798,
+                "left": 1292,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Incoming requests per Queue",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "metricSelector": "builtin:cloud.azure.serviceBus.queue.requests.incoming:splitBy(\"dt.entity.azure_service_bus_queue\"):value:rate(m):auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&(builtin:cloud.azure.serviceBus.queue.requests.incoming:splitBy(\"dt.entity.azure_service_bus_queue\"):value:rate(1m):auto:sort(value(sum,descending)):limit(10)):limit(100):names:fold(auto)"
+            ]
+        },
+        {
+            "name": "Successful requests per Queue",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 798,
+                "left": 1596,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Successful requests per Queue",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_service_bus_queue"
+                    ],
+                    "metricSelector": "builtin:cloud.azure.serviceBus.queue.requests.successful:splitBy(\"dt.entity.azure_service_bus_queue\"):value:auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.serviceBus.queue.requests.successful:splitBy(\"dt.entity.azure_service_bus_queue\"):value:auto:sort(value(sum,descending)):limit(10)):limit(100):names"
+            ]
+        },
+        {
+            "name": "User errors per Hub",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1026,
+                "left": 0,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "User errors per Hub",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_event_hub"
+                    ],
+                    "metricSelector": "builtin:cloud.azure.eventHub.errors.user:splitBy(\"dt.entity.azure_event_hub\"):value:auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.eventHub.errors.user:splitBy(\"dt.entity.azure_event_hub\"):value:auto:sort(value(sum,descending)):limit(10)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Server errors per Hub",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1026,
+                "left": 304,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Server errors per Hub",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_event_hub"
+                    ],
+                    "metricSelector": "builtin:cloud.azure.eventHub.errors.server:splitBy(\"dt.entity.azure_event_hub\"):value:auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.eventHub.errors.server:splitBy(\"dt.entity.azure_event_hub\"):value:auto:sort(value(sum,descending)):limit(10)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Server success latency per Blob Account",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1026,
+                "left": 646,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Server success latency per Blob Account",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:cloud.azure.storage.blob.transactions.network.latency.success.server",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_storage_account"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.storage.blob.transactions.network.latency.success.server:splitBy(\"dt.entity.azure_storage_account\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "E2E success latency per Blob Account",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1026,
+                "left": 950,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "E2E success latency per Blob Account",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:cloud.azure.storage.blob.transactions.network.latency.success.e2e",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_storage_account"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.storage.blob.transactions.network.latency.success.e2e:splitBy(\"dt.entity.azure_storage_account\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Messages in Queue",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1026,
+                "left": 1292,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Messages in Queue",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:cloud.azure.serviceBus.queue.messages.count",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_service_bus_queue"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.serviceBus.queue.messages.count:splitBy(\"dt.entity.azure_service_bus_queue\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Server errors per Queue",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1026,
+                "left": 1596,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Server errors per Queue",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_service_bus_queue"
+                    ],
+                    "metricSelector": "builtin:cloud.azure.serviceBus.queue.errors.server:splitBy(\"dt.entity.azure_service_bus_queue\"):value:auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.serviceBus.queue.errors.server:splitBy(\"dt.entity.azure_service_bus_queue\"):value:auto:sort(value(sum,descending)):limit(10)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Throttled requests per Hub",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1254,
+                "left": 0,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Throttled requests per Hub",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_event_hub"
+                    ],
+                    "metricSelector": "builtin:cloud.azure.eventHub.requests.throttled:splitBy(\"dt.entity.azure_event_hub\"):value:auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.eventHub.requests.throttled:splitBy(\"dt.entity.azure_event_hub\"):value:auto:sort(value(sum,descending)):limit(10)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Quota exceeded errors per Hub",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1254,
+                "left": 304,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Quota exceeded errors per Hub",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_event_hub"
+                    ],
+                    "metricSelector": "builtin:cloud.azure.eventHub.errors.quotaExceeded:splitBy(\"dt.entity.azure_event_hub\"):value:auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.eventHub.errors.quotaExceeded:splitBy(\"dt.entity.azure_event_hub\"):value:auto:sort(value(sum,descending)):limit(10)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Blob container count per Blob Account",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1254,
+                "left": 646,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Blob container count per Blob Account",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:cloud.azure.storage.blob.containers",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_storage_account"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.storage.blob.containers:splitBy(\"dt.entity.azure_storage_account\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Blob count per Blob Account",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1254,
+                "left": 950,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Blob count per Blob Account",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:cloud.azure.storage.blob.entities",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_storage_account"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.storage.blob.entities:splitBy(\"dt.entity.azure_storage_account\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Dead-lettered Messages in Queue",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1254,
+                "left": 1292,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Dead-lettered Messages in Queue",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:cloud.azure.serviceBus.queue.messages.countDeadLettered",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_service_bus_queue"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.serviceBus.queue.messages.countDeadLettered:splitBy(\"dt.entity.azure_service_bus_queue\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Size per Queue",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1254,
+                "left": 1596,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Size per Queue",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:cloud.azure.serviceBus.queue.size",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_service_bus_queue"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.serviceBus.queue.size:splitBy(\"dt.entity.azure_service_bus_queue\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Azure App Gateway & Load Balancer",
+            "tileType": "HEADER",
+            "configured": true,
+            "bounds": {
+                "top": 1520,
+                "left": 0,
+                "width": 608,
+                "height": 38
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false
+        },
+        {
+            "name": "Azure SQL DB",
+            "tileType": "HEADER",
+            "configured": true,
+            "bounds": {
+                "top": 1520,
+                "left": 646,
+                "width": 456,
+                "height": 38
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false
+        },
+        {
+            "name": "Azure Redis",
+            "tileType": "HEADER",
+            "configured": true,
+            "bounds": {
+                "top": 1520,
+                "left": 1292,
+                "width": 456,
+                "height": 38
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false
+        },
+        {
+            "name": "Requests throughput per App Gateway",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1558,
+                "left": 0,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Requests throughput per App Gateway",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "metricSelector": "builtin:cloud.azure.appGateway.backend.settings.traffic.requests.total:splitBy(\"dt.entity.azure_application_gateway\"):value:rate(m):auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&(builtin:cloud.azure.appGateway.backend.settings.traffic.requests.total:splitBy(\"dt.entity.azure_application_gateway\"):value:rate(1m):auto:sort(value(sum,descending)):limit(10)):limit(100):names:fold(auto)"
+            ]
+        },
+        {
+            "name": "Requests failed per App Gateway",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1558,
+                "left": 304,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Requests failed per App Gateway",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_application_gateway"
+                    ],
+                    "metricSelector": "builtin:cloud.azure.appGateway.backend.settings.traffic.requests.failed:splitBy(\"dt.entity.azure_application_gateway\"):value:auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.appGateway.backend.settings.traffic.requests.failed:splitBy(\"dt.entity.azure_application_gateway\"):value:auto:sort(value(sum,descending)):limit(10)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Successful connections per SQL DB",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1558,
+                "left": 646,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Successful connections per SQL DB",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "metricSelector": "builtin:cloud.azure.sqlDatabase.connections.successful:splitBy(\"dt.entity.azure_sql_database\"):value:rate(m):auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&(builtin:cloud.azure.sqlDatabase.connections.successful:splitBy(\"dt.entity.azure_sql_database\"):value:rate(1m):auto:sort(value(sum,descending)):limit(10)):limit(100):names:fold(auto)"
+            ]
+        },
+        {
+            "name": "Failed connections per SQL DB",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1558,
+                "left": 950,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Failed connections per SQL DB",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "metricSelector": "builtin:cloud.azure.sqlDatabase.connections.failed:splitBy(\"dt.entity.azure_sql_database\"):value:rate(m):auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&(builtin:cloud.azure.sqlDatabase.connections.failed:splitBy(\"dt.entity.azure_sql_database\"):value:rate(1m):auto:sort(value(sum,descending)):limit(10)):limit(100):names:fold(auto)"
+            ]
+        },
+        {
+            "name": "Processed commands per Redis Cache",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1558,
+                "left": 1292,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Processed commands per Redis Cache",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_redis_cache"
+                    ],
+                    "metricSelector": "builtin:cloud.azure.redis.commands.total:splitBy(\"dt.entity.azure_redis_cache\"):value:auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.redis.commands.total:splitBy(\"dt.entity.azure_redis_cache\"):value:auto:sort(value(sum,descending)):limit(10)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Cache hits per Redis Cache",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1558,
+                "left": 1596,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Cache hits per Redis Cache",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "metricSelector": "builtin:cloud.azure.redis.cache.hits:splitBy(\"dt.entity.azure_redis_cache\"):value:rate(m):auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&(builtin:cloud.azure.redis.cache.hits:splitBy(\"dt.entity.azure_redis_cache\"):value:rate(1m):auto:sort(value(sum,descending)):limit(10)):limit(100):names:fold(auto)"
+            ]
+        },
+        {
+            "name": "Current connections count per App Gateway",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1786,
+                "left": 0,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Current connections count per App Gateway",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:cloud.azure.appGateway.network.connections.count",
+                    "spaceAggregation": "MAX",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_application_gateway"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.appGateway.network.connections.count:splitBy(\"dt.entity.azure_application_gateway\"):max:sort(value(max,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Unhealthy host count per App Gateway",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1786,
+                "left": 304,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Unhealthy host count per App Gateway",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:cloud.azure.appGateway.backend.settings.pool.host.unhealthy",
+                    "spaceAggregation": "MAX",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_application_gateway"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.appGateway.backend.settings.pool.host.unhealthy:splitBy(\"dt.entity.azure_application_gateway\"):max:sort(value(max,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Total database size per SQL DB",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1786,
+                "left": 646,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Total database size per SQL DB",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:cloud.azure.sqlDatabase.storage.totalBytes",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_sql_database"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.sqlDatabase.storage.totalBytes:splitBy(\"dt.entity.azure_sql_database\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Database DTU percentage per SQL DB",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1786,
+                "left": 950,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Database DTU percentage per SQL DB",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:cloud.azure.sqlDatabase.dtu.consumptionPerc",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_sql_database"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.sqlDatabase.dtu.consumptionPerc:splitBy(\"dt.entity.azure_sql_database\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Reads per Redis Cache",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1786,
+                "left": 1292,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Reads per Redis Cache",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:cloud.azure.redis.cache.read",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_redis_cache"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.redis.cache.read:splitBy(\"dt.entity.azure_redis_cache\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Writes per Redis Cache",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1786,
+                "left": 1596,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Writes per Redis Cache",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:cloud.azure.redis.cache.write",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_redis_cache"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.redis.cache.write:splitBy(\"dt.entity.azure_redis_cache\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Load balancer DIP TCP availability per LB",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2014,
+                "left": 0,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Load balancer DIP TCP availability per LB",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:cloud.azure.loadbalancer.availability.dipTcp",
+                    "spaceAggregation": "MIN",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_load_balancer"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.loadbalancer.availability.dipTcp:splitBy(\"dt.entity.azure_load_balancer\"):min:sort(value(min,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Load Balancer VIP availability per LB",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2014,
+                "left": 304,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Load Balancer VIP availability per LB",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:cloud.azure.loadbalancer.availability.vip",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_load_balancer"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.loadbalancer.availability.vip:splitBy(\"dt.entity.azure_load_balancer\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "CPU usage per SQL DB",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2014,
+                "left": 646,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "CPU usage per SQL DB",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:cloud.azure.sqlDatabase.cpuPercent",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_sql_database"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.sqlDatabase.cpuPercent:splitBy(\"dt.entity.azure_sql_database\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Deadlocks per SQL DB",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2014,
+                "left": 950,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Deadlocks per SQL DB",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_sql_database"
+                    ],
+                    "metricSelector": "builtin:cloud.azure.sqlDatabase.deadlocks:splitBy(\"dt.entity.azure_sql_database\"):value:auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.sqlDatabase.deadlocks:splitBy(\"dt.entity.azure_sql_database\"):value:auto:sort(value(sum,descending)):limit(10)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Used memory per Redis Cache",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2014,
+                "left": 1292,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Used memory per Redis Cache",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:cloud.azure.redis.memory.used",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_redis_cache"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.redis.memory.used:splitBy(\"dt.entity.azure_redis_cache\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Used memory RSS per Redis Cache",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2014,
+                "left": 1596,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Used memory RSS per Redis Cache",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:cloud.azure.redis.memory.usedRss",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_redis_cache"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.redis.memory.usedRss:splitBy(\"dt.entity.azure_redis_cache\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Bytes received per LB",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2242,
+                "left": 0,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Bytes received per LB",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_load_balancer"
+                    ],
+                    "metricSelector": "builtin:cloud.azure.loadbalancer.traffic.byteIn:splitBy(\"dt.entity.azure_load_balancer\"):value:auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.loadbalancer.traffic.byteIn:splitBy(\"dt.entity.azure_load_balancer\"):value:auto:sort(value(sum,descending)):limit(10)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Bytes sent per LB",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2242,
+                "left": 304,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Bytes sent per LB",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_load_balancer"
+                    ],
+                    "metricSelector": "builtin:cloud.azure.loadbalancer.traffic.byteOut:splitBy(\"dt.entity.azure_load_balancer\"):value:auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.loadbalancer.traffic.byteOut:splitBy(\"dt.entity.azure_load_balancer\"):value:auto:sort(value(sum,descending)):limit(10)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Sessions per SQL DB",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2242,
+                "left": 646,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Sessions per SQL DB",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:cloud.azure.sqlDatabase.sessions",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_sql_database"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.sqlDatabase.sessions:splitBy(\"dt.entity.azure_sql_database\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Workers per SQL DB",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2242,
+                "left": 950,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Workers per SQL DB",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:cloud.azure.sqlDatabase.workers",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.azure_sql_database"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:cloud.azure.sqlDatabase.workers:splitBy(\"dt.entity.azure_sql_database\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Get commands per Redis Cache",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2242,
+                "left": 1292,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Get commands per Redis Cache",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "metricSelector": "builtin:cloud.azure.redis.commands.get:splitBy(\"dt.entity.azure_redis_cache\"):value:rate(m):auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&(builtin:cloud.azure.redis.commands.get:splitBy(\"dt.entity.azure_redis_cache\"):value:rate(1m):auto:sort(value(sum,descending)):limit(10)):limit(100):names:fold(auto)"
+            ]
+        },
+        {
+            "name": "Set commands per Redis Cache",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2242,
+                "left": 1596,
+                "width": 304,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Set commands per Redis Cache",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "metricSelector": "builtin:cloud.azure.redis.commands.set:splitBy(\"dt.entity.azure_redis_cache\"):value:rate(m):auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A",
+                        "properties": {
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&(builtin:cloud.azure.redis.commands.set:splitBy(\"dt.entity.azure_redis_cache\"):value:rate(1m):auto:sort(value(sum,descending)):limit(10)):limit(100):names:fold(auto)"
+            ]
+        }
+    ]
+}
