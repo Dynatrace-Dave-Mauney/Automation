@@ -6,11 +6,17 @@ import shutil
 import yaml
 from inspect import currentframe
 
-env_name = 'Prod'
+from Reuse import dynatrace_api
+
+# env_name = 'Prod'
 # env_name = 'PreProd'
 # env_name = 'Dev'
 # env_name = 'Personal'
 # env_name = 'Demo'
+
+tenant = os.getenv(f'DYNATRACE_{env_name.upper()}_TENANT')
+env = f'https://{tenant}.live.dynatrace.com'
+token = os.getenv(f'DYNATRACE_AUTOMATION_REPORTING_{env_name.upper()}_TOKEN')
 
 PREFIX = f'{env_name}:'
 DASHBOARD_CUSTOM_PATH = f'Custom/Overview-{env_name}'
@@ -232,6 +238,8 @@ CUSTOM_DEVICE_FILTERS = ['CUSTOM_DIMENSION:Custom Device']
 # For Customer1 False
 hasMobile = True
 
+hasManagementZoneMarkdown = True
+
 confirmation_required = True
 remove_directory_at_startup = True
 
@@ -278,6 +286,13 @@ def customize_dashboard(dashboard):
             tiles = dashboard_json.get('tiles')
             app_markdown = tiles[0].get('markdown').replace('Web Apps', 'Web Applications').replace(' / [Mobile Apps](#dashboard;id=00000000-dddd-bbbb-ffff-000000000003)', '')
             new_dashboard_json['tiles'][0]['markdown'] = app_markdown
+        if hasManagementZoneMarkdown:
+            tiles = dashboard_json.get('tiles')
+            for tile in tiles:
+                if tile.get('name') == 'Management Zone Overview Links Markdown':
+                    print('Modified the mz markdown tile!')
+                    tile['markdown'] = generate_management_zone_markdown()
+                    new_dashboard_json['tiles'] = tiles
     else:
         if ': Hosts' in name:
             # print(f'Hosts in {name}')
@@ -433,11 +448,49 @@ def load_tag_filters_from_yaml():
     # Hardcode for now...include if needed...
     IIS_TAGS = ['IIS App Pool']
 
+
 def read_yaml(input_file_name):
     with open(input_file_name, 'r') as file:
         document = file.read()
         yaml_data = yaml.load(document, Loader=yaml.FullLoader)
     return yaml_data
+
+
+def generate_management_zone_markdown():
+    endpoint = '/api/config/v1/managementZones'
+    management_zone_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
+
+    markdown = 'Management Zone Overview Links\n\n'
+
+    mz_markdown_dict = {}
+    for management_zone_json in management_zone_json_list:
+        inner_management_zone_json_list = management_zone_json.get('values')
+        for inner_management_zone_json in inner_management_zone_json_list:
+            mz_id = inner_management_zone_json.get('id')
+            mz_name = inner_management_zone_json.get('name')
+            dashboard_id = convert_mz_id_to_db_id(mz_id)
+            mz_markdown_dict[mz_name] = {'mz_id': mz_id, 'dashboard_id': dashboard_id}
+
+    for mz_name in sorted(mz_markdown_dict.keys()):
+        dashboard_id = mz_markdown_dict[mz_name]['dashboard_id']
+        mz_id = mz_markdown_dict[mz_name]['mz_id']
+        markdown += f'[{mz_name}](#dashboard;id={dashboard_id};gf={mz_id})  \n'
+
+    return markdown
+
+
+def convert_mz_id_to_db_id(mz_id):
+    # drop the negative sign, if present and start number with 1 instead.
+    # start positive numbers with 2 so that positive and negative numbers are both of the same length (20) and remain unique.
+    if mz_id.startswith('-'):
+        mz_id = '1' + mz_id.replace('-', '')
+    else:
+        mz_id = '2' + mz_id
+
+    mz_id_string = str(mz_id)
+    dashboard_id = f'00000000-dddd-{mz_id_string[0:4]}-{mz_id_string[4:8]}-{mz_id_string[8:20]}'
+
+    return dashboard_id
 
 
 def main():
