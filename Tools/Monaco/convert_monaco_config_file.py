@@ -1,3 +1,5 @@
+# Deprecated: use "convert_monaco_files.py" instead
+
 import glob
 import os
 import yaml
@@ -39,6 +41,7 @@ def process_config_file(filename_list, json_entity_id_list):
                     new_yaml_dict['configs'].append(entity_dict)
 
     write_yaml(new_yaml_dict, f'{OUTPUT_PATH}/{os.path.basename(filename)}')
+
 
 def read_yaml(input_file_name):
     with open(input_file_name, 'r') as file:

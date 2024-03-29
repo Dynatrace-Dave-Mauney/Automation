@@ -11,8 +11,8 @@ configuration_yaml_file = '/Temp/builtinmanagement-zones-output/config.yaml'
 input_glob_pattern = '/Temp/builtinmanagement-zones-output/*.json'
 output_configuration_yaml_file = '/Temp/builtinmanagement-zones-output/new_config.yaml'
 
-def main():
 
+def main():
     ids_to_keep = []
 
     try:
