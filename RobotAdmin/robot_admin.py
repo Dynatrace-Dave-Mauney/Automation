@@ -248,8 +248,8 @@ def process():
 
     # Current Customer: Production
     # process_customer_specific_production()
-    generate_shotgun_request_attributes()
-    # generate_request_attribute_json_payload_extracts('REQUEST_HEADER', 'user', {"employeeId":"","employeeName":"","employeeFullId":"","employeeMenuId":"","forkliftNumber":"","valid":"","supervisor":"","originServiceCenter":"","alternateServiceCenter":"","currentLocationServiceCenter":"","device":"","authorized":0,"tabletSerialNumber":0,"ipAddress":""})
+    # generate_shotgun_request_attributes()
+    generate_request_attribute_json_payload_extracts('REQUEST_HEADER', 'user', {"employeeId":"","employeeName":"","employeeFullId":"","employeeMenuId":"","forkliftNumber":"","valid":"","supervisor":"","originServiceCenter":"","alternateServiceCenter":"","currentLocationServiceCenter":"","device":"","authorized":0,"tabletSerialNumber":0,"ipAddress":""})
     exit(9999)
 
     # process_customer_specific_auto_tags()
@@ -405,7 +405,8 @@ def generate_request_attribute_json_payload_extracts(source_type, source_paramet
     for key in json_example.keys():
         between_key_type = type(json_example.get(key))
         # print(key, between_key_type)
-        request_attribute_name = f'{source_parameter}({source_type})-{key}'
+        # request_attribute_name = f'{source_parameter}({source_type})-{key}'
+        request_attribute_name = f'{source_parameter}:{key}'
         request_attribute_id = request_attribute_id_prefix + str(idx).zfill(11)
         put_request_attribute(request_attribute_name, source_type, source_parameter, object_id=request_attribute_id, between_key=key, between_key_type=between_key_type)
         idx += 1

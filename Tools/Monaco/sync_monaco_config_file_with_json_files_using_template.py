@@ -1,15 +1,6 @@
 import os
 import glob
-import json
 import yaml
-
-# configuration_yaml_file = '/Temp/builtinmonitoring.slo/config.yaml'
-# input_glob_pattern = '/Temp/builtinmonitoring.slo/*.json'
-# output_configuration_yaml_file = '/Temp/builtinmonitoring.slo/new_config.yaml'
-
-# configuration_yaml_file = '/Temp/builtinmanagement-zones-output/config.yaml'
-# input_glob_pattern = '/Temp/builtinmanagement-zones-output/*.json'
-# output_configuration_yaml_file = '/Temp/builtinmanagement-zones-output/new_config.yaml'
 
 configuration_yaml_file = '/Dynatrace/Customers/ODFL/RequestAttributesUserPayloadExtracts/request-attributes-names/config.yaml'
 input_glob_pattern = '/Dynatrace/Customers/ODFL/RequestAttributesUserPayloadExtracts/request-attributes-names/*.json'
@@ -17,27 +8,20 @@ output_configuration_yaml_file = '/Dynatrace/Customers/ODFL/RequestAttributesUse
 
 
 def main():
-    ids_to_keep = []
+    templates_to_keep = []
 
     try:
         for file_name in glob.glob(input_glob_pattern, recursive=True):
             base_file_name = os.path.basename(file_name)
             if os.path.isfile(file_name) and file_name.endswith('.json'):
-                with open(file_name, 'r', encoding='utf-8') as infile:
-                    # input_json = json.loads(infile.read())
-                    # formatted_json = json.dumps(input_json, indent=4, sort_keys=False)
-                    # name = input_json.get('name')
-                    # metric_expression = input_json.get('metricExpression')
-                    # if '- Host Availability' in name:
-                    if True:
-                        id_to_keep = base_file_name.replace(".json", "")
-                        # print(f'{name}: {metric_expression}:{id_to_keep}')
-                        ids_to_keep.append(id_to_keep)
-                        # print(formatted_json)
+                template_to_keep = base_file_name
+                # print(f'{name}: {metric_expression}:{id_to_keep}')
+                templates_to_keep.append(template_to_keep)
+                # print(formatted_json)
     except FileNotFoundError:
         print('The directory name does not exist')
 
-    # print(ids_to_keep)
+    print(templates_to_keep)
 
     new_config_dict_list = []
     config = get_config()
@@ -46,9 +30,10 @@ def main():
     keep_count = 0
     config_dict_list = config.get('configs')
     for config_dict in config_dict_list:
-        config_id = config_dict.get('id')
-        if config_id in ids_to_keep:
-            print(f'keep: {config_id}')
+        config_template = config_dict['config']['template']
+        print(config_template)
+        if config_template in templates_to_keep:
+            print(f'keep: {config_template}')
             new_config_dict_list.append(config_dict)
             keep_count += 1
 
