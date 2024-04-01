@@ -16,9 +16,12 @@ def process(env, token):
     for auto_tags_json in auto_tags_json_list:
         inner_auto_tags_json_list = auto_tags_json.get('values')
         for inner_auto_tags_json in inner_auto_tags_json_list:
-            name = inner_auto_tags_json.get('name')
-            description = inner_auto_tags_json.get('description', '')
-            rows.append((name, description))
+            tag_id = inner_auto_tags_json.get('id')
+            # if tag_id.startswith('aaaa'):
+            if True:
+                name = inner_auto_tags_json.get('name')
+                description = inner_auto_tags_json.get('description', '')
+                rows.append((name, description))
 
     report_name = 'Automatic Tags'
     report_writer.initialize_text_file(None)
@@ -36,7 +39,7 @@ def main():
     # env_name_supplied = 'Prod'
     # env_name_supplied = 'PreProd'
     # env_name_supplied = 'Sandbox'
-    # env_name_supplied = 'Dev'
+    env_name_supplied = 'Dev'
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'Demo'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)

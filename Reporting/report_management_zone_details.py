@@ -3,7 +3,7 @@ from Reuse import environment
 from Reuse import report_writer
 from Reuse import standards
 
-perform_check_naming_standard = False
+perform_check_naming_standard = True
 report_naming_standard_violations_only = False
 configuration_object = environment.get_configuration_object('configurations.yaml')
 
@@ -62,7 +62,8 @@ def process_report(env, token, summary_mode, **kwargs):
             standard_string = 'N/A'
             standard_met = True
             if perform_check_naming_standard:
-                standard_met, reason = check_naming_standard(name, **kwargs)
+                # standard_met, reason = check_naming_standard(name, **kwargs)
+                standard_met, reason = check_naming_standard(name)
                 if standard_met:
                     standard_string = 'Meets naming standards'
                     count_naming_standard_pass += 1
@@ -256,7 +257,16 @@ def format_dimensional_rules(dimensional_rules):
     return str(formatted_dimensional_rules)
 
 
-def check_naming_standard(name, **kwargs):
+def check_naming_standard(name):
+    check_name = name.replace('_APP_STAKEHOLDER', '')
+    check_name = check_name.replace('_ADMIN', '')
+    if '_' in check_name:
+        return False, 'Too many underscores'
+    else:
+        return True, 'Name Meets Standard'
+
+
+def check_naming_standard_old(name, **kwargs):
     env_name = kwargs.get('env_name')
     if not env_name:
         return False, 'Environment name ("env_name") must be passed'

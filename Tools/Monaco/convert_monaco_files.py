@@ -7,10 +7,10 @@ import yaml
 
 from Reuse import directories_and_files
 
-# INPUT_PATH = 'C:\\Temp\\request-attributes'
-# OUTPUT_PATH = 'C:\\Temp\\request-attributes-improved'
-INPUT_PATH = '\\Dynatrace\\Customers\\ODFL\\RequestAttributesUserPayloadExtracts\\request-attributes'
-OUTPUT_PATH = '\\Dynatrace\\Customers\\ODFL\\RequestAttributesUserPayloadExtracts\\request-attributes-names'
+# INPUT_PATH = '\\Dynatrace\\Customers\\ODFL\\RequestAttributesUserPayloadExtracts\\request-attributes'
+# OUTPUT_PATH = '\\Dynatrace\\Customers\\ODFL\\RequestAttributesUserPayloadExtracts\\request-attributes-names'
+INPUT_PATH = 'C:\\Temp\\request-attributes'
+OUTPUT_PATH = 'C:\\Temp\\request-attributes-preprod-improved'
 
 confirmation_required = False
 remove_directory_at_startup = True

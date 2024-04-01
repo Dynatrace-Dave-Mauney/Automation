@@ -53,11 +53,11 @@ def process_report(env, token, summary_mode):
 
     summary.append('There are ' + str(count_total) + ' network zones currently defined and reporting.')
     if count_too_few_active_gates > 0:
-        summary.append('There are ' + str(count_too_few_active_gates) + ' network zones with less than 2 ActiveGates currently and reporting to them.')
+        summary.append('There are ' + str(count_too_few_active_gates) + ' network zones with less than 2 ActiveGates currently reporting to them.')
     if count_default_active_gates > 0:
         summary.append('The default network zone has ' + str(count_default_active_gates) + ' ActiveGates reporting to it.')
     if count_default_one_agents > 0:
-        summary.append('There default network zone has ' + str(count_default_one_agents) + ' OneAgents reporting to it.')
+        summary.append('The default network zone has ' + str(count_default_one_agents) + ' OneAgents reporting to it.')
 
     if not summary_mode:
         report_name = 'Network Zones'

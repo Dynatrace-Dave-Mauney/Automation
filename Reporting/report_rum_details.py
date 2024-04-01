@@ -112,7 +112,9 @@ def main():
     # env_name_supplied = 'Demo'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
     process(env, token)
-    
+    # for line in summarize(env, token):
+    #     print(line)
+
     
 if __name__ == '__main__':
     main()

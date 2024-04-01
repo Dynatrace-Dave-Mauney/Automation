@@ -42,7 +42,11 @@ def process_report(env, token, summary_mode):
             version_status = 'N/A'
             active_gate_version_split = version.split('.')
             active_gate_minor_version = active_gate_version_split[1]
-            if int(active_gate_minor_version) < int(cluster_minor_version) - 2:
+            if int(cluster_minor_version) % 2 == 0:
+                version_difference_allowed = 3
+            else:
+                version_difference_allowed = 2
+            if int(active_gate_minor_version) < int(cluster_minor_version) - version_difference_allowed:
                 version_status = 'Not Up To Date'
                 count_version_not_up_to_date += 1
             else:

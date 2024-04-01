@@ -30,7 +30,7 @@ def process_report(env, token, summary_mode):
             endpoint = '/api/config/v1/service/requestAttributes/' + entity_id
             r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
             request_attribute = r.json()
-            print(request_attribute)
+            # print(request_attribute)
 
             if not summary_mode:
                 rows.append((name, entity_id))

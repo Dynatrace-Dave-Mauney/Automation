@@ -246,10 +246,13 @@ def process():
     # For when everything is commented out below...
     pass
 
+    # Current Customer: PreProd
+    # put_auto_tag('Geolocation', 'OPENSTACK_REGION_NAME', 'EXISTS', '{GeolocationSite:Name}', 'PROCESS_GROUP')
+
     # Current Customer: Production
     # process_customer_specific_production()
     # generate_shotgun_request_attributes()
-    generate_request_attribute_json_payload_extracts('REQUEST_HEADER', 'user', {"employeeId":"","employeeName":"","employeeFullId":"","employeeMenuId":"","forkliftNumber":"","valid":"","supervisor":"","originServiceCenter":"","alternateServiceCenter":"","currentLocationServiceCenter":"","device":"","authorized":0,"tabletSerialNumber":0,"ipAddress":""})
+    # generate_request_attribute_json_payload_extracts('REQUEST_HEADER', 'user', {"employeeId":"","employeeName":"","employeeFullId":"","employeeMenuId":"","forkliftNumber":"","valid":"","supervisor":"","originServiceCenter":"","alternateServiceCenter":"","currentLocationServiceCenter":"","device":"","authorized":0,"tabletSerialNumber":0,"ipAddress":""})
     exit(9999)
 
     # process_customer_specific_auto_tags()

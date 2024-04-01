@@ -20,8 +20,8 @@ import report_anomaly_detection_vmware_details
 import report_api_token_extended_details
 import report_application_details
 import report_autotag_details
-import report_aws_credential_details
-import report_azure_credential_details
+# import report_aws_credential_details
+# import report_azure_credential_details
 import report_broken_slo_metrics
 import report_calculated_metrics_details
 import report_cluster_details
