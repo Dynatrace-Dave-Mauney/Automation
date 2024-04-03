@@ -260,7 +260,7 @@ def customize_dashboards():
         load_tag_filters_from_yaml()
 
     for filename in glob.glob(DASHBOARD_TEMPLATE_PATH + '/00000000-*'):
-        print(filename)
+        # print(filename)
         with open(filename, 'r', encoding='utf-8') as f:
             dashboard = f.read()
             new_dashboard = customize_dashboard(dashboard)
@@ -437,7 +437,7 @@ def load_tag_filters_from_yaml():
     kubernetes_cluster_tags = yaml_dict.get('KUBERNETES_CLUSTER', [])
     kubernetes_node_tags = yaml_dict.get('KUBERNETES_NODE', [])
     kubernetes_service_tags = yaml_dict.get('KUBERNETES_SERVICE', [])
-    print(kubernetes_service_tags, kubernetes_cluster_tags, kubernetes_node_tags)
+    # print(kubernetes_service_tags, kubernetes_cluster_tags, kubernetes_node_tags)
     KUBERNETES_TAGS = kubernetes_cluster_tags
     if kubernetes_node_tags:
         KUBERNETES_TAGS.extend(kubernetes_cluster_tags)

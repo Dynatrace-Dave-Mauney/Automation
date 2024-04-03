@@ -245,7 +245,16 @@ def generate_menu_dashboard(dashboard_template, menu_dashboard_dict):
 
     markdown_menu_code = ''
     for key in menu_dashboard_dict.keys():
-        markdown_menu_code += f'[{key.replace("Prod: Overview for ", "")}](#dashboard;id={menu_dashboard_dict[key][0]};gf={menu_dashboard_dict[key][1]})  \n'
+        name = key
+        if name.startswith('Prod: '):
+            name = name.replace("Prod: Overview for ", "")
+        else:
+            if name.startswith('PreProd: '):
+                name = name.replace("PreProd: Overview for ", "")
+            else:
+                if name.startswith('Dev: '):
+                    name = name.replace("Dev: Overview for ", "")
+        markdown_menu_code += f'[{name}](#dashboard;id={menu_dashboard_dict[key][0]};gf={menu_dashboard_dict[key][1]})  \n'
 
     markdown_menu['markdown'] = markdown_menu_code
     dashboard['tiles'] = [markdown_menu]

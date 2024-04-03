@@ -74,6 +74,7 @@ def run():
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000001-v3c.json', owner=owner, skip_list=current_customer_skip_list)
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000033.json', owner=owner, skip_list=current_customer_skip_list)
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000034.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000035.json', owner=owner, skip_list=current_customer_skip_list)
 
 
 def put_dashboards(env_name, path, **kwargs):
@@ -83,7 +84,7 @@ def put_dashboards(env_name, path, **kwargs):
 
     print(f'Prefix:    {prefix}')
     print(f'Owner:     {owner}')
-    print(f'Skip List: {skip_list}')
+    # print(f'Skip List: {skip_list}')
 
     for filename in glob.glob(path):
         with codecs.open(filename, encoding='utf-8') as f:
@@ -122,11 +123,11 @@ def put_dashboards(env_name, path, **kwargs):
                 dashboard_owner = dashboard_owner.replace('nobody@example.com', owner)
                 dashboard_owner = dashboard_owner.replace('Dynatrace', owner)
                 dashboard_json['dashboardMetadata']['owner'] = dashboard_owner
-            print(filename + ': ' + dashboard_id + ': ' + dashboard_name)
+            # print(filename + ': ' + dashboard_id + ': ' + dashboard_name)
 
             # Enable "preset" for Dashboard Overview Framework
             if dashboard_id.startswith('00000000-dddd-bbbb-ffff'):
-                print(f'Set preset to True for {dashboard_id}:{dashboard_name}')
+                # print(f'Set preset to True for {dashboard_id}:{dashboard_name}')
                 dashboard_json['dashboardMetadata']['preset'] = True
 
             # # Disable "preset" for Dashboard Overview Framework

@@ -155,6 +155,7 @@ def write_markdown_menus(dashboard_lookup):
         'Suspicious Activity Audit',
         'Synthetics: Browser Monitor Events',
         'Tomcat',
+        'Web Application Insights',
         'Web Servers',
         'WebLogic by Name',
         'WebLogic by Process',

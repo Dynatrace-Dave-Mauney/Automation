@@ -246,7 +246,7 @@ def process():
     # For when everything is commented out below...
     pass
 
-    # Current Customer: PreProd
+    # Current Customer: Prod
     # put_auto_tag('Geolocation', 'OPENSTACK_REGION_NAME', 'EXISTS', '{GeolocationSite:Name}', 'PROCESS_GROUP')
 
     # Current Customer: Production
