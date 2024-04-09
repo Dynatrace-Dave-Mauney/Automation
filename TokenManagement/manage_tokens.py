@@ -54,7 +54,7 @@ def post_api_token():
 
 
 def post_dynatrace_automation_token():
-	# Supports Token Key: DYNATRACE_AUTOMATION_PERSONAL_TOKEN
+	# Supports Token Key: DYNATRACE_AUTOMATION_PERSONAL_TOKEN (where "PERSONAL" can be any environment name).
 	# Has every known permission needed by the automation project (and maybe some more!)
 	return post_token('Automation', [
 		"ActiveGateCertManagement",
