@@ -24,17 +24,17 @@ def main():
         automation_token = post_dynatrace_automation_token(env, token)
         print('automation_token:', automation_token)
 
+        with open(f'set_Env{env_name}.bat', 'w') as windows_bat:
+            windows_bat.write('')
+
         with open(f'set_Env{env_name}.bat', 'a') as windows_bat:
             windows_bat.write('@echo off\n')
             windows_bat.write('\n')
             windows_bat.write('rem Be sure to restart your command prompt/PyCharm IDE after this script runs to use the new environment variable settings\n')
             windows_bat.write('\n')
-            windows_bat.write(f'setx DYNATRACE_AUTOMATION_ACCOUNT_ID {account}\n')
-            windows_bat.write(f'setx DYNATRACE_AUTOMATION_CLIENT_ID {client_id}\n')
-            windows_bat.write(f'setx DYNATRACE_AUTOMATION_CLIENT_SECRET {client_secret}\n')
-            windows_bat.write('setx DYNATRACE_AUTOMATION_SKIP_SLOW_ACCOUNT_MANAGEMENT_API_CALLS True\n')
+            windows_bat.write(f'setx DYNATRACE_PROD_TENANT {env}\n')
+            windows_bat.write(f'setx DYNATRACE_DASHBOARD_OWNER {email_id}\n')
             windows_bat.write('\n')
-            windows_bat.write(f'setx DASHBOARD_OWNER_EMAIL {email_id}\n')
             windows_bat.write(f'setx DYNATRACE_AUTOMATION_ENV_NAME {env_name}\n')
             windows_bat.write(f'setx DYNATRACE_AUTOMATION_REPORTING_ENV_NAME {env_name}\n')
             windows_bat.write(f'setx DYNATRACE_AUTOMATION_TOKEN_MANAGEMENT_ENV_NAME {env_name}\n')
@@ -48,12 +48,17 @@ def main():
             windows_bat.write(f'setx DYNATRACE_AUTOMATION_TOKEN_MANAGEMENT_{env_name.upper()}_TOKEN {token}\n')
             windows_bat.write(f'setx DYNATRACE_AUTOMATION_TOOLS_{env_name.upper()}_TOKEN {automation_token}\n')
             windows_bat.write('\n')
+            windows_bat.write(f'setx DYNATRACE_AUTOMATION_ACCOUNT_ID {account}\n')
+            windows_bat.write(f'setx DYNATRACE_AUTOMATION_CLIENT_ID {client_id}\n')
+            windows_bat.write(f'setx DYNATRACE_AUTOMATION_CLIENT_SECRET {client_secret}\n')
+            windows_bat.write('setx DYNATRACE_AUTOMATION_SKIP_SLOW_ACCOUNT_MANAGEMENT_API_CALLS True\n')
+
+        with open(f'set_Env{env_name}.sh', 'w') as linux_sh:
+            linux_sh.write('')
 
         with open(f'set_Env{env_name}.sh', 'a') as linux_sh:
-            linux_sh.write(f'export DYNATRACE_AUTOMATION_ACCOUNT_ID={account}\n')
-            linux_sh.write(f'export DYNATRACE_AUTOMATION_CLIENT_ID={client_id}\n')
-            linux_sh.write(f'export DYNATRACE_AUTOMATION_CLIENT_SECRET={client_secret}\n')
-            linux_sh.write('export DYNATRACE_AUTOMATION_SKIP_SLOW_ACCOUNT_MANAGEMENT_API_CALLS=True\n')
+            linux_sh.write(f'export DYNATRACE_PROD_TENANT={env}\n')
+            linux_sh.write(f'export DYNATRACE_DASHBOARD_OWNER={email_id}\n')
             linux_sh.write('\n')
             linux_sh.write(f'export DASHBOARD_OWNER_EMAIL={email_id}\n')
             linux_sh.write(f'export DYNATRACE_AUTOMATION_ENV_NAME={env_name}\n')
@@ -69,6 +74,10 @@ def main():
             linux_sh.write(f'export DYNATRACE_AUTOMATION_TOKEN_MANAGEMENT_{env_name.upper()}_TOKEN={token}\n')
             linux_sh.write(f'export DYNATRACE_AUTOMATION_TOOLS_{env_name.upper()}_TOKEN={automation_token}\n')
             linux_sh.write('\n')
+            linux_sh.write(f'export DYNATRACE_AUTOMATION_ACCOUNT_ID={account}\n')
+            linux_sh.write(f'export DYNATRACE_AUTOMATION_CLIENT_ID={client_id}\n')
+            linux_sh.write(f'export DYNATRACE_AUTOMATION_CLIENT_SECRET={client_secret}\n')
+            linux_sh.write('export DYNATRACE_AUTOMATION_SKIP_SLOW_ACCOUNT_MANAGEMENT_API_CALLS=True\n')
     else:
         print('Must provide environment name argument!')
 
@@ -124,12 +133,13 @@ def post_token(env, token, token_name, token_scopes):
     payload = json.dumps({"name": token_name, "scopes": token_scopes})
     r = dynatrace_api.post_object(f'{env}{endpoint}', token, payload)
     token_posted = r.json()
+    secret = token_posted.get("token")
+
     print(f'Created token named "{token_name}" with scopes: {token_scopes}: {token_posted.get("token")}')
     print(f'Be sure to save the token displayed below in your password keeper/secrets manager/vault!')
-    print(f'{token_posted.get("token")}')
+    print(secret)
 
-    # return a full token object rather than skimpy one returned from POST
-    return token_posted.get('id')
+    return secret
 
 
 if __name__ == '__main__':
