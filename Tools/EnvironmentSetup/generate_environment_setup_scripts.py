@@ -11,6 +11,8 @@ def main():
         env_name, env, token = environment.get_environment(args[1])
         print('env_name:', env_name)
         print('env:', env)
+        tenant = env.replace('https://', '').replace('.live.dynatrace.com', '')
+        print('tenant:', tenant)
         print('token:', token)
         client_secret = args[7]
         print('client_secret:', client_secret)
@@ -32,7 +34,7 @@ def main():
             windows_bat.write('\n')
             windows_bat.write('rem Be sure to restart your command prompt/PyCharm IDE after this script runs to use the new environment variable settings\n')
             windows_bat.write('\n')
-            windows_bat.write(f'setx DYNATRACE_PROD_TENANT {env}\n')
+            windows_bat.write(f'setx DYNATRACE_PROD_TENANT {tenant}\n')
             windows_bat.write(f'setx DYNATRACE_DASHBOARD_OWNER {email_id}\n')
             windows_bat.write('\n')
             windows_bat.write(f'setx DYNATRACE_AUTOMATION_ENV_NAME {env_name}\n')
@@ -57,10 +59,9 @@ def main():
             linux_sh.write('')
 
         with open(f'set_Env{env_name}.sh', 'a') as linux_sh:
-            linux_sh.write(f'export DYNATRACE_PROD_TENANT={env}\n')
+            linux_sh.write(f'export DYNATRACE_PROD_TENANT={tenant}\n')
             linux_sh.write(f'export DYNATRACE_DASHBOARD_OWNER={email_id}\n')
             linux_sh.write('\n')
-            linux_sh.write(f'export DASHBOARD_OWNER_EMAIL={email_id}\n')
             linux_sh.write(f'export DYNATRACE_AUTOMATION_ENV_NAME={env_name}\n')
             linux_sh.write(f'export DYNATRACE_AUTOMATION_REPORTING_ENV_NAME={env_name}\n')
             linux_sh.write(f'export DYNATRACE_AUTOMATION_TOKEN_MANAGEMENT_ENV_NAME={env_name}\n')
