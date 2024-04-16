@@ -34,7 +34,7 @@ def main():
             windows_bat.write('\n')
             windows_bat.write('rem Be sure to restart your command prompt/PyCharm IDE after this script runs to use the new environment variable settings\n')
             windows_bat.write('\n')
-            windows_bat.write(f'setx DYNATRACE_PROD_TENANT {tenant}\n')
+            windows_bat.write(f'setx DYNATRACE_{env_name.upper()}_TENANT {tenant}\n')
             windows_bat.write(f'setx DYNATRACE_DASHBOARD_OWNER {email_id}\n')
             windows_bat.write('\n')
             windows_bat.write(f'setx DYNATRACE_AUTOMATION_ENV_NAME {env_name}\n')

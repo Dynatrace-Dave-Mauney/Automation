@@ -54,7 +54,8 @@ def save_dashboards(env, token, path):
 			# if dashboard_owner == 'dave.mauney@dynatrace.com' and 'SLO' in dashboard_name:
 			# if 'TEMPLATE: Oracle' in dashboard_name:
 			# if dashboard_id not in known_collisions and dashboard_name != 'Home':
-			if dashboard_id.startswith('00000000-dddd-bbbb-ffff-00000000'):
+			# if dashboard_id.startswith('00000000-dddd-bbbb-ffff-00000000'):
+			if 'mauney' in dashboard_owner:
 				print(dashboard_id, dashboard_name, dashboard_owner)
 				r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{dashboard_id}', token)
 				dashboard = r.json()
@@ -95,15 +96,18 @@ def main(arguments):
 	friendly_function_name = 'Dynatrace Automation'
 	env_name_supplied = environment.get_env_name(friendly_function_name)
 	# For easy control from IDE
+	# env_name_supplied = 'Upper'
+	# env_name_supplied = 'Lower'
+	# env_name_supplied = 'Sandbox'
+	#
 	# env_name_supplied = 'Prod'
 	# env_name_supplied = 'PreProd'
-	# env_name_supplied = 'Sandbox'
 	# env_name_supplied = 'Dev'
 	# env_name_supplied = 'Personal'
 	# env_name_supplied = 'Demo'
 	env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 
-	path = f'../$Output/Dashboards/Downloads/{env_name}_DBF_BKP'
+	path = f'../$Output/Dashboards/Downloads/{env_name}_BACKUP_DAY1'
 
 	print(f'Downloading dashboards for {env_name} to {path}')
 
