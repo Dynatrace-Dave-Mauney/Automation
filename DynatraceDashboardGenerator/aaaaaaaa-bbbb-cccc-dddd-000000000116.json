@@ -3,11 +3,11 @@
         "configurationVersions": [
             3
         ],
-        "clusterVersion": "1.281.79.20231208-113952"
+        "clusterVersion": "1.289.99.20240419-025534"
     },
     "id": "aaaaaaaa-bbbb-cccc-dddd-000000000116",
     "dashboardMetadata": {
-        "name": "F5 Metrics 1",
+        "name": "WebServer",
         "shared": false,
         "owner": "nobody@example.com",
         "sharingDetails": {
@@ -27,7 +27,7 @@
     },
     "tiles": [
         {
-            "name": "Free Disk",
+            "name": "Dropped connections",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -37,14 +37,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Free Disk",
+            "customName": "Dropped connections",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "func:com.dynatrace.extension.f5.bigip.sys.host.disk.free.byte",
+                    "metric": "builtin:tech.webserver.connections.dropped",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -96,7 +98,7 @@
             }
         },
         {
-            "name": "Free Disk (%)",
+            "name": "Handled connections",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -106,14 +108,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Free Disk (%)",
+            "customName": "Handled connections",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "func:com.dynatrace.extension.f5.bigip.sys.host.disk.free.percent",
+                    "metric": "builtin:tech.webserver.connections.handled",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -165,7 +169,7 @@
             }
         },
         {
-            "name": "Used Disk",
+            "name": "Reading connections",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -175,14 +179,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Used Disk",
+            "customName": "Reading connections",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "func:com.dynatrace.extension.f5.bigip.sys.host.disk.used.byte",
+                    "metric": "builtin:tech.webserver.connections.reading",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -234,7 +240,7 @@
             }
         },
         {
-            "name": "Used Disk (%)",
+            "name": "Socket backlog waiting time",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -244,14 +250,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Used Disk (%)",
+            "customName": "Socket backlog waiting time",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "func:com.dynatrace.extension.f5.bigip.sys.host.disk.used.percent",
+                    "metric": "builtin:tech.webserver.connections.socketWaitingTime",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -303,7 +311,7 @@
             }
         },
         {
-            "name": "Memory used (%)",
+            "name": "Waiting connections",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -313,14 +321,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Memory used (%)",
+            "customName": "Waiting connections",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "func:com.dynatrace.extension.f5.bigip.sys.host.memory.used.percent",
+                    "metric": "builtin:tech.webserver.connections.waiting",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -372,7 +382,7 @@
             }
         },
         {
-            "name": "System uptime (sec)",
+            "name": "Writing connections",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -382,14 +392,371 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "System uptime (sec)",
+            "customName": "Writing connections",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "func:com.dynatrace.extension.f5.bigip.sys.uptime.sec",
+                    "metric": "builtin:tech.webserver.connections.writing",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Active worker threads",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Active worker threads",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.webserver.threads.active",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Idle worker threads",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 304,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Idle worker threads",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.webserver.threads.idle",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Maximum worker threads",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 608,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Maximum worker threads",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.webserver.threads.max",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Requests",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 912,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Requests",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.webserver.requests",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Traffic",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Traffic",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.webserver.traffic",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],

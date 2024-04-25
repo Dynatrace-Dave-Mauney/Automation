@@ -8,7 +8,7 @@ from Reuse import report_writer
 account_id = os.getenv('DYNATRACE_AUTOMATION_ACCOUNT_ID')
 client_id = os.getenv('DYNATRACE_AUTOMATION_CLIENT_ID')
 client_secret = os.getenv('DYNATRACE_AUTOMATION_CLIENT_SECRET')
-skip_slow_api_calls = environment.get_boolean_environment_variable('SKIP_SLOW_API_CALLS', 'True')
+skip_slow_api_calls = environment.get_boolean_environment_variable('DYNATRACE_AUTOMATION_SKIP_SLOW_ACCOUNT_MANAGEMENT_API_CALLS', 'True')
 environment_variable_source = 'New Environment Variable Names'
 
 

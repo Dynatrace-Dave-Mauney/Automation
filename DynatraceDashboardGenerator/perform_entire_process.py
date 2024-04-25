@@ -20,6 +20,10 @@ def main(arguments):
         friendly_function_name = 'Dynatrace Automation'
         env_name_supplied = environment.get_env_name(friendly_function_name)
         # For easy control from IDE
+        env_name_supplied = 'Upper'
+        # env_name_supplied = 'Lower'
+        # env_name_supplied = 'Sandbox'
+        #
         # env_name_supplied = 'Prod'
         # env_name_supplied = 'PreProd'
         # env_name_supplied = 'Sandbox'

@@ -107,7 +107,7 @@ def main(arguments):
 	# env_name_supplied = 'Demo'
 	env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 
-	path = f'../$Output/Dashboards/Downloads/{env_name}_BACKUP_DAY1'
+	path = f'../$Output/Dashboards/Downloads/{env_name}_BACKUP'
 
 	print(f'Downloading dashboards for {env_name} to {path}')
 

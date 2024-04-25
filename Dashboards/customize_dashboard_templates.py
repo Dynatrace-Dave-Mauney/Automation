@@ -8,6 +8,9 @@ from inspect import currentframe
 
 from Reuse import dynatrace_api
 
+# env_name = 'Upper'
+# env_name = 'Lower'
+# env_name = 'Sandbox'
 # env_name = 'Prod'
 # env_name = 'PreProd'
 # env_name = 'Dev'
@@ -29,6 +32,18 @@ OWNER = os.environ.get('DYNATRACE_DASHBOARD_OWNER', 'nobody@example.com')
 SHARED = True
 PRESET = True
 MENU_PRESET = True
+
+skip_file_name_list = [
+    '00000000-dddd-bbbb-ffff-000000000001.json',
+    '00000000-dddd-bbbb-ffff-000000000001-v1.json',
+    '00000000-dddd-bbbb-ffff-000000000001-v2.json',
+    '00000000-dddd-bbbb-ffff-000000000001-v2a.json',
+    '00000000-dddd-bbbb-ffff-000000000001-v3.json',
+    '00000000-dddd-bbbb-ffff-000000000001-v3a.json',
+    '00000000-dddd-bbbb-ffff-000000000001-v3b.json',
+    '00000000-dddd-bbbb-ffff-000000000001-v3c.json',
+
+]
 
 # Used when no API token was available, so ID renames were done
 # DASHBOARD_TEMPLATE_PATH = 'Templates/Overview-Customer2-NonProd'
@@ -260,16 +275,18 @@ def customize_dashboards():
         load_tag_filters_from_yaml()
 
     for filename in glob.glob(DASHBOARD_TEMPLATE_PATH + '/00000000-*'):
+        base_name = os.path.basename(filename)
         # print(filename)
-        with open(filename, 'r', encoding='utf-8') as f:
-            dashboard = f.read()
-            new_dashboard = customize_dashboard(dashboard)
-            pretty_new_dashboard = json.dumps(new_dashboard, indent=4, sort_keys=False)
-            name = new_dashboard.get('dashboardMetadata').get('name')
-            if hasMobile or (not hasMobile and 'Mobile' not in name):
-                output_filename = DASHBOARD_CUSTOM_PATH + '/' + os.path.basename(filename)
-                with open(output_filename, 'w', encoding='utf-8') as outfile:
-                    outfile.write(pretty_new_dashboard)
+        if base_name not in skip_file_name_list:
+            with open(filename, 'r', encoding='utf-8') as f:
+                dashboard = f.read()
+                new_dashboard = customize_dashboard(dashboard)
+                pretty_new_dashboard = json.dumps(new_dashboard, indent=4, sort_keys=False)
+                name = new_dashboard.get('dashboardMetadata').get('name')
+                if hasMobile or (not hasMobile and 'Mobile' not in name):
+                    output_filename = DASHBOARD_CUSTOM_PATH + '/' + base_name
+                    with open(output_filename, 'w', encoding='utf-8') as outfile:
+                        outfile.write(pretty_new_dashboard)
 
 
 def customize_dashboard(dashboard):

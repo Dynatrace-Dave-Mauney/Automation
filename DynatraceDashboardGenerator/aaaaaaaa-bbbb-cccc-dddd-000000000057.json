@@ -3,11 +3,11 @@
         "configurationVersions": [
             3
         ],
-        "clusterVersion": "1.278.65.20231023-153505"
+        "clusterVersion": "1.289.99.20240419-025534"
     },
     "id": "aaaaaaaa-bbbb-cccc-dddd-000000000057",
     "dashboardMetadata": {
-        "name": "AWS SQS",
+        "name": "Java",
         "shared": false,
         "owner": "nobody@example.com",
         "sharingDetails": {
@@ -27,7 +27,7 @@
     },
     "tiles": [
         {
-            "name": "ApproximateAgeOfOldestMessage",
+            "name": "JVM loaded classes",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -37,15 +37,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "ApproximateAgeOfOldestMessage",
+            "customName": "JVM loaded classes",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.sqs.approximateAgeOfOldestMessage",
+                    "metric": "builtin:tech.jvm.classes.loaded",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -98,7 +98,7 @@
             }
         },
         {
-            "name": "ApproximateNumberOfMessagesNotVisible Sum",
+            "name": "JVM total number of loaded classes",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -108,15 +108,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "ApproximateNumberOfMessagesNotVisible Sum",
+            "customName": "JVM total number of loaded classes",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.sqs.approximateNumberOfMessagesNotVisibleSum",
+                    "metric": "builtin:tech.jvm.classes.total",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -169,7 +169,7 @@
             }
         },
         {
-            "name": "NumberOfMessagesReceived",
+            "name": "JVM unloaded classes",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -179,15 +179,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "NumberOfMessagesReceived",
+            "customName": "JVM unloaded classes",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.sqs.numberOfMessagesReceived",
+                    "metric": "builtin:tech.jvm.classes.unloaded",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -240,7 +240,7 @@
             }
         },
         {
-            "name": "NumberOfMessagesSent",
+            "name": "Garbage collection total activation count",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -250,15 +250,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "NumberOfMessagesSent",
+            "customName": "Garbage collection total activation count",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.sqs.numberOfMessagesSent",
+                    "metric": "builtin:tech.jvm.memory.gc.activationCount",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -311,7 +311,7 @@
             }
         },
         {
-            "name": "SentMessageSize",
+            "name": "Garbage collection total collection time",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -321,15 +321,4275 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "SentMessageSize",
+            "customName": "Garbage collection total collection time",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.sqs.sentMessageSize",
+                    "metric": "builtin:tech.jvm.memory.gc.collectionTime",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Garbage collection suspension time",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Garbage collection suspension time",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.memory.gc.suspensionTime",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Garbage collection count",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Garbage collection count",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.memory.pool.collectionCount",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Garbage collection time",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 304,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Garbage collection time",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.memory.pool.collectionTime",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "JVM heap memory pool committed bytes",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 608,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "JVM heap memory pool committed bytes",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.memory.pool.committed",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "JVM heap memory max bytes",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 912,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "JVM heap memory max bytes",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.memory.pool.max",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "JVM heap memory pool used bytes",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "JVM heap memory pool used bytes",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.memory.pool.used",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "JVM runtime free memory",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "JVM runtime free memory",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.memory.runtime.free",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "JVM runtime max memory",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 608,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "JVM runtime max memory",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.memory.runtime.max",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "JVM runtime total memory",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 608,
+                "left": 304,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "JVM runtime total memory",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.memory.runtime.total",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Process memory allocation bytes",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 608,
+                "left": 608,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Process memory allocation bytes",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.memory.memAllocationBytes",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Process memory allocation objects count",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 608,
+                "left": 912,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Process memory allocation objects count",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.memory.memAllocationCount",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Process memory survived objects bytes",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 608,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Process memory survived objects bytes",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.memory.memSurvivorsBytes",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Process memory survived objects count",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 608,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Process memory survived objects count",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.memory.memSurvivorsCount",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "DiscoveryClient-HTTPClient_RequestConnectionTimer_count",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 912,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "DiscoveryClient-HTTPClient_RequestConnectionTimer_count",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.servo.DiscoveryClient-HTTPClient_RequestConnectionTimer_count",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "DiscoveryClient-HTTPClient_RequestConnectionTimer_max",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 912,
+                "left": 304,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "DiscoveryClient-HTTPClient_RequestConnectionTimer_max",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.servo.DiscoveryClient-HTTPClient_RequestConnectionTimer_max",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "DiscoveryClient-HTTPClient_RequestConnectionTimer_min",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 912,
+                "left": 608,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "DiscoveryClient-HTTPClient_RequestConnectionTimer_min",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.servo.DiscoveryClient-HTTPClient_RequestConnectionTimer_min",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "DiscoveryClient-HTTPClient_RequestConnectionTimer_totalTime",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 912,
+                "left": 912,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "DiscoveryClient-HTTPClient_RequestConnectionTimer_totalTime",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.servo.DiscoveryClient-HTTPClient_RequestConnectionTimer_totalTime",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "DiscoveryClient_Failed",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 912,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "DiscoveryClient_Failed",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.servo.DiscoveryClient_Failed",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "DiscoveryClient_Reregister",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 912,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "DiscoveryClient_Reregister",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.servo.DiscoveryClient_Reregister",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "DiscoveryClient_Retry",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1216,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "DiscoveryClient_Retry",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.servo.DiscoveryClient_Retry",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "ZoneStats_CircuitBreakerTrippedCount",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1216,
+                "left": 304,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "ZoneStats_CircuitBreakerTrippedCount",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.servo.ZoneStats_CircuitBreakerTrippedCount",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "ZoneStats_InstanceCount",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1216,
+                "left": 608,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "ZoneStats_InstanceCount",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.servo.ZoneStats_InstanceCount",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Alive workers",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1216,
+                "left": 912,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Alive workers",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.aliveWorkers",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Alive workers",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1216,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Alive workers",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.aliveWorkers.gauge",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Master apps",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1216,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Master apps",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.apps",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Master apps",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1520,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Master apps",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.apps.gauge",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Processing time - count",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1520,
+                "left": 304,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Processing time - count",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.driver.Count",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Processing time - count",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1520,
+                "left": 608,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Processing time - count",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.driver.Count.timer",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Processing time - mean",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1520,
+                "left": 912,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Processing time - mean",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.driver.Mean",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Processing time - mean",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1520,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Processing time - mean",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.driver.Mean.timer",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Processing time - one minute rate",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1520,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Processing time - one minute rate",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.driver.OneMinuteRate",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Processing time - one minute rate",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1824,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Processing time - one minute rate",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.driver.OneMinuteRate.timer",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Active jobs",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1824,
+                "left": 304,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Active jobs",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.driver.activeJobs",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Active jobs",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1824,
+                "left": 608,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Active jobs",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.driver.activeJobs.gauge",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Total jobs",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1824,
+                "left": 912,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Total jobs",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.driver.allJobs",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Total jobs",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1824,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Total jobs",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.driver.allJobs.gauge",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Failed stages",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1824,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Failed stages",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.driver.failedStages",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Failed stages",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2128,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Failed stages",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.driver.failedStages.gauge",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Running stages",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2128,
+                "left": 304,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Running stages",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.driver.runningStages",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Running stages",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2128,
+                "left": 608,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Running stages",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.driver.runningStages.gauge",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Waiting stages",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2128,
+                "left": 912,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Waiting stages",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.driver.waitingStages",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Waiting stages",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2128,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Waiting stages",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.driver.waitingStages.gauge",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Waiting apps",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2128,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Waiting apps",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.waitingApps",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Waiting apps",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2432,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Waiting apps",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.waitingApps.gauge",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Worker cores free",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2432,
+                "left": 304,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Worker cores free",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.worker.coresFree",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Worker cores free",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2432,
+                "left": 608,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Worker cores free",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.worker.coresFree.gauge",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Worker cores used",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2432,
+                "left": 912,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Worker cores used",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.worker.coresUsed",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Worker cores used",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2432,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Worker cores used",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.worker.coresUsed.gauge",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Worker executors",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2432,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Worker executors",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.worker.executors",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Worker executors",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2736,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Worker executors",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.worker.executors.gauge",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Worker free memory (MB)",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2736,
+                "left": 304,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Worker free memory (MB)",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.worker.memFree_MB",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Worker free memory (MB)",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2736,
+                "left": 608,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Worker free memory (MB)",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.worker.memFree_MB.gauge",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Worker memory used (MB)",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2736,
+                "left": 912,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Worker memory used (MB)",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.worker.memUsed_MB",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Worker memory used (MB)",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2736,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Worker memory used (MB)",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.worker.memUsed_MB.gauge",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Master workers",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2736,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Master workers",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.workers",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Master workers",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3040,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Master workers",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.spark.workers.gauge",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "JVM average number of active threads",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3040,
+                "left": 304,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "JVM average number of active threads",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.threads.avgActiveThreadCount",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "JVM average number of inactive threads",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3040,
+                "left": 608,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "JVM average number of inactive threads",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.threads.avgInactiveThreadCount",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "JVM thread count",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3040,
+                "left": 912,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "JVM thread count",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.threads.count",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "JVM total CPU time",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3040,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "JVM total CPU time",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.jvm.threads.totalCpuTime",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",

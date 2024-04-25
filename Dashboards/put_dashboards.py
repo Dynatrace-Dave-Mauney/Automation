@@ -25,19 +25,32 @@ def run():
 
     current_customer_skip_list = [
         ': AWS',
-        ': Azure',
         ': DB2',
-        ': F5',
         ': IBM',
-        ': Kafka',
-        ': Microsoft',
         ': Oracle',
         ': SAP',
         ': SOLR',
         ': VMware',
+        ': Weblogic',
         ': WebSphere',
     ]
 
+    # Customer-1 skips
+    # current_customer_skip_list = [
+    #     ': AWS',
+    #     ': Azure',
+    #     ': DB2',
+    #     ': F5',
+    #     ': IBM',
+    #     ': Kafka',
+    #     ': Microsoft',
+    #     ': Oracle',
+    #     ': SAP',
+    #     ': SOLR',
+    #     ': VMware',
+    #     ': WebSphere',
+    # ]
+    #
     # Put dashboard(s) to the environment name, path, prefix and owner specified.
     # Wildcards like "?" to signify any single character or "*" to signify any number of characters may be used.
     # When wildcards are used, multiple dashboards may be referenced.
@@ -67,7 +80,7 @@ def run():
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000800-v2.json', owner=owner, skip_list=current_customer_skip_list)
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000900-v1.json', owner=owner, skip_list=current_customer_skip_list)
 
-    env_name = 'Prod'
+    # env_name = 'Prod'
     # env_name = 'PreProd'
     # env_name = 'Dev'
     # env_name = 'Personal'
@@ -75,6 +88,29 @@ def run():
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000033.json', owner=owner, skip_list=current_customer_skip_list)
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000034.json', owner=owner, skip_list=current_customer_skip_list)
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000035.json', owner=owner, skip_list=current_customer_skip_list)
+
+    # CURRENT CUSTOMER!
+    # env_name = 'Upper'
+    env_name = 'Lower'
+    # env_name = 'Sandbox'
+    # env_name = 'Prod  '
+    # env_name = 'PreProd'
+    # env_name = 'Dev'
+    # env_name = 'Personal'
+    # Overview and Children
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-*.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000001-v4.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000800-v3.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000900-v2.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000110-v1.json', owner=owner, skip_list=current_customer_skip_list)
+
+    # Generated Dashboards
+    # put_dashboards(env_name, f'../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-*.json', owner=owner, skip_list=current_customer_skip_list)
+
+    # New Self-Monitoring
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000800-v3.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-00000000082?.json', owner=owner, skip_list=current_customer_skip_list)
+    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000820.json', owner=owner, skip_list=current_customer_skip_list)
 
 
 def put_dashboards(env_name, path, **kwargs):
