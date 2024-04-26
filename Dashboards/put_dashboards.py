@@ -91,8 +91,8 @@ def run():
 
     # CURRENT CUSTOMER!
     # env_name = 'Upper'
-    env_name = 'Lower'
-    # env_name = 'Sandbox'
+    # env_name = 'Lower'
+    env_name = 'Sandbox'
     # env_name = 'Prod  '
     # env_name = 'PreProd'
     # env_name = 'Dev'
@@ -110,8 +110,16 @@ def run():
     # New Self-Monitoring
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000800-v3.json', owner=owner, skip_list=current_customer_skip_list)
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-00000000082?.json', owner=owner, skip_list=current_customer_skip_list)
-    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000820.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000820.json', owner=owner, skip_list=current_customer_skip_list)
 
+    # Azure Home
+    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000110.json', owner=owner, skip_list=current_customer_skip_list)
+
+    # Google Home
+    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000130.json', owner=owner, skip_list=current_customer_skip_list)
+
+    # Overview
+    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000001-v4.json', owner=owner, skip_list=current_customer_skip_list)
 
 def put_dashboards(env_name, path, **kwargs):
     prefix = kwargs.get('prefix')
