@@ -30,7 +30,8 @@ save_content = ''
 
 # supported_environments = ['Prod', 'NonProd', 'PreProd', 'Dev', 'Personal', 'Demo']
 # supported_environments = ['Prod', 'NonProd']
-supported_environments = ['Prod', 'PreProd', 'Dev', 'Personal', 'Demo']
+# supported_environments = ['Prod', 'PreProd', 'Dev', 'Personal', 'Demo']
+supported_environments = ['Upper', 'Lower', 'Sandbox', 'Personal', 'Demo']
 
 supported_modes = ['configs', 'entities', 'entities_v1', 'events', 'metrics', 'settings20']
 

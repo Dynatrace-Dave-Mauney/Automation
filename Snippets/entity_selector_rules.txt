@@ -1,0 +1,74 @@
+Tag all downstream services called by service tagged with FOO
+type(SERVICE),toRelationships.calls(type(SERVICE),tag(Application:FOO))
+
+type(SERVICE),toRelationships.calls(type(SERVICE),tag(Application:FOO,Application:BAR)) # OR - I think, one below ended up working for my use case
+
+type(SERVICE),toRelationships.calls(type(SERVICE),tag(Application:FOO),tag(Environment:PROD)) #And
+
+Tag all downstream database services called by service tagged with "Application:FOO"
+type(SERVICE),databaseName.exists(),toRelationships.calls(type(SERVICE),tag(Application:FOO))
+
+Wider Coverage Example:
+type(SERVICE),fromRelationships.calls(type(SERVICE),tag(TAG_KEY:TAG_VALUE))
+type(SERVICE),toRelationships.calls(type(SERVICE),tag(TAG_KEY:TAG_VALUE))
+type(PROCESS_GROUP),toRelationships.runsOn(type(SERVICE),fromRelationships.calls(type(SERVICE),tag(TAG_KEY:TAG_VALUE)))
+type(PROCESS_GROUP),toRelationships.runsOn(type(SERVICE),toRelationships.calls(type(SERVICE),tag(TAG_KEY:TAG_VALUE)))
+type(HOST),toRelationships.runsOnHost(type(SERVICE),fromRelationships.calls(type(SERVICE),tag(TAG_KEY:TAG_VALUE)))
+type(HOST),toRelationships.runsOnHost(type(SERVICE),toRelationships.calls(type(SERVICE),tag(TAG_KEY:TAG_VALUE)))
+
+https://dynatrace.slack.com/archives/C8MBDKNTD/p1666966993560219
+
+AWS Management Zone
+type(APPLICATION),fromRelationships.calls(type(SERVICE),fromRelationships.runsOnHost(type(HOST),fromRelationships.runsOn(type(EC2_INSTANCE),fromRelationships.isAccessibleBy(type(AWS_CREDENTIALS),entityName.equals("X")))))
+type(SERVICE),fromRelationships.runsOnHost(type(HOST),fromRelationships.runsOn(type(EC2_INSTANCE),fromRelationships.isAccessibleBy(type(AWS_CREDENTIALS),,entityName.equals("X"))))
+type(PROCESS_GROUP),fromRelationships.runsOn(type(HOST),fromRelationships.runsOn(type(EC2_INSTANCE),fromRelationships.isAccessibleBy(type(AWS_CREDENTIALS),,entityName.equals(""))))
+type(PROCESS_GROUP_INSTANCE),fromRelationships.isProcessOf(type(HOST),fromRelationships.runsOn(type(EC2_INSTANCE),fromRelationships.isAccessibleBy(type(AWS_CREDENTIALS),entityName.equals("X"))))
+type(HOST),fromRelationships.runsOn(type(EC2_INSTANCE),fromRelationships.isAccessibleBy(type(AWS_CREDENTIALS),entityName.equals("X")))
+type(EC2_INSTANCE),fromRelationships.isAccessibleBy(type(AWS_CREDENTIALS),entityName.equals("X"))
+type(custom_device_group),fromRelationships.isAccessibleBy(type(aws_credentials),entityName.equals("X"))
+type(custom_device),fromRelationships.isAccessibleBy(type(aws_credentials),entityName.equals("X"))
+
+VMWare Management Zone
+ESXi hosts where ESXI host cluster name exists
+type(SERVICE),fromRelationships.runsOn(type(PROCESS_GROUP),fromRelationships.runsOn(type(HOST),hostvirtualizationtype(VMWARE)))
+type(PROCESS_GROUP),fromRelationships.runsOn(type(HOST),hostvirtualizationtype(VMWARE))
+type(PROCESS_GROUP_INSTANCE),fromRelationships.isProcessOf(type(HOST),hostvirtualizationtype(VMWARE))
+type(HOST),hostvirtualizationtype(VMWARE)
+
+MZ Rules Example:
+"entitySelectorBasedRules": [
+  {
+   "enabled": true,
+   "entitySelector": "type(APPLICATION),fromRelationships.calls(type(SERVICE),tag(App:Foo))"
+  },
+  {
+   "enabled": true,
+   "entitySelector": "type(HOST),toRelationships.runsOnHost(type(SERVICE),toRelationships.calls(type(SERVICE),tag(App:Foo)))"
+  },
+  {
+   "enabled": true,
+   "entitySelector": "type(HOST),toRelationships.runsOnHost(type(SERVICE),fromRelationships.calls(type(SERVICE),tag(App:Foo)))"
+  },
+  {
+   "enabled": true,
+   "entitySelector": "type(SERVICE),toRelationships.calls(type(SERVICE),tag(App:Foo))"
+  },
+  {
+   "enabled": true,
+   "entitySelector": "type(SERVICE),fromRelationships.calls(type(SERVICE),tag(App:Foo))"
+  },
+  {
+   "enabled": true,
+   "entitySelector": "type(PROCESS_GROUP),toRelationships.runsOn(type(SERVICE),fromRelationships.calls(type(SERVICE),tag(App:Foo)))"
+  },
+  {
+   "enabled": true,
+   "entitySelector": "type(PROCESS_GROUP),toRelationships.runsOn(type(SERVICE),toRelationships.calls(type(SERVICE),tag(App:Foo)))"
+  }
+ ]
+
+https://dynatrace.slack.com/archives/C74NG8NUC/p1697544640163399?thread_ts=1697542481.368419&cid=C74NG8NUC
+
+
+
+
