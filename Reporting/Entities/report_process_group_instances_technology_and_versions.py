@@ -5,7 +5,7 @@ from Reuse import environment
 from Reuse import report_writer
 
 
-# Use when possible to run much faster
+# Use when possible to run much faster...not yet REFERENCED!
 target_management_zones = [
     'HostGroup:Laptops',
 ]
@@ -29,7 +29,7 @@ def process(env, token, entity_type):
                 if software_technology_list:
                     for software_technology in software_technology_list:
                         software_technology_type = software_technology.get('type')
-                        software_technology_edition = software_technology.get('edition')
+                        software_technology_edition = software_technology.get('edition', 'N/A')
                         software_technology_version = software_technology.get('version')
                         if software_technology_type and software_technology_edition and software_technology_version:
                             rows.append((display_name, software_technology_type, software_technology_edition, software_technology_version))
@@ -55,6 +55,10 @@ def main():
     friendly_function_name = 'Dynatrace Automation Reporting'
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
+    # env_name_supplied = 'Upper'
+    # env_name_supplied = 'Lower'
+    # env_name_supplied = 'Sandbox'
+    #
     # env_name_supplied = 'Prod'
     # env_name_supplied = 'PreProd'
     # env_name_supplied = 'Sandbox'

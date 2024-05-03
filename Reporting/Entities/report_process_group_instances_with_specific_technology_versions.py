@@ -6,16 +6,19 @@ from Reuse import report_writer
 
 
 target_management_zones = [
+    # 'ZZ: DAVE/KEEP/PROD/V2',
+    # 'ZZ: DAVE/KEEP/STAGE',
     # 'HostGroup:Laptops',
-    'ALINK-PROD',
-    'AUTOD-PROD',
+    # 'ALINK-PROD',
+    # 'AUTOD-PROD',
 ]
 
 # Easy hits for testing...
 target_technology_types = [
-    'DOTNET',
-    'DYNATRACE',
-    'WINDOWS_SYSTEM',
+    # 'NGINX',
+    # 'DOTNET',
+    # 'DYNATRACE',
+    # 'WINDOWS_SYSTEM',
 ]
 
 
@@ -58,14 +61,17 @@ def process_entities(env, token, target_management_zone, rows):
                 if software_technology_list:
                     for software_technology in software_technology_list:
                         software_technology_type = software_technology.get('type')
-                        software_technology_edition = software_technology.get('edition')
+                        software_technology_edition = software_technology.get('edition', 'N/A')
                         software_technology_version = software_technology.get('version')
                         # print(software_technology, software_technology_type, software_technology_edition, software_technology_version)
-                        if software_technology_type and software_technology_edition and software_technology_version:
                         # if software_technology_type and target_technology_types:
+                        # if software_technology_type and software_technology_edition and software_technology_version:
+                        if software_technology_type and software_technology_version:
                             # if software_technology_type == 'DOTNET' and software_technology_edition == '.NET Framework' and software_technology_version.startswith('3.5'):
-                            if software_technology_type in target_technology_types:
-                                rows.append((display_name, str(software_technology_type), str(software_technology_edition), str(software_technology_version)))
+                            # if software_technology_type in target_technology_types:
+                            if software_technology_type == 'NGINX':
+                                if software_technology_version != 'nginx/1.24.0':
+                                    rows.append((display_name, str(software_technology_type), str(software_technology_edition), str(software_technology_version)))
 
 
 def remove_duplicates(any_list):
@@ -78,6 +84,10 @@ def main():
     friendly_function_name = 'Dynatrace Automation Reporting'
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
+    # env_name_supplied = 'Upper'
+    # env_name_supplied = 'Lower'
+    # env_name_supplied = 'Sandbox'
+    #
     # env_name_supplied = 'Prod'
     # env_name_supplied = 'PreProd'
     # env_name_supplied = 'Sandbox'
