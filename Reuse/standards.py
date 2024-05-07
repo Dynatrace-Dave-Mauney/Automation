@@ -2,7 +2,7 @@
 
 from Reuse import environment
 
-supported_naming_standard_flavors = [1]
+supported_naming_standard_flavors = [1, 2]
 supported_entity_types = ['management zone', 'alerting profile', 'notification', 'host group']
 
 
@@ -20,6 +20,9 @@ def check_naming_standard(env_name, name, configuration_object, entity_type):
 
     if naming_standard_flavor == 1:
         return check_naming_standard_flavor_1(env_name, name, configuration_object, entity_type)
+
+    if naming_standard_flavor == 2:
+        return check_naming_standard_flavor_2(env_name, name, configuration_object, entity_type)
 
 
 def check_naming_standard_flavor_1(env_name, name, configuration_object, entity_type):
@@ -47,4 +50,33 @@ def check_naming_standard_flavor_1(env_name, name, configuration_object, entity_
                 return False, f'Application Environment Name {application_environment_name} not found in the valid environment list: {valid_environments}'
 
     # print('Rule 3', name, name_hyphen_count, name_split_list)
+    return True, 'Name meets standards'
+
+
+def check_naming_standard_flavor_2(env_name, name, configuration_object, entity_type):
+    return check_naming_standard_flavor_2_host_group(env_name, name, configuration_object)
+
+
+def check_naming_standard_flavor_2_host_group(env_name, name, configuration_object):
+    valid_environments = environment.get_configuration(f'standards.valid_environments_{env_name}', configuration_object=configuration_object)
+    if not valid_environments:
+        return False, f'No naming standard valid environments list found in configuration object'
+
+    name_split_list = name.split('_')
+    name_underscore_count = len(name_split_list) - 1
+
+    print(name, name_split_list, name_underscore_count)
+
+    if name_underscore_count > 1:
+        return False, f'Host group name must have zero (for k8s clusters only) or one underscore'
+    else:
+        if name_underscore_count == 0:
+            if not (name.startswith('s') and (name.endswith('001') or name.endswith('002'))):
+                return False, f'Non-kubernetes Host group name must have one underscore'
+        else:
+            application_environment_name = name_split_list[1].upper()
+            if application_environment_name not in valid_environments:
+                return False, f'Application Environment Name {application_environment_name} not found in the valid environment list: {valid_environments}'
+
+    # print('Rule 3', name, name_underscore_count, name_split_list)
     return True, 'Name meets standards'
