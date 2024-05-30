@@ -23,10 +23,15 @@ def run():
     #   'Sandbox/00000000-dddd-bbbb-aaaa-????????????.json' # Strict reference
     #   'Sandbox/*.json' # Lenient reference
 
-    post_dashboards('Personal', 'Assets/*.json')
-    post_dashboards('Personal', 'Assets/External/CustomerSuccess/*.json')
-    post_dashboards('Personal', 'Assets/External/GGR/*.json')
-    post_dashboards('Personal', 'Assets/External/TechShady/*.json')
+    # post_dashboards('Personal', 'Assets/*.json')
+    # post_dashboards('Personal', 'Assets/External/CustomerSuccess/*.json')
+    # post_dashboards('Personal', 'Assets/External/GGR/*.json')
+    # post_dashboards('Personal', 'Assets/External/TechShady/*.json')
+
+    post_dashboards('Upper', 'Assets/*.json')
+    post_dashboards('Upper', 'Assets/External/CustomerSuccess/*.json')
+    post_dashboards('Upper', 'Assets/External/GGR/*.json')
+    post_dashboards('Upper', 'Assets/External/TechShady/*.json')
 
 
 def post_dashboards(env_name, path):

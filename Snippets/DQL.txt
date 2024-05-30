@@ -1,0 +1,59 @@
+// Look for evidence of a server/cluster update in self-monitoring
+fetch logs, scanLimitGBytes: 5000
+| filter matchesValue(dt.host_group.id, "cluster_prod-us-east-6-virginia")
+| filter log.source == "/media/datastore/server-data/log/Server_Debug.#.#.log"
+| filter contains(content, "[<header>] + Version 1.291")
+| sort timestamp asc
+
+// Summarize Log Sources
+fetch logs, scanLimitGBytes: 50
+| filter matchesValue(index, "app_k8s_keep")
+| parse log.source, "LD:content"
+| fieldsAdd base_name=splitString(content, "_")[0]
+| fieldsAdd base_name_split_dash=splitString(base_name, "-")
+| fieldsAdd base_name_last_node=base_name_split_dash[-1]
+| fieldsAdd base_name_next_to_last_node=base_name_split_dash[-2]
+| fieldsAdd base_name_last_node_length=stringLength(base_name_last_node)
+| fieldsAdd base_name_next_to_last_node_length=stringLength(base_name_next_to_last_node)
+| fieldsAdd base_name_delete_substring_size=base_name_last_node_length+base_name_next_to_last_node_length+2
+| fieldsAdd base_name_short=substring(base_name, to: -base_name_delete_substring_size)
+| fieldsAdd new_source_name=concat(base_name_short, "*.log")
+| fieldsAdd good_name=startsWith(new_source_name, "/")
+| fieldsAdd final_source_name=if(good_name, new_source_name, else: log.source)
+| fieldsKeep source_name
+| dedup source_name
+
+
+
+// From Mike Ferguson for SLOs in Grail:
+
+// timeseries latency_p50 = median(dt.service.request.response_time),
+//            by:{dt.entity.service}
+// | filter dt.entity.service == "SERVICE-018BB8D84577E9BA"
+// | fieldsAdd latency_p50 = arrayMedian(latency_p50)
+// | fields latency_p50
+
+// timeseries latency_p90 = percentile(dt.service.request.response_time, 90),
+//            by:{dt.entity.service}
+// | filter dt.entity.service == "SERVICE-018BB8D84577E9BA"
+// | fieldsAdd latency_p90 = arrayAvg(latency_p90)
+// | fields latency_p90
+
+timeseries latency_p90 = percentile(dt.service.request.response_time, 90),
+           by:{dt.entity.service}
+//| filter dt.entity.service == "SERVICE-018BB8D84577E9BA"
+| fieldsAdd serviceName = entityName(dt.entity.service)
+//| fieldsAdd latency_p90 = arrayAvg(latency_p90)
+| filter serviceName == "MF EasyTravelWebserver:8079"
+| fieldsAdd latency_p90 = arrayAvg(latency_p90)
+| fields latency_p90
+
+//timeseries errors = sum(dt.service.request.failure_count),
+//           by:{dt.entity.service}
+//| filter dt.entity.service == "SERVICE-018BB8D84577E9BA"
+// | fieldsAdd errors = arraySum(errors)
+// | fields errors
+has context menu
+
+
+has context menu

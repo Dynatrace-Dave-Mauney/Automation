@@ -1,6 +1,5 @@
 # Put all notebooks matching the file path pattern to the specified environment.
 
-import json
 import glob
 import os
 import codecs
@@ -23,9 +22,11 @@ def run():
     #   'Sandbox/00000000-dddd-bbbb-aaaa-????????????.json' # Strict reference
     #   'Sandbox/*.json' # Lenient reference
 
-    post_notebooks('Personal', 'Assets/External/Demo/*.json')
+    # post_notebooks('Personal', 'Assets/External/Demo/*.json')
     # post_notebooks('NonProd', 'Assets/External/Demo/*.json')
     # post_notebooks('Prod', 'Assets/External/Demo/*.json')
+
+    post_notebooks('Upper', 'Assets/External/Demo/*.json')
 
 
 def post_notebooks(env_name, path):

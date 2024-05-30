@@ -6,6 +6,12 @@ import glob
 import json
 # import pathlib
 
+env_name = 'Upper'
+# env_name = 'Lower'
+
+ootb_dashboards = [
+    ('Palo Alto', 'ab163c60-07f5-7e82-40d5-35cd6a8be991')
+]
 
 def load_dashboard_lookup():
     dashboard_lookup = {}
@@ -18,6 +24,11 @@ def load_dashboard_lookup():
             dashboard_name = dashboard.get('dashboardMetadata').get('name').replace('TEMPLATE: ', '')
             dashboard_name = dashboard_name.replace(' Monitoring', '')
             dashboard_lookup[dashboard_name] = dashboard_id
+
+    for ootb_dashboard in ootb_dashboards:
+        dashboard_name = ootb_dashboard[0]
+        dashboard_id = ootb_dashboard[1]
+        dashboard_lookup[dashboard_name] = dashboard_id
 
     return dashboard_lookup
 
@@ -169,7 +180,7 @@ def write_markdown_menus(dashboard_lookup):
         'Backend Overview',
         'Containers',
         'Detailed Drilldowns Menu',
-        'F5',
+        'F5 - Home',
         'Full Stack Overview',
         'Go',
         'Hosts (Detailed)',
@@ -184,7 +195,9 @@ def write_markdown_menus(dashboard_lookup):
         'Network (Host-Level Details)',
         'Network (Process-Level Details)',
         'Node.js',
+        'Palo Alto',
         'Processes',
+        'Redis - Home',
         'Service Errors',
         'Service HTTP Errors',
         'Suspicious Activity Audit',
@@ -198,12 +211,14 @@ def write_markdown_menus(dashboard_lookup):
     # for menu_item in menu_item_list_v1:
     # for menu_item in menu_item_list_v2:
     # for menu_item in menu_item_list_v3:
+    lower_skips = ['Redis - Home', 'F5 - Home', 'Palo Alto']
     for menu_item in menu_item_list_v4:
         # for menu_item in menu_item_list:
         markdown_item_id = dashboard_lookup.get(menu_item)
         if not markdown_item_id:
             print(f'Dashboard lookup dictionary missing menu item: {menu_item}')
-        markdown_menu += f'[{menu_item}](#dashboard;id={markdown_item_id})  \\n'
+        if not (env_name == 'Lower' and menu_item in lower_skips):
+            markdown_menu += f'[{menu_item}](#dashboard;id={markdown_item_id})  \\n'
     markdown_menu += '"'
 
     filename = 'Templates/Overview/markdown_menu.json'

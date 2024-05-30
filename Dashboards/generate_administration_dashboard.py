@@ -43,6 +43,7 @@ def main():
         ('Calculated Service Metrics', '#settings/serviceMetrics'),
         ('Custom Service Detection', '#settings/newcustomservices'),
         ('Deep Monitoring', '#settings/deepmonitoring'),
+        ('Default Web Application Settings', '#uemapplications/uemappmetrics;uemapplicationId=APPLICATION-EA7C4B59F27D43EB'),
         ('Maintenance Windows', '/ui/settings/builtin:alerting.maintenance-window'),
         ('Management Zones', '/ui/settings/builtin:management-zones'),
         ('Manually applied tags', '#settings/taggingoverview/tagging'),
@@ -60,14 +61,16 @@ def main():
     "configurationVersions": [
       6
     ],
-    "clusterVersion": "1.240.132.20220503-084001"
+    "clusterVersion": "1.261.134.20230302-084304"
   },
   "id": "00000000-dddd-bbbb-ffff-000000000800",
   "dashboardMetadata": {
     "name": "TEMPLATE: Administration",
     "shared": true,
-    "preset": true,
-    "owner": "nobody@example.com"
+    "preset": false,
+    "owner": "nobody@example.com",
+    "tilesNameSize": "small",
+    "hasConsistentColors": true
   },
   "tiles": [
     {
@@ -83,20 +86,6 @@ def main():
       "tileFilter": {},
       "isAutoRefreshDisabled": false,
       "markdown": "{{.dashboard_markdown}}"
-    },
-    {
-      "name": "Markdown",
-      "tileType": "MARKDOWN",
-      "configured": true,
-      "bounds": {
-        "top": 304,
-        "left": 0,
-        "width": 494,
-        "height": 304
-      },
-      "tileFilter": {},
-      "isAutoRefreshDisabled": false,
-      "markdown": "{{.view_markdown}}"
     },
     {
       "name": "Markdown",
@@ -124,6 +113,20 @@ def main():
       },
       "tileFilter": {},
       "markdown": "#### [\u21e6 Overview](#dashboard;id=00000000-dddd-bbbb-ffff-000000000001)\\n![BackButton]()"
+    },
+    {
+      "name": "Markdown",
+      "tileType": "MARKDOWN",
+      "configured": true,
+      "bounds": {
+        "top": 304,
+        "left": 0,
+        "width": 494,
+        "height": 304
+      },
+      "tileFilter": {},
+      "isAutoRefreshDisabled": false,
+      "markdown": "{{.view_markdown}}"
     }
   ]
 }
@@ -135,17 +138,17 @@ def main():
         dashboard_key, dashboard_link = dashboard_link
         dashboard_markdown += f'  \\n[{dashboard_key}]({dashboard_link})'
 
-    view_markdown_title = drilldown_title.replace('{{.title}}', 'Views')
-    view_markdown = view_markdown_title
-    for view_link in view_links:
-        view_key, view_link = view_link
-        view_markdown += f'  \\n[{view_key}]({view_link})'
-
     setting_markdown_title = drilldown_title.replace('{{.title}}', 'Settings')
     setting_markdown = setting_markdown_title
     for setting_link in setting_links:
         setting_key, setting_link = setting_link
         setting_markdown += f'  \\n[{setting_key}]({setting_link})'
+
+    view_markdown_title = drilldown_title.replace('{{.title}}', 'Views')
+    view_markdown = view_markdown_title
+    for view_link in view_links:
+        view_key, view_link = view_link
+        view_markdown += f'  \\n[{view_key}]({view_link})'
 
     dashboard_template = dashboard_template.replace('{{.dashboard_markdown}}', dashboard_markdown)
     dashboard_template = dashboard_template.replace('{{.view_markdown}}', view_markdown)

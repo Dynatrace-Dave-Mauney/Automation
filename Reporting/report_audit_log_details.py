@@ -40,6 +40,10 @@ def process_report(env, token, summary_mode):
             # if 'LOGIN' in event_type or 'LOGOUT' in event_type:
             #    continue
 
+            # Customer wants to report all logins only...
+            # if 'LOGIN' not in event_type:
+            #     continue
+
             category = inner_auditlog_json.get('category')
             entity_id = inner_auditlog_json.get('entityId')
             environment_id = inner_auditlog_json.get('environmentId')
@@ -109,6 +113,10 @@ def main():
     friendly_function_name = 'Dynatrace Automation Reporting'
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
+    # env_name_supplied = 'Upper'
+    # env_name_supplied = 'Lower'
+    # env_name_supplied = 'Sandbox'
+    #
     # env_name_supplied = 'Prod'
     # env_name_supplied = 'PreProd'
     # env_name_supplied = 'Sandbox'
