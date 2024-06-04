@@ -1,0 +1,1206 @@
+{
+    "version": 13,
+    "variables": [],
+    "tiles": {
+        "1": {
+            "type": "data",
+            "title": "Inter VPC traffic types",
+            "query": "fetch logs\n| filter matchesValue(aws.log_group, \"*vpc*\") and matchesValue(aws.log_group, \"*flow-logs*\")\n| filterOut matchesValue(content, \"*SKIPDATA*\") \n| filterOut matchesValue(content, \"*NODATA*\")\n| filter isNotNull(vpc_id) | filter flow_direction==\"egress\"      \n| fieldsAdd bytes=toLong(bytes), start=toLong(start), end=toLong(end)             \n| summarize {bandwidth=8*sum(bytes)/ (max(end)-min(start)) }, by:{traffic_path}   \n| fieldsAdd destination=coalesce(\nif(traffic_path==\"1\",\"same VPC\"),\nif(traffic_path==\"2\",\"internet gateway or a gateway VPC endpoint\") ,\nif(traffic_path==\"3\",\"virtual private gateway\") ,\nif(traffic_path==\"4\",\"intra-region VPC peering connectio\") ,\nif(traffic_path==\"5\",\"inter-region VPC peering connection\") ,\nif(traffic_path==\"6\",\"local gateway\") ,\nif(traffic_path==\"7\",\"gateway VPC endpoint (Nitro-based instances only)\") ,\nif(traffic_path==\"8\",\"internet gateway (Nitro-based instances only\") ,\n\"Unknown\"\n)\n| fields destination=concat(destination, \"(\", traffic_path, \")\"), bandwidth\n| sort bandwidth desc",
+            "visualization": "donutChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "destination",
+                        "categoryAxisLabel": "destination",
+                        "valueAxis": "bandwidth",
+                        "valueAxisLabel": "bandwidth"
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "destination"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [
+                        [
+                            "content"
+                        ]
+                    ],
+                    "columnWidths": {}
+                }
+            }
+        },
+        "2": {
+            "type": "data",
+            "title": "Inter Availability Zone traffic",
+            "query": "fetch logs\n| filter matchesValue(aws.log_group, \"*vpc*\") and matchesValue(aws.log_group, \"*flow-logs*\")\n| filterOut matchesValue(content, \"*SKIPDATA*\") \n| filterOut matchesValue(content, \"*NODATA*\")\n| filter isNotNull(vpc_id) \n| filter flow_direction==\"egress\" and traffic_path==\"1\"                           \n| fieldsAdd bytes=toLong(bytes), start=toLong(start), end=toLong(end)             \n\n| lookup [\n  fetch logs\n| filter matchesValue(aws.log_group, \"*vpc*\") and matchesValue(aws.log_group, \"*flow-logs*\")\n| filterOut matchesValue(content, \"*SKIPDATA*\") \n| filterOut matchesValue(content, \"*NODATA*\")\n| filter isNotNull(vpc_id) \n  | filter flow_direction==\"ingress\"\n  | summarize {c=count()}, by:{ dstaddr, instance_id, az_id}\n], sourceField:dstaddr, lookupField:dstaddr, fields:{c, dst_instance_id=instance_id, dst_az_id=az_id}\n\n| filterOut isNull(dst_az_id) or az_id==dst_az_id\n| summarize {bandwidth=8*sum(bytes)/ (max(end)-min(start)), bytes=sum(bytes) }, by:{ az_id, dst_az_id }\n| fields src_az_id=az_id, dst_az_id, bytes\n| fieldsRename `Traffic`= bytes,`Source AZ`= src_az_id,`Destination AZ`= dst_az_id\n| sort `Traffic` desc\n",
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "Source AZ",
+                        "categoryAxisLabel": "Source AZ",
+                        "valueAxis": "Traffic",
+                        "valueAxisLabel": "Traffic"
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "Source AZ"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "bytes",
+                        "unitCategory": "data",
+                        "baseUnit": "byte",
+                        "displayUnit": null,
+                        "decimals": 3,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1706215259578
+                    },
+                    {
+                        "identifier": "Traffic",
+                        "unitCategory": "data",
+                        "baseUnit": "byte",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1706215292736
+                    }
+                ]
+            }
+        },
+        "3": {
+            "type": "data",
+            "title": "Top source ports",
+            "query": "fetch logs\n| filter matchesValue(aws.log_group, \"*vpc*\") and matchesValue(aws.log_group, \"*flow-logs*\")\n| filterOut matchesValue(content, \"*SKIPDATA*\") \n| filterOut matchesValue(content, \"*NODATA*\")\n| filter isNotNull(vpc_id) \n| filter   flow_direction==\"egress\"\n | fieldsKeep srcaddr,dstaddr, srcport, bytes, vpc_id\n | fields srcaddr, dstaddr, srcport, vpc_id,bytes\n | summarize bytes = sum(toLong(bytes)), by:{srcport, srcaddr,  vpc_id}\n | fieldsRename `Origin VPC` = vpc_id\n | fieldsRename `Traffic`= bytes,`Source Address`=srcaddr,`Source Port`=srcport\n| sort `Traffic` desc\n | limit 10",
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "Source Port",
+                        "categoryAxisLabel": "Source Port",
+                        "valueAxis": "Traffic",
+                        "valueAxisLabel": "Traffic"
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "Source Port"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "Traffic",
+                        "unitCategory": "data",
+                        "baseUnit": "byte",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1706688257029
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "Traffic",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "4": {
+            "type": "data",
+            "title": "Top source port ",
+            "query": "fetch logs\n| filter matchesValue(aws.log_group, \"*vpc*\") and matchesValue(aws.log_group, \"*flow-logs*\")\n| filterOut matchesValue(content, \"*SKIPDATA*\") \n| filterOut matchesValue(content, \"*NODATA*\")\n| filter isNotNull(vpc_id) \n| filter   flow_direction==\"egress\"\n | fieldsKeep srcaddr,dstaddr, srcport, bytes\n | summarize bytes = sum(toLong(bytes)), by:{srcport}\n | sort bytes desc\n | limit 10",
+            "visualization": "donutChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute",
+                        "showTotalValue": true,
+                        "valueType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "srcport",
+                        "categoryAxisLabel": "srcport",
+                        "valueAxis": "bytes",
+                        "valueAxisLabel": "bytes"
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "srcport"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "bytes",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "7": {
+            "type": "markdown",
+            "title": "",
+            "content": "#\n# **AWS Network Flows Analytics**\n#\n\nThe AWS Network Flows Analytics dashboard offers insight into VPC (Virtual Private Cloud) and TGW (Transit Gateway) network flows.\n\n\nApplications incident reactive operations (Single numbers, tables), Applications related incident analysis (tables, time-series)\n\nThis dashboard helps Cloud engineers fulfill a number of their regular tasks:\n- Application process cloud usage monitoring\n- Application failure Root Cause Analysis\n- Cloud performance analysis\n- Cloud capacity planner\n- Cloud cost analysis \n\nIn order to complete the tasks of various Cloud engineers, a methodical approach is required, starting from the general and moving towards the specific. To meet different observability needs, the dashboard provides various levels of insight aggregations. An intuitive donut-shaped graph captures critical trends for immediate reaction to traffic flow changes, while tables cover more analytical use cases and allow easy CSV file export. Timeseries help with Cloud capacity forecasting, with the assistance of Davis analyzers in a notebook.\n\n\n## AWS requirements\n\nSet up VPC log generation (https://docs.aws.amazon.com/vpc/latest/userguide/working-with-flow-logs.html)\n\n## Dynatrace requirements\n\nSet up log ingestion (ingests AWS VPC flow logs into Grail). Depending on VPC flow logs availability, log forwarding (https://docs.dynatrace.com/docs/observe-and-explore/logs/lma-log-ingestion-via-api/lma-cloud-provider-log-forwarding) via CloudWatch/Kinesis or via S3 is possible.\n"
+        },
+        "8": {
+            "type": "data",
+            "title": "Top endpoint pairs",
+            "query": "fetch logs\n| filter matchesValue(aws.log_group, \"*vpc*\") and matchesValue(aws.log_group, \"*flow-logs*\")\n| filterOut matchesValue(content, \"*SKIPDATA*\") \n| filterOut matchesValue(content, \"*NODATA*\")\n| filter isNotNull(vpc_id) \n| filter   flow_direction==\"egress\"\n| fieldsKeep pkt_srcaddr, pkt_dstaddr, bytes, vpc_id\n | summarize bytes = sum(toLong(bytes)), by:{pkt_srcaddr,pkt_dstaddr, vpc_id}\n | fieldsRename `Origin VPC` = vpc_id\n | fieldsRename `Traffic`= bytes,`Source Address`=pkt_srcaddr,`Destinatiin Address`=pkt_dstaddr\n| sort `Traffic` desc\n| limit 10\n",
+            "visualization": "donutChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute",
+                        "valueType": "absolute",
+                        "showTotalValue": true
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "Source Address",
+                        "categoryAxisLabel": "Source Address",
+                        "valueAxis": "Traffic",
+                        "valueAxisLabel": "Traffic"
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "srcaddr"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "Traffic",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "9": {
+            "type": "data",
+            "title": "Top endpoint pairs",
+            "query": "fetch logs\n| filter matchesValue(aws.log_group, \"*vpc*\") and matchesValue(aws.log_group, \"*flow-logs*\")\n| filterOut matchesValue(content, \"*SKIPDATA*\") \n| filterOut matchesValue(content, \"*NODATA*\")\n| filter isNotNull(vpc_id) \n| filter   flow_direction==\"egress\"\n| fieldsKeep pkt_srcaddr, pkt_dstaddr, bytes, aws.log_group\n | summarize bytes = sum(toLong(bytes)), by:{pkt_srcaddr,pkt_dstaddr, aws.log_group}\n | fieldsRename `Origin VPC` = aws.log_group\n | fieldsRename `Traffic`= bytes,`Source Address`=pkt_srcaddr,`Destination Address`=pkt_dstaddr\n| sort `Traffic` desc\n| limit 10",
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "Source Address",
+                        "categoryAxisLabel": "Source Address",
+                        "valueAxis": "Traffic",
+                        "valueAxisLabel": "Traffic"
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "Source Address"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "Traffic",
+                        "unitCategory": "data",
+                        "baseUnit": "byte",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1706688301679
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "Traffic",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "11": {
+            "type": "markdown",
+            "title": "",
+            "content": "# TGW network flows matrix"
+        },
+        "12": {
+            "type": "markdown",
+            "title": "",
+            "content": "# VPC network flows - Network conversations"
+        },
+        "13": {
+            "type": "markdown",
+            "title": "",
+            "content": "# VPC network flows - Source/Destination Ports"
+        },
+        "14": {
+            "type": "data",
+            "title": "Top  origin VPC ",
+            "query": "fetch logs\n| filter matchesValue(aws.log_group, \"*vpc*\") and matchesValue(aws.log_group, \"*flow-logs*\")\n| filterOut matchesValue(content, \"*SKIPDATA*\") \n| filterOut matchesValue(content, \"*NODATA*\")\n| filter isNotNull(vpc_id) \n| filter   flow_direction==\"egress\"\n | makeTimeseries  bytes = sum(tolong(bytes)), by:{aws.log_group}\n | sort arraySum(bytes) desc\n | limit 10",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "aws.log_group",
+                        "categoryAxisLabel": "aws.log_group",
+                        "valueAxis": "interval",
+                        "valueAxisLabel": "interval"
+                    },
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "bytes"
+                        ],
+                        "leftAxisDimensions": [
+                            "aws.log_group"
+                        ],
+                        "fields": [],
+                        "values": []
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "aws.log_group"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "17": {
+            "type": "data",
+            "title": "Top origin VPC ",
+            "query": "fetch logs\n| filter matchesValue(aws.log_group, \"*vpc*\") and matchesValue(aws.log_group, \"*flow-logs*\")\n| filterOut matchesValue(content, \"*SKIPDATA*\") \n| filterOut matchesValue(content, \"*NODATA*\")\n| filter isNotNull(vpc_id) \n | filter flow_direction==\"egress\"\n | fieldsKeep  srcaddr, bytes, aws.log_group\n | summarize bytes = sum(toLong(bytes)), by:{aws.log_group,srcaddr}\n | fieldsRename `Origin VPC`= aws.log_group, `Source Address` = srcaddr, `Traffic`= bytes\n | sort  `Traffic` desc",
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "Origin VPC",
+                        "categoryAxisLabel": "Origin VPC",
+                        "valueAxis": "Traffic",
+                        "valueAxisLabel": "Traffic"
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "Origin VPC"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "Traffic",
+                        "unitCategory": "data",
+                        "baseUnit": "byte",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1706686216666
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "Traffic",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "18": {
+            "type": "data",
+            "title": "Top VPC,source, destination addresses",
+            "query": "fetch logs\n| filter matchesValue(aws.log_group, \"*vpc*\") and matchesValue(aws.log_group, \"*flow-logs*\")\n| filterOut matchesValue(content, \"*SKIPDATA*\") \n| filterOut matchesValue(content, \"*NODATA*\")\n| filter isNotNull(vpc_id) \n | filter flow_direction==\"egress\"\n | makeTimeseries bytes = sum(tolong(bytes)), by:{aws.log_group, srcaddr,dstaddr}\n | sort arraySum(bytes) desc\n | limit 10",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "aws.log_group",
+                        "categoryAxisLabel": "aws.log_group",
+                        "valueAxis": "interval",
+                        "valueAxisLabel": "interval"
+                    },
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "bytes"
+                        ],
+                        "leftAxisDimensions": [
+                            "aws.log_group",
+                            "srcaddr",
+                            "dstaddr"
+                        ],
+                        "fields": [],
+                        "values": []
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "aws.log_group"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "20": {
+            "type": "data",
+            "title": "Top  VPC.Sources",
+            "query": "fetch logs\n| filter matchesValue(aws.log_group, \"*vpc*\") and matchesValue(aws.log_group, \"*flow-logs*\")\n| filterOut matchesValue(content, \"*SKIPDATA*\") \n| filterOut matchesValue(content, \"*NODATA*\")\n| filter isNotNull(vpc_id) \n | filter flow_direction==\"egress\"\n | makeTimeseries  bytes = sum(tolong(bytes)), by:{aws.log_group, srcaddr}\n | sort arraySum(bytes) desc\n | limit 10\n",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "aws.log_group",
+                        "categoryAxisLabel": "aws.log_group",
+                        "valueAxis": "interval",
+                        "valueAxisLabel": "interval"
+                    },
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "bytes"
+                        ],
+                        "leftAxisDimensions": [
+                            "aws.log_group",
+                            "srcaddr"
+                        ],
+                        "fields": [],
+                        "values": []
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "aws.log_group"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "21": {
+            "type": "markdown",
+            "title": "",
+            "content": "# VPC network flows matrix"
+        },
+        "22": {
+            "type": "data",
+            "title": "Top destination port ",
+            "query": "fetch logs\n| filter matchesValue(aws.log_group, \"*vpc*\") and matchesValue(aws.log_group, \"*flow-logs*\")\n| filterOut matchesValue(content, \"*SKIPDATA*\") \n| filterOut matchesValue(content, \"*NODATA*\")\n| filter isNotNull(vpc_id) \n | filter flow_direction==\"egress\"\n | fieldsKeep srcaddr,dstaddr, dstport, bytes, vpc_id\n | fields srcaddr, dstaddr, dstport,vpc_id,bytes\n | summarize bytes = sum(toLong(bytes)), by:{dstport, srcaddr, vpc_id}\n | fieldsRename `Origin VPC` = vpc_id, `Traffic`= bytes, `Destination Port`=dstport,`Source Address`=srcaddr\n |  sort `Traffic` desc\n | limit 10",
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "Destination Port",
+                        "categoryAxisLabel": "Destination Port",
+                        "valueAxis": "Traffic",
+                        "valueAxisLabel": "Traffic"
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "Destination Port"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "bytes",
+                        "unitCategory": "data",
+                        "baseUnit": "byte",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1706688089510
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "Traffic",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "23": {
+            "type": "data",
+            "title": "Top Source port, address",
+            "query": "fetch logs\n| filter matchesValue(aws.log_group, \"*vpc*\") and matchesValue(aws.log_group, \"*flow-logs*\")\n| filterOut matchesValue(content, \"*SKIPDATA*\") \n| filterOut matchesValue(content, \"*NODATA*\")\n| filter isNotNull(vpc_id) \n  | filter flow_direction==\"egress\"\n | makeTimeseries  bytes = sum(tolong(bytes)), by:{srcport, srcaddr, aws.log_groups}\n | sort arraySum(bytes) desc\n | limit 10",
+            "visualization": "barChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "srcport",
+                        "categoryAxisLabel": "srcport",
+                        "valueAxis": "interval",
+                        "valueAxisLabel": "interval"
+                    },
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "bytes"
+                        ],
+                        "leftAxisDimensions": [
+                            "srcport",
+                            "srcaddr"
+                        ],
+                        "fields": [],
+                        "values": []
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "srcport"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "24": {
+            "type": "data",
+            "title": "Top destination port ",
+            "query": "fetch logs\n| filter matchesValue(aws.log_group, \"*vpc*\") and matchesValue(aws.log_group, \"*flow-logs*\")\n| filterOut matchesValue(content, \"*SKIPDATA*\") \n| filterOut matchesValue(content, \"*NODATA*\")\n| filter isNotNull(vpc_id) \n | filter flow_direction==\"egress\"\n | fieldsKeep  dstport, bytes\n | summarize bytes = sum(toLong(bytes)), by:{dstport}\n | sort bytes desc\n | limit 10",
+            "visualization": "donutChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute",
+                        "showTotalValue": true,
+                        "valueType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "dstport",
+                        "categoryAxisLabel": "dstport",
+                        "valueAxis": "bytes",
+                        "valueAxisLabel": "bytes"
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "dstport"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "bytes",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "25": {
+            "type": "data",
+            "title": "Top inter VPC traffic (bytes)",
+            "query": "fetch logs\n| filter matchesValue(aws.log_group, \"*vpc*\") and matchesValue(aws.log_group, \"*flow-logs*\")\n| filterOut matchesValue(content, \"*SKIPDATA*\") \n| filterOut matchesValue(content, \"*NODATA*\")\n| filter isNotNull(vpc_id) \n | filter flow_direction==\"egress\"\n| fieldsAdd record_id=record(from=srcaddr, to=dstaddr)\n| summarize by:{vpc_id, record_id}, {packets_sent=sum(toLong(packets)), bytes_sent=sum(toLong(bytes)), count()}\n| lookup [fetch logs\n| filter matchesValue(aws.log_group, \"*vpc*\") and matchesValue(aws.log_group, \"*flow-logs*\")\n| filterOut matchesValue(content, \"*SKIPDATA*\") \n| filterOut matchesValue(content, \"*NODATA*\")\n| filter isNotNull(vpc_id) \n| filter  flow_direction==\"egress\"\n| fieldsAdd record_id=record(from=dstaddr, to=srcaddr)\n| summarize by:{vpc_id, record_id}, {packets_received=sum(toLong(packets)), bytes_received=sum(toLong(bytes)), count()}\n], sourceField:record_id, lookupField:record_id\n| summarize by:{vpc_id, lookup.vpc_id},\n{packets_sent=sum(toLong(packets_sent)), bytes_sent=sum(toLong(bytes_sent)), \npackets_received=sum(toLong(lookup.packets_received)), bytes_received=sum(toLong(lookup.bytes_received))}\n| fieldsRename src_vpc=vpc_id,dst_vpc=`lookup.vpc_id`\n| fields src_vpc,dst_vpc,bytes_received,bytes_sent\n| summarize Traffic = sum(toLong(bytes_sent))+ sum(toLong(bytes_received)), by:{src_vpc,dst_vpc}",
+            "visualization": "donutChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute",
+                        "showTotalValue": true,
+                        "valueType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "src_vpc",
+                        "categoryAxisLabel": "src_vpc",
+                        "valueAxis": "Traffic",
+                        "valueAxisLabel": "Traffic"
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "src_vpc"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                }
+            }
+        },
+        "26": {
+            "type": "data",
+            "title": "Top inter Availability Zone traffic (bytes)",
+            "query": "fetch logs\n| filter matchesValue(aws.log_group, \"*vpc*\") and matchesValue(aws.log_group, \"*flow-logs*\")\n| filterOut matchesValue(content, \"*SKIPDATA*\") \n| filterOut matchesValue(content, \"*NODATA*\")\n| filter isNotNull(vpc_id) \n| filter flow_direction==\"egress\"\n| fieldsAdd record_id=record(from=srcaddr, to=dstaddr)\n| summarize by:{record_id,az_id}, {packets_sent=sum(toLong(packets)), bytes_sent=sum(toLong(bytes)), count()}\n| lookup [fetch logs\n| filter matchesValue(aws.log_group, \"*vpc*\") and matchesValue(aws.log_group, \"*flow-logs*\")\n| filterOut matchesValue(content, \"*SKIPDATA*\") \n| filterOut matchesValue(content, \"*NODATA*\")\n| filter isNotNull(vpc_id) \n| filter flow_direction==\"egress\"\n| fieldsAdd record_id=record(from=dstaddr, to=srcaddr)\n| summarize by:{record_id, az_id}, {packets_received=sum(toLong(packets)), bytes_received=sum(toLong(bytes)), count()}],sourceField:record_id, lookupField:record_id\n| summarize by:{az_id, lookup.az_id},\n{packets_sent=sum(toLong(packets_sent)), bytes_sent=sum(toLong(bytes_sent)), \npackets_received=sum(toLong(lookup.packets_received)), bytes_received=sum(toLong(lookup.bytes_received))}\n| fieldsRename src_vpc=az_id,dst_az=`lookup.az_id`\n| fields src_vpc,dst_az,bytes_received,bytes_sent\n| summarize Traffic = sum(toLong(bytes_sent))+ sum(toLong(bytes_received)), by:{src_vpc,dst_az}\n| limit 10",
+            "visualization": "donutChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute",
+                        "showTotalValue": true,
+                        "valueType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "src_vpc",
+                        "categoryAxisLabel": "src_vpc",
+                        "valueAxis": "Traffic",
+                        "valueAxisLabel": "Traffic"
+                    },
+                    "legend": {
+                        "position": "right",
+                        "hidden": false
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "src_vpc"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                }
+            }
+        },
+        "27": {
+            "type": "data",
+            "title": "TGW aggregated traffic",
+            "query": "  fetch logs\n  | filter aws.log_group == \"flow-logs-eu-west-1-tgw-cw\"  or aws.log_group ==\"flow-logs-us-west-1-tgw-cw\" or aws.log_group ==\"flow-logs-ap-southeast-1-tgw-cw\"\n  | filter isNotNull(tgw_id) AND (tgw_dst_vpc_id == \"-\")\n  | filter not(contains(content, \"NODATA\")) and not(contains(content, \"SKIPDATA\"))\n  | fieldsAdd join_key = record(tgw_attachment_id, tgw_dst_vpc_id, srcaddr, dstaddr)\n  | summarize {\n    bytes = sum(toDouble(bytes))\n  }, by: {join_key, tgw_id, tgw_attachment_id, region, tgw_src_vpc_id, tgw_dst_vpc_id}\n  | Limit 100\n| lookup [\n  fetch logs\n  | filter aws.log_group == \"flow-logs-eu-west-1-tgw-cw\"  or aws.log_group ==\"flow-logs-us-west-1-tgw-cw\" or aws.log_group ==\"flow-logs-ap-southeast-1-tgw-cw\"\n  | filter not(contains(content, \"NODATA\")) and not(contains(content, \"SKIPDATA\"))\n    | filter isNotNull(tgw_id)  and flow_direction == \"ingress\"  AND (tgw_dst_vpc_id == \"-\")\n\n  | fieldsAdd join_key = record(tgw_attachment_id,  tgw_dst_vpc_id,  srcaddr, dstaddr)\n  | summarize {\n    bytes = sum(toDouble(bytes))\n  },\n  by: {join_key, tgw_id, tgw_attachment_id, region, tgw_src_vpc_id, tgw_dst_vpc_id}\n  | Limit 100\n], sourceField:join_key, lookupField:join_key\n| filter tgw_id != lookup.tgw_id\n| summarize \n  by:{tgw_id},\n  {\n    bytes_sent=sum(toLong(bytes))\n  }\n   | fieldsRename `TGW`= tgw_id,`Traffic`= bytes_sent\n| limit 100",
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute",
+                        "valueType": "absolute",
+                        "showTotalValue": true
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "TGW",
+                        "categoryAxisLabel": "TGW",
+                        "valueAxis": "Traffic",
+                        "valueAxisLabel": "Traffic"
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "TGW"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "Traffic",
+                        "unitCategory": "data",
+                        "baseUnit": "byte",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1706203395373
+                    }
+                ]
+            }
+        },
+        "28": {
+            "type": "data",
+            "title": "Destination Addresses --> HTTP(s) Endpoints ",
+            "query": "\nfetch logs\n| filter aws.log_group == \"flow-logs-eu-west-1-vpc-cw\"  or aws.log_group ==\"flow-logs-us-west-1-vpc-cw\" or aws.log_group ==\"flow-logs-us-west-1-vpc-cw\"  \n| filterOut matchesValue(content, \"*SKIPDATA*\") \n| filterOut matchesValue(content, \"*NODATA*\")\n| filter isNotNull(vpc_id) \n | fieldsKeep dstport,dstaddr, bytes\n | filter dstport == \"80\"   or dstport == \"443\"\n| summarize HTTP=countDistinct(dstaddr)",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {}
+                },
+                "singleValue": {
+                    "showLabel": false,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "HTTP"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [
+                        [
+                            "content"
+                        ]
+                    ],
+                    "columnWidths": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "HTTP",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "29": {
+            "type": "data",
+            "title": "Source Addresses --> HTTP(s) Endpoints ",
+            "query": "fetch logs\n| filter matchesValue(aws.log_group, \"*vpc*\") and matchesValue(aws.log_group, \"*flow-logs*\")\n| filterOut matchesValue(content, \"*SKIPDATA*\") \n| filterOut matchesValue(content, \"*NODATA*\")\n| filter isNotNull(vpc_id) \n| filter   flow_direction==\"egress\"\n| fieldsKeep srcport,srcaddr, bytes\n| filter srcport == \"80\" or srcport == \"443\" \n| summarize HTTP=countDistinct(srcaddr)\n",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {}
+                },
+                "singleValue": {
+                    "showLabel": false,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "HTTP"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [
+                        [
+                            "content"
+                        ]
+                    ],
+                    "columnWidths": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "HTTP",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "30": {
+            "type": "data",
+            "title": "Inter region traffic",
+            "query": "  fetch logs\n  | filter aws.log_group == \"flow-logs-eu-west-1-tgw-cw\"  or aws.log_group ==\"flow-logs-us-west-1-tgw-cw\" or aws.log_group ==\"flow-logs-ap-southeast-1-tgw-cw\"\n  | filter isNotNull(tgw_id) AND (tgw_dst_vpc_id == \"-\")\n  | filter not(contains(content, \"NODATA\")) and not(contains(content, \"SKIPDATA\"))\n  | fieldsAdd join_key = record(tgw_attachment_id, srcaddr, dstaddr)\n  | summarize {\n    bytes = sum(toDouble(bytes))\n  }, by: {join_key, tgw_id, tgw_attachment_id, region, tgw_src_vpc_id, tgw_dst_vpc_id}\n  | Limit 100\n| lookup [\n  fetch logs\n  | filter aws.log_group == \"flow-logs-eu-west-1-tgw-cw\"  or aws.log_group ==\"flow-logs-us-west-1-tgw-cw\" or aws.log_group ==\"flow-logs-ap-southeast-1-tgw-cw\"\n  | filter not(contains(content, \"NODATA\")) and not(contains(content, \"SKIPDATA\"))\n  | filter isNotNull(tgw_id)  and flow_direction == \"ingress\"  AND (tgw_dst_vpc_id == \"-\")\n\n  | fieldsAdd join_key = record(tgw_attachment_id, srcaddr, dstaddr)\n  | summarize {\n    bytes = sum(toDouble(bytes))\n  },\n  by: {join_key, tgw_id, tgw_attachment_id, region, tgw_src_vpc_id, tgw_dst_vpc_id}\n  | Limit 100\n], sourceField:join_key, lookupField:join_key\n| filter tgw_id != lookup.tgw_id\n| summarize \n  by:{src_region=region, dst_region=lookup.region},\n  {\n    bytes_sent=sum(toLong(bytes))\n  }\n     | fieldsRename`Traffic`= bytes_sent\n| limit 100\n| fieldsRename `Source Region`= src_region,`Destination Region`= dst_region\n",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "Source Region",
+                        "categoryAxisLabel": "Source Region",
+                        "valueAxis": "Traffic",
+                        "valueAxisLabel": "Traffic"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value",
+                    "recordField": "Source Region"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [
+                        [
+                            "content"
+                        ]
+                    ],
+                    "columnWidths": {}
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "Traffic",
+                        "unitCategory": "data",
+                        "baseUnit": "byte",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1706203474716
+                    }
+                ]
+            }
+        }
+    },
+    "layouts": {
+        "1": {
+            "x": 0,
+            "y": 32,
+            "w": 10,
+            "h": 6
+        },
+        "2": {
+            "x": 10,
+            "y": 32,
+            "w": 9,
+            "h": 4
+        },
+        "3": {
+            "x": 17,
+            "y": 6,
+            "w": 7,
+            "h": 7
+        },
+        "4": {
+            "x": 12,
+            "y": 6,
+            "w": 5,
+            "h": 7
+        },
+        "7": {
+            "x": 0,
+            "y": 0,
+            "w": 24,
+            "h": 3
+        },
+        "8": {
+            "x": 0,
+            "y": 6,
+            "w": 5,
+            "h": 7
+        },
+        "9": {
+            "x": 5,
+            "y": 6,
+            "w": 7,
+            "h": 7
+        },
+        "11": {
+            "x": 0,
+            "y": 38,
+            "w": 24,
+            "h": 1
+        },
+        "12": {
+            "x": 0,
+            "y": 5,
+            "w": 12,
+            "h": 1
+        },
+        "13": {
+            "x": 12,
+            "y": 5,
+            "w": 12,
+            "h": 1
+        },
+        "14": {
+            "x": 5,
+            "y": 13,
+            "w": 7,
+            "h": 5
+        },
+        "17": {
+            "x": 5,
+            "y": 18,
+            "w": 7,
+            "h": 7
+        },
+        "18": {
+            "x": 0,
+            "y": 13,
+            "w": 5,
+            "h": 5
+        },
+        "20": {
+            "x": 0,
+            "y": 18,
+            "w": 5,
+            "h": 7
+        },
+        "21": {
+            "x": 0,
+            "y": 25,
+            "w": 24,
+            "h": 1
+        },
+        "22": {
+            "x": 17,
+            "y": 18,
+            "w": 7,
+            "h": 7
+        },
+        "23": {
+            "x": 12,
+            "y": 13,
+            "w": 12,
+            "h": 5
+        },
+        "24": {
+            "x": 12,
+            "y": 18,
+            "w": 5,
+            "h": 7
+        },
+        "25": {
+            "x": 0,
+            "y": 26,
+            "w": 12,
+            "h": 6
+        },
+        "26": {
+            "x": 12,
+            "y": 26,
+            "w": 9,
+            "h": 6
+        },
+        "27": {
+            "x": 8,
+            "y": 39,
+            "w": 14,
+            "h": 6
+        },
+        "28": {
+            "x": 0,
+            "y": 3,
+            "w": 12,
+            "h": 2
+        },
+        "29": {
+            "x": 12,
+            "y": 3,
+            "w": 12,
+            "h": 2
+        },
+        "30": {
+            "x": 0,
+            "y": 39,
+            "w": 8,
+            "h": 6
+        }
+    }
+}

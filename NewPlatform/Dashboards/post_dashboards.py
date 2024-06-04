@@ -28,11 +28,28 @@ def run():
     # post_dashboards('Personal', 'Assets/External/GGR/*.json')
     # post_dashboards('Personal', 'Assets/External/TechShady/*.json')
 
-    post_dashboards('Upper', 'Assets/*.json')
-    post_dashboards('Upper', 'Assets/External/CustomerSuccess/*.json')
-    post_dashboards('Upper', 'Assets/External/GGR/*.json')
-    post_dashboards('Upper', 'Assets/External/TechShady/*.json')
+    # post_dashboards('Upper', 'Assets/*.json')
+    # post_dashboards('Upper', 'Assets/External/CustomerSuccess/*.json')
+    # post_dashboards('Upper', 'Assets/External/GGR/*.json')
+    # post_dashboards('Upper', 'Assets/External/TechShady/*.json')
 
+    # post_dashboards('Sandbox', 'Assets/*.json')
+    # post_dashboards('Sandbox', 'Assets/External/AndiG/*.json')
+    # post_dashboards('Sandbox', 'Assets/External/CustomerSuccess/*.json')
+    # post_dashboards('Sandbox', 'Assets/External/Demo/*.json')
+    # post_dashboards('Sandbox', 'Assets/External/GGR/*.json')
+    # post_dashboards('Sandbox', 'Assets/External/Playground/*.json')
+    # post_dashboards('Sandbox', 'Assets/External/TechShady/*.json')
+    # post_dashboards('Sandbox', 'Assets/External/TM/*.json')
+    #
+    # post_dashboards('Lower', 'Assets/*.json')
+    # post_dashboards('Lower', 'Assets/External/AndiG/*.json')
+    # post_dashboards('Lower', 'Assets/External/CustomerSuccess/*.json')
+    # post_dashboards('Lower', 'Assets/External/Demo/*.json')
+    # post_dashboards('Lower', 'Assets/External/GGR/*.json')
+    # post_dashboards('Lower', 'Assets/External/Playground/*.json')
+    # post_dashboards('Lower', 'Assets/External/TechShady/*.json')
+    # post_dashboards('Lower', 'Assets/External/TM/*.json')
 
 def post_dashboards(env_name, path):
     friendly_function_name = 'Dynatrace Automation'

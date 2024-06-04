@@ -1,0 +1,2015 @@
+{
+    "version": 13,
+    "variables": [],
+    "tiles": {
+        "0": {
+            "type": "markdown",
+            "title": "",
+            "content": "# Example infrastructure observability dashboard\nUse the Infrastructure & Operations application for more details"
+        },
+        "1": {
+            "type": "markdown",
+            "title": "",
+            "content": "# Impacted hosts (last 6 hours)\nUse intent from dt.entity.host field to open host application for that host"
+        },
+        "2": {
+            "type": "data",
+            "title": "HOST STATES",
+            "query": "fetch dt.entity.host\n| fieldsAdd state\n| fieldsRemove entity.name\n| fieldsRemove id\n| filterOut isNull(state)\n| summarize count(),\n          by:{\n               state\n             }",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "donutChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {
+                        "RUNNING": {
+                            "color": "var(--dt-colors-charts-vulnerability-status-resolved-default, #3e8e6a)",
+                            "added": 1702388089047
+                        },
+                        "MONITORING_DISABLED": {
+                            "color": "var(--dt-colors-charts-categorical-color-05-default, #84859a)",
+                            "added": 1702389138386
+                        }
+                    },
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "state",
+                        "categoryAxisLabel": "state",
+                        "valueAxis": "count()",
+                        "valueAxisLabel": "count()"
+                    },
+                    "legend": {
+                        "position": "right",
+                        "hidden": false
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "state"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "count()",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "3": {
+            "type": "data",
+            "title": "RESOURCE SATURATION METRICS",
+            "query": "timeseries cpu_usage=avg(dt.host.cpu.usage), interval:1m\n| append [ timeseries mem_usage=avg(dt.host.memory.avail.percent), interval:5m ]\n| append [ timeseries disk_usage=avg(dt.host.disk.used.percent), interval:5m ]",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "cpu_usage",
+                            "mem_usage",
+                            "disk_usage"
+                        ],
+                        "leftAxisDimensions": [],
+                        "fields": [],
+                        "values": []
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "4": {
+            "type": "data",
+            "title": "Host with active problems",
+            "query": "fetch dt.entity.host\n\n| lookup [\n             fetch events, from: now()-6h-10m, to: now()\n             | filter dt.system.bucket == \"default_davis_events\"\n             | filter event.kind == \"DAVIS_PROBLEM\"\n             | filter in(affected_entity_types, \"dt.entity.host\")\n             | sort timestamp\n             | summarize {\n                  event.start = takeLast(event.start),\n                  event.end = takeLast(event.end),\n                  event.status = takeLast(event.status),\n                  dt.davis.is_duplicate = takeLast(dt.davis.is_duplicate),\n                  affected_entities=takeLast(affected_entity_ids)\n               },\n               by:{event.id}\n             | filter isNull(dt.davis.is_duplicate) OR not(dt.davis.is_duplicate)\n             | filter event.status == \"ACTIVE\"\n             | filter isNull(event.end) OR event.end >= now()-6h-10m\n             | filter event.start <= now()\n             | expand affectedHost = affected_entities\n             | filter startsWith(affectedHost,\"HOST-\")\n             | summarize countDistinct(event.id), alias: problems, by:{affectedHost}\n         ],\n          sourceField:id, lookupField:affectedHost, prefix:\"lookup.hostProblems.\"\n| fieldsAdd problems=coalesce(lookup.hostProblems.problems,0)\n| sort problems desc\n| fieldsRemove lookup.hostProblems.affectedHost\n| fieldsRemove lookup.hostProblems.problems\n| fieldsRename dt.entity.host = id\n| fieldsRename `Host name` = entity.name\n| fieldsRename `Open problems` = problems\n| fields dt.entity.host,`Host name`, `Open problems`\n| filterOut `Open problems` == 0\n",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "dt.entity.host",
+                        "categoryAxisLabel": "dt.entity.host",
+                        "valueAxis": "problem.count",
+                        "valueAxisLabel": "problem.count"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "dt.entity.host"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "Open problems",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "5": {
+            "type": "markdown",
+            "title": "",
+            "content": "# Environment "
+        },
+        "6": {
+            "type": "data",
+            "title": "NUMBER OF HOSTS",
+            "query": "fetch dt.entity.host\n| fieldsAdd isMonitoringCandidate\n| filterOut isMonitoringCandidate == true\n| summarize count(), alias: hosts",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {}
+                },
+                "singleValue": {
+                    "showLabel": false,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "hosts"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "hosts",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "7": {
+            "type": "data",
+            "title": "HOST UPTIME",
+            "query": "timeseries host_uptime=avg(dt.host.uptime)\n| fieldsAdd avg_uptime = arrayAvg(host_uptime)\n| fieldsRemove host_uptime\n| fieldsRemove interval\n| fieldsRemove timeframe",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {}
+                },
+                "singleValue": {
+                    "showLabel": false,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "avg_uptime"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "avg_uptime",
+                        "unitCategory": "time",
+                        "baseUnit": "second",
+                        "displayUnit": "day",
+                        "decimals": 1,
+                        "suffix": " days",
+                        "delimiter": false,
+                        "added": 1700654696598
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "avg_uptime",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "9": {
+            "type": "markdown",
+            "title": "",
+            "content": "# Metrics\n"
+        },
+        "10": {
+            "type": "data",
+            "title": "Logs accross all hosts",
+            "query": "fetch logs\n| makeTimeseries count = count(), by:loglevel, interval:5m",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "barChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "loglevel",
+                        "categoryAxisLabel": "loglevel",
+                        "valueAxis": "interval",
+                        "valueAxisLabel": "interval"
+                    },
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "count"
+                        ],
+                        "leftAxisDimensions": [
+                            "loglevel"
+                        ],
+                        "fields": [],
+                        "values": []
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "loglevel"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [
+                        [
+                            "content"
+                        ]
+                    ],
+                    "columnWidths": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "11": {
+            "type": "markdown",
+            "title": "",
+            "content": "# Logs\n"
+        },
+        "12": {
+            "type": "data",
+            "title": "HOST AVAILABILITY",
+            "query": "timeseries m1=sum(dt.host.availability),filter:\navailability.state == \"up\"\n, by:{availability.state,dt.entity.host}\n| parse replaceString(toString(m1),\"null\",\"0\"), \"\"\"'['ARRAY{ DOUBLE:i ', '}{1,10000}:m1Pop\"\"\"\n| fieldsAdd availability= arraySum(m1Pop)/(arraySize(m1Pop)*(toDouble(interval)/6000000000))*1000\n| fieldsRemove timeframe\n| fieldsRemove interval\n| fieldsRemove availability.state\n| fieldsRemove dt.entity.host\n| summarize avg(availability)",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "thresholds": [
+                    {
+                        "id": 1,
+                        "field": "",
+                        "title": "",
+                        "isEnabled": true,
+                        "rules": [
+                            {
+                                "id": 0,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-09-default, #649438)"
+                                },
+                                "comparator": "\u2265",
+                                "label": "",
+                                "value": 95
+                            },
+                            {
+                                "id": 1,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-14-default, #d56b1a)"
+                                },
+                                "comparator": "\u2265",
+                                "label": "",
+                                "value": 80
+                            },
+                            {
+                                "id": 2,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-12-default, #cd3741)"
+                                },
+                                "comparator": "\u2264",
+                                "label": "",
+                                "value": 80
+                            }
+                        ]
+                    }
+                ],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "availability.state",
+                        "categoryAxisLabel": "availability.state",
+                        "valueAxis": "availability",
+                        "valueAxisLabel": "availability"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": false,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "avg(availability)"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "avg(availability)",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "none",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": " %",
+                        "delimiter": false,
+                        "added": 1701249707791
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "avg(availability)",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "13": {
+            "type": "data",
+            "title": "TOP 10 Processes across all hosts based on CPU",
+            "query": "timeseries cpuUsage = avg(dt.process.cpu.usage), by:{host.name, dt.entity.process_group_instance}, interval:15m\n| sort arrayAvg(cpuUsage) desc\n| limit 10\n| lookup [fetch dt.entity.process_group_instance], sourceField:dt.entity.process_group_instance, lookupField:id\n| fieldsRename process_group_instance.name = lookup.entity.name\n| fieldsRemove lookup.id, dt.entity.process_group_instance",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "legend": {
+                        "position": "right",
+                        "hidden": false
+                    },
+                    "leftYAxisSettings": {
+                        "min": 1,
+                        "scale": "linear"
+                    },
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "host.name",
+                        "categoryAxisLabel": "host.name",
+                        "valueAxis": "interval",
+                        "valueAxisLabel": "interval"
+                    },
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "cpuUsage"
+                        ],
+                        "leftAxisDimensions": [
+                            "host.name",
+                            "process_group_instance.name"
+                        ],
+                        "fields": [],
+                        "values": []
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "host.name"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [
+                        [
+                            "content"
+                        ]
+                    ],
+                    "columnWidths": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "14": {
+            "type": "markdown",
+            "title": "",
+            "content": "# Technologies and Processes"
+        },
+        "15": {
+            "type": "data",
+            "title": "Hosts with low Availability %",
+            "query": "timeseries availability_ts=avg(dt.host.memory.avail.percent),by:{dt.entity.host}, from: now()-6h-10m, to: now()\n| sort availability_ts asc\n\n| lookup [\n          fetch dt.entity.host\n\n         ],\n         sourceField:dt.entity.host, lookupField:id, prefix:\"lookup.\"\n         \n| fieldsRemove timeframe\n| fieldsRemove interval\n| fieldsAdd last_availability_pct = arraylast(availability_ts)\n| fieldsRemove availability_ts\n| fieldsRemove lookup.id\n| fieldsRename entity.name = lookup.entity.name\n| sort last_availability_pct asc\n\n\n| fieldsRename `Host name` = entity.name\n| fieldsRename `Availability %` = last_availability_pct\n| fields dt.entity.host,`Host name`, `Availability %`\n\n\n| limit 10",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "dt.entity.host",
+                        "categoryAxisLabel": "dt.entity.host",
+                        "valueAxis": "last_availability_pct",
+                        "valueAxisLabel": "last_availability_pct"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "dt.entity.host"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "Availability %",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "16": {
+            "type": "data",
+            "title": "TOP 10 hosts based on CPU consumption",
+            "query": "timeseries t_cpu=avg(dt.host.cpu.usage), interval: 15m,by:{host.name}\n| fieldsAdd avg_cpu=arrayAvg(t_cpu)\n| sort avg_cpu desc\n| limit 10\n",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "dt.entity.host",
+                        "categoryAxisLabel": "dt.entity.host",
+                        "valueAxis": "avg_cpu",
+                        "valueAxisLabel": "avg_cpu"
+                    },
+                    "legend": {
+                        "position": "right",
+                        "hidden": false
+                    },
+                    "leftYAxisSettings": {
+                        "min": "auto",
+                        "scale": "linear",
+                        "max": 100
+                    },
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "t_cpu"
+                        ],
+                        "leftAxisDimensions": [
+                            "host.name",
+                            "avg_cpu"
+                        ],
+                        "fields": [],
+                        "values": []
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "host.name"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [
+                        [
+                            "content"
+                        ]
+                    ],
+                    "columnWidths": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "avg_cpu",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "17": {
+            "type": "data",
+            "title": "TOP 10 hosts based on MEMORY consumption",
+            "query": "timeseries t_mem=avg(dt.host.memory.avail.percent), interval: 15m,by:{host.name}\n| fieldsAdd avg_mem=arrayAvg(t_mem)\n| sort avg_mem desc\n| limit 10\n",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "dt.entity.host",
+                        "categoryAxisLabel": "dt.entity.host",
+                        "valueAxis": "avg_mem",
+                        "valueAxisLabel": "avg_mem"
+                    },
+                    "legend": {
+                        "position": "right",
+                        "hidden": false
+                    },
+                    "leftYAxisSettings": {
+                        "min": "auto",
+                        "max": 100
+                    },
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "t_mem"
+                        ],
+                        "leftAxisDimensions": [
+                            "host.name",
+                            "avg_mem"
+                        ],
+                        "fields": [],
+                        "values": []
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "host.name"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [
+                        [
+                            "content"
+                        ]
+                    ],
+                    "columnWidths": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "avg_mem",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "18": {
+            "type": "data",
+            "title": "TOP 10 hosts based on DISK utilization",
+            "query": "timeseries t_disk=avg(dt.host.disk.used.percent),interval: 15min, by:{host.name}\n| fieldsAdd avg_disk=arrayAvg(t_disk)\n| sort avg_disk desc\n| limit 10\n",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "dt.entity.host",
+                        "categoryAxisLabel": "dt.entity.host",
+                        "valueAxis": "avg_disk",
+                        "valueAxisLabel": "avg_disk"
+                    },
+                    "legend": {
+                        "position": "right",
+                        "hidden": false
+                    },
+                    "leftYAxisSettings": {
+                        "min": "auto",
+                        "max": 100
+                    },
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "t_disk"
+                        ],
+                        "leftAxisDimensions": [
+                            "host.name",
+                            "avg_disk"
+                        ],
+                        "fields": [],
+                        "values": []
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "host.name"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [
+                        [
+                            "content"
+                        ]
+                    ],
+                    "columnWidths": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "avg_disk",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "20": {
+            "type": "markdown",
+            "title": "",
+            "content": "# Network"
+        },
+        "21": {
+            "type": "data",
+            "title": "TOTAL TRAFFIC IN GB",
+            "query": "timeseries by:{dt.entity.host}, {\n    bytes_rx = sum(dt.host.net.nic.bytes_rx),\n    bytes_tx = sum(dt.host.net.nic.bytes_tx)\n  }\n| fieldsAdd bytes_rx = arraySum(bytes_rx)\n| fieldsAdd bytes_tx = arraySum(bytes_tx)\n| fieldsAdd traffic_gb = 1e-9 * (bytes_rx + bytes_tx)\n| fieldsRemove timeframe\n| fieldsRemove interval\n| fieldsRemove dt.entity.host\n| fieldsRemove bytes_rx\n| fieldsRemove bytes_tx\n| summarize max(traffic_gb), alias: traffic_gb\n",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "dt.entity.host",
+                        "categoryAxisLabel": "dt.entity.host",
+                        "valueAxis": "bytes_rx",
+                        "valueAxisLabel": "bytes_rx"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": false,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "traffic_gb"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [
+                        [
+                            "content"
+                        ]
+                    ],
+                    "columnWidths": {}
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "traffic_gb",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "none",
+                        "displayUnit": null,
+                        "decimals": 1,
+                        "suffix": " GB",
+                        "delimiter": false,
+                        "added": 1701249745190
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "traffic_gb",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "22": {
+            "type": "data",
+            "title": "Hosts by network traffic Tx/Rx",
+            "query": "timeseries by:{host.name}, interval:15min, {\n    bytes_rx = sum(dt.host.net.nic.bytes_rx),\n    bytes_tx = sum(dt.host.net.nic.bytes_tx)\n  }\n  | limit 50\n",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "dt.entity.host",
+                        "categoryAxisLabel": "dt.entity.host",
+                        "valueAxis": "traffic_gb",
+                        "valueAxisLabel": "traffic_gb"
+                    },
+                    "legend": {
+                        "position": "right",
+                        "hidden": false
+                    },
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "bytes_rx",
+                            "bytes_tx"
+                        ],
+                        "leftAxisDimensions": [
+                            "host.name"
+                        ],
+                        "fields": [],
+                        "values": []
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "host.name"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [
+                        [
+                            "content"
+                        ]
+                    ],
+                    "columnWidths": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "23": {
+            "type": "data",
+            "title": "CLOUD TYPE",
+            "query": "fetch dt.entity.host\n| fieldsAdd cloudType = coalesce(replaceString(coalesce(belongs_to[dt.entity.vmware_datacenter],cloudType),\"EC2\",\"AWS\"),\"UNKNOWN\")\n| fieldsAdd cloudType = coalesce(replaceString(cloudType,belongs_to[dt.entity.vmware_datacenter],\"VMWARE\"),cloudType)\n\n\n\n| fieldsRemove entity.name\n| fieldsRemove id\n\n| summarize count(),\n          by:{\n               cloudType\n             }",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "donutChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative",
+                        "hideLabels": false
+                    },
+                    "categoryOverrides": {
+                        "AWS": {
+                            "color": "var(--dt-colors-charts-categorical-color-01-default, #134fc9)",
+                            "added": 1702456719523
+                        },
+                        "AZURE": {
+                            "color": "#b3007d",
+                            "added": 1702456759884
+                        },
+                        "GCP": {
+                            "color": "var(--dt-colors-charts-categorical-color-15-default, #9033a3)",
+                            "added": 1702456789759
+                        },
+                        "VMWARE": {
+                            "color": "var(--dt-colors-charts-categorical-color-14-default, #d56b1a)",
+                            "added": 1702456855562
+                        },
+                        "UNKNOWN": {
+                            "color": "var(--dt-colors-charts-categorical-color-05-default, #84859a)",
+                            "added": 1702456873253
+                        }
+                    },
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "cloudType",
+                        "categoryAxisLabel": "cloudType",
+                        "valueAxis": "count()",
+                        "valueAxisLabel": "count()"
+                    },
+                    "legend": {
+                        "position": "right",
+                        "hidden": false
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "cloudType"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "count()",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "24": {
+            "type": "markdown",
+            "title": "",
+            "content": "# Host Analysis\n"
+        },
+        "25": {
+            "type": "data",
+            "title": "CPU BY CLOUD TYPE",
+            "query": "fetch dt.entity.host\n\n| fieldsAdd cloudType = coalesce(replaceString(coalesce(belongs_to[dt.entity.vmware_datacenter],cloudType),\"EC2\",\"AWS\"),\"UNKNOWN\")\n| fieldsAdd cloudType = coalesce(replaceString(cloudType,belongs_to[dt.entity.vmware_datacenter],\"VMWARE\"),cloudType)\n\n| lookup [\n             timeseries cpu=avg(dt.host.cpu.usage), by:dt.entity.host\n             | fieldsAdd lastCpu = arrayLast(cpu)\n         ],\n          sourceField:id, lookupField:dt.entity.host, fields:lastCpu\n| summarize Average_CPU_usage_on_cloud=avg(lastCpu), by:cloudType\n| sort Average_CPU_usage_on_cloud desc\n| fieldsRename `Cloud Type` = cloudType\n| fieldsRename `Average CPU %` = Average_CPU_usage_on_cloud",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "dt.entity.host",
+                        "categoryAxisLabel": "dt.entity.host",
+                        "valueAxis": "problem.count",
+                        "valueAxisLabel": "problem.count"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "Cloud Type"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "Average CPU %",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "26": {
+            "type": "data",
+            "title": "HYPERVISOR TYPE",
+            "query": "fetch dt.entity.host\n| fieldsAdd hypervisorType = coalesce(hypervisorType,\"UNKNOWN\")\n| fieldsAdd hypervisorType\n| fieldsRemove entity.name\n| fieldsRemove id\n| summarize count(),\n          by:{\n               hypervisorType\n             }",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "donutChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {
+                        "AWS_NITRO": {
+                            "color": "var(--dt-colors-charts-categorical-color-01-default, #134fc9)",
+                            "added": 1702456744203
+                        },
+                        "HYPER_V": {
+                            "color": "#b3007d",
+                            "added": 1702456775960
+                        },
+                        "KVM": {
+                            "color": "var(--dt-colors-charts-categorical-color-15-default, #9033a3)",
+                            "added": 1702456821305
+                        },
+                        "VMWARE": {
+                            "color": "var(--dt-colors-charts-categorical-color-14-default, #d56b1a)",
+                            "added": 1702456894805
+                        },
+                        "UNKNOWN": {
+                            "color": "var(--dt-colors-charts-categorical-color-05-default, #84859a)",
+                            "added": 1702457030474
+                        },
+                        "XEN": {
+                            "color": "var(--dt-colors-charts-categorical-color-06-default, #a9780f)",
+                            "added": 1702457046681
+                        },
+                        "LPAR": {
+                            "color": "var(--dt-colors-charts-categorical-color-07-default, #438fb1)",
+                            "added": 1702457057554
+                        }
+                    },
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "hypervisorType",
+                        "categoryAxisLabel": "hypervisorType",
+                        "valueAxis": "count()",
+                        "valueAxisLabel": "count()"
+                    },
+                    "legend": {
+                        "position": "right",
+                        "hidden": false
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "hypervisorType"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "count()",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "27": {
+            "type": "data",
+            "title": "CPU BY HYPERVISOR TYPE",
+            "query": "fetch dt.entity.host\n| fieldsAdd hypervisorType\n| fieldsAdd hypervisorType = coalesce(hypervisorType,\"UNKNOWN\")\n| lookup [\n             timeseries cpu=avg(dt.host.cpu.usage), by:dt.entity.host\n             | fieldsAdd lastCpu = arrayLast(cpu)\n         ],\n          sourceField:id, lookupField:dt.entity.host, fields:lastCpu\n| summarize Average_CPU_usage_on_cloud=avg(lastCpu), by:hypervisorType\n| sort Average_CPU_usage_on_cloud desc\n\n| fieldsRename `Hypervisor Type` = hypervisorType\n| fieldsRename `Average CPU %` = Average_CPU_usage_on_cloud\n\n",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "dt.entity.host",
+                        "categoryAxisLabel": "dt.entity.host",
+                        "valueAxis": "problem.count",
+                        "valueAxisLabel": "problem.count"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "Hypervisor Type"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "Average CPU %",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "30": {
+            "type": "data",
+            "title": "TECHNOLOGIES",
+            "query": "fetch dt.entity.host\n| fieldsAdd softwareTechnologies\n// | fieldsRemove entity.name\n// | fieldsRemove id\n| filterOut isNull(softwareTechnologies)\n| summarize count = count(),\n          by:{\n               softwareTechnologies\n             }\n| sort count desc\n",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "dt.entity.host",
+                        "categoryAxisLabel": "dt.entity.host",
+                        "valueAxis": "problem.count",
+                        "valueAxisLabel": "problem.count"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "softwareTechnologies"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {
+                        "[\"softwareTechnologies\"]": 600,
+                        "[\"count\"]": 84
+                    }
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "count",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "31": {
+            "type": "data",
+            "title": "HOSTS WITH PROBLEMS",
+            "query": "fetch events, scanLimitGBytes:-1\n| filter dt.system.bucket == \"default_davis_events\"\n| filter event.kind == \"DAVIS_PROBLEM\"\n| filter in(affected_entity_types, \"dt.entity.host\")\n| filterOut event.status == \"CLOSED\"\n| filter isNull(dt.davis.is_duplicate) OR not(dt.davis.is_duplicate)\n| expand affected_entity_ids\n| summarize by:{affected_entity_ids}, count = countDistinct(display_id)\n| fieldsRemove affected_entity_ids\n| summarize hosts = count()",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "thresholds": [
+                    {
+                        "id": 1,
+                        "field": "",
+                        "title": "",
+                        "isEnabled": true,
+                        "rules": [
+                            {
+                                "id": 0,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-09-default, #649438)"
+                                },
+                                "comparator": "\u2265",
+                                "label": ""
+                            },
+                            {
+                                "id": 1,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-14-default, #d56b1a)"
+                                },
+                                "comparator": "\u2265",
+                                "label": ""
+                            },
+                            {
+                                "id": 2,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-12-default, #cd3741)"
+                                },
+                                "comparator": ">",
+                                "label": "",
+                                "value": 0
+                            }
+                        ]
+                    }
+                ],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {}
+                },
+                "singleValue": {
+                    "showLabel": false,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "hosts"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "hosts",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "32": {
+            "type": "data",
+            "title": "TRAFFIC Tx/Rx",
+            "query": "timeseries bytes_rx = sum(dt.host.net.nic.bytes_rx), interval:1m\n| append [ timeseries bytes_tx = sum(dt.host.net.nic.bytes_tx), interval:1m ]\n",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "bytes_rx",
+                            "bytes_tx"
+                        ],
+                        "leftAxisDimensions": [],
+                        "fields": [],
+                        "values": []
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "33": {
+            "type": "data",
+            "title": "AVERAGE PROCESS CPU & MEM USAGE",
+            "query": "timeseries pgi_cpu_usage=avg(dt.process.cpu.usage), interval:15m\n| append [\ntimeseries pgi_mem_usage=avg(dt.process.memory.usage), interval:15m\n]\n",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "legend": {
+                        "position": "right",
+                        "hidden": false
+                    },
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "pgi_cpu_usage",
+                            "pgi_mem_usage"
+                        ],
+                        "leftAxisDimensions": [],
+                        "fields": [],
+                        "values": []
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [
+                        [
+                            "content"
+                        ]
+                    ],
+                    "columnWidths": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "34": {
+            "type": "data",
+            "title": "MONITORING MODE",
+            "query": "fetch dt.entity.host\n| fieldsAdd monitoringMode = coalesce(monitoringMode,\"MONITORING_CANDIDATE\")\n| fieldsRemove entity.name\n| fieldsRemove id\n\n| summarize count(),\n          by:{\n               monitoringMode\n             }\n\n             ",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "donutChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {
+                        "FULL_STACK": {
+                            "color": "var(--dt-colors-charts-vulnerability-status-resolved-default, #3e8e6a)",
+                            "added": 1702388137365
+                        },
+                        "INFRASTRUCTURE": {
+                            "color": "var(--dt-colors-charts-categorical-color-01-default, #134fc9)",
+                            "added": 1702388151228
+                        },
+                        "DISCOVERY": {
+                            "color": "var(--dt-colors-charts-categorical-color-04-default, #d85a9f)",
+                            "added": 1702388172961
+                        },
+                        "MONITORING_CANDIDATE": {
+                            "color": "var(--dt-colors-charts-categorical-color-05-default, #84859a)",
+                            "added": 1702388186359
+                        }
+                    },
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "monitoringMode",
+                        "categoryAxisLabel": "monitoringMode",
+                        "valueAxis": "count()",
+                        "valueAxisLabel": "count()"
+                    },
+                    "legend": {
+                        "position": "right",
+                        "hidden": false
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "monitoringMode"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "count()",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "35": {
+            "type": "data",
+            "title": "Hosts reaching resource saturation (CPU, Memory or Disk)",
+            "query": "timeseries t_mem=avg(dt.host.memory.avail.percent),t_disk=avg(dt.host.disk.free),t_cpu=avg(dt.host.cpu.usage), interval: 15m,by:{host.name}\n| lookup [\n\nfetch dt.entity.host\n\n| fieldsAdd cloudType = coalesce(replaceString(coalesce(belongs_to[dt.entity.vmware_datacenter],cloudType),\"EC2\",\"AWS\"),\"UNKNOWN\")\n| fieldsAdd cloudType = coalesce(replaceString(cloudType,belongs_to[dt.entity.vmware_datacenter],\"VMWARE\"),cloudType)\n\n], sourceField:host.name, lookupField:entity.name, prefix:\"host.\"\n\n| fieldsAdd avg_cpu=arrayAvg(t_cpu)\n| fieldsAdd avg_mem=arrayAvg(t_mem)\n| fieldsAdd avg_disk=arrayAvg(t_disk)\n\n| fieldsRemove t_mem,t_disk,t_cpu, interval, timeframe\n\n| fieldsAdd if(avg_cpu > 60, \"WARNING\", else: \"\"), alias: CPU_warning\n\n| fieldsAdd if(avg_mem > 60, \"WARNING\", else: \"\"), alias: Mem_warning\n\n| fieldsAdd if(avg_disk < 40, \"WARNING\", else: \"\"), alias: Disk_warning\n\n| filter Mem_warning == \"WARNING\" or Disk_warning == \"WARNING\" or CPU_warning == \"WARNING\"\n\n| filter isNotNull(host.entity.name)\n\n| sort avg_cpu desc\n\n| fieldsRename dt.entity.host = host.id",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "dt.entity.host",
+                        "categoryAxisLabel": "dt.entity.host",
+                        "valueAxis": "problem.count",
+                        "valueAxisLabel": "problem.count"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "host.entity.name"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {
+                        "[\"host.entity.name\"]": 222.00000000000003,
+                        "[\"host.id\"]": 185,
+                        "[\"avg_cpu\"]": 109,
+                        "[\"avg_mem\"]": 112,
+                        "[\"avg_disk\"]": 105,
+                        "[\"CPU_warning\"]": 134,
+                        "[\"Mem_warning\"]": 140,
+                        "[\"Disk_warning\"]": 135
+                    }
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "avg_cpu",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "avg_mem",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "avg_disk",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "38": {
+            "type": "data",
+            "title": "RESOURCE SATURATION TYPE",
+            "query": "timeseries t_mem=avg(dt.host.memory.avail.percent),t_disk=avg(dt.host.disk.free),t_cpu=avg(dt.host.cpu.usage), interval: 15m,by:{host.name}\n| lookup [\n\nfetch dt.entity.host\n\n], sourceField:host.name, lookupField:entity.name, prefix:\"host.\"\n\n| fieldsAdd avg_mem=arrayAvg(t_mem)\n| fieldsAdd avg_disk=arrayAvg(t_disk)\n| fieldsAdd avg_cpu=arrayAvg(t_cpu)\n| fieldsRemove t_mem,t_disk,t_cpu, interval, timeframe\n\n| fieldsAdd if(avg_cpu > 60, \"CPU\", else: \"\"), alias: CPU_warning\n\n| fieldsAdd if(avg_mem > 60, \"MEM\", else: \"\"), alias: Mem_warning\n\n| fieldsAdd if(avg_disk < 40, \"DISK\", else: \"\"), alias: Disk_warning\n\n| filter Mem_warning == \"MEM\" or Disk_warning == \"DISK\" or CPU_warning == \"CPU\"\n\n| filter isNotNull(host.entity.name)\n\n| sort avg_cpu desc\n\n// | fieldsAdd coalesce(CPU_warning, Mem_warning, Disk_warning)\n| fieldsRemove host.entity.name, host.id, avg_mem, avg_disk, avg_cpu\n\n| summarize count=count(), by:{CPU_warning==\"CPU\", alias: CPU, Mem_warning==\"MEM\", alias: MEMORY, Disk_warning==\"DISK\", alias: DISK}\n\n| fieldsAdd if(CPU, \"CPU WARNING\", else: if(DISK, \"DISK WARNING\", else: if(MEMORY, \"MEM WARNING\", else: \"\"))), alias: WARNING\n\n| fieldsRemove CPU, MEMORY, DISK\n",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "donutChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "WARNING",
+                        "categoryAxisLabel": "WARNING",
+                        "valueAxis": "count",
+                        "valueAxisLabel": "count"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "count"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "count",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "39": {
+            "type": "data",
+            "title": "UNDERUTILIZED Hosts (CPU, Memory or Disk)",
+            "query": "timeseries t_mem=avg(dt.host.memory.avail.percent),t_disk=avg(dt.host.disk.free),t_cpu=avg(dt.host.cpu.usage), interval: 15m,by:{host.name}\n| lookup [\n\nfetch dt.entity.host\n\n| fieldsAdd cloudType = coalesce(replaceString(coalesce(belongs_to[dt.entity.vmware_datacenter],cloudType),\"EC2\",\"AWS\"),\"UNKNOWN\")\n| fieldsAdd cloudType = coalesce(replaceString(cloudType,belongs_to[dt.entity.vmware_datacenter],\"VMWARE\"),cloudType)\n\n\n], sourceField:host.name, lookupField:entity.name, prefix:\"host.\"\n\n| fieldsAdd avg_cpu=arrayAvg(t_cpu)\n| fieldsAdd avg_mem=arrayAvg(t_mem)\n| fieldsAdd avg_disk=arrayAvg(t_disk)\n\n| fieldsRemove t_mem,t_disk,t_cpu, interval, timeframe\n\n| fieldsAdd if(avg_cpu < 11, \"LOW\", else: \"\"), alias: CPU_warning\n\n| fieldsAdd if(avg_mem < 11, \"LOW\", else: \"\"), alias: Mem_warning\n\n| fieldsAdd if(avg_disk > 79, \"LOW\", else: \"\"), alias: Disk_warning\n\n| filter Mem_warning == \"LOW\" or Disk_warning == \"LOW\" or CPU_warning == \"LOW\"\n\n| filter isNotNull(host.entity.name)\n\n| sort avg_cpu asc\n\n| fieldsRename dt.entity.host = host.id",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "dt.entity.host",
+                        "categoryAxisLabel": "dt.entity.host",
+                        "valueAxis": "problem.count",
+                        "valueAxisLabel": "problem.count"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "host.entity.name"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {
+                        "[\"host.entity.name\"]": 222.00000000000003,
+                        "[\"host.id\"]": 185,
+                        "[\"avg_cpu\"]": 109,
+                        "[\"avg_mem\"]": 112,
+                        "[\"avg_disk\"]": 105,
+                        "[\"CPU_warning\"]": 134,
+                        "[\"Mem_warning\"]": 140,
+                        "[\"Disk_warning\"]": 135
+                    }
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "avg_cpu",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "avg_mem",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "avg_disk",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        }
+    },
+    "layouts": {
+        "0": {
+            "x": 0,
+            "y": 0,
+            "w": 24,
+            "h": 2
+        },
+        "1": {
+            "x": 0,
+            "y": 18,
+            "w": 21,
+            "h": 2
+        },
+        "2": {
+            "x": 0,
+            "y": 7,
+            "w": 10,
+            "h": 7
+        },
+        "3": {
+            "x": 10,
+            "y": 24,
+            "w": 11,
+            "h": 8
+        },
+        "4": {
+            "x": 0,
+            "y": 20,
+            "w": 21,
+            "h": 4
+        },
+        "5": {
+            "x": 0,
+            "y": 2,
+            "w": 24,
+            "h": 2
+        },
+        "6": {
+            "x": 0,
+            "y": 4,
+            "w": 4,
+            "h": 3
+        },
+        "7": {
+            "x": 14,
+            "y": 4,
+            "w": 7,
+            "h": 3
+        },
+        "9": {
+            "x": 0,
+            "y": 108,
+            "w": 24,
+            "h": 2
+        },
+        "10": {
+            "x": 0,
+            "y": 159,
+            "w": 21,
+            "h": 11
+        },
+        "11": {
+            "x": 0,
+            "y": 157,
+            "w": 24,
+            "h": 2
+        },
+        "12": {
+            "x": 8,
+            "y": 4,
+            "w": 6,
+            "h": 3
+        },
+        "13": {
+            "x": 0,
+            "y": 97,
+            "w": 21,
+            "h": 11
+        },
+        "14": {
+            "x": 0,
+            "y": 77,
+            "w": 24,
+            "h": 2
+        },
+        "15": {
+            "x": 0,
+            "y": 41,
+            "w": 21,
+            "h": 9
+        },
+        "16": {
+            "x": 0,
+            "y": 110,
+            "w": 21,
+            "h": 10
+        },
+        "17": {
+            "x": 0,
+            "y": 120,
+            "w": 21,
+            "h": 11
+        },
+        "18": {
+            "x": 0,
+            "y": 131,
+            "w": 21,
+            "h": 10
+        },
+        "20": {
+            "x": 0,
+            "y": 141,
+            "w": 24,
+            "h": 2
+        },
+        "21": {
+            "x": 0,
+            "y": 14,
+            "w": 8,
+            "h": 4
+        },
+        "22": {
+            "x": 0,
+            "y": 143,
+            "w": 24,
+            "h": 14
+        },
+        "23": {
+            "x": 0,
+            "y": 61,
+            "w": 12,
+            "h": 8
+        },
+        "24": {
+            "x": 0,
+            "y": 59,
+            "w": 24,
+            "h": 2
+        },
+        "25": {
+            "x": 12,
+            "y": 61,
+            "w": 9,
+            "h": 8
+        },
+        "26": {
+            "x": 0,
+            "y": 69,
+            "w": 12,
+            "h": 8
+        },
+        "27": {
+            "x": 12,
+            "y": 69,
+            "w": 9,
+            "h": 8
+        },
+        "30": {
+            "x": 0,
+            "y": 79,
+            "w": 21,
+            "h": 7
+        },
+        "31": {
+            "x": 4,
+            "y": 4,
+            "w": 4,
+            "h": 3
+        },
+        "32": {
+            "x": 8,
+            "y": 14,
+            "w": 13,
+            "h": 4
+        },
+        "33": {
+            "x": 0,
+            "y": 86,
+            "w": 21,
+            "h": 11
+        },
+        "34": {
+            "x": 10,
+            "y": 7,
+            "w": 11,
+            "h": 7
+        },
+        "35": {
+            "x": 0,
+            "y": 32,
+            "w": 21,
+            "h": 9
+        },
+        "38": {
+            "x": 0,
+            "y": 24,
+            "w": 10,
+            "h": 8
+        },
+        "39": {
+            "x": 0,
+            "y": 50,
+            "w": 21,
+            "h": 9
+        }
+    },
+    "refreshRate": 60000
+}

@@ -1,0 +1,251 @@
+{
+    "version": 11,
+    "variables": [
+        {
+            "key": "status",
+            "type": "csv",
+            "input": "ERROR,WARN,INFO,NONE",
+            "multiple": true
+        }
+    ],
+    "tiles": {
+        "1": {
+            "type": "data",
+            "title": "Recent logs",
+            "query": "fetch logs\n| fields status, timestamp, content, log.source, dt.source_entity",
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [
+                        [
+                            "content"
+                        ]
+                    ],
+                    "columnWidths": {}
+                }
+            }
+        },
+        "2": {
+            "type": "data",
+            "title": "",
+            "query": "fetch logs\n| filter in(loglevel,array($status))\n| summarize count = count(), by:{bin(timestamp, 1m), status}",
+            "visualization": "barChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                }
+            }
+        },
+        "3": {
+            "type": "data",
+            "title": "",
+            "query": "fetch logs\n| filter loglevel == \"ERROR\" \n// get the series for the sparkline\n| makeTimeseries errors=count()\n// fold the counts for the single value\n| fieldsAdd `error count`=arraySum(errors)",
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "ErrorIcon",
+                    "recordField": "error count",
+                    "autoscale": true,
+                    "sparklineSettings": {
+                        "showTicks": false,
+                        "color": {
+                            "Default": "var(--dt-colors-charts-categorical-color-12-default, #d50b34)",
+                            "Hover": "var(--dt-colors-charts-categorical-color-12-hover, #b30024)",
+                            "Active": "var(--dt-colors-charts-categorical-color-12-active, #7e071d)",
+                            "DefaultTransparent": "var(--dt-colors-charts-categorical-color-12-default-transparent, #c5000ccc)",
+                            "HoverTransparent": "var(--dt-colors-charts-categorical-color-12-hover-transparent, #83000fcc)",
+                            "ActiveTransparent": "var(--dt-colors-charts-categorical-color-12-active-transparent, #140000cc)"
+                        },
+                        "variant": "area",
+                        "isVisible": true
+                    },
+                    "alignment": "center"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [
+                        [
+                            "errors"
+                        ]
+                    ],
+                    "columnWidths": {}
+                }
+            }
+        },
+        "4": {
+            "type": "markdown",
+            "title": "",
+            "content": "# Error analysis\nTo fix log status you can use [log processing](/ui/apps/dynatrace.classic.settings/ui/settings/builtin:logmonitoring.log-dpp-rules?gtf=-2h&gf=all)\n\nTo connect Logs and Trace [enable the feature on OneAgent](https://www.dynatrace.com/support/help/observe-and-explore/logs/log-management-and-analytics/lma-log-enrichment)"
+        },
+        "5": {
+            "type": "markdown",
+            "title": "",
+            "content": "# Example: Log overview \nIf you want to ingest more logs [go to settings](/ui/apps/dynatrace.classic.settings/ui/settings/builtin:logmonitoring.log-storage-settings?gtf=-2h&gf=all)"
+        },
+        "6": {
+            "type": "data",
+            "title": "Log sources with most Errors (click on dt.source_entity value to open related App)",
+            "query": "fetch logs\n| filter status == \"ERROR\"\n| summarize count(), by: {dt.source_entity, dt.process.name  }, alias: total\n| sort total desc",
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "dt.source_entity",
+                        "categoryAxisLabel": "dt.source_entity",
+                        "valueAxis": "count()",
+                        "valueAxisLabel": "count()"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                }
+            }
+        },
+        "7": {
+            "type": "data",
+            "title": "Traces with errors (click on dt.trace_id to open trace details)",
+            "query": "fetch logs\n| filter status == \"ERROR\"\n| filter isNotNull(dt.trace_id)\n| fields timestamp, content, dt.trace_id",
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "dt.source_entity",
+                        "categoryAxisLabel": "dt.source_entity",
+                        "valueAxis": "count()",
+                        "valueAxisLabel": "count()"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                }
+            }
+        }
+    },
+    "layouts": {
+        "1": {
+            "x": 0,
+            "y": 8,
+            "w": 24,
+            "h": 9
+        },
+        "2": {
+            "x": 0,
+            "y": 2,
+            "w": 24,
+            "h": 6
+        },
+        "3": {
+            "x": 0,
+            "y": 17,
+            "w": 7,
+            "h": 3
+        },
+        "4": {
+            "x": 7,
+            "y": 17,
+            "w": 14,
+            "h": 3
+        },
+        "5": {
+            "x": 0,
+            "y": 0,
+            "w": 24,
+            "h": 2
+        },
+        "6": {
+            "x": 0,
+            "y": 20,
+            "w": 24,
+            "h": 6
+        },
+        "7": {
+            "x": 0,
+            "y": 26,
+            "w": 24,
+            "h": 5
+        }
+    }
+}

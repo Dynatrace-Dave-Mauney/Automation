@@ -20,6 +20,18 @@ remove_directory_at_startup = True
 current_cluster_version = '1.261.134.20230302-084304'
 current_configuration_versions = [6]
 
+file_skip_list = [
+    'Templates/Overview\README.md',
+    'Templates/Overview\dashboard_index_by_id.txt',
+    'Templates/Overview\dashboard_index_by_name.txt',
+    'Templates/Overview\dashboard_templates_overview_versions.txt',
+    'Templates/Overview\demo_dashboard_index_by_id.txt',
+    'Templates/Overview\demo_dashboard_notes.txt',
+    'Templates/Overview\markdown_aws_menu.json',
+    'Templates/Overview\markdown_menu-BACKUP.json',
+    'Templates/Overview\markdown_menu-v1.json',
+    'Templates/Overview\markdown_menu.json',
+]
 
 def clean_dashboards():
     confirm('clean dashboards from ' + DASHBOARD_INPUT_PATH + ' to ' + DASHBOARD_OUTPUT_PATH)
@@ -119,7 +131,8 @@ def clean_dashboard(filename):
             with open(output_filename, 'w', encoding='utf-8') as outfile:
                 outfile.write(json.dumps(dashboard_json, indent=4, sort_keys=False))
         except JSONDecodeError:
-            print(f'Skipping non-JSON file: {filename}')
+            if filename not in file_skip_list:
+                print(f'Skipping non-JSON file: {filename}')
 
 
 def initialize():

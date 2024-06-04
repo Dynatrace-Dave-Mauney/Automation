@@ -1,0 +1,698 @@
+{
+    "version": 12,
+    "variables": [
+        {
+            "key": "dbType",
+            "type": "csv",
+            "input": "MS SQL Server, Oracle, PostgreSQL, SAP HanaDB, IBM DB2, MySQL, Snowflake, Cassandra, MongoDB, Elasticsearch, Memcached",
+            "multiple": true
+        },
+        {
+            "key": "logLevel",
+            "type": "csv",
+            "input": "INFO, ERROR, WARN",
+            "multiple": true
+        }
+    ],
+    "tiles": {
+        "0": {
+            "type": "data",
+            "title": "Database type distribution",
+            "query": "fetch `dt.entity.sql:com_dynatrace_extension_sql-oracle_instance` \n// | append [fetch `dt.entity.sql:db2_instance`]\n| append [fetch `dt.entity.sql:sql_server_instance`]\n// | append [fetch `dt.entity.sql:snowflake_account`]\n| append [fetch `dt.entity.sql:postgres_instance`]\n// | append [fetch `dt.entity.mysql:instance`]\n| append [fetch `dt.entity.sql:hana_db_database`]\n// | append [fetch `dt.entity.mongodb-prometheus:device`]\n// | append [fetch `dt.entity.elasticsearch:node`]\n| append [fetch dt.entity.process_group_instance\n  | fieldsAdd id, entity.type, techType = \"Cassandra\"\n  | filter iAny(contains(softwareTechnologies[], \"type:APACHE_CASSANDRA,\"))]\n| append [fetch dt.entity.process_group_instance\n  | fieldsAdd id, entity.type, techType = \"Memcached\"\n  | filter iAny(contains(softwareTechnologies[], \"type:MEMCACHED,\"))]\n| fieldsAdd db_type = replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(entity.type, \n  \"sql:com_dynatrace_extension_sql-oracle_instance\", \"Oracle\"), \n  \"sql:db2_instance\", \"IBM DB2\"), \n  \"sql:sql_server_instance\", \"MS SQL Server\"), \n  \"sql:postgres_instance\", \"PostgreSQL\"), \"mysql:instance\", \"MySQL\"), \n  \"sql:hana_db_database\", \"SAP HanaDB\"), \n  \"sql:snowflake_account\", \"Snowflake\"),\n  \"mongodb-prometheus:device\", \"MongoDB\"),\n  \"elasticsearch:node\", \"Elasticsearch\"),\n  \"PROCESS_GROUP_INSTANCE\", coalesce(techType, \"?\"))\n| filter in(db_type, array($dbType))\n| summarize distinct_dbs = countDistinct(id), by:db_type \n| fields db_type, distinct_dbs\n| sort distinct_dbs desc, db_type",
+            "visualization": "donutChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "hideLabels": false
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "db_type",
+                        "categoryAxisLabel": "db_type",
+                        "valueAxis": "distinct_dbs",
+                        "valueAxisLabel": "distinct_dbs",
+                        "layout": "horizontal"
+                    },
+                    "legend": {
+                        "position": "right",
+                        "hidden": false
+                    },
+                    "colorPalette": "blue-steel"
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [
+                        [
+                            "timeframe"
+                        ],
+                        [
+                            "interval"
+                        ]
+                    ],
+                    "lineWrapIds": [
+                        [
+                            "sum(`com.dynatrace.extension.sql-oracle.cpu.cores`)"
+                        ]
+                    ],
+                    "columnWidths": {}
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "com.dynatrace.extension.sql-oracle.cpu.cores",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true
+                    }
+                ]
+            }
+        },
+        "1": {
+            "type": "data",
+            "title": "DBMS server instances",
+            "query": "fetch `dt.entity.sql:com_dynatrace_extension_sql-oracle_instance`\n// | append [fetch `dt.entity.sql:db2_instance`]\n| append [fetch `dt.entity.sql:sql_server_instance`]\n// | append [fetch `dt.entity.sql:snowflake_account`]\n| append [fetch `dt.entity.sql:postgres_instance`]\n// | append [fetch `dt.entity.mysql:instance`]\n| append [fetch `dt.entity.sql:hana_db_database`]\n| fieldsAdd db_type=replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(entity.type, \"sql:com_dynatrace_extension_sql-oracle_instance\", \"Oracle\"), \"sql:db2_instance\", \"IBM DB2\"), \"sql:sql_server_instance\", \"MS SQL Server\"), \"sql:postgres_instance\", \"PostgreSQL\"), \"mysql:instance\", \"MySQL\"), \"sql:hana_db_database\", \"SAP HanaDB\")\n| lookup [\n    timeseries status_avg = avg(`com.dynatrace.extension.sql-oracle.status`), by:{`dt.entity.sql:com_dynatrace_extension_sql-oracle_instance`, `status`}\n    | summarize {o = max(arrayLastIndexOf(status_avg, 1))}, by:{`dt.entity.sql:com_dynatrace_extension_sql-oracle_instance`, `status`, timeframe, interval}\n    | fieldsAdd d = record(t = timeframe[start] + interval * toLong(o), status)\n    | summarize {d = takeMax(d)}, by:{`dt.entity.sql:com_dynatrace_extension_sql-oracle_instance`}\n    | fieldsAdd {d[status], alias:status}, {d[t], alias:status_timestamp}\n  ],\n  sourceField:id,\n  lookupField:{`dt.entity.sql:com_dynatrace_extension_sql-oracle_instance`},\n  prefix:\"oracle.\"\n| lookup [\n    timeseries status_avg = avg(`sql-server.databases.state`), by:{`dt.entity.sql:sql_server_instance`, `database.state`}\n    | summarize {o = max(arrayLastIndexOf(status_avg, 1))}, by:{`dt.entity.sql:sql_server_instance`, `database.state`, timeframe, interval}\n    | fieldsAdd d = record(t = timeframe[start] + interval * toLong(o), database.state)\n    | summarize {d = takeMax(d)}, by:{`dt.entity.sql:sql_server_instance`}\n    | fieldsAdd {d[database.state], alias:status}, {d[t], alias:status_timestamp}\n  ],\n  sourceField:id,\n  lookupField:{`dt.entity.sql:sql_server_instance`},\n  prefix: \"mssql.\"\n| lookup [\n    timeseries status_avg = avg(`db2.db2_status`), by:{`dt.entity.sql:db2_instance`, `db2_status`}\n    | summarize {o = max(arrayLastIndexOf(status_avg, 1)) }, by:{`dt.entity.sql:db2_instance`, `db2_status`, timeframe, interval}\n    | fieldsAdd d = record(t = timeframe[start] + interval * toLong(o), db2_status)\n    | summarize {d = takeMax(d)}, by:{`dt.entity.sql:db2_instance`}\n    | fieldsAdd {d[db2_status], alias:status}, {d[t], alias:status_timestamp}\n  ],\n  sourceField:id,\n  lookupField:{`dt.entity.sql:db2_instance`},\n  prefix: \"db2.\"\n| lookup [\n    timeseries status_avg = avg(`mysql.global_status.status`), by:{`dt.entity.mysql:instance`, `status`}\n    | summarize {o = max(arrayLastIndexOf(status_avg, 1)) }, by:{`dt.entity.mysql:instance`, `status`, timeframe, interval}\n    | fieldsAdd d = record(t = timeframe[start] + interval * toLong(o), status)\n    | summarize {d = takeMax(d)}, by:{`dt.entity.mysql:instance`}\n    | fieldsAdd {d[status], alias:status}, {d[t], alias:status_timestamp}\n  ],\n  sourceField:id,\n  lookupField:{`dt.entity.mysql:instance`},\n  prefix: \"mysql.\"\n| lookup [\n    timeseries status_avg = avg(`sap.hana.db.service.status`), by:{`dt.entity.sql:hana_db_database`, `status`}\n    | summarize {o = max(arrayLastIndexOf(status_avg, 1)) }, by:{`dt.entity.sql:hana_db_database`, `status`, timeframe, interval}\n    | fieldsAdd d = record(t = timeframe[start] + interval * toLong(o), status)\n    | summarize {d = takeMax(d)}, by:{`dt.entity.sql:hana_db_database`}\n    | fieldsAdd {d[status], alias:status}, {d[t], alias:status_timestamp}\n  ],\n  sourceField:id,\n  lookupField:{`dt.entity.sql:hana_db_database`},\n  prefix: \"hanadb.\"\n| filter in(db_type, array($dbType))\n| fields db_type, id, entity.name,\n  status = coalesce(oracle.status, mssql.status, db2.status, mysql.status, hanadb.status, \"UNKNOWN\"),\n  status_timestamp = coalesce(oracle.status_timestamp, mssql.status_timestamp, db2.status_timestamp, mysql.status_timestamp, hanadb.status_timestamp)",
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {}
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [
+                        [
+                            "entity.name"
+                        ]
+                    ],
+                    "columnWidths": {}
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "status_avg",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "state",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true
+                    },
+                    {
+                        "identifier": "status_avg",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "state",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true
+                    },
+                    {
+                        "identifier": "status_avg",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "state",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true
+                    },
+                    {
+                        "identifier": "status_avg",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true
+                    }
+                ]
+            }
+        },
+        "2": {
+            "type": "data",
+            "title": "Recent top queries",
+            "query": "fetch logs, from:now()-6h\n| filter matchesValue(loglevel, \"INFO\")\n| filter ((matchesValue(dt.extension.name, \"com.dynatrace.extension.sql-oracle\") \n    and matchesValue(event.group, \"query_performance\")\n    and isNotNull(elapsed_time))\n  or (matchesValue(dt.extension.name, \"com.dynatrace.extension.sql-server\") \n    and matchesValue(event.group, \"longest_queries\")\n    and isNotNull(total_duration))\n  or (matchesValue(dt.extension.name, \"com.dynatrace.extension.mysql\") \n    and matchesValue(event.group, \"query_performance\")\n    and isNotNull(query_time))\n  or (matchesValue(dt.extension.name, \"com.dynatrace.extension.sql-sap-hana\") \n    and matchesValue(type, \"expensive_statement\")\n    and isNotNull(duration)))\n| fieldsAdd totalTimeElapsed = toDouble(coalesce(elapsed_time, total_duration, query_time, duration, \"0\"))\n| filter totalTimeElapsed > 0\n| fieldsAdd statementID = coalesce(sql_id, query_id, \"UNKNOWN\")\n| fieldsAdd schema = coalesce(schema, db, \"\")\n| fieldsAdd dbType = replaceString(replaceString(replaceString(replaceString(dt.extension.name, \n  \"com.dynatrace.extension.sql-oracle\", \"Oracle\"), \n  \"com.dynatrace.extension.sql-server\", \"MS SQL Server\"), \n  \"com.dynatrace.extension.mysql\", \"MySQL\"), \n  \"com.dynatrace.extension.sql-sap-hana\", \"SAP HanaDB\")\n| filter in(dbType, array($dbType))\n| filter in(loglevel, array($logLevel))\n| fields dbType, device, content, schema, statementID, timestamp, totalTimeElapsed\n| sort totalTimeElapsed desc, timestamp desc\n| limit 20",
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "content",
+                        "categoryAxisLabel": "content",
+                        "valueAxis": "avg_elapsed",
+                        "valueAxisLabel": "avg_elapsed"
+                    },
+                    "fieldMapping": {
+                        "timestamp": "timestamp",
+                        "leftAxisValues": [
+                            "avg_elapsed"
+                        ],
+                        "leftAxisDimensions": [
+                            "content"
+                        ]
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [
+                        [
+                            "content"
+                        ]
+                    ],
+                    "columnWidths": {}
+                }
+            }
+        },
+        "4": {
+            "type": "data",
+            "title": "Oracle tablespace utilization",
+            "query": "timeseries tablespaceUsedRatio = avg(`com.dynatrace.extension.sql-oracle.tablespaces.usedSpaceRatio`),\n  from:now()-6h,\n  by:{`dt.entity.sql:com_dynatrace_extension_sql-oracle_instance`, device, tablespace}\n| filter in(\"Oracle\", array($dbType))\n| filterOut like(tablespace, \"UNDO%\")\n| filterOut like(tablespace, \"MGMT%\")\n| summarize {tsUsed = avg(arrayLast(tablespaceUsedRatio))}, by:{`dt.entity.sql:com_dynatrace_extension_sql-oracle_instance`, device, tablespace}\n| fields device, tablespace, tsUsed\n| sort tsUsed desc\n| limit 10",
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [
+                    {
+                        "id": 1,
+                        "field": "",
+                        "title": "",
+                        "isEnabled": true,
+                        "rules": [
+                            {
+                                "id": 0,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-09-default, #649438)"
+                                },
+                                "comparator": "\u2264",
+                                "label": "",
+                                "value": 75
+                            },
+                            {
+                                "id": 1,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-14-default, #d56b1a)"
+                                },
+                                "comparator": ">",
+                                "label": "Warning",
+                                "value": 75
+                            },
+                            {
+                                "id": 2,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-12-default, #cd3741)"
+                                },
+                                "comparator": "\u2265",
+                                "label": "Critical",
+                                "value": 95
+                            }
+                        ]
+                    }
+                ],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute",
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "device",
+                        "categoryAxisLabel": "device",
+                        "valueAxis": "tsUsed",
+                        "valueAxisLabel": "tsUsed"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [
+                        [
+                            "tablespaceUsedRatio"
+                        ]
+                    ],
+                    "columnWidths": {},
+                    "enableLineWrap": true
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "tsUsed",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": "percent",
+                        "decimals": 1,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1701870954976
+                    }
+                ]
+            }
+        },
+        "5": {
+            "type": "data",
+            "title": "# of monitored servers",
+            "query": "fetch `dt.entity.sql:com_dynatrace_extension_sql-oracle_instance` \n// | append [fetch `dt.entity.sql:db2_instance`]\n| append [fetch `dt.entity.sql:sql_server_instance`]\n// | append [fetch `dt.entity.sql:snowflake_account`]\n| append [fetch `dt.entity.sql:postgres_instance`]\n// | append [fetch `dt.entity.mysql:instance`]\n| append [fetch `dt.entity.sql:hana_db_database`]\n// | append [fetch `dt.entity.mongodb-prometheus:device`]\n// | append [fetch `dt.entity.elasticsearch:node`]\n| append [fetch dt.entity.process_group_instance\n  | fieldsAdd id, entity.type, techType = \"Cassandra\"\n  | filter iAny(contains(softwareTechnologies[], \"type:APACHE_CASSANDRA,\"))]\n| append [fetch dt.entity.process_group_instance\n  | fieldsAdd id, entity.type, techType = \"Memcached\"\n  | filter iAny(contains(softwareTechnologies[], \"type:MEMCACHED,\"))]\n| fieldsAdd dbType = replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(entity.type, \n  \"sql:com_dynatrace_extension_sql-oracle_instance\", \"Oracle\"), \n  \"sql:db2_instance\", \"IBM DB2\"), \n  \"sql:sql_server_instance\", \"MS SQL Server\"), \n  \"sql:postgres_instance\", \"PostgreSQL\"), \n  \"mysql:instance\", \"MySQL\"), \n  \"sql:hana_db_database\", \"SAP HanaDB\"), \n  \"sql:snowflake_account\", \"Snowflake\"),\n  \"mongodb-prometheus:device\", \"MongoDB\"),\n  \"elasticsearch:node\", \"Elasticsearch\"),\n  \"PROCESS_GROUP_INSTANCE\", coalesce(techType, \"?\"))\n| filter in(dbType, array($dbType))\n| summarize countDistinct(id)",
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "hideLabels": false
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "db_type",
+                        "categoryAxisLabel": "db_type",
+                        "valueAxis": "distinct_dbs",
+                        "valueAxisLabel": "distinct_dbs",
+                        "layout": "horizontal"
+                    },
+                    "legend": {
+                        "position": "right",
+                        "hidden": false
+                    },
+                    "colorPalette": "blue-steel"
+                },
+                "singleValue": {
+                    "label": "# of servers",
+                    "prefixIcon": "CheckCircleIcon",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "showLabel": false,
+                    "sparklineSettings": {
+                        "isVisible": false
+                    },
+                    "trend": {
+                        "isVisible": false
+                    }
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [
+                        [
+                            "timeframe"
+                        ],
+                        [
+                            "interval"
+                        ]
+                    ],
+                    "lineWrapIds": [
+                        [
+                            "sum(`com.dynatrace.extension.sql-oracle.cpu.cores`)"
+                        ]
+                    ],
+                    "columnWidths": {}
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "com.dynatrace.extension.sql-oracle.cpu.cores",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true
+                    }
+                ]
+            }
+        },
+        "6": {
+            "type": "markdown",
+            "title": "",
+            "content": "# Databases\nAn overview of all monitored DB servers and databases. Use the [DB application](/ui/apps/dynatrace.database.overview/) for more details."
+        },
+        "7": {
+            "type": "data",
+            "title": "# of monitored databases",
+            "query": "fetch `dt.entity.sql:sql_server_database`\n// | append [fetch `dt.entity.sql:db2_database_member`]\n// | append [fetch `dt.entity.mysql:database`]\n// | append [fetch `dt.entity.sql:snowflake_account`]\n| append [fetch `dt.entity.sql:com_dynatrace_extension_sql-oracle_database`]\n| append [fetch `dt.entity.sql:postgres_database`]\n// | append [fetch `dt.entity.mongodb-prometheus:device`]\n// | append [fetch `dt.entity.elasticsearch:node`]\n| append [fetch dt.entity.process_group_instance\n  | fieldsAdd id, entity.type, techType = \"Cassandra\"\n  | filter iAny(contains(softwareTechnologies[], \"type:APACHE_CASSANDRA,\"))]\n| append [fetch dt.entity.process_group_instance\n  | fieldsAdd id, entity.type, techType = \"Memcached\"\n  | filter iAny(contains(softwareTechnologies[], \"type:MEMCACHED,\"))]\n| fieldsAdd db_type = replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(entity.type, \n  \"sql:com_dynatrace_extension_sql-oracle_database\", \"Oracle\"), \n  \"sql:db2_database_member\", \"IBM DB2\"), \n  \"sql:sql_server_database\", \"MS SQL Server\"), \n  \"sql:postgres_database\", \"PostgreSQL\"), \n  \"mysql:database\", \"MySQL\"), \n  \"sql:snowflake_account\", \"Snowflake\"),\n  \"elasticsearch:node\", \"Elasticsearch\"),\n  \"PROCESS_GROUP_INSTANCE\", coalesce(techType, \"?\"))\n| filter in(db_type, array($dbType))\n| summarize countDistinct(id)",
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "hideLabels": false
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "db_type",
+                        "categoryAxisLabel": "db_type",
+                        "valueAxis": "distinct_dbs",
+                        "valueAxisLabel": "distinct_dbs",
+                        "layout": "horizontal"
+                    },
+                    "legend": {
+                        "position": "right",
+                        "hidden": false
+                    },
+                    "colorPalette": "blue-steel"
+                },
+                "singleValue": {
+                    "label": "# of servers",
+                    "prefixIcon": "DatabaseIcon",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "showLabel": false,
+                    "sparklineSettings": {
+                        "isVisible": false
+                    },
+                    "trend": {
+                        "isVisible": false
+                    }
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [
+                        [
+                            "timeframe"
+                        ],
+                        [
+                            "interval"
+                        ]
+                    ],
+                    "lineWrapIds": [
+                        [
+                            "sum(`com.dynatrace.extension.sql-oracle.cpu.cores`)"
+                        ]
+                    ],
+                    "columnWidths": {}
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "com.dynatrace.extension.sql-oracle.cpu.cores",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true
+                    }
+                ]
+            }
+        },
+        "8": {
+            "type": "data",
+            "title": "Current live problem count for ALL servers and databases (*)",
+            "query": "fetch events\n| filter dt.system.bucket == \"default_davis_events\"\n| filter event.kind == \"DAVIS_PROBLEM\"\n| filter in(affected_entity_types,\n  {\n    \"dt.entity.sql:com_dynatrace_extension_sql-oracle_instance\",\n    \"dt.entity.sql:db2_instance\",\n    \"dt.entity.sql:sql_server_instance\",\n    \"dt.entity.sql:snowflake_account\",\n    \"dt.entity.sql:postgres_instance\",\n    \"dt.entity.mysql:instance\",\n    \"dt.entity.sql:hana_db_database\",\n    \"dt.entity.sql:db2_database_member\",\n    \"dt.entity.sql:sql_server_database\",\n    \"dt.entity.mysql:database\",\n    \"dt.entity.sql:snowflake_account\",\n    \"dt.entity.sql:com_dynatrace_extension_sql-oracle_database\",\n    \"dt.entity.sql:postgres_database\",\n    \"dt.entity.mongodb-prometheus:device\",\n    \"dt.entity.elasticsearch:node\",\n    \"dt.entity.elasticsearch:cluster\",\n    \"dt.entity.elasticsearch:index\",\n    \"dt.entity.elasticsearch:disk\",\n    \"dt.entity.elasticsearch:thread_pool\"\n  })\n| fieldsAdd db_type = replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(affected_entity_types, \n  \"dt.entity.sql:com_dynatrace_extension_sql-oracle_instance\", \"Oracle\"), \n  \"dt.entity.sql:db2_instance\", \"IBM DB2\"), \n  \"dt.entity.sql:sql_server_instance\", \"MS SQL Server\"), \n  \"dt.entity.sql:snowflake_account\", \"Snowflake\"),\n  \"dt.entity.sql:postgres_instance\", \"PostgreSQL\"), \n  \"dt.entity.mysql:instance\", \"MySQL\"), \n  \"dt.entity.sql:hana_db_database\", \"SAP HanaDB\"),\n  \"dt.entity.sql:db2_database_member\", \"IBM DB2\"), \n  \"dt.entity.sql:sql_server_database\", \"MS SQL Server\"), \n  \"dt.entity.mysql:database\", \"MySQL\"), \n  \"dt.entity.sql:snowflake_account\", \"Snowflake\"),\n  \"dt.entity.sql:com_dynatrace_extension_sql-oracle_database\", \"Oracle\"), \n  \"dt.entity.sql:postgres_database\", \"PostgreSQL\"),\n  \"dt.entity.mongodb-prometheus:device\", \"MongoDB\"),\n  \"dt.entity.elasticsearch:node\", \"Elasticsearch\"),\n  \"dt.entity.elasticsearch:cluster\", \"Elasticsearch\"),\n  \"dt.entity.elasticsearch:index\", \"Elasticsearch\"),\n  \"dt.entity.elasticsearch:disk\", \"Elasticsearch\"),\n  \"dt.entity.elasticsearch:thread_pool\", \"Elasticsearch\")\n| filter in(db_type, array($dbType))\n| sort timestamp\n| summarize { \n  event.status = takeLast(event.status),\n  dt.davis.is_duplicate = takeLast(dt.davis.is_duplicate)\n}, by: {event.id}\n| filter isNull(dt.davis.is_duplicate) OR not(dt.davis.is_duplicate)\n| filter event.status == \"ACTIVE\"\n| summarize problem_count = count()",
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "thresholds": [
+                    {
+                        "id": 1,
+                        "field": "",
+                        "title": "",
+                        "isEnabled": true,
+                        "rules": [
+                            {
+                                "id": 0,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-09-default, #649438)"
+                                },
+                                "comparator": "\u2265",
+                                "label": "",
+                                "value": 0
+                            },
+                            {
+                                "id": 1,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-14-default, #d56b1a)"
+                                },
+                                "comparator": "\u2265",
+                                "label": ""
+                            },
+                            {
+                                "id": 2,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-12-default, #cd3741)"
+                                },
+                                "comparator": "\u2265",
+                                "label": "",
+                                "value": 1
+                            }
+                        ]
+                    }
+                ],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {}
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "EventIcon",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "showLabel": false,
+                    "trend": {
+                        "isVisible": false
+                    }
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "columnWidths": {},
+                    "lineWrapIds": [],
+                    "enableLineWrap": true
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "dt.host.cpu.usage",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true
+                    },
+                    {
+                        "identifier": "dt.host.memory.avail.percent",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true
+                    },
+                    {
+                        "identifier": "dt.host.disk.free",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true
+                    }
+                ]
+            }
+        },
+        "9": {
+            "type": "data",
+            "title": "Log ingestion overview",
+            "query": "fetch logs\n| filter in(dt.extension.name, {\n  \"com.dynatrace.extension.sql-db2\",\n  \"com.dynatrace.extension.sql-oracle\", \n  \"com.dynatrace.extension.sql-server\", \n  \"com.dynatrace.extension.mysql\",\n  \"com.dynatrace.extension.sql-sap-hana\",\n  \"com.dynatrace.extension.postgres\",\n  \"com.dynatrace.extension.sql-snowflake\",\n  \"com.dynatrace.extension.jmx-cassandra\",\n  \"com.dynatrace.extension.mongodb-mongodb\",\n  \"com.dynatrace.extension.elasticsearch\",\n  \"com.dynatrace.extension.memcached\"}) \n| fieldsAdd dbType = replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(dt.extension.name, \n  \"com.dynatrace.extension.sql-oracle\", \"Oracle\"), \n  \"com.dynatrace.extension.sql-server\", \"MS SQL Server\"), \n  \"com.dynatrace.extension.mysql\", \"MySQL\"), \n  \"com.dynatrace.extension.sql-db2\", \"IBM DB2\"), \n  \"com.dynatrace.extension.postgres\", \"PostgreSQL\"), \n  \"com.dynatrace.extension.sql-snowflake\", \"Snowflake\"), \n  \"com.dynatrace.extension.sql-sap-hana\", \"SAP HanaDB\"),\n  \"com.dynatrace.extension.jmx-cassandra\", \"Cassandra\"),\n  \"com.dynatrace.extension.mongodb-mongodb\", \"MongoDB\"),\n  \"com.dynatrace.extension.elasticsearch\", \"Elasticsearch\"),\n  \"com.dynatrace.extension.memcached\", \"Memcached\")\n| filter in(dbType, array($dbType))\n| filter in(loglevel, array($logLevel))\n| makeTimeseries count = count(), by:{dbType, loglevel}, interval:5m",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "legend": {
+                        "position": "bottom",
+                        "hidden": false
+                    },
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "dbType",
+                        "categoryAxisLabel": "dbType",
+                        "valueAxis": "interval",
+                        "valueAxisLabel": "interval"
+                    },
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "count"
+                        ],
+                        "leftAxisDimensions": [
+                            "dbType",
+                            "loglevel"
+                        ],
+                        "fields": [],
+                        "values": []
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "columnWidths": {},
+                    "lineWrapIds": []
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "dt.host.cpu.usage",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true
+                    },
+                    {
+                        "identifier": "dt.host.memory.avail.percent",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true
+                    },
+                    {
+                        "identifier": "dt.host.disk.free",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true
+                    },
+                    {
+                        "identifier": "dt.host.disk.used.percent",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true
+                    }
+                ]
+            }
+        },
+        "10": {
+            "type": "markdown",
+            "title": "",
+            "content": "\\* based on generic entities ONLY"
+        }
+    },
+    "layouts": {
+        "0": {
+            "x": 10,
+            "y": 2,
+            "w": 14,
+            "h": 7
+        },
+        "1": {
+            "x": 0,
+            "y": 17,
+            "w": 24,
+            "h": 6
+        },
+        "2": {
+            "x": 0,
+            "y": 23,
+            "w": 24,
+            "h": 8
+        },
+        "4": {
+            "x": 0,
+            "y": 31,
+            "w": 24,
+            "h": 5
+        },
+        "5": {
+            "x": 0,
+            "y": 2,
+            "w": 5,
+            "h": 3
+        },
+        "6": {
+            "x": 0,
+            "y": 0,
+            "w": 24,
+            "h": 2
+        },
+        "7": {
+            "x": 5,
+            "y": 2,
+            "w": 5,
+            "h": 3
+        },
+        "8": {
+            "x": 0,
+            "y": 5,
+            "w": 10,
+            "h": 3
+        },
+        "9": {
+            "x": 0,
+            "y": 9,
+            "w": 24,
+            "h": 8
+        },
+        "10": {
+            "x": 0,
+            "y": 8,
+            "w": 10,
+            "h": 1
+        }
+    }
+}

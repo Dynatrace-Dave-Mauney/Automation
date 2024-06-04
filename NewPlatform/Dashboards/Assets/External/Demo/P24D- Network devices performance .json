@@ -1,0 +1,2677 @@
+{
+    "version": 14,
+    "variables": [
+        {
+            "key": "Tags",
+            "type": "query",
+            "input": "fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`\n| fields tags\n| summarize tags = collectDistinct(tags)",
+            "multiple": true
+        }
+    ],
+    "tiles": {
+        "0": {
+            "type": "data",
+            "title": "PaloAlto firewalls",
+            "query": "timeseries t_cpu=avg(`com.dynatrace.extension.palo-alto.generic.cpu.management.utilization`), t_upt=avg(`com.dynatrace.extension.palo-alto.generic.sys.uptime`),\nby: {`dt.entity.palo-alto:device`}\n| lookup [fetch `dt.entity.palo-alto:device` | fields id, SystemName, lifetime[end]],\n    sourceField:`dt.entity.palo-alto:device`,\n    lookupField:id,\n    fields:{ SystemName,`lifetime[end]` }\n| fieldsAdd avg_cpu=toLong(arrayAvg(`t_cpu`)), avg_upt=arrayLast(`t_upt`)\n\n| lookup [timeseries t_ino=avg(`com.dynatrace.extension.palo-alto.generic.if.hc.in.octets`,rate:1s), t_outo=avg( `com.dynatrace.extension.palo-alto.generic.if.hc.out.octets`,rate:1s), \nby: {`dt.entity.palo-alto:device`,`dt.entity.palo-alto:interface`}, interval:1m\n| fieldsAdd `InOs` = tolong(8*arrayAvg(t_ino)), `OutOs` = tolong(8*arrayAvg(t_outo))\n| summarize `In Traffic`= sum(InOs),`Out Traffic` = sum(OutOs),by:{`dt.entity.palo-alto:device`}],\n    sourceField:`dt.entity.palo-alto:device`,\n      lookupField:`dt.entity.palo-alto:device`,\n    fields:{`In Traffic`, `Out Traffic` }  \n\n| lookup sourceField:`dt.entity.palo-alto:device`, lookupField: affected_id, fields: {problems},\n [fetch events\n| filter event.kind == \"DAVIS_PROBLEM\" | fieldsAdd affected_entity_id = affected_entity_ids[0] | summarize collectDistinct(event.status), by:{display_id, affected_entity_id}, alias:problem_status | filter NOT in(problem_status, \"CLOSED\")| summarize problems = count(), by: {affected_id = affected_entity_id}]\n\n| fields lifetime=toString(`lifetime[end]`), problem_count = if(isNull(problems), 0, else: problems), avg_upt, SystemName, avg_cpu, `In Traffic`, `Out Traffic`\n| fieldsRename `Problems #` = problem_count\n| fieldsAdd DurSys = toDuration(avg_upt)*1000000\n| fieldsRemove avg_upt\n| filter SystemName != \"DUMSYS-10\"\n| fieldsRename `DNS name` = SystemName, `System Up Time` = DurSys ,`CPU utilization` = avg_cpu, `Last seen` = lifetime\n| fieldsAdd `Monitoring status` =  if( `Last seen`  <  now() - 10m, \"\u26a0\ufe0f\",else:\"\u2705\")\n| fields `DNS name`,  `Monitoring status`, `System Up Time` , `Problems #`,`CPU utilization`, `Out Traffic`, `In Traffic`\n| sort `Problems #` desc",
+            "visualizationSettings": {
+                "thresholds": [
+                    {
+                        "id": 1,
+                        "field": "Problems #",
+                        "title": "",
+                        "isEnabled": true,
+                        "rules": [
+                            {
+                                "id": 0,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-09-default, #649438)"
+                                },
+                                "comparator": "=",
+                                "label": "",
+                                "value": 0
+                            },
+                            {
+                                "id": 1,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-14-default, #d56b1a)"
+                                },
+                                "comparator": "\u2265",
+                                "label": ""
+                            },
+                            {
+                                "id": 2,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-12-default, #cd3741)"
+                                },
+                                "comparator": "\u2265",
+                                "label": "",
+                                "value": 1
+                            }
+                        ]
+                    }
+                ],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "DNS name",
+                        "categoryAxisLabel": "DNS name",
+                        "valueAxis": "System Up Time",
+                        "valueAxisLabel": "System Up Time"
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "DNS name"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "columnWidths": {},
+                    "lineWrapIds": [],
+                    "enableLineWrap": true
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "DNS name",
+                        "value": "Monitoring status"
+                    },
+                    "legend": "auto"
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "CPU utilization",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1705512956105
+                    },
+                    {
+                        "identifier": "InTraffic GB",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "none",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1705512970730
+                    },
+                    {
+                        "identifier": "CPU (%)",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "none",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1705561889835
+                    },
+                    {
+                        "identifier": "System Up Time",
+                        "unitCategory": "time",
+                        "baseUnit": "nanosecond",
+                        "displayUnit": null,
+                        "decimals": 3,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1706542963338
+                    },
+                    {
+                        "identifier": "OutTraffic",
+                        "unitCategory": "data",
+                        "baseUnit": "byte",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1706542999793
+                    },
+                    {
+                        "identifier": "In Traffic",
+                        "unitCategory": "datarate",
+                        "baseUnit": "bitps",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1706543234394
+                    },
+                    {
+                        "identifier": "Out Traffic",
+                        "unitCategory": "datarate",
+                        "baseUnit": "Bps",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707725604603
+                    },
+                    {
+                        "identifier": "Problems #",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "none",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1707725658702
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "System Up Time",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "Problems #",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "CPU utilization",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "Out Traffic",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "In Traffic",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            },
+            "visualization": "table"
+        },
+        "6": {
+            "type": "data",
+            "title": "Cisco switches and routers",
+            "query": "timeseries t_cpu=avg(`com.dynatrace.extension.snmp-generic-cisco-device.cpm.cpu.loadavg.5min`), t_mem=avg(`com.dynatrace.extension.snmp-generic-cisco-device.cpm.cpu.memory.hc.free`),  t_upt=avg(`com.dynatrace.extension.snmp-generic-cisco-device.sys.uptime`), \nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`}\n| lookup [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device` | fields id, system_name, lifetime[end]],\n    sourceField:`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`,\n    lookupField:id,\n    fields:{system_name,`lifetime[end]`}\n| fieldsAdd avg_cpu=arrayAvg(`t_cpu`), avg_mem=arrayAvg(`t_mem`), avg_upt=arrayLast(`t_upt`)\n\n| lookup [ timeseries t_in=avg(`com.dynatrace.extension.snmp-generic-cisco-device.if.hc.in.octets.count`, rate:1s), t_out=avg(`com.dynatrace.extension.snmp-generic-cisco-device.if.hc.out.octets.count`, rate:1s), \nby:{ `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`,`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`}, interval:1m\n| fieldsAdd `InOs` = 8*tolong(arrayAvg(t_in)), `OutOs` = 8*tolong(arrayAvg(t_out))\n| summarize `In Traffic`= sum(InOs),`Out Traffic` = sum(OutOs),by:{`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`}],\n    sourceField:`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`,\n      lookupField:`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`,\n    fields:{`In Traffic`,`Out Traffic`}  \n    \n| lookup sourceField:`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`, lookupField: affected_id, fields: {problems},\n [fetch events\n| filter event.kind == \"DAVIS_PROBLEM\" | fieldsAdd affected_entity_id = affected_entity_ids[0] | summarize collectDistinct(event.status), by:{display_id, affected_entity_id}, alias:problem_status | filter NOT in(problem_status, \"CLOSED\")| summarize problems = count(), by: {affected_id = affected_entity_id}]\n| fields Device = system_name, `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`,lifetime=toString(`lifetime[end]`), problem_count = if(isNull(problems), 0, else: problems), avg_upt, system_name, avg_mem, avg_cpu,`In Traffic`,`Out Traffic`\n| fieldsRename `Problems #` = problem_count\n| fieldsAdd DurSys = toDuration(avg_upt)*1000000\n| fieldsRemove avg_upt\n| fieldsRename `DNS name`=system_name, `System Up Time` = DurSys , `CPU utilization` = avg_cpu, `Free Memory (KB)` = avg_mem\n| fieldsAdd `Monitoring status` =  if( lifetime <  now() -10m, \"\u26a0\ufe0f\",else:\"\u2705\")\n| fields `DNS name`,  `Monitoring status`, `System Up Time` ,  `Problems #`, `CPU utilization`, `Free Memory (KB)`, `Out Traffic`, `In Traffic`\n| filter `DNS name` != \"AT1i-SW-snmptest.dynatrace.org\"\n| sort `Problems #` desc",
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [
+                    {
+                        "id": 1,
+                        "field": "Problems #",
+                        "title": "",
+                        "isEnabled": true,
+                        "rules": [
+                            {
+                                "id": 0,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-09-default, #649438)"
+                                },
+                                "comparator": "=",
+                                "label": "",
+                                "value": 0
+                            },
+                            {
+                                "id": 1,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-14-default, #d56b1a)"
+                                },
+                                "comparator": "\u2265",
+                                "label": ""
+                            },
+                            {
+                                "id": 2,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-12-default, #cd3741)"
+                                },
+                                "comparator": ">",
+                                "label": "",
+                                "value": 0
+                            }
+                        ]
+                    }
+                ],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "DNS name",
+                        "categoryAxisLabel": "DNS name",
+                        "valueAxis": "System Up Time",
+                        "valueAxisLabel": "System Up Time"
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "DNS name"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {
+                        "[\"DNS name\"]": 224,
+                        "[\"Monitoring status\"]": 174,
+                        "[\"System Up Time\"]": 152,
+                        "[\"Device type\"]": 186.56666564941406,
+                        "[\"Problems #\"]": 122,
+                        "[\"CPU (%)\"]": 98,
+                        "[\"Free Memory (KB)\"]": 163,
+                        "[\"OutTraffic GB\"]": 134,
+                        "[\"InTraffic GB\"]": 223
+                    }
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "DNS name",
+                        "value": "Monitoring status"
+                    },
+                    "legend": "auto"
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "CPU utilization",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1707483383150
+                    },
+                    {
+                        "identifier": "t_upt",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "unspecified",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707483383150
+                    },
+                    {
+                        "identifier": "InTraffic GB",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "none",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1705513072192
+                    },
+                    {
+                        "identifier": "Free Memory (KB)",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "none",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1705513467364
+                    },
+                    {
+                        "identifier": "CPU (%)",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "none",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1705513604834
+                    },
+                    {
+                        "identifier": "Out Traffic",
+                        "unitCategory": "datarate",
+                        "baseUnit": "bitps",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1706543172748
+                    },
+                    {
+                        "identifier": "In Traffic",
+                        "unitCategory": "datarate",
+                        "baseUnit": "bitps",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1706543192234
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "System Up Time",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "Problems #",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "CPU utilization",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "Free Memory (KB)",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "Out Traffic",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "In Traffic",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            }
+        },
+        "7": {
+            "type": "markdown",
+            "title": "",
+            "content": "#\n# **Network Devices Performance**\n"
+        },
+        "8": {
+            "type": "data",
+            "title": "Interfaces in Up/Down state",
+            "query": "fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`\n| fieldsAdd description,type,  opStatus, adminStatus\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`| fields id, system_name],\n    sourceField:child_of[`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`] ,\n    lookupField:id,\n    prefix: \"rtr_\"\n| fieldsRemove rtr_id, id, entity.name\n| fieldsRename  `DNS name` = rtr_system_name,Interface=description\n| fields `DNS name`, Interface, opStatus, adminStatus\n| filter opStatus == \"down(2)\" AND adminStatus == \"up(1)\"\n| fieldsRemove opStatus,adminStatus\n\n| append [fetch `dt.entity.f5:interface`\n| fieldsAdd Name, Status,EnabledState\n| lookup [fetch  `dt.entity.f5:instance`| fields id, NodeName],\n    sourceField:runs_on[`dt.entity.f5:instance`],\n    lookupField:id,\n    prefix: \"rtr_\"\n| fieldsRemove rtr_id, id, entity.name\n| fieldsRename  `DNS name` = rtr_NodeName,Interface=Name,opStatus=Status,adminStatus=EnabledState\n| fields `DNS name`, Interface, opStatus, adminStatus\n| filter opStatus == \"down(2)\" AND adminStatus == \"true(1)\"\n| fieldsRemove opStatus,adminStatus]\n\n| append [fetch `dt.entity.palo-alto:interface`\n| fieldsAdd InterfaceDescription, IFOperatingStatus, InterfaceAdminStatus\n| lookup [fetch  `dt.entity.palo-alto:device`| fields id, SystemName],\n    sourceField:runs_on[`dt.entity.palo-alto:device`],\n    lookupField:id,\n    prefix: \"rtr_\"\n| fieldsRemove rtr_id, id, entity.name\n| fieldsRename  `DNS name` = rtr_SystemName,Interface=InterfaceDescription, opStatus=IFOperatingStatus,adminStatus=InterfaceAdminStatus\n| fields `DNS name`, Interface, opStatus, adminStatus\n| filter opStatus == \"down(2)\" AND adminStatus == \"up(1)\"\n| fieldsRemove opStatus,adminStatus]\n\n| append [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`\n| fieldsAdd entity.name,  if_adminstatus, if_operstatus\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`| fields id, system_name],\n    sourceField:child_of[`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`],\n    lookupField:id,\n    prefix: \"rtr_\"\n| fieldsRemove rtr_id, id\n| fieldsRename  `DNS name` = rtr_system_name, Interface=entity.name, opStatus=if_operstatus,adminStatus=if_adminstatus\n| fields `DNS name`, Interface, opStatus, adminStatus\n| filter opStatus == \"down(2)\" AND adminStatus == \"up(1)\"\n| fieldsRemove opStatus,adminStatus]\n\n| append [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`\n| fieldsAdd description,  adminStatus, opStatus\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`| fields id, system_name],\n    sourceField:child_of[`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`],\n    lookupField:id,\n    prefix: \"rtr_\"\n| fieldsRemove rtr_id, id\n| fieldsRename  `DNS name` = rtr_system_name, Interface=description\n| fields `DNS name`, Interface, opStatus, adminStatus\n| filter opStatus == \"down(2)\" AND adminStatus == \"up(1)\"\n| fieldsRemove opStatus,adminStatus]\n\n| filter `DNS name`  != \"\"",
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {}
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "DNS name"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [
+                        [
+                            "entity.name"
+                        ]
+                    ],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "DNS name",
+                        "value": "Interface"
+                    },
+                    "legend": "auto"
+                },
+                "histogram": {
+                    "dataMappings": []
+                }
+            }
+        },
+        "18": {
+            "type": "data",
+            "title": "Top interfaces Inbound load",
+            "query": "timeseries t_ino=avg( `com.dynatrace.extension.snmp-generic-cisco-device.if.hc.in.octets.count`,rate:1s),  t_speed=avg(`com.dynatrace.extension.snmp-generic-cisco-device.if.highspeed`),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`}, interval:1m\n| lookup [fetch`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface` | fields id, description , child_of[`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`]],\n    sourceField: `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`,\n    lookupField:id,\n    fields:{  description, `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device\\`]` }\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`| fields id, system_name],\n    sourceField:`child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device\\`]`,\n    lookupField:id,\n    fields:{ system_name }    \n| fieldsRemove   `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`,  `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device\\`]`\n| fieldsAdd `Interface` = concat( description,\"-\",system_name ), `InLoad`=  8*100*t_ino[]/(power(10, 6)*tolong(t_speed[]))\n| fieldsAdd SumLoad = arraySum(`InLoad`)\n\n| append [timeseries t_ino=avg( `com.dynatrace.extension.snmp-generic-device.if.hc.in.octets.count`,rate:1s),  t_speed=avg(`com.dynatrace.extension.snmp-generic-device.if.highspeed`),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`}, interval:1m\n| lookup [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface` | fields id, description , child_of[`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`]],\n    sourceField: `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`,\n    lookupField:id,\n    fields:{  description, `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device\\`]` }\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`| fields id, system_name],\n    sourceField:`child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device\\`]`,\n    lookupField:id,\n    fields:{ system_name }    \n| fieldsRemove `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`,  `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device\\`]`\n| fieldsAdd `Interface` = concat( description,\"-\",system_name ), `InLoad`=  8*100*t_ino[]/(power(10, 6)*tolong(t_speed[]))\n| fieldsAdd SumLoad = arraySum(`InLoad`)]\n\n| sort SumLoad desc\n| limit 10\n| fieldsRemove description,system_name, t_ino,t_speed,SumLoad",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "Interface",
+                        "categoryAxisLabel": "Interface",
+                        "valueAxis": "interval",
+                        "valueAxisLabel": "interval"
+                    },
+                    "leftYAxisSettings": {
+                        "min": 0,
+                        "max": 100,
+                        "label": ""
+                    },
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "InLoad"
+                        ],
+                        "leftAxisDimensions": [
+                            "Interface"
+                        ],
+                        "fields": [],
+                        "values": []
+                    },
+                    "hiddenLegendFields": []
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "Interface"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "Interface",
+                        "value": "Interface"
+                    },
+                    "legend": "auto"
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "InLoad",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1705060132996
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            }
+        },
+        "19": {
+            "type": "data",
+            "title": "Top interfaces Outbound load",
+            "query": "timeseries t_ouo=avg( `com.dynatrace.extension.snmp-generic-cisco-device.if.hc.out.octets.count`, rate:1s),  t_speed=avg(`com.dynatrace.extension.snmp-generic-cisco-device.if.highspeed`),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`},interval:1m\n| lookup [fetch`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface` | fields id, description , child_of[`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`]],\n    sourceField: `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`,\n    lookupField:id,\n    fields:{  description, `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device\\`]` }\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`| fields id, system_name],\n    sourceField:`child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device\\`]`,\n    lookupField:id,\n    fields:{ system_name }    \n| fieldsRemove   `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`,  `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device\\`]`\n| fieldsAdd `Interface` = concat( description,\"-\",system_name ), `OutLoad`= 8*100*t_ouo[]/(power(10, 6)*tolong(t_speed[]))\n| fieldsAdd SumLoad = arraySum(`OutLoad`)\n\n| append [timeseries t_ouo=avg( `com.dynatrace.extension.snmp-generic-device.if.hc.out.octets.count`, rate:1s),  t_speed=avg(`com.dynatrace.extension.snmp-generic-device.if.highspeed`),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`},interval:1m\n| lookup [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface` | fields id, description , child_of[`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`]],\n    sourceField: `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`,\n    lookupField:id,\n    fields:{  description, `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device\\`]` }\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`| fields id, system_name],\n    sourceField:`child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device\\`]`,\n    lookupField:id,\n    fields:{ system_name }    \n| fieldsRemove `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`,  `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device\\`]`\n| fieldsAdd `Interface` = concat( description,\"-\",system_name ), `OutLoad`=  8*100*t_ouo[]/(power(10, 6)*tolong(t_speed[]))\n| fieldsAdd SumLoad = arraySum(`OutLoad`)]\n\n| sort SumLoad desc\n| limit 10\n| fieldsRemove description,system_name, t_ouo,t_speed,SumLoad",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "Interface",
+                        "categoryAxisLabel": "Interface",
+                        "valueAxis": "interval",
+                        "valueAxisLabel": "interval"
+                    },
+                    "leftYAxisSettings": {
+                        "min": 0,
+                        "max": 100,
+                        "label": ""
+                    },
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "OutLoad"
+                        ],
+                        "leftAxisDimensions": [
+                            "Interface"
+                        ],
+                        "fields": [],
+                        "values": []
+                    },
+                    "hiddenLegendFields": []
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "Interface"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "Interface",
+                        "value": "Interface"
+                    },
+                    "legend": "auto"
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "OutLoad (%)",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1705060184157
+                    },
+                    {
+                        "identifier": "OutLoad",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1705747064300
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            }
+        },
+        "20": {
+            "type": "data",
+            "title": "Top interfaces traffic",
+            "query": "timeseries t_ino=avg( `com.dynatrace.extension.snmp-generic-cisco-device.if.hc.in.octets.count`,rate:1s), t_outo=avg( `com.dynatrace.extension.snmp-generic-cisco-device.if.hc.out.octets.count`,rate:1s),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`},interval:1m\n| fieldsAdd `In Traffic` = tolong(arrayAvg(t_ino)*8), `Out Traffic` = tolong(arrayAvg(t_outo)*8)\n| lookup [fetch`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface` | fields id, description , child_of[`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`]],\n    sourceField: `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`,\n    lookupField:id,\n    fields:{ description, `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device\\`]` }\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`| fields id, system_name],\n    sourceField:`child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device\\`]`,\n    lookupField:id,\n    fields:{ system_name }    \n| fieldsRename  `DNS name` = system_name,Interface=description\n| fields `DNS name`, Interface, `In Traffic`, `Out Traffic` \n\n| append [timeseries t_ino=avg( `com.dynatrace.extension.juniper.generic.if.in.bits`),  t_outo=avg(`com.dynatrace.extension.juniper.generic.if.out.bits`),\nby: { `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`},interval:1m\n| fieldsAdd `In Traffic` = tolong(arrayAvg(t_ino)), `Out Traffic` = tolong(arrayAvg(t_outo))\n| lookup [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`| fields id,entity.name , child_of[`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`]],\n    sourceField: `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`,\n    lookupField:id,\n    fields:{ entity.name, `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device\\`]` }\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`| fields id, system_name],\n    sourceField:`child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device\\`]`,\n    lookupField:id,\n    fields:{ system_name }    \n| fieldsRename  `DNS name` = system_name,Interface=entity.name\n| fields `DNS name`, Interface, `In Traffic`, `Out Traffic` ]\n\n| append [timeseries t_ino=avg(`com.dynatrace.extension.palo-alto.generic.if.in.octets`,rate:1s), t_outo=avg( `com.dynatrace.extension.palo-alto.generic.if.out.octets`,rate:1s),\nby:{`dt.entity.palo-alto:device`,`dt.entity.palo-alto:interface`},interval:1m\n| fieldsAdd `In Traffic` = tolong(arrayAvg(t_ino)*8), `Out Traffic` = tolong(arrayAvg(t_outo)*8)\n| lookup [fetch `dt.entity.palo-alto:interface`| fields id,InterfaceDescription, runs_on[`dt.entity.palo-alto:device`]] ,\n    sourceField: `dt.entity.palo-alto:interface`,\n    lookupField:id,\n    fields:{  InterfaceDescription, `runs_on[\\`dt.entity.palo-alto:device\\`]` }\n| lookup [fetch  `dt.entity.palo-alto:device`| fields id, SystemName],\n    sourceField:`runs_on[\\`dt.entity.palo-alto:device\\`]`,\n    lookupField:id,\n    fields:{ SystemName } \n| filter SystemName != \"DUMSYS-10\"\n| fieldsRename  `DNS name` = SystemName,Interface=InterfaceDescription\n| fields `DNS name`, Interface, `In Traffic`, `Out Traffic` ]\n\n| append [timeseries t_ino=avg(`com.dynatrace.extension.snmp-generic-device.if.hc.in.octets.count`,rate:1s), t_outo=avg( `com.dynatrace.extension.snmp-generic-device.if.hc.in.octets.count`,rate:1s),\nby:{`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`},interval:1m\n| fieldsAdd `In Traffic` = tolong(arrayAvg(t_ino)*8), `Out Traffic` = tolong(arrayAvg(t_outo)*8)\n| lookup [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`| fields id, description, child_of[`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`]] ,\n    sourceField: `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`,\n    lookupField:id,\n    fields:{  description, `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device\\`]` }\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`| fields id, system_name],\n    sourceField:`child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device\\`]`,\n    lookupField:id,\n    fields:{ system_name } \n| filter system_name != \"DUMSYS-10\"\n| fieldsRename  `DNS name` = system_name,Interface=description\n| fields `DNS name`, Interface, `In Traffic`, `Out Traffic`]\n\n| append [timeseries t_ino=avg( `com.dynatrace.extension.f5.bigip.sys.interface.stat.bytes.in.count`,rate:1s),  t_outo=avg( `com.dynatrace.extension.f5.bigip.sys.interface.stat.bytes.out.count`,rate:1s),\nby: {`dt.entity.f5:interface`},interval:1m\n| fieldsAdd `In Traffic` = tolong(arrayAvg(t_ino)*8), `Out Traffic` = tolong(arrayAvg(t_outo)*8)\n| lookup [fetch `dt.entity.f5:interface`| fields id, Name , runs_on[`dt.entity.f5:instance`]],\n    sourceField:`dt.entity.f5:interface`,\n    lookupField:id,\n    fields:{ Name, `runs_on[\\`dt.entity.f5:instance\\`]` }\n| lookup [fetch  `dt.entity.f5:instance`| fields id, NodeName],\n    sourceField:`runs_on[\\`dt.entity.f5:instance\\`]`,\n    lookupField:id,\n    fields:{ NodeName }    \n| fieldsRename  `DNS name` = NodeName,Interface=Name\n| fields `DNS name`, Interface, `In Traffic`, `Out Traffic` ]\n| filter `DNS name` != \"\"\n| sort `In Traffic`+ `Out Traffic` desc\n| limit 10\n",
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "DNS name",
+                        "categoryAxisLabel": "DNS name",
+                        "valueAxis": "In Traffic",
+                        "valueAxisLabel": "In Traffic"
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "DNS name"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [
+                        [
+                            "Out GBytes"
+                        ]
+                    ],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "DNS name",
+                        "value": "Interface"
+                    },
+                    "legend": "auto"
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "t_indiscards",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707483383153
+                    },
+                    {
+                        "identifier": "t_outdiscards",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707483383153
+                    },
+                    {
+                        "identifier": "In Traffic",
+                        "unitCategory": "datarate",
+                        "baseUnit": "bitps",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707404132302
+                    },
+                    {
+                        "identifier": "Out Traffic",
+                        "unitCategory": "datarate",
+                        "baseUnit": "bitps",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707404166865
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "In Traffic",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "Out Traffic",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            }
+        },
+        "21": {
+            "type": "data",
+            "title": "Top interfaces discards and errors",
+            "query": "timeseries t_indiscards=avg( `com.dynatrace.extension.snmp-generic-cisco-device.if.in.discards`,rate:1s),t_outdiscards=avg( `com.dynatrace.extension.snmp-generic-cisco-device.if.out.discards`,rate:1s),\n t_inerrors=avg( `com.dynatrace.extension.snmp-generic-cisco-device.if.in.errors`,rate:1s),t_outerrors=avg( `com.dynatrace.extension.snmp-generic-cisco-device.if.out.errors`,rate:1s),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`},interval:1m\n| lookup [fetch`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface` | fields id, description , child_of[`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`]],\n    sourceField: `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`,\n    lookupField:id,\n    fields:{ description, `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device\\`]` }\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`| fields id, system_name],\n    sourceField:`child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device\\`]`,\n    lookupField:id,\n    fields:{ system_name }    \n| fieldsAdd avg_indiscards=arrayAvg(`t_indiscards`),avg_outdiscards=arrayAvg(`t_outdiscards`),avg_inerrors=arrayAvg(`t_inerrors`),avg_outerrors=arrayAvg(`t_outerrors`)\n| fieldsRename `DNS name` = system_name,Interface=description\n| fieldsRename InDiscards = avg_indiscards, OutDiscards = avg_outdiscards, InErrors = avg_inerrors, OutErrors = avg_outerrors\n| fields `DNS name`,Interface,InDiscards,OutDiscards,InErrors,OutErrors\n\n| append [timeseries t_indiscards=avg( `com.dynatrace.extension.f5.bigip.sys.interface.stat.drops.in.count`,rate:1s),t_outdiscards=avg( `com.dynatrace.extension.f5.bigip.sys.interface.stat.drops.out.count`,rate:1s),\n t_inerrors=avg( `com.dynatrace.extension.f5.bigip.sys.interface.stat.errors.in.count`,rate:1s),t_outerrors=avg( `com.dynatrace.extension.f5.bigip.sys.interface.stat.errors.out.count`,rate:1s),\nby: {`dt.entity.f5:interface`},interval:1m\n| lookup [fetch`dt.entity.f5:interface` | fields id, Name , runs_on[`dt.entity.f5:instance`]],\n    sourceField: `dt.entity.f5:interface`,\n    lookupField:id,\n    fields:{  Name, `runs_on[\\`dt.entity.f5:instance\\`]`}\n| lookup [fetch  `dt.entity.f5:instance`| fields id, NodeName],\n    sourceField: `runs_on[\\`dt.entity.f5:instance\\`]`,\n    lookupField:id,\n    fields:{ NodeName }    \n| fieldsAdd avg_indiscards=arrayAvg(`t_indiscards`),avg_outdiscards=arrayAvg(`t_outdiscards`),avg_inerrors=arrayAvg(`t_inerrors`),avg_outerrors=arrayAvg(`t_outerrors`)\n| fieldsRename `DNS name` = NodeName,Interface=Name\n| fieldsRename InDiscards = avg_indiscards, OutDiscards = avg_outdiscards, InErrors = avg_inerrors, OutErrors = avg_outerrors\n| fields `DNS name`,Interface,InDiscards,OutDiscards,InErrors,OutErrors]\n\n| append [timeseries t_indiscards=avg( `com.dynatrace.extension.snmp-generic-device.if.in.discards.count`,rate:1s),t_outdiscards=avg( `com.dynatrace.extension.snmp-generic-device.if.out.discards.count`,rate:1s),\n t_inerrors=avg( `com.dynatrace.extension.snmp-generic-device.if.in.errors.count`,rate:1s),t_outerrors=avg( `com.dynatrace.extension.snmp-generic-device.if.out.errors.count`,rate:1s),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`}, interval:1m\n| lookup [fetch`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface` | fields id, description , child_of[`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`]],\n    sourceField: `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`,\n    lookupField:id,\n    fields:{  description, `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device\\`]` }\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`| fields id, system_name],\n    sourceField:`child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device\\`]`,\n    lookupField:id,\n    fields:{ system_name }    \n| fieldsAdd avg_indiscards=arrayAvg(`t_indiscards`),avg_outdiscards=arrayAvg(`t_outdiscards`),avg_inerrors=arrayAvg(`t_inerrors`),avg_outerrors=arrayAvg(`t_outerrors`)\n| fieldsRename `DNS name` = system_name,Interface=description\n| fieldsRename InDiscards = avg_indiscards, OutDiscards = avg_outdiscards, InErrors = avg_inerrors, OutErrors = avg_outerrors\n| fields `DNS name`,Interface,InDiscards,OutDiscards,InErrors,OutErrors]\n\n| append [timeseries t_indiscards=avg( `com.dynatrace.extension.juniper.generic.if.in.discards.count`,rate:1s),t_outdiscards=avg( `com.dynatrace.extension.juniper.generic.if.out.discards.count`,rate:1s),\n t_inerrors=avg( `com.dynatrace.extension.juniper.generic.if.in.err.count`,rate:1s),t_outerrors=avg( `com.dynatrace.extension.juniper.generic.if.out.err.count`,rate:1s),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`},interval:1m\n| lookup [fetch`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface` | fields id, if_descr , child_of[`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`]],\n    sourceField: `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`,\n    lookupField:id,\n    fields:{  if_descr, `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device\\`]`}\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`| fields id, system_name],\n    sourceField: `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device\\`]`,\n    lookupField:id,\n    fields:{ system_name }    \n| fieldsAdd avg_indiscards=arrayAvg(`t_indiscards`),avg_outdiscards=arrayAvg(`t_outdiscards`),avg_inerrors=arrayAvg(`t_inerrors`),avg_outerrors=arrayAvg(`t_outerrors`)\n| fieldsRename `DNS name` = system_name,Interface=if_descr\n| fieldsRename InDiscards = avg_indiscards, OutDiscards = avg_outdiscards, InErrors = avg_inerrors, OutErrors = avg_outerrors\n| fields `DNS name`,Interface,InDiscards,OutDiscards,InErrors,OutErrors]\n\n| append [timeseries t_indiscards=avg( `com.dynatrace.extension.palo-alto.generic.if.in.discards`,rate:1s),t_outdiscards=avg( `com.dynatrace.extension.palo-alto.generic.if.out.discards`,rate:1s),\nt_outerrors=avg( `com.dynatrace.extension.palo-alto.generic.if.out.err`,rate:1s), t_inerrors=avg( `com.dynatrace.extension.palo-alto.generic.if.in.err`,rate:1s),\nby: {`dt.entity.palo-alto:interface`},interval:1m\n| lookup [fetch`dt.entity.palo-alto:interface` | fields id, InterfaceDescription , runs_on[`dt.entity.palo-alto:device`]],\n    sourceField: `dt.entity.palo-alto:interface`,\n    lookupField:id,\n    fields:{  InterfaceDescription, `runs_on[\\`dt.entity.palo-alto:device\\`]`}\n| lookup [fetch  `dt.entity.palo-alto:device`| fields id, SystemName],\n    sourceField: `runs_on[\\`dt.entity.palo-alto:device\\`]`,\n    lookupField:id,\n    fields:{ SystemName }    \n| fieldsAdd avg_indiscards=arrayAvg(`t_indiscards`),avg_outdiscards=arrayAvg(`t_outdiscards`),avg_inerrors=arrayAvg(`t_inerrors`),avg_outerrors=arrayAvg(`t_outerrors`)\n| fieldsAdd sum_trouble = avg_indiscards + avg_outdiscards + avg_inerrors + avg_outerrors\n| fieldsRename `DNS name` = SystemName,Interface=InterfaceDescription\n| fieldsRename InDiscards = avg_indiscards, OutDiscards = avg_outdiscards, InErrors = avg_inerrors, OutErrors = avg_outerrors\n| fields `DNS name`,Interface,InDiscards,OutDiscards,InErrors,OutErrors]\n\n| sort InDiscards + OutDiscards + InErrors + OutErrors desc\n| limit 10\n",
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "DNS name",
+                        "categoryAxisLabel": "DNS name",
+                        "valueAxis": "InDiscards",
+                        "valueAxisLabel": "InDiscards"
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "DNS name"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "DNS name",
+                        "value": "Interface"
+                    },
+                    "legend": "auto"
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "t_indiscards",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707483383154
+                    },
+                    {
+                        "identifier": "t_outdiscards",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707483383154
+                    },
+                    {
+                        "identifier": "InDiscards",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count_per_second",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1705513769704
+                    },
+                    {
+                        "identifier": "OutDiscards",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count_per_second",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1705513775909
+                    },
+                    {
+                        "identifier": "InErrors",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count_per_second",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1705513783476
+                    },
+                    {
+                        "identifier": "OutErrors",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count_per_second",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1705513792918
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "InDiscards",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "OutDiscards",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "InErrors",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "OutErrors",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            }
+        },
+        "23": {
+            "type": "data",
+            "title": "Top interfaces Inbound traffic",
+            "query": "timeseries t_ino=avg(`com.dynatrace.extension.snmp-generic-cisco-device.if.hc.in.octets.count`,rate:1s),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`},interval:1m\n| lookup [fetch`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface` | fields id,description , child_of[`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`]],\n    sourceField: `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`,\n    lookupField:id,\n    fields:{  description, `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device\\`]` }\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`| fields id, system_name],\n    sourceField:`child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device\\`]`,\n    lookupField:id,\n    fields:{ system_name }    \n| fieldsRemove   `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`,  `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device\\`]`\n| fieldsAdd `Interface` = concat( description,\"-\",system_name ), `InLoad` = 8*t_ino[]\n| fieldsRemove description,system_name, t_ino\n\n| append [timeseries t_ino=avg( `com.dynatrace.extension.snmp-generic-device.if.hc.in.octets.count`,rate:1s),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`},interval:1m\n| lookup [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`| fields id, description, child_of[`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`]],\n    sourceField:`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`,\n    lookupField:id,\n    fields:{ description, `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device\\`]` }\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`| fields id, system_name],\n    sourceField:`child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device\\`]`,\n    lookupField:id,\n    fields:{ system_name }  \n| fieldsRemove `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`, `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device\\`]`\n| fieldsAdd `Interface` = concat( description,\"-\",system_name ), `InLoad` = 8*t_ino[]\n| fieldsRemove description,system_name, t_ino]\n\n\n| append [timeseries t_ino=avg( `com.dynatrace.extension.juniper.generic.if.in.bits`),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`},interval:1m\n| lookup [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`| fields id,if_descr , child_of[`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`]],\n    sourceField:`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`,\n    lookupField:id,\n    fields:{ if_descr, `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device\\`]` }\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`| fields id, system_name],\n    sourceField:`child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device\\`]`,\n    lookupField:id,\n    fields:{ system_name }  \n| fieldsRemove `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`, `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device\\`]`\n| fieldsAdd `Interface` = concat( if_descr,\"-\",system_name ), `InLoad` = t_ino[]\n| fieldsRemove t_ino,system_name,if_descr]\n\n| append [timeseries t_ino=avg(`com.dynatrace.extension.palo-alto.generic.if.hc.in.octets`,rate:1s),\nby: {`dt.entity.palo-alto:interface`},interval:1m\n| lookup [fetch `dt.entity.palo-alto:interface`| fields id, InterfaceDescription , runs_on[`dt.entity.palo-alto:device`]],\n    sourceField:`dt.entity.palo-alto:interface`,\n    lookupField:id,\n    fields:{ InterfaceDescription,  `runs_on[\\`dt.entity.palo-alto:device\\`]`}\n| lookup [fetch  `dt.entity.palo-alto:device`| fields id, SystemName],\n    sourceField:`runs_on[\\`dt.entity.palo-alto:device\\`]`,\n    lookupField:id,\n    fields:{ SystemName }  \n| fieldsRemove `dt.entity.palo-alto:interface`, `runs_on[\\`dt.entity.palo-alto:device\\`]`\n| fieldsAdd `Interface` = concat( InterfaceDescription,\"-\",SystemName ), `InLoad` = 8*t_ino[]\n| fieldsRemove t_ino,SystemName,InterfaceDescription]\n\n| append [timeseries t_ino=avg( `com.dynatrace.extension.f5.bigip.sys.interface.stat.bytes.in.count`,rate:1s),\nby: {`dt.entity.f5:interface`},interval:1m\n| lookup [fetch `dt.entity.f5:interface`| fields id, Name , runs_on[`dt.entity.f5:instance`]],\n    sourceField:`dt.entity.f5:interface`,\n    lookupField:id,\n    fields:{ Name, `runs_on[\\`dt.entity.f5:instance\\`]` }\n| lookup [fetch  `dt.entity.f5:instance`| fields id, NodeName],\n    sourceField:`runs_on[\\`dt.entity.f5:instance\\`]`,\n    lookupField:id,\n    fields:{ NodeName }    \n| fieldsRemove  `runs_on[\\`dt.entity.f5:instance\\`]`,`dt.entity.f5:interface`\n| fieldsAdd `Interface` = concat( Name,\"-\",NodeName ), `InLoad` = 8*t_ino[]\n| fieldsRemove Name,NodeName, t_ino]\n\n| sort arrayLast(InLoad) desc\n|limit 10\n",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "Interface",
+                        "categoryAxisLabel": "Interface",
+                        "valueAxis": "interval",
+                        "valueAxisLabel": "interval"
+                    },
+                    "leftYAxisSettings": {
+                        "min": 0,
+                        "max": "data-max"
+                    },
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "InLoad"
+                        ],
+                        "leftAxisDimensions": [
+                            "Interface"
+                        ],
+                        "fields": [],
+                        "values": []
+                    },
+                    "hiddenLegendFields": []
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "Interface"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "Interface",
+                        "value": "Interface"
+                    },
+                    "legend": "auto"
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "InLoad",
+                        "unitCategory": "datarate",
+                        "baseUnit": "bitps",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1705056612480
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            }
+        },
+        "24": {
+            "type": "data",
+            "title": "Top interfaces Outbound traffic",
+            "query": "timeseries t_outo=avg( `com.dynatrace.extension.snmp-generic-cisco-device.if.hc.out.octets.count`,rate:1s),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`},interval:1m\n| lookup [fetch`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface` | fields id, description , child_of[`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`]],\n    sourceField: `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`,\n    lookupField:id,\n    fields:{  description, `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device\\`]` }\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`| fields id, system_name],\n    sourceField:`child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device\\`]`,\n    lookupField:id,\n    fields:{ system_name }    \n| fieldsRemove   `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`,  `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device\\`]`\n| fieldsAdd `Interface` = concat( description,\"-\",system_name ), `OutLoad` = t_outo[]*8\n| fieldsRemove description,system_name, t_outo\n\n| append [timeseries t_outo=avg( `com.dynatrace.extension.juniper.generic.if.in.bits`),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`},interval:1m\n| lookup [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`| fields id,if_descr , child_of[`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`]],\n    sourceField:`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`,\n    lookupField:id,\n    fields:{ if_descr, `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device\\`]` }\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`| fields id, system_name],\n    sourceField:`child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device\\`]`,\n    lookupField:id,\n    fields:{ system_name }  \n| fieldsRemove `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`, `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device\\`]`\n| fieldsAdd `Interface` = concat( if_descr,\"-\",system_name ), `OutLoad` = t_outo[]\n| fieldsRemove t_outo,system_name,if_descr]\n\n| append [timeseries t_outo=avg( `com.dynatrace.extension.palo-alto.generic.if.hc.in.octets`,rate:1s), \nby: {`dt.entity.palo-alto:interface`},interval:1m\n| lookup [fetch `dt.entity.palo-alto:interface`| fields id, InterfaceDescription , runs_on[`dt.entity.palo-alto:device`]],\n    sourceField:`dt.entity.palo-alto:interface`,\n    lookupField:id,\n    fields:{ InterfaceDescription,  `runs_on[\\`dt.entity.palo-alto:device\\`]`}\n| lookup [fetch  `dt.entity.palo-alto:device`| fields id, SystemName],\n    sourceField:`runs_on[\\`dt.entity.palo-alto:device\\`]`,\n    lookupField:id,\n    fields:{ SystemName }  \n| fieldsRemove `dt.entity.palo-alto:interface`, `runs_on[\\`dt.entity.palo-alto:device\\`]`\n| fieldsAdd `Interface` = concat( InterfaceDescription,\"-\",SystemName ), `OutLoad` = t_outo[]*8\n| fieldsRemove t_outo,SystemName,InterfaceDescription]\n\n| append [timeseries t_outo=avg( `com.dynatrace.extension.palo-alto.generic.if.hc.in.octets`,rate:1s), \nby: {`dt.entity.palo-alto:interface`},interval:1m\n| lookup [fetch `dt.entity.palo-alto:interface`| fields id, InterfaceDescription , runs_on[`dt.entity.palo-alto:device`]],\n    sourceField:`dt.entity.palo-alto:interface`,\n    lookupField:id,\n    fields:{ InterfaceDescription,  `runs_on[\\`dt.entity.palo-alto:device\\`]`}\n| lookup [fetch  `dt.entity.palo-alto:device`| fields id, SystemName],\n    sourceField:`runs_on[\\`dt.entity.palo-alto:device\\`]`,\n    lookupField:id,\n    fields:{ SystemName }  \n| fieldsRemove `dt.entity.palo-alto:interface`, `runs_on[\\`dt.entity.palo-alto:device\\`]`\n| fieldsAdd `Interface` = concat( InterfaceDescription,\"-\",SystemName ), `OutLoad` = t_outo[]*8\n| fieldsRemove t_outo,SystemName,InterfaceDescription]\n\n| append [timeseries t_outo=avg(`com.dynatrace.extension.f5.bigip.sys.interface.stat.bytes.out.count`,rate:1s), \nby: {`dt.entity.f5:interface`},interval:1m\n| lookup [fetch `dt.entity.f5:interface`| fields id, Name , runs_on[`dt.entity.f5:instance`]],\n    sourceField:`dt.entity.f5:interface`,\n    lookupField:id,\n    fields:{ Name, `runs_on[\\`dt.entity.f5:instance\\`]` }\n| lookup [fetch  `dt.entity.f5:instance`| fields id, NodeName],\n    sourceField:`runs_on[\\`dt.entity.f5:instance\\`]`,\n    lookupField:id,\n    fields:{ NodeName }    \n| fieldsRemove  `runs_on[\\`dt.entity.f5:instance\\`]`,`dt.entity.f5:interface`\n| fieldsAdd `Interface` = concat( Name,\"-\",NodeName ), `OutLoad` = t_outo[]*8\n| fieldsRemove Name,NodeName, t_outo]\n\n| sort arrayLast(OutLoad) desc\n|limit 10\n\n",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "Interface",
+                        "categoryAxisLabel": "Interface",
+                        "valueAxis": "interval",
+                        "valueAxisLabel": "interval"
+                    },
+                    "leftYAxisSettings": {
+                        "min": "data-min"
+                    },
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "OutLoad"
+                        ],
+                        "leftAxisDimensions": [
+                            "Interface"
+                        ],
+                        "fields": [],
+                        "values": []
+                    },
+                    "hiddenLegendFields": []
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "Interface"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "Interface",
+                        "value": "Interface"
+                    },
+                    "legend": "auto"
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "Outload b/s",
+                        "unitCategory": "datarate",
+                        "baseUnit": "bitps",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1705057252272
+                    },
+                    {
+                        "identifier": "OutLoad",
+                        "unitCategory": "datarate",
+                        "baseUnit": "bitps",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1705746183536
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            }
+        },
+        "25": {
+            "type": "data",
+            "title": " Top devices CPU usage",
+            "query": "timeseries t_cpu=avg(`com.dynatrace.extension.snmp-generic-cisco-device.cpm.cpu.loadavg.5min`),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`}\n| lookup [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device` | fields id, system_name ],\n    sourceField:`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`,\n    lookupField:id,\n    fields:{system_name}\n| filter system_name != \"AT1i-SW-snmptest.dynatrace.org\"\n| fieldsRename `DNS name`=system_name, `CPU (%)` = t_cpu\n| fieldsRemove  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`\n\n| append [timeseries  t_cpum=avg(`com.dynatrace.extension.palo-alto.generic.cpu.management.utilization`),  t_cpus=avg(`com.dynatrace.extension.palo-alto.generic.cpu.system.utilization`),\nby: {`dt.entity.palo-alto:device`}\n| lookup [fetch `dt.entity.palo-alto:device` | fields id, SystemName],\n    sourceField:`dt.entity.palo-alto:device`,\n    lookupField:id,\n    fields:{ SystemName }\n| fieldsadd `CPU (%)` = tolong(100-t_cpum[]-t_cpus[])\n| fieldsRename `DNS name`=SystemName\n| fieldsRemove `dt.entity.palo-alto:device`,t_cpum,t_cpus]\n\n| append [timeseries  t_cpu=avg(`com.dynatrace.extension.juniper.generic.routingengine.cpu.utilization`),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`}\n| lookup [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device` | fields id,  system_name],\n    sourceField:`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`,\n    lookupField:id,\n    fields:{system_name}\n| fieldsRename `DNS name`=system_name, `CPU (%)` = t_cpu\n| fieldsRemove `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`]\n\n| append [timeseries t_cpu=avg(`com.dynatrace.extension.f5.bigip.sys.global.host.cpu.user1m`),\nby: {`dt.entity.f5:instance`}\n| lookup [fetch `dt.entity.f5:instance` | fields id, NodeName],\n    sourceField:`dt.entity.f5:instance`,\n    lookupField:id,\n    fields:{NodeName}\n| fieldsRename `DNS name`=NodeName, `CPU (%)` = t_cpu\n| fieldsRemove  `dt.entity.f5:instance`]\n\n| sort `CPU (%)` desc\n| limit 10",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "DNS name",
+                        "categoryAxisLabel": "DNS name",
+                        "valueAxis": "interval",
+                        "valueAxisLabel": "interval"
+                    },
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "CPU (%)"
+                        ],
+                        "leftAxisDimensions": [
+                            "DNS name"
+                        ],
+                        "fields": [],
+                        "values": []
+                    },
+                    "hiddenLegendFields": []
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "DNS name"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "DNS name",
+                        "value": "DNS name"
+                    },
+                    "legend": "auto"
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "t_cpu",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707483383156
+                    },
+                    {
+                        "identifier": "t_upt",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "unspecified",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707483383156
+                    },
+                    {
+                        "identifier": "CPU (%)",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1705059899426
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            }
+        },
+        "28": {
+            "type": "markdown",
+            "title": "",
+            "content": "#\n# **Network interfaces load**\n#"
+        },
+        "29": {
+            "type": "data",
+            "title": " Top Cisco routers and switches temperature",
+            "query": "timeseries t_temp=avg(`com.dynatrace.extension.snmp-generic-cisco-device.envmon.temperature.status.value`),\nby: { `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`}\n| lookup [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device` | fields id, system_name, lifetime[end] ],\n    sourceField:`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`,\n    lookupField:id,\n    fields:{system_name}\n| fieldsRename `DNS name`=system_name, `Device Temperature` = t_temp\n| fieldsRemove `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`\n| sort `Device Temperature` desc\n| limit 10",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "DNS name",
+                        "categoryAxisLabel": "DNS name",
+                        "valueAxis": "interval",
+                        "valueAxisLabel": "interval"
+                    },
+                    "leftYAxisSettings": {
+                        "min": 0,
+                        "max": 105
+                    },
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "Device Temperature"
+                        ],
+                        "leftAxisDimensions": [
+                            "DNS name"
+                        ],
+                        "fields": [],
+                        "values": []
+                    },
+                    "hiddenLegendFields": []
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "DNS name"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "DNS name",
+                        "value": "DNS name"
+                    },
+                    "legend": "auto"
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "t_cpu",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707483383157
+                    },
+                    {
+                        "identifier": "t_upt",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "unspecified",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707483383157
+                    },
+                    {
+                        "identifier": "Device Temperature",
+                        "unitCategory": "temperature",
+                        "baseUnit": "degree_celsius",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1705056141609
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            }
+        },
+        "32": {
+            "type": "data",
+            "title": "F5 BIG-IP load balancers",
+            "query": "timeseries t_cpuu=avg(`com.dynatrace.extension.f5.bigip.sys.global.host.cpu.user1m`),\nt_cpui=avg(`com.dynatrace.extension.f5.bigip.sys.global.host.cpu.idle1m`),\nt_cpuw=avg(`com.dynatrace.extension.f5.bigip.sys.global.host.cpu.iowait1m`),\nt_cpur=avg(`com.dynatrace.extension.f5.bigip.sys.global.host.cpu.irq1m`),\nt_cpuf=avg(`com.dynatrace.extension.f5.bigip.sys.global.host.cpu.softirq1min`),\nby: {`dt.entity.f5:instance`}\n| fieldsAdd avg_cpu1=arrayAvg(`t_cpuu`)+arrayAvg(`t_cpui`)+arrayAvg(`t_cpuw`)+arrayAvg(`t_cpur`)+arrayAvg(`t_cpuf`)\n| fieldsRemove t_cpuu,t_cpui,t_cpuw,t_cpur,t_cpuf\n| lookup [ timeseries   t_cpus=avg(`com.dynatrace.extension.f5.bigip.sys.global.host.cpu.stolen1m`),t_cput=avg(`com.dynatrace.extension.f5.bigip.sys.global.host.cpu.system1m`),\nt_mem=avg(`com.dynatrace.extension.f5.bigip.sys.host.memory.used`),  t_upt=avg(`com.dynatrace.extension.f5.bigip.sys.uptime`),\nby: {`dt.entity.f5:instance`}| fieldsAdd avg_cpu2=arrayAvg(`t_cpus`)+arrayAvg(`t_cput`),avg_mem=arrayAvg(`t_mem`), avg_upt=arrayLast(`t_upt`) | fieldsRemove t_cpus,t_cput,t_mem,t_upt],\n    sourceField:`dt.entity.f5:instance`,\n      lookupField:`dt.entity.f5:instance`,\n    fields:{avg_cpu2,avg_mem,avg_upt}\n | fieldsAdd avg_cpu=  avg_cpu1+avg_cpu2 \n| lookup [fetch `dt.entity.f5:instance` | fields id, entity.name, NodeName, lifetime[end]],\n    sourceField:`dt.entity.f5:instance`,\n    lookupField:id,\n    fields:{entity.name,NodeName,`lifetime[end]`}   \n\n| lookup [ timeseries t_in=avg(`com.dynatrace.extension.f5.bigip.sys.interface.stat.bytes.out.count`,rate:1s), t_out=avg(`com.dynatrace.extension.f5.bigip.sys.interface.stat.bytes.in.count`,rate:1s), \nby:{ `dt.entity.f5:instance`,`dt.entity.f5:interface`}, interval:1m\n| fieldsAdd `InOs` = 8*tolong(arrayAvg(t_in)), `OutOs` = 8*tolong(arrayAvg(t_out))\n| summarize `In Traffic`= sum(InOs),`Out Traffic` = sum(OutOs),by:{`dt.entity.f5:instance`}],\n    sourceField:`dt.entity.f5:instance`,\n      lookupField:`dt.entity.f5:instance`,\n    fields:{`In Traffic`,`Out Traffic`}  \n| lookup sourceField:`dt.entity.f5:instance`, lookupField: affected_id, fields: {problems},\n [fetch events\n| filter event.kind == \"DAVIS_PROBLEM\" | fieldsAdd affected_entity_id = affected_entity_ids[0] | summarize collectDistinct(event.status), by:{display_id, affected_entity_id}, alias:problem_status | filter NOT in(problem_status, \"CLOSED\")| summarize problems = count(), by: {affected_id = affected_entity_id}]\n| fields Device = NodeName, `dt.entity.f5:instance`, name=entity.name, lifetime=toString(`lifetime[end]`), problem_count = if(isNull(problems), 0, else: problems), avg_upt, NodeName, avg_mem, avg_cpu, `In Traffic`,`Out Traffic`\n| fieldsRename `Problems #` = problem_count\n| fieldsRemove `dt.entity.f5:instance`\n| fieldsAdd DurSys = toDuration(avg_upt)*1000000\n| filter NodeName != \"ip-10-0-11-88.ec2.internal\"\n| fieldsRename `DNS name`= NodeName, `System Up Time` = DurSys , `CPU utilization` = avg_cpu, `Free Memory` = avg_mem\n| fieldsAdd `Monitoring status` =  if( lifetime <  now() -10m, \"\u26a0\ufe0f\",else:\"\u2705\")\n| fields `DNS name`,  `Monitoring status`, `System Up Time` ,  `Problems #`, `CPU utilization`, `Free Memory`, `Out Traffic`, `In Traffic`\n| sort `Problems #` desc",
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [
+                    {
+                        "id": 1,
+                        "field": "Problems #",
+                        "title": "",
+                        "isEnabled": true,
+                        "rules": [
+                            {
+                                "id": 0,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-09-default, #649438)"
+                                },
+                                "comparator": "=",
+                                "label": "",
+                                "value": 0
+                            },
+                            {
+                                "id": 1,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-14-default, #d56b1a)"
+                                },
+                                "comparator": "\u2265",
+                                "label": ""
+                            },
+                            {
+                                "id": 2,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-12-default, #cd3741)"
+                                },
+                                "comparator": ">",
+                                "label": "",
+                                "value": 0
+                            }
+                        ]
+                    }
+                ],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "DNS name",
+                        "categoryAxisLabel": "DNS name",
+                        "valueAxis": "System Up Time",
+                        "valueAxisLabel": "System Up Time"
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "DNS name"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {
+                        "[\"DNS name\"]": 185,
+                        "[\"Monitoring status\"]": 208,
+                        "[\"System Up Time\"]": 152,
+                        "[\"Device type\"]": 120.63333129882812,
+                        "[\"CPU (%)\"]": 98,
+                        "[\"Free Memory (KB)\"]": 163,
+                        "[\"OutTraffic GB\"]": 134,
+                        "[\"InTraffic GB\"]": 124.30000305175781
+                    }
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "DNS name",
+                        "value": "Monitoring status"
+                    },
+                    "legend": "auto"
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "CPU utilization",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1707483383158
+                    },
+                    {
+                        "identifier": "t_upt",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "unspecified",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707483383158
+                    },
+                    {
+                        "identifier": "In Traffic",
+                        "unitCategory": "datarate",
+                        "baseUnit": "bitps",
+                        "displayUnit": null,
+                        "decimals": 1,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1705513043220
+                    },
+                    {
+                        "identifier": "Free Memory",
+                        "unitCategory": "data",
+                        "baseUnit": "kilobyte",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1705513490605
+                    },
+                    {
+                        "identifier": "CPU (%)",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "none",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1705513577552
+                    },
+                    {
+                        "identifier": "Out Traffic",
+                        "unitCategory": "datarate",
+                        "baseUnit": "bitps",
+                        "displayUnit": null,
+                        "decimals": 1,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1706543310176
+                    },
+                    {
+                        "identifier": "InTraffic",
+                        "unitCategory": "data",
+                        "baseUnit": "byte",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1706543324563
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "System Up Time",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "Problems #",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "CPU utilization",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "Free Memory",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "Out Traffic",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "In Traffic",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            }
+        },
+        "33": {
+            "type": "markdown",
+            "title": "",
+            "content": "#\n# **Interfaces attention points**\n#"
+        },
+        "35": {
+            "type": "markdown",
+            "title": "",
+            "content": "#\n# **Inventory**\n#"
+        },
+        "36": {
+            "type": "data",
+            "title": "Cisco routers and switches Power  Supply state",
+            "query": "\ntimeseries t_ps=avg( `com.dynatrace.extension.snmp-generic-cisco-device.power_supply.state`),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`,ps.label, ps.status}\n| fieldsAdd LastState=arraylast(`t_ps`)\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`| fields id, system_name],\n    sourceField:`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`,\n    lookupField:id,\n    fields:{ system_name }    \n| filter system_name != \"AT1i-SW-snmptest.dynatrace.org\"\n| filter LastState == 1 and isNotNull(ps.label)\n| fieldsRename `DNS name` = system_name , `PSU Name` = ps.label\n| fieldsRemove t_ps, timeframe,interval,`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`,LastState\n| fieldsAdd `PSU State`=  if(ps.status   == \"normal(1)\" ,\"\ud83d\udfe2\" ,else:\"\ud83d\udd34\" )\n| fields `DNS name`, `PSU Name`, `PSU State`\n| sort `PSU State` asc",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device",
+                        "categoryAxisLabel": "dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device",
+                        "valueAxis": "interval",
+                        "valueAxisLabel": "interval"
+                    },
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "t_fs"
+                        ],
+                        "leftAxisDimensions": [
+                            "dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device",
+                            "envmon.fan.status",
+                            "DNS name",
+                            "Fan"
+                        ]
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "DNS name"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "DNS name",
+                        "value": "PSU Name"
+                    },
+                    "legend": "auto"
+                },
+                "histogram": {
+                    "dataMappings": []
+                }
+            }
+        },
+        "38": {
+            "type": "data",
+            "title": "Davis monitored  Network device metrics Health",
+            "query": "fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device` \n| lookup sourceField: id, lookupField: affected_id, fields: {problems},\n [fetch events\n| filter event.kind == \"DAVIS_PROBLEM\" | fieldsAdd affected_entity_id = affected_entity_ids[0] | summarize collectDistinct(event.status), by:{display_id, affected_entity_id}, alias:problem_status | filter NOT in(problem_status, \"CLOSED\")| summarize problems = count(), by: {affected_id = affected_entity_id}]\n| fields id, name=entity.name, type=entity.type, lifetime=toString(lifetime), problem_count = if(isNull(problems), 0, else: problems) \n| fieldsRemove id, lifetime, type\n| summarize result = sum(problem_count )\n\n|append[fetch `dt.entity.f5:instance` \n| lookup sourceField: id, lookupField: affected_id, fields: {problems},\n [fetch events\n| filter event.kind == \"DAVIS_PROBLEM\" | fieldsAdd affected_entity_id = affected_entity_ids[0] | summarize collectDistinct(event.status), by:{display_id, affected_entity_id}, alias:problem_status | filter NOT in(problem_status, \"CLOSED\")| summarize problems = count(), by: {affected_id = affected_entity_id}]\n| fields id, name=entity.name, type=entity.type, lifetime=toString(lifetime), problem_count = if(isNull(problems), 0, else: problems)\n| fieldsRemove id, lifetime, type\n| summarize result = sum(problem_count )]\n\n|append[fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device` \n| lookup sourceField: id, lookupField: affected_id, fields: {problems},\n [fetch events\n| filter event.kind == \"DAVIS_PROBLEM\" | fieldsAdd affected_entity_id = affected_entity_ids[0] | summarize collectDistinct(event.status), by:{display_id, affected_entity_id}, alias:problem_status | filter NOT in(problem_status, \"CLOSED\")| summarize problems = count(), by: {affected_id = affected_entity_id}]\n| fields id, name=entity.name, type=entity.type, lifetime=toString(lifetime), problem_count = if(isNull(problems), 0, else: problems)\n| fieldsRemove id, lifetime, type\n| summarize result = sum(problem_count )]\n\n|append[fetch `dt.entity.palo-alto:device` \n| lookup sourceField: id, lookupField: affected_id, fields: {problems},\n [fetch events\n| filter event.kind == \"DAVIS_PROBLEM\" | fieldsAdd affected_entity_id = affected_entity_ids[0] | summarize collectDistinct(event.status), by:{display_id, affected_entity_id}, alias:problem_status | filter NOT in(problem_status, \"CLOSED\")| summarize problems = count(), by: {affected_id = affected_entity_id}]\n| fields id, name=entity.name, type=entity.type, lifetime=toString(lifetime), problem_count = if(isNull(problems), 0, else: problems)\n| fieldsRemove id, lifetime, type\n| summarize result = sum(problem_count )]\n\n\n|append[fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device` \n| lookup sourceField: id, lookupField: affected_id, fields: {problems},\n [fetch events\n| filter event.kind == \"DAVIS_PROBLEM\" | fieldsAdd affected_entity_id = affected_entity_ids[0] | summarize collectDistinct(event.status), by:{display_id, affected_entity_id}, alias:problem_status | filter NOT in(problem_status, \"CLOSED\")| summarize problems = count(), by: {affected_id = affected_entity_id}]\n| fields id, name=entity.name, type=entity.type, lifetime=toString(lifetime), problem_count = if(isNull(problems), 0, else: problems)\n| fieldsRemove id, lifetime, type\n| summarize result = sum(problem_count )]\n| summarize countdown=sum(result)\n| fieldsAdd `Monitoring status` =  if( countdown  == 0 , \"\ud83d\udfe2\",else:\"\ud83d\udd34\")\n",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "thresholds": [
+                    {
+                        "id": 1,
+                        "field": "",
+                        "title": "",
+                        "isEnabled": true,
+                        "rules": [
+                            {
+                                "id": 0,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-09-default, #649438)"
+                                },
+                                "comparator": "=",
+                                "label": "",
+                                "value": 0
+                            },
+                            {
+                                "id": 1,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-14-default, #d56b1a)"
+                                },
+                                "comparator": "<",
+                                "label": "",
+                                "value": 5
+                            },
+                            {
+                                "id": 2,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-12-default, #cd3741)"
+                                },
+                                "comparator": "\u2265",
+                                "label": "",
+                                "value": 10
+                            }
+                        ]
+                    }
+                ],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "Monitoring status",
+                        "categoryAxisLabel": "Monitoring status",
+                        "valueAxis": "countdown",
+                        "valueAxisLabel": "countdown"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": false,
+                    "label": "",
+                    "prefixIcon": "",
+                    "recordField": "Monitoring status",
+                    "autoscale": false,
+                    "alignment": "center"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "Monitoring status",
+                        "value": "countdown"
+                    },
+                    "legend": "auto"
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "countdown",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            }
+        },
+        "39": {
+            "type": "data",
+            "title": "Interface desired status",
+            "query": "fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`\n| fieldsAdd   opStatus, adminStatus\n| filter opStatus == \"down(2)\" and adminStatus == \"up(1)\"\n| summarize updown=count()\n| append [fetch `dt.entity.f5:interface`\n| fieldsAdd  Status,EnabledState\n| filter Status == \"down(2)\" and EnabledState == \"up(1)\"\n| fieldsRename  opStatus=Status,adminStatus=EnabledState\n| summarize updown=count()]\n\n| append [fetch `dt.entity.palo-alto:interface`\n| fieldsAdd  IFOperatingStatus, InterfaceAdminStatus\n| filter IFOperatingStatus == \"down(2)\" and InterfaceAdminStatus ==\"up(1)\"\n| fieldsRename  opStatus=IFOperatingStatus,adminStatus=InterfaceAdminStatus\n| summarize updown=count()]\n\n| append [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`\n| fieldsAdd if_adminstatus,if_operstatus\n| filter if_operstatus == \"down(2)\" and if_adminstatus == \"up(1)\"\n| fieldsRename  opStatus=if_operstatus,adminStatus=if_adminstatus\n| summarize updown=count()]\n\n| append [fetch `dt.entity.f5:interface`\n| fieldsAdd Status,EnabledState\n| filter Status == \"down(1)\" AND EnabledState == \"true(1)\"\n| summarize updown=count()]\n\n| append [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`\n| fieldsAdd  adminStatus, opStatus\n| filter opStatus == \"down(2)\" and adminStatus == \"up(1)\"\n| summarize updown=count()]\n\n\n| summarize countdown=sum(updown)\n| fieldsAdd `Monitoring status` =  if( countdown == 0 , \"\ud83d\udfe2\",else:\"\ud83d\udd34\")",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "thresholds": [
+                    {
+                        "id": 1,
+                        "field": "",
+                        "title": "",
+                        "isEnabled": true,
+                        "rules": [
+                            {
+                                "id": 0,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-09-default, #649438)"
+                                },
+                                "comparator": "=",
+                                "label": "",
+                                "value": 0
+                            },
+                            {
+                                "id": 1,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-14-default, #d56b1a)"
+                                },
+                                "comparator": "<",
+                                "label": "",
+                                "value": 5
+                            },
+                            {
+                                "id": 2,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-12-default, #cd3741)"
+                                },
+                                "comparator": "\u2265",
+                                "label": "",
+                                "value": 10
+                            }
+                        ]
+                    }
+                ],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "Monitoring status",
+                        "categoryAxisLabel": "Monitoring status",
+                        "valueAxis": "countdown",
+                        "valueAxisLabel": "countdown"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": false,
+                    "label": "",
+                    "prefixIcon": "",
+                    "recordField": "Monitoring status",
+                    "autoscale": false,
+                    "alignment": "center"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "Monitoring status",
+                        "value": "countdown"
+                    },
+                    "legend": "auto"
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "countdown",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            }
+        },
+        "40": {
+            "type": "data",
+            "title": "Network devices monitoring health",
+            "query": "fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`\n| filter lifetime[end]  <  now() - 5m\n| summarize down=count()\n|append [fetch `dt.entity.f5:instance`\n| filter lifetime[end]  <  now() - 5m\n| summarize down=count()]\n|append [fetch `dt.entity.palo-alto:device`\n| filter lifetime[end]  <  now() - 5m\n| summarize down=count()]\n|append [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`\n| filter lifetime[end]  <  now() - 5m\n| summarize down=count()]\n|append [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`\n| filter lifetime[end]  <  now() - 5m\n| summarize down=count()]\n| summarize countdown=sum(down)\n| fieldsAdd `Monitoring status` =  if( countdown == 0 , \"\ud83d\udfe2\",else:\"\ud83d\udd34\")",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "thresholds": [
+                    {
+                        "id": 1,
+                        "field": "",
+                        "title": "",
+                        "isEnabled": true,
+                        "rules": [
+                            {
+                                "id": 0,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-09-default, #649438)"
+                                },
+                                "comparator": "=",
+                                "label": "",
+                                "value": 0
+                            },
+                            {
+                                "id": 1,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-14-default, #d56b1a)"
+                                },
+                                "comparator": "<",
+                                "label": "",
+                                "value": 5
+                            },
+                            {
+                                "id": 2,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-12-default, #cd3741)"
+                                },
+                                "comparator": "\u2265",
+                                "label": "",
+                                "value": 10
+                            }
+                        ]
+                    }
+                ],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "Monitoring status",
+                        "categoryAxisLabel": "Monitoring status",
+                        "valueAxis": "countdown",
+                        "valueAxisLabel": "countdown"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": false,
+                    "label": "",
+                    "prefixIcon": "",
+                    "recordField": "Monitoring status",
+                    "autoscale": false,
+                    "alignment": "center"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "Monitoring status",
+                        "value": "countdown"
+                    },
+                    "legend": "auto"
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "countdown",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            }
+        },
+        "41": {
+            "type": "data",
+            "title": "Network devices hardware health",
+            "query": "timeseries t_fs=avg( `com.dynatrace.extension.snmp-generic-cisco-device.envmon.fan.state`),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`,envmon.fan.status,envmon.fan.status.descr}\n| fieldsAdd LastFanState=arraylast(`t_fs`)\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`| fields id, system_name],\n    sourceField:`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`,\n    lookupField:id,\n    fields:{ system_name }   \n| filter LastFanState == 1 and isnotnull( envmon.fan.status.descr) and  envmon.fan.status ==  \"critical(3)\"   \n| filter system_name == \"AT1i-SW-snmptest.dynatrace.org\"\n| summarize HHealth=count()\n|append [timeseries t_ps=avg( `com.dynatrace.extension.snmp-generic-cisco-device.power_supply.state`),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`,ps.label, ps.status}\n| fieldsAdd LastPSUState=arraylast(`t_ps`)\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`| fields id, system_name],\n    sourceField:`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`,\n    lookupField:id,\n    fields:{ system_name }    \n| filter LastPSUState == 1 and isnotnull(ps.label) and ps.status ==  \"critical(3)\"  \n| filter system_name != \"AT1i-SW-snmptest.dynatrace.org\"\n| summarize HHealth=count()]\n| summarize critical=sum(HHealth)\n| fieldsAdd `Hardware`=  if(critical==0,  \"\ud83d\udfe2\",else: \"\ud83d\udd34\")",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "thresholds": [
+                    {
+                        "id": 1,
+                        "field": "",
+                        "title": "",
+                        "isEnabled": true,
+                        "rules": [
+                            {
+                                "id": 0,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-09-default, #649438)"
+                                },
+                                "comparator": "=",
+                                "label": "",
+                                "value": 0
+                            },
+                            {
+                                "id": 1,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-14-default, #d56b1a)"
+                                },
+                                "comparator": "<",
+                                "label": "",
+                                "value": 5
+                            },
+                            {
+                                "id": 2,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-12-default, #cd3741)"
+                                },
+                                "comparator": "\u2265",
+                                "label": "",
+                                "value": 10
+                            }
+                        ]
+                    }
+                ],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "Hardware",
+                        "categoryAxisLabel": "Hardware",
+                        "valueAxis": "critical",
+                        "valueAxisLabel": "critical"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": false,
+                    "label": "",
+                    "prefixIcon": "",
+                    "recordField": "Hardware",
+                    "autoscale": false,
+                    "alignment": "center"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "Hardware",
+                        "value": "critical"
+                    },
+                    "legend": "auto"
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "critical",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            }
+        },
+        "42": {
+            "type": "markdown",
+            "title": "",
+            "content": "##\n## Hardware performance\n##"
+        },
+        "43": {
+            "type": "data",
+            "title": " Top devices  memory usage",
+            "query": "timeseries t_free=avg(`com.dynatrace.extension.snmp-generic-cisco-device.cpm.cpu.memory.hc.free`), t_used=avg(`com.dynatrace.extension.snmp-generic-cisco-device.cpm.cpu.memory.hc.used`),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`}\n| lookup [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device` | fields id, system_name],\n    sourceField:`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`,\n    lookupField:id,\n    fields:{system_name}\n| fieldsadd `Used Memory (%)` = 100*(t_used[]/(t_free[]+ t_used[]))\n| fieldsRename `DNS name`=system_name\n| fieldsRemove  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`,t_free,t_used\n\n| append [timeseries t_mem=avg(`com.dynatrace.extension.juniper.generic.routingengine.memory.utilization`),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`}\n| lookup [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device` | fields id,  system_name],\n    sourceField:`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`,\n    lookupField:id,\n    fields:{system_name}\n| fieldsRename `DNS name`=system_name, `Used Memory (%)` = t_mem\n| fieldsRemove `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`]\n\n| append [timeseries t_used=avg(`com.dynatrace.extension.f5.bigip.sys.host.memory.used`),t_free=avg(`com.dynatrace.extension.f5.bigip.sys.host.memory.free`),\nby: {`dt.entity.f5:instance`}\n| lookup [fetch `dt.entity.f5:instance` | fields id, NodeName],\n    sourceField:`dt.entity.f5:instance`,\n    lookupField:id,\n    fields:{NodeName}\n| fieldsadd `Used Memory (%)` = 100*(t_used[]/(t_free[]+ t_used[]))\n| fieldsRename `DNS name`=NodeName\n| fieldsRemove  `dt.entity.f5:instance`,t_used,t_free]\n| sort `Used Memory (%)` desc\n| limit 10",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "DNS name",
+                        "categoryAxisLabel": "DNS name",
+                        "valueAxis": "interval",
+                        "valueAxisLabel": "interval"
+                    },
+                    "leftYAxisSettings": {
+                        "min": 0,
+                        "max": 100
+                    },
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "Used Memory (%)"
+                        ],
+                        "leftAxisDimensions": [
+                            "DNS name"
+                        ],
+                        "fields": [],
+                        "values": []
+                    },
+                    "hiddenLegendFields": []
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "DNS name"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "DNS name",
+                        "value": "DNS name"
+                    },
+                    "legend": "auto"
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "t_cpu",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707483383169
+                    },
+                    {
+                        "identifier": "t_upt",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "unspecified",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707483383169
+                    },
+                    {
+                        "identifier": "Used Memory (%)",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1702394182414
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            }
+        },
+        "45": {
+            "type": "data",
+            "title": "Juniper routers",
+            "query": "timeseries  t_upt=avg(`com.dynatrace.extension.juniper.generic.device.sys.uptime`),t_cpu=avg(`com.dynatrace.extension.juniper.generic.routingengine.cpu.utilization`),t_mem=avg(`com.dynatrace.extension.juniper.generic.routingengine.memory.utilization`),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`}\n| lookup [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device` | fields id, system_name, lifetime[end],entity.type ],\n    sourceField:`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`,\n    lookupField:id,\n    fields:{system_name,`lifetime[end]`, entity.type}\n| fieldsAdd avg_cpu=toLong(arrayAvg(`t_cpu`)), avg_mem=arrayAvg(`t_mem`), avg_upt=arrayLast(`t_upt`)\n| lookup [ timeseries t_in=avg(`com.dynatrace.extension.juniper.generic.if.in.bits`), t_out=avg(`com.dynatrace.extension.juniper.generic.if.out.bits`),\nby:{ `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`,`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`},interval:1m\n| fieldsAdd `InOs` = tolong(arrayAvg(t_in)), `OutOs` = tolong(arrayAvg(t_out))\n| summarize `In Traffic`= sum(InOs),`Out Traffic` = sum(OutOs),by:{`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`}],\n    sourceField:`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`,\n      lookupField:`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`,\n    fields:{`Out Traffic`, `In Traffic` }  \n| lookup sourceField:`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`, lookupField: affected_id, fields: {problems},\n [fetch events\n| filter event.kind == \"DAVIS_PROBLEM\" | fieldsAdd affected_entity_id = affected_entity_ids[0] | summarize collectDistinct(event.status), by:{display_id, affected_entity_id}, alias:problem_status | filter NOT in(problem_status, \"CLOSED\")| summarize problems = count(), by: {affected_id = affected_entity_id}]\n| fields Device = system_name, `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`, type=entity.type, lifetime=toString(`lifetime[end]`), problem_count = if(isNull(problems), 0, else: problems), avg_upt, system_name, `Out Traffic`, `In Traffic`, avg_mem, avg_cpu\n| fieldsAdd DurSys = toDuration(avg_upt)*10000000\n| fieldsRename `DNS name`=system_name, `System Up Time` = DurSys ,  `CPU utilization` = avg_cpu, `Memory utilization` = avg_mem, `Problems #` = problem_count\n| fieldsAdd `Monitoring status` =  if( lifetime <  now() - 10m, \"\u26a0\ufe0f\",else:\"\u2705\")\n| fields `DNS name`,  `Monitoring status`, `System Up Time` ,  `Problems #`, `CPU utilization`, `Memory utilization`, `Out Traffic`, `In Traffic`\n| sort `Problems #` desc",
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [
+                    {
+                        "id": 1,
+                        "field": "Problems #",
+                        "title": "",
+                        "isEnabled": true,
+                        "rules": [
+                            {
+                                "id": 0,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-09-default, #649438)"
+                                },
+                                "comparator": "=",
+                                "label": "",
+                                "value": 0
+                            },
+                            {
+                                "id": 1,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-14-default, #d56b1a)"
+                                },
+                                "comparator": "\u2265",
+                                "label": ""
+                            },
+                            {
+                                "id": 2,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-12-default, #cd3741)"
+                                },
+                                "comparator": ">",
+                                "label": "",
+                                "value": 0
+                            }
+                        ]
+                    }
+                ],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "DNS name",
+                        "categoryAxisLabel": "DNS name",
+                        "valueAxis": "System Up Time",
+                        "valueAxisLabel": "System Up Time"
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "DNS name"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {
+                        "[\"DNS name\"]": 118,
+                        "[\"Monitoring status\"]": 174,
+                        "[\"System Up Time\"]": 152,
+                        "[\"Device type\"]": 186.56666564941406,
+                        "[\"Problems #\"]": 122,
+                        "[\"CPU (%)\"]": 98,
+                        "[\"Free Memory (KB)\"]": 163,
+                        "[\"OutTraffic GB\"]": 134,
+                        "[\"InTraffic GB\"]": 223
+                    }
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "DNS name",
+                        "value": "Monitoring status"
+                    },
+                    "legend": "auto"
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "Out Traffic",
+                        "unitCategory": "datarate",
+                        "baseUnit": "bitps",
+                        "displayUnit": null,
+                        "decimals": 1,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1705513710936
+                    },
+                    {
+                        "identifier": "In Traffic",
+                        "unitCategory": "datarate",
+                        "baseUnit": "bitps",
+                        "displayUnit": null,
+                        "decimals": 1,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1705513716585
+                    },
+                    {
+                        "identifier": "OutTraffic",
+                        "unitCategory": "data",
+                        "baseUnit": "byte",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1706543100276
+                    },
+                    {
+                        "identifier": "Memory utilization",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1707818463448
+                    },
+                    {
+                        "identifier": "CPU utilization",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1707819272258
+                    },
+                    {
+                        "identifier": null,
+                        "unitCategory": "unspecified",
+                        "baseUnit": "none",
+                        "displayUnit": null,
+                        "decimals": 3,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1707819293663
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "System Up Time",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "Problems #",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "CPU utilization",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "Memory utilization",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "Out Traffic",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "In Traffic",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            }
+        },
+        "46": {
+            "type": "data",
+            "title": "Cisco routers and switches  Fans state",
+            "query": "timeseries t_fs=avg( `com.dynatrace.extension.snmp-generic-cisco-device.envmon.fan.state`),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`,envmon.fan.status,envmon.fan.status.descr}\n| fieldsAdd LastState=arraylast(`t_fs`)\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`| fields id, system_name],\n    sourceField:`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`,\n    lookupField:id,\n    fields:{ system_name }    \n| filter system_name != \"AT1i-SW-snmptest.dynatrace.org\"\n| fieldsRename `DNS name` = system_name \n| fieldsRemove t_fs, timeframe,interval\n| filter LastState == 1\n| fieldsAdd `Fan State`=  if(envmon.fan.status   == \"critical(3)\" , \"\ud83d\udd34\" ,else:\"\ud83d\udfe2\")\n| fieldsRename `Fan Description`=`envmon.fan.status.descr`\n| fields `DNS name`,`Fan Description`, `Fan State`\n| sort `Fan State` asc",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxisLabel": "dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device",
+                        "valueAxisLabel": "interval"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "DNS name"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "DNS name",
+                        "value": "Fan Description"
+                    },
+                    "legend": "auto"
+                },
+                "histogram": {
+                    "dataMappings": []
+                }
+            }
+        },
+        "47": {
+            "type": "data",
+            "title": "Generic devices",
+            "query": "timeseries t_upt=avg(`com.dynatrace.extension.snmp-generic-device.sys.uptime`), \nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`}\n| lookup [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device` | fields id, entity.name, system_name, lifetime[end],entity.type ],\n    sourceField:`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`,\n    lookupField:id,\n    fields:{entity.name,system_name,`lifetime[end]`, entity.type }\n| fieldsAdd avg_upt=arrayLast(`t_upt`)\n\n| lookup [ timeseries t_ino=avg(`com.dynatrace.extension.snmp-generic-device.if.hc.in.octets.count`,rate:1s), t_outo=avg(`com.dynatrace.extension.snmp-generic-device.if.hc.out.octets.count`,rate:1s),\nby:{ `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`, `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`}, interval:1m\n| fieldsAdd `InOs` = tolong(8*arrayAvg(t_ino)), `OutOs` = tolong(8*arrayAvg(t_outo))\n| summarize `In Traffic`= sum(InOs),`Out Traffic` = sum(OutOs),by:{`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`}],\n    sourceField:`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`,\n      lookupField:`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`,\n    fields:{`In Traffic`, `Out Traffic` }  \n    \n| lookup sourceField:`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`, lookupField: affected_id, fields: {problems},\n [fetch events\n| filter event.kind == \"DAVIS_PROBLEM\" | fieldsAdd affected_entity_id = affected_entity_ids[0] | summarize collectDistinct(event.status), by:{display_id, affected_entity_id}, alias:problem_status | filter NOT in(problem_status, \"CLOSED\")| summarize problems = count(), by: {affected_id = affected_entity_id}]\n| fields Device = system_name, `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`, name=entity.name, `Device type`=entity.type, lifetime=toString(`lifetime[end]`), problem_count = if(isNull(problems), 0, else: problems), avg_upt, system_name, `In Traffic`, `Out Traffic`\n| fieldsAdd DurSys = toDuration(avg_upt)*1000000\n| fieldsRemove avg_upt\n| fieldsRename `DNS name`=system_name, `System Up Time` = DurSys , `Problems #` = problem_count\n| fieldsAdd `Monitoring status` =  if( lifetime <  now() -10m, \"\u26a0\ufe0f\",else:\"\u2705\")\n| fields `DNS name`,  `Monitoring status`, `System Up Time` ,  `Problems #`, `Out Traffic`, `In Traffic`\n| filter `DNS name` != \"AT1i-SW-snmptest.dynatrace.org\"\n| sort `Problems #` desc",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "DNS name",
+                        "categoryAxisLabel": "DNS name",
+                        "valueAxis": "System Up Time",
+                        "valueAxisLabel": "System Up Time"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "recordField": "DNS name",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "DNS name",
+                        "value": "Monitoring status"
+                    },
+                    "legend": "auto"
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "Out Traffic",
+                        "unitCategory": "datarate",
+                        "baseUnit": "bitps",
+                        "displayUnit": null,
+                        "decimals": 1,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707484742776
+                    },
+                    {
+                        "identifier": "In Traffic",
+                        "unitCategory": "datarate",
+                        "baseUnit": "bitps",
+                        "displayUnit": null,
+                        "decimals": 1,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707484768617
+                    },
+                    {
+                        "identifier": "System Up Time",
+                        "unitCategory": "time",
+                        "baseUnit": "nanosecond",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707484784915
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "System Up Time",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "Problems #",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "Out Traffic",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "In Traffic",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            }
+        },
+        "48": {
+            "type": "data",
+            "title": "Cisco switches and routers",
+            "query": "timeseries t_cpu=avg(`com.dynatrace.extension.snmp-generic-cisco-device.cpm.cpu.loadavg.5min`), t_mem=avg(`com.dynatrace.extension.snmp-generic-cisco-device.cpm.cpu.memory.hc.free`),  t_upt=avg(`com.dynatrace.extension.snmp-generic-cisco-device.sys.uptime`), \nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`}\n| lookup [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device` | fields id, system_name, lifetime[end]],\n    sourceField:`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`,\n    lookupField:id,\n    fields:{system_name,`lifetime[end]`}\n| fieldsAdd avg_cpu=arrayAvg(`t_cpu`), avg_mem=arrayAvg(`t_mem`), avg_upt=arrayLast(`t_upt`)\n\n| lookup [ timeseries t_in=avg(`com.dynatrace.extension.snmp-generic-cisco-device.if.hc.in.octets.count`, rate:1s), t_out=avg(`com.dynatrace.extension.snmp-generic-cisco-device.if.hc.out.octets.count`, rate:1s), \nby:{ `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`,`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`}, interval:1m\n| fieldsAdd `InOs` = 8*tolong(arrayAvg(t_in)), `OutOs` = 8*tolong(arrayAvg(t_out))\n| summarize `In Traffic`= sum(InOs),`Out Traffic` = sum(OutOs),by:{`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`}],\n    sourceField:`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`,\n      lookupField:`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`,\n    fields:{`In Traffic`,`Out Traffic`}  \n    \n| lookup sourceField:`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`, lookupField: affected_id, fields: {problems},\n [fetch events\n| filter event.kind == \"DAVIS_PROBLEM\" | fieldsAdd affected_entity_id = affected_entity_ids[0] | summarize collectDistinct(event.status), by:{display_id, affected_entity_id}, alias:problem_status | filter NOT in(problem_status, \"CLOSED\")| summarize problems = count(), by: {affected_id = affected_entity_id}]\n| fields Device = system_name, `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`,lifetime=toString(`lifetime[end]`), problem_count = if(isNull(problems), 0, else: problems), avg_upt, system_name, avg_mem, avg_cpu,`In Traffic`,`Out Traffic`\n| fieldsRename `Problems #` = problem_count\n| fieldsAdd DurSys = toDuration(avg_upt)*1000000\n| fieldsRemove avg_upt\n| fieldsRename `DNS name`=system_name, `System Up Time` = DurSys , `CPU utilization` = avg_cpu, `Free Memory (KB)` = avg_mem\n| fieldsAdd `Monitoring status` =  if( lifetime <  now() -10m, \"\u26a0\ufe0f\",else:\"\u2705\")\n| fields `DNS name`,  `Monitoring status`, `System Up Time` ,  `Problems #`, `CPU utilization`, `Free Memory (KB)`, `Out Traffic`, `In Traffic`\n| filter `DNS name` != \"AT1i-SW-snmptest.dynatrace.org\"\n| sort `Problems #` desc",
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [
+                    {
+                        "id": 1,
+                        "field": "Problems #",
+                        "title": "",
+                        "isEnabled": true,
+                        "rules": [
+                            {
+                                "id": 0,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-09-default, #649438)"
+                                },
+                                "comparator": "=",
+                                "label": "",
+                                "value": 0
+                            },
+                            {
+                                "id": 1,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-14-default, #d56b1a)"
+                                },
+                                "comparator": "\u2265",
+                                "label": ""
+                            },
+                            {
+                                "id": 2,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-12-default, #cd3741)"
+                                },
+                                "comparator": ">",
+                                "label": "",
+                                "value": 0
+                            }
+                        ]
+                    }
+                ],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "DNS name",
+                        "categoryAxisLabel": "DNS name",
+                        "valueAxis": "System Up Time",
+                        "valueAxisLabel": "System Up Time"
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "DNS name"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {
+                        "[\"DNS name\"]": 224,
+                        "[\"Monitoring status\"]": 174,
+                        "[\"System Up Time\"]": 152,
+                        "[\"Device type\"]": 186.56666564941406,
+                        "[\"Problems #\"]": 122,
+                        "[\"CPU (%)\"]": 98,
+                        "[\"Free Memory (KB)\"]": 163,
+                        "[\"OutTraffic GB\"]": 134,
+                        "[\"InTraffic GB\"]": 223
+                    }
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "DNS name",
+                        "value": "Monitoring status"
+                    },
+                    "legend": "auto"
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "CPU utilization",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1707483383150
+                    },
+                    {
+                        "identifier": "t_upt",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "unspecified",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707483383150
+                    },
+                    {
+                        "identifier": "InTraffic GB",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "none",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1705513072192
+                    },
+                    {
+                        "identifier": "Free Memory (KB)",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "none",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1705513467364
+                    },
+                    {
+                        "identifier": "CPU (%)",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "none",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1705513604834
+                    },
+                    {
+                        "identifier": "Out Traffic",
+                        "unitCategory": "datarate",
+                        "baseUnit": "bitps",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1706543172748
+                    },
+                    {
+                        "identifier": "In Traffic",
+                        "unitCategory": "datarate",
+                        "baseUnit": "bitps",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1706543192234
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "System Up Time",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "Problems #",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "CPU utilization",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "Free Memory (KB)",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "Out Traffic",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "In Traffic",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "layouts": {
+        "0": {
+            "x": 0,
+            "y": 19,
+            "w": 9,
+            "h": 3
+        },
+        "6": {
+            "x": 9,
+            "y": 22,
+            "w": 12,
+            "h": 3
+        },
+        "7": {
+            "x": 0,
+            "y": 0,
+            "w": 21,
+            "h": 3
+        },
+        "8": {
+            "x": 10,
+            "y": 53,
+            "w": 10,
+            "h": 7
+        },
+        "18": {
+            "x": 0,
+            "y": 32,
+            "w": 10,
+            "h": 6
+        },
+        "19": {
+            "x": 10,
+            "y": 32,
+            "w": 11,
+            "h": 6
+        },
+        "20": {
+            "x": 0,
+            "y": 44,
+            "w": 10,
+            "h": 7
+        },
+        "21": {
+            "x": 0,
+            "y": 53,
+            "w": 10,
+            "h": 7
+        },
+        "23": {
+            "x": 0,
+            "y": 38,
+            "w": 10,
+            "h": 6
+        },
+        "24": {
+            "x": 10,
+            "y": 38,
+            "w": 11,
+            "h": 6
+        },
+        "25": {
+            "x": 10,
+            "y": 7,
+            "w": 11,
+            "h": 5
+        },
+        "28": {
+            "x": 0,
+            "y": 30,
+            "w": 21,
+            "h": 2
+        },
+        "29": {
+            "x": 0,
+            "y": 7,
+            "w": 10,
+            "h": 5
+        },
+        "32": {
+            "x": 9,
+            "y": 19,
+            "w": 12,
+            "h": 3
+        },
+        "33": {
+            "x": 0,
+            "y": 51,
+            "w": 20,
+            "h": 2
+        },
+        "35": {
+            "x": 0,
+            "y": 17,
+            "w": 21,
+            "h": 2
+        },
+        "36": {
+            "x": 0,
+            "y": 12,
+            "w": 6,
+            "h": 5
+        },
+        "38": {
+            "x": 12,
+            "y": 3,
+            "w": 4,
+            "h": 2
+        },
+        "39": {
+            "x": 8,
+            "y": 3,
+            "w": 4,
+            "h": 2
+        },
+        "40": {
+            "x": 0,
+            "y": 3,
+            "w": 4,
+            "h": 2
+        },
+        "41": {
+            "x": 4,
+            "y": 3,
+            "w": 4,
+            "h": 2
+        },
+        "42": {
+            "x": 0,
+            "y": 5,
+            "w": 21,
+            "h": 2
+        },
+        "43": {
+            "x": 12,
+            "y": 12,
+            "w": 9,
+            "h": 5
+        },
+        "45": {
+            "x": 0,
+            "y": 22,
+            "w": 9,
+            "h": 3
+        },
+        "46": {
+            "x": 6,
+            "y": 12,
+            "w": 6,
+            "h": 5
+        },
+        "47": {
+            "x": 0,
+            "y": 25,
+            "w": 22,
+            "h": 5
+        },
+        "48": {
+            "x": 0,
+            "y": 60,
+            "w": 12,
+            "h": 3
+        }
+    },
+    "importedWithCode": false
+}

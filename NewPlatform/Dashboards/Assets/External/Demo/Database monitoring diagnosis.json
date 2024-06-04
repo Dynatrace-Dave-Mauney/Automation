@@ -1,0 +1,275 @@
+{
+    "version": 12,
+    "variables": [
+        {
+            "key": "eventType",
+            "type": "csv",
+            "input": "Environment config, Monitoring config, Generic",
+            "multiple": true
+        },
+        {
+            "key": "logLevel",
+            "type": "csv",
+            "input": "INFO, ERROR, WARN",
+            "multiple": true
+        },
+        {
+            "key": "dbType",
+            "type": "csv",
+            "input": "MS SQL Server, Oracle, PostgreSQL, SAP HanaDB, IBM DB2, MySQL, Snowflake, Cassandra, MongoDB, Elasticsearch, Memcached",
+            "multiple": true
+        }
+    ],
+    "tiles": {
+        "0": {
+            "type": "data",
+            "title": "Recent 100 event details",
+            "query": "fetch dt.system.events\n| filter matchesValue(event.type, \"SFM\") \n| filter in(dt.extension.name, {\n  \"com.dynatrace.extension.sql-db2\",\n  \"com.dynatrace.extension.sql-oracle\", \n  \"com.dynatrace.extension.sql-server\", \n  \"com.dynatrace.extension.mysql\",\n  \"com.dynatrace.extension.sql-sap-hana\",\n  \"com.dynatrace.extension.postgres\",\n  \"com.dynatrace.extension.sql-snowflake\", \n  \"com.dynatrace.extension.jmx-cassandra\",\n  \"com.dynatrace.extension.mongodb-mongodb\",\n  \"com.dynatrace.extension.elasticsearch\",\n  \"com.dynatrace.extension.memcached\"}) \n| fieldsAdd dbType = replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(dt.extension.name, \n  \"com.dynatrace.extension.sql-oracle\", \"Oracle\"), \n  \"com.dynatrace.extension.sql-server\", \"MS SQL Server\"), \n  \"com.dynatrace.extension.mysql\", \"MySQL\"), \n  \"com.dynatrace.extension.sql-db2\", \"IBM DB2\"), \n  \"com.dynatrace.extension.postgres\", \"PostgreSQL\"), \n  \"com.dynatrace.extension.sql-snowflake\", \"Snowflake\"), \n  \"com.dynatrace.extension.sql-sap-hana\", \"SAP HanaDB\"), \n  \"com.dynatrace.extension.jmx-cassandra\", \"Cassandra\"), \n  \"com.dynatrace.extension.mongodb-mongodb\", \"MongoDB\"), \n  \"com.dynatrace.extension.elasticsearch\", \"Elasticsearch\"), \n  \"com.dynatrace.extension.memcached\", \"Memcached\")\n| filter in(dbType, array($dbType))\n| fieldsAdd eventType =\n  if(like(content, \"%The monitoring configuration requires ActiveGate version %\"), \"Environment config\", else:\n    if(like(content, \"%Cannot connect to database%\"), \"Monitoring config\", else: \"Generic\"))\n| filter in(eventType, array($eventType))\n| filter in(loglevel, array($logLevel))\n| fields dt.extension.name, timestamp, dt.extension.ds, dt.active_gate.group.name, dt.active_gate.id, dt.extension.config.id, content\n| sort timestamp desc, dt.extension.config.id\n| limit 100",
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "dt.entity.sql:com_dynatrace_extension_sql-oracle_instance",
+                        "categoryAxisLabel": "dt.entity.sql:com_dynatrace_extension_sql-oracle_instance",
+                        "valueAxis": "interval",
+                        "valueAxisLabel": "interval"
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [
+                        [
+                            "timeframe"
+                        ],
+                        [
+                            "interval"
+                        ]
+                    ],
+                    "lineWrapIds": [
+                        [
+                            "sum(`com.dynatrace.extension.sql-oracle.cpu.cores`)"
+                        ]
+                    ],
+                    "columnWidths": {}
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "com.dynatrace.extension.sql-oracle.cpu.cores",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true
+                    }
+                ]
+            }
+        },
+        "2": {
+            "type": "markdown",
+            "title": "",
+            "content": "# Database monitoring diagnosis\nAn overview of all self-monitoring events reported by DB monitoring extensions. Use the [Extension Manager](/ui/apps/dynatrace.extensions.manager/) for more details."
+        },
+        "3": {
+            "type": "data",
+            "title": "Events overview",
+            "query": "fetch dt.system.events\n| filter matchesValue(event.type, \"SFM\") \n| filter in(dt.extension.name, {\n  \"com.dynatrace.extension.sql-db2\",\n  \"com.dynatrace.extension.sql-oracle\", \n  \"com.dynatrace.extension.sql-server\", \n  \"com.dynatrace.extension.mysql\",\n  \"com.dynatrace.extension.sql-sap-hana\",\n  \"com.dynatrace.extension.postgres\",\n  \"com.dynatrace.extension.sql-snowflake\", \n  \"com.dynatrace.extension.jmx-cassandra\",\n  \"com.dynatrace.extension.mongodb-mongodb\",\n  \"com.dynatrace.extension.elasticsearch\",\n  \"com.dynatrace.extension.memcached\"}) \n| fieldsAdd dbType = replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(dt.extension.name, \n  \"com.dynatrace.extension.sql-oracle\", \"Oracle\"), \n  \"com.dynatrace.extension.sql-server\", \"MS SQL Server\"), \n  \"com.dynatrace.extension.mysql\", \"MySQL\"), \n  \"com.dynatrace.extension.sql-db2\", \"IBM DB2\"), \n  \"com.dynatrace.extension.postgres\", \"PostgreSQL\"), \n  \"com.dynatrace.extension.sql-snowflake\", \"Snowflake\"), \n  \"com.dynatrace.extension.sql-sap-hana\", \"SAP HanaDB\"), \n  \"com.dynatrace.extension.jmx-cassandra\", \"Cassandra\"), \n  \"com.dynatrace.extension.mongodb-mongodb\", \"MongoDB\"), \n  \"com.dynatrace.extension.elasticsearch\", \"Elasticsearch\"), \n  \"com.dynatrace.extension.memcached\", \"Memcached\")\n| filter in(dbType, array($dbType))\n| filter in(loglevel, array($logLevel))\n| makeTimeseries count = count(), by:{dbType, loglevel}, interval:5m",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "legend": {
+                        "position": "bottom",
+                        "hidden": false
+                    },
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "dbType",
+                        "categoryAxisLabel": "dbType",
+                        "valueAxis": "interval",
+                        "valueAxisLabel": "interval"
+                    },
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "count"
+                        ],
+                        "leftAxisDimensions": [
+                            "dbType",
+                            "loglevel"
+                        ],
+                        "fields": [],
+                        "values": []
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "columnWidths": {},
+                    "lineWrapIds": []
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "dt.host.cpu.usage",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true
+                    },
+                    {
+                        "identifier": "dt.host.memory.avail.percent",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true
+                    },
+                    {
+                        "identifier": "dt.host.disk.free",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true
+                    },
+                    {
+                        "identifier": "dt.host.disk.used.percent",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true
+                    }
+                ]
+            }
+        },
+        "4": {
+            "type": "data",
+            "title": "Total number of events reported",
+            "query": "fetch dt.system.events\n| filter matchesValue(event.type, \"SFM\") \n| filter in(dt.extension.name, {\n  \"com.dynatrace.extension.sql-db2\",\n  \"com.dynatrace.extension.sql-oracle\", \n  \"com.dynatrace.extension.sql-server\", \n  \"com.dynatrace.extension.mysql\",\n  \"com.dynatrace.extension.sql-sap-hana\",\n  \"com.dynatrace.extension.postgres\",\n  \"com.dynatrace.extension.sql-snowflake\", \n  \"com.dynatrace.extension.jmx-cassandra\",\n  \"com.dynatrace.extension.mongodb-mongodb\",\n  \"com.dynatrace.extension.elasticsearch\",\n  \"com.dynatrace.extension.memcached\"}) \n| fieldsAdd dbType = replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(replaceString(dt.extension.name, \n  \"com.dynatrace.extension.sql-oracle\", \"Oracle\"), \n  \"com.dynatrace.extension.sql-server\", \"MS SQL Server\"), \n  \"com.dynatrace.extension.mysql\", \"MySQL\"), \n  \"com.dynatrace.extension.sql-db2\", \"IBM DB2\"), \n  \"com.dynatrace.extension.postgres\", \"PostgreSQL\"), \n  \"com.dynatrace.extension.sql-snowflake\", \"Snowflake\"), \n  \"com.dynatrace.extension.sql-sap-hana\", \"SAP HanaDB\"), \n  \"com.dynatrace.extension.jmx-cassandra\", \"Cassandra\"), \n  \"com.dynatrace.extension.mongodb-mongodb\", \"MongoDB\"), \n  \"com.dynatrace.extension.elasticsearch\", \"Elasticsearch\"), \n  \"com.dynatrace.extension.memcached\", \"Memcached\")\n| filter in(dbType, array($dbType))\n| filter in(loglevel, array($logLevel))\n| summarize eventCount = count()",
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "legend": {
+                        "position": "bottom",
+                        "hidden": false
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "HashtagIcon",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "showLabel": false
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "columnWidths": {},
+                    "lineWrapIds": []
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "dt.host.cpu.usage",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true
+                    },
+                    {
+                        "identifier": "dt.host.memory.avail.percent",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true
+                    },
+                    {
+                        "identifier": "dt.host.disk.free",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true
+                    },
+                    {
+                        "identifier": "dt.host.disk.used.percent",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true
+                    }
+                ]
+            }
+        }
+    },
+    "layouts": {
+        "0": {
+            "x": 0,
+            "y": 7,
+            "w": 24,
+            "h": 8
+        },
+        "2": {
+            "x": 0,
+            "y": 0,
+            "w": 24,
+            "h": 2
+        },
+        "3": {
+            "x": 5,
+            "y": 2,
+            "w": 19,
+            "h": 5
+        },
+        "4": {
+            "x": 0,
+            "y": 2,
+            "w": 5,
+            "h": 5
+        }
+    }
+}

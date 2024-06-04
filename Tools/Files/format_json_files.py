@@ -10,7 +10,16 @@ import json
 def main():
     try:
         # input_glob_pattern = "../../NewPlatform/Dashboards/Assets/External/**"
-        input_glob_pattern = "../../NewPlatform/Dashboards/Assets/*.json"
+        # input_glob_pattern = "../../NewPlatform/Dashboards/Assets/*.json"
+        input_glob_pattern = "../../NewPlatform/Dashboards/Assets/External/Playground/*.json"
+        input_glob_pattern = "../../NewPlatform/Dashboards/Assets/External/TM/*.json"
+        input_glob_pattern = "../../NewPlatform/Notebooks/Assets/External/AndiG/*.json"
+        input_glob_pattern = "../../NewPlatform/Notebooks/Assets/External/Demo/*.json"
+        input_glob_pattern = "../../NewPlatform/Dashboards/Assets/External/Demo/*.json"
+        input_glob_pattern = "../../NewPlatform/Dashboards/Assets/External/AndiG/*.json"
+        input_glob_pattern = "../../NewPlatform/Notebooks/Assets/External/Playground/*.json"
+        # input_glob_pattern = "../../NewPlatform/Notebooks/Assets/*.json"
+
         output_directory_name = '/Temp/Formatted'
 
         for file_name in glob.glob(input_glob_pattern, recursive=True):

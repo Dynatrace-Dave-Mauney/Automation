@@ -1,0 +1,1602 @@
+{
+    "version": 14,
+    "variables": [
+        {
+            "key": "Tags",
+            "type": "query",
+            "input": "fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`\n| fields tags\n| summarize tags = collectDistinct(tags)",
+            "multiple": false
+        }
+    ],
+    "tiles": {
+        "4": {
+            "type": "data",
+            "title": "Devices interfaces discards and errors",
+            "query": "timeseries t_indiscards=avg( `com.dynatrace.extension.snmp-generic-cisco-device.if.in.discards`,rate:1s),t_outdiscards=avg( `com.dynatrace.extension.snmp-generic-cisco-device.if.out.discards`,rate:1s),\n t_inerrors=avg( `com.dynatrace.extension.snmp-generic-cisco-device.if.in.errors`,rate:1s),t_outerrors=avg( `com.dynatrace.extension.snmp-generic-cisco-device.if.out.errors`,rate:1s),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`},interval:1m\n| lookup [fetch`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface` | fields id, description , child_of[`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`]],\n    sourceField: `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`,\n    lookupField:id,\n    fields:{ description, `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device\\`]` }\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`| fields id, system_name],\n    sourceField:`child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device\\`]`,\n    lookupField:id,\n    fields:{ system_name }    \n| fieldsAdd avg_indiscards=arrayAvg(`t_indiscards`),avg_outdiscards=arrayAvg(`t_outdiscards`),avg_inerrors=arrayAvg(`t_inerrors`),avg_outerrors=arrayAvg(`t_outerrors`)\n| fieldsRename `DNS name` = system_name,Interface=description\n| fieldsRename InDiscards = avg_indiscards, OutDiscards = avg_outdiscards, InErrors = avg_inerrors, OutErrors = avg_outerrors\n| fields `DNS name`,Interface,InDiscards,OutDiscards,InErrors,OutErrors\n\n| append [timeseries t_indiscards=avg( `com.dynatrace.extension.f5.bigip.sys.interface.stat.drops.in.count`,rate:1s),t_outdiscards=avg( `com.dynatrace.extension.f5.bigip.sys.interface.stat.drops.out.count`,rate:1s),\n t_inerrors=avg( `com.dynatrace.extension.f5.bigip.sys.interface.stat.errors.in.count`,rate:1s),t_outerrors=avg( `com.dynatrace.extension.f5.bigip.sys.interface.stat.errors.out.count`,rate:1s),\nby: {`dt.entity.f5:interface`},interval:1m\n| lookup [fetch`dt.entity.f5:interface` | fields id, Name , runs_on[`dt.entity.f5:instance`]],\n    sourceField: `dt.entity.f5:interface`,\n    lookupField:id,\n    fields:{  Name, `runs_on[\\`dt.entity.f5:instance\\`]`}\n| lookup [fetch  `dt.entity.f5:instance`| fields id, NodeName],\n    sourceField: `runs_on[\\`dt.entity.f5:instance\\`]`,\n    lookupField:id,\n    fields:{ NodeName }    \n| fieldsAdd avg_indiscards=arrayAvg(`t_indiscards`),avg_outdiscards=arrayAvg(`t_outdiscards`),avg_inerrors=arrayAvg(`t_inerrors`),avg_outerrors=arrayAvg(`t_outerrors`)\n| fieldsRename `DNS name` = NodeName,Interface=Name\n| fieldsRename InDiscards = avg_indiscards, OutDiscards = avg_outdiscards, InErrors = avg_inerrors, OutErrors = avg_outerrors\n| fields `DNS name`,Interface,InDiscards,OutDiscards,InErrors,OutErrors]\n\n| append [timeseries t_indiscards=avg( `com.dynatrace.extension.snmp-generic-device.if.in.discards.count`,rate:1s),t_outdiscards=avg( `com.dynatrace.extension.snmp-generic-device.if.out.discards.count`,rate:1s),\n t_inerrors=avg( `com.dynatrace.extension.snmp-generic-device.if.in.errors.count`,rate:1s),t_outerrors=avg( `com.dynatrace.extension.snmp-generic-device.if.out.errors.count`,rate:1s),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`}, interval:1m\n| lookup [fetch`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface` | fields id, description , child_of[`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`]],\n    sourceField: `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`,\n    lookupField:id,\n    fields:{  description, `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device\\`]` }\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`| fields id, system_name],\n    sourceField:`child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device\\`]`,\n    lookupField:id,\n    fields:{ system_name }    \n| fieldsAdd avg_indiscards=arrayAvg(`t_indiscards`),avg_outdiscards=arrayAvg(`t_outdiscards`),avg_inerrors=arrayAvg(`t_inerrors`),avg_outerrors=arrayAvg(`t_outerrors`)\n| fieldsRename `DNS name` = system_name,Interface=description\n| fieldsRename InDiscards = avg_indiscards, OutDiscards = avg_outdiscards, InErrors = avg_inerrors, OutErrors = avg_outerrors\n| fields `DNS name`,Interface,InDiscards,OutDiscards,InErrors,OutErrors]\n\n| append [timeseries t_indiscards=avg( `com.dynatrace.extension.juniper.generic.if.in.discards.count`,rate:1s),t_outdiscards=avg( `com.dynatrace.extension.juniper.generic.if.out.discards.count`,rate:1s),\n t_inerrors=avg( `com.dynatrace.extension.juniper.generic.if.in.err.count`,rate:1s),t_outerrors=avg( `com.dynatrace.extension.juniper.generic.if.out.err.count`,rate:1s),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`},interval:1m\n| lookup [fetch`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface` | fields id, if_descr , child_of[`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`]],\n    sourceField: `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`,\n    lookupField:id,\n    fields:{  if_descr, `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device\\`]`}\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`| fields id, system_name],\n    sourceField: `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device\\`]`,\n    lookupField:id,\n    fields:{ system_name }    \n| fieldsAdd avg_indiscards=arrayAvg(`t_indiscards`),avg_outdiscards=arrayAvg(`t_outdiscards`),avg_inerrors=arrayAvg(`t_inerrors`),avg_outerrors=arrayAvg(`t_outerrors`)\n| fieldsRename `DNS name` = system_name,Interface=if_descr\n| fieldsRename InDiscards = avg_indiscards, OutDiscards = avg_outdiscards, InErrors = avg_inerrors, OutErrors = avg_outerrors\n| fields `DNS name`,Interface,InDiscards,OutDiscards,InErrors,OutErrors]\n\n| append [timeseries t_indiscards=avg( `com.dynatrace.extension.palo-alto.generic.if.in.discards`,rate:1s),t_outdiscards=avg( `com.dynatrace.extension.palo-alto.generic.if.out.discards`,rate:1s),\nt_outerrors=avg( `com.dynatrace.extension.palo-alto.generic.if.out.err`,rate:1s), t_inerrors=avg( `com.dynatrace.extension.palo-alto.generic.if.in.err`,rate:1s),\nby: {`dt.entity.palo-alto:interface`},interval:1m\n| lookup [fetch`dt.entity.palo-alto:interface` | fields id, InterfaceDescription , runs_on[`dt.entity.palo-alto:device`]],\n    sourceField: `dt.entity.palo-alto:interface`,\n    lookupField:id,\n    fields:{  InterfaceDescription, `runs_on[\\`dt.entity.palo-alto:device\\`]`}\n| lookup [fetch  `dt.entity.palo-alto:device`| fields id, SystemName],\n    sourceField: `runs_on[\\`dt.entity.palo-alto:device\\`]`,\n    lookupField:id,\n    fields:{ SystemName }    \n| fieldsAdd avg_indiscards=arrayAvg(`t_indiscards`),avg_outdiscards=arrayAvg(`t_outdiscards`),avg_inerrors=arrayAvg(`t_inerrors`),avg_outerrors=arrayAvg(`t_outerrors`)\n| fieldsAdd sum_trouble = avg_indiscards + avg_outdiscards + avg_inerrors + avg_outerrors\n| fieldsRename `DNS name` = SystemName,Interface=InterfaceDescription\n| fieldsRename InDiscards = avg_indiscards, OutDiscards = avg_outdiscards, InErrors = avg_inerrors, OutErrors = avg_outerrors\n| fields `DNS name`,Interface,InDiscards,OutDiscards,InErrors,OutErrors]\n\n| sort InDiscards + OutDiscards + InErrors + OutErrors desc\n| limit 10\n",
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "DNS name",
+                        "categoryAxisLabel": "DNS name",
+                        "valueAxis": "InDiscards",
+                        "valueAxisLabel": "InDiscards"
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "DNS name"
+                },
+                "table": {
+                    "rowDensity": "default",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [
+                        [
+                            "OutErrors"
+                        ]
+                    ],
+                    "columnWidths": {
+                        "[\"DNS name\"]": 223.01666259765625,
+                        "[\"Interface\"]": 174.3333282470703,
+                        "[\"InDiscards\"]": 269,
+                        "[\"OutDiscards\"]": 474.1166687011719,
+                        "[\"InErrors\"]": 437,
+                        "[\"OutErrors\"]": 600
+                    }
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "DNS name",
+                        "value": "Interface"
+                    },
+                    "legend": "auto"
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "t_indiscards",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707726485743
+                    },
+                    {
+                        "identifier": "t_outdiscards",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707726485743
+                    },
+                    {
+                        "identifier": "OutErrors",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count_per_second",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1705562896704
+                    },
+                    {
+                        "identifier": "InDiscards",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count_per_second",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1705562912061
+                    },
+                    {
+                        "identifier": "OutDiscards",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count_per_second",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1705562917995
+                    },
+                    {
+                        "identifier": "InErrors",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count_per_second",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1705562933923
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "InDiscards",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "OutDiscards",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "InErrors",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "OutErrors",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            }
+        },
+        "7": {
+            "type": "markdown",
+            "title": "",
+            "content": "#\n# **Network Performance Global View**\n#"
+        },
+        "8": {
+            "type": "data",
+            "title": "Interfaces in Up/Down state",
+            "query": "fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`\n| fieldsAdd description,type,  opStatus, adminStatus\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`| fields id, system_name],\n    sourceField:child_of[`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`] ,\n    lookupField:id,\n    prefix: \"rtr_\"\n| fieldsRemove rtr_id, id, entity.name\n| fieldsRename  `DNS name` = rtr_system_name,Interface=description\n| fields `DNS name`, Interface, opStatus, adminStatus\n| filter opStatus == \"down(2)\" AND adminStatus == \"up(1)\"\n\n| append [fetch `dt.entity.f5:interface`\n| fieldsAdd Name, Status,EnabledState\n| lookup [fetch  `dt.entity.f5:instance`| fields id, NodeName],\n    sourceField:runs_on[`dt.entity.f5:instance`],\n    lookupField:id,\n    prefix: \"rtr_\"\n| fieldsRemove rtr_id, id, entity.name\n| fieldsRename  `DNS name` = rtr_NodeName,Interface=Name,opStatus=Status,adminStatus=EnabledState\n| fields `DNS name`, Interface, opStatus, adminStatus\n| filter opStatus == \"down(2)\" AND adminStatus == \"true(1)\"\n| fieldsRemove opStatus,adminStatus]\n\n| append [fetch `dt.entity.palo-alto:interface`\n| fieldsAdd InterfaceDescription, IFOperatingStatus, InterfaceAdminStatus\n| lookup [fetch  `dt.entity.palo-alto:device`| fields id, SystemName],\n    sourceField:runs_on[`dt.entity.palo-alto:device`],\n    lookupField:id,\n    prefix: \"rtr_\"\n| fieldsRemove rtr_id, id, entity.name\n| fieldsRename  `DNS name` = rtr_SystemName,Interface=InterfaceDescription, opStatus=IFOperatingStatus,adminStatus=InterfaceAdminStatus\n| fields `DNS name`, Interface, opStatus, adminStatus\n| filter opStatus == \"down(2)\" AND adminStatus == \"up(1)\"\n| fieldsRemove opStatus,adminStatus]\n\n| append [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`\n| fieldsAdd entity.name,  if_adminstatus, if_operstatus\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`| fields id, system_name],\n    sourceField:child_of[`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`],\n    lookupField:id,\n    prefix: \"rtr_\"\n| fieldsRemove rtr_id, id\n| fieldsRename  `DNS name` = rtr_system_name, Interface=entity.name, opStatus=if_operstatus,adminStatus=if_adminstatus\n| fields `DNS name`, Interface, opStatus, adminStatus\n| filter opStatus == \"down(2)\" AND adminStatus == \"up(1)\"\n| fieldsRemove opStatus,adminStatus]\n\n| append [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`\n| fieldsAdd description,  adminStatus, opStatus\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`| fields id, system_name],\n    sourceField:child_of[`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`],\n    lookupField:id,\n    prefix: \"rtr_\"\n| fieldsRemove rtr_id, id\n| fieldsRename  `DNS name` = rtr_system_name, Interface=description\n| fields `DNS name`, Interface, opStatus, adminStatus\n| filter opStatus == \"down(2)\" AND adminStatus == \"up(1)\"\n| fieldsRemove opStatus,adminStatus]\n\n",
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxisLabel": "Device",
+                        "valueAxisLabel": "Speed Gbps"
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "DNS name"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableLineWrap": true,
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [
+                        [
+                            "entity.name"
+                        ]
+                    ],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "DNS name",
+                        "value": "Interface"
+                    },
+                    "legend": "auto"
+                },
+                "histogram": {
+                    "dataMappings": []
+                }
+            }
+        },
+        "10": {
+            "type": "data",
+            "title": "NODE INTERFACES UP/DOWN",
+            "query": "fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`\n| fieldsAdd   opStatus, adminStatus\n| filter opStatus == \"down(2)\" and adminStatus == \"up(1)\"\n| summarize sum_int=count()\n\n|append [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`\n| fieldsAdd   if_adminstatus,if_operstatus\n| filter if_operstatus == \"down(2)\" and if_adminstatus == \"down(2)\"\n| summarize sum_int=count()]\n\n|append [fetch `dt.entity.palo-alto:interface`\n| fieldsAdd   InterfaceAdminStatus,IFOperatingStatus\n| filter IFOperatingStatus == \"down(2)\" and InterfaceAdminStatus == \"down(2)\"\n| summarize sum_int=count()]\n\n|append [fetch `dt.entity.f5:interface`\n| fieldsAdd   EnabledState, Status\n| filter Status == \"down(2)\" and EnabledState == \"true(1)\"\n| summarize sum_int=count()]\n\n|append [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`\n| fieldsAdd adminStatus, opStatus\n| filter opStatus == \"down(2)\" AND adminStatus == \"up(1)\"\n| summarize sum_int=count()]\n\n| summarize sum_down=sum(sum_int)\n",
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "thresholds": [
+                    {
+                        "id": 1,
+                        "field": "",
+                        "title": "",
+                        "isEnabled": true,
+                        "rules": [
+                            {
+                                "id": 0,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-09-default, #649438)"
+                                },
+                                "comparator": "<",
+                                "label": "",
+                                "value": 10
+                            },
+                            {
+                                "id": 1,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-14-default, #d56b1a)"
+                                },
+                                "comparator": "\u2265",
+                                "label": ""
+                            },
+                            {
+                                "id": 2,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-12-default, #cd3741)"
+                                },
+                                "comparator": "\u2265",
+                                "label": "",
+                                "value": 10
+                            }
+                        ]
+                    }
+                ],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {}
+                },
+                "singleValue": {
+                    "label": "Up/Down",
+                    "prefixIcon": "WarningFailedIcon",
+                    "autoscale": true,
+                    "sparklineSettings": {
+                        "isVisible": false,
+                        "showTicks": true,
+                        "variant": "area",
+                        "color": {
+                            "Default": "var(--dt-colors-charts-categorical-color-12-default, #d50b34)",
+                            "Hover": "var(--dt-colors-charts-categorical-color-12-hover, #b30024)",
+                            "Active": "var(--dt-colors-charts-categorical-color-12-active, #7e071d)",
+                            "DefaultTransparent": "var(--dt-colors-charts-categorical-color-12-default-transparent, #c5000ccc)",
+                            "HoverTransparent": "var(--dt-colors-charts-categorical-color-12-hover-transparent, #83000fcc)",
+                            "ActiveTransparent": "var(--dt-colors-charts-categorical-color-12-active-transparent, #140000cc)"
+                        }
+                    },
+                    "alignment": "center",
+                    "showLabel": false,
+                    "trend": {
+                        "isVisible": true
+                    },
+                    "recordField": "sum_down"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "sum_down",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "11": {
+            "type": "data",
+            "title": "INBOUND DISCARDS",
+            "query": "timeseries t_indiscards=avg( `com.dynatrace.extension.snmp-generic-cisco-device.if.in.discards`,rate:1s),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`},interval:1m\n| summarize InDiscards=sum(arrayAvg(t_indiscards)),\nby:{`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`}\n| fieldsRemove `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`\n\n| append [timeseries t_indiscards=avg(`com.dynatrace.extension.f5.bigip.sys.interface.stat.drops.in.count`,rate:1s),\nby: {`dt.entity.f5:interface`},interval:1m\n| summarize InDiscards=sum(arrayAvg(t_indiscards)),by:{`dt.entity.f5:interface`}\n| fieldsRemove `dt.entity.f5:interface`]\n\n| append [timeseries t_indiscards=avg( `com.dynatrace.extension.snmp-generic-device.if.in.discards.count`,rate:1s),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`},interval:1m\n| summarize InDiscards=sum(arrayAvg(t_indiscards)), by: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`}\n| fieldsRemove `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`]\n\n| append [timeseries t_indiscards=avg( `com.dynatrace.extension.juniper.generic.if.in.discards.count`,rate:1s),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`},interval:1m\n| summarize InDiscards=sum(arrayAvg(t_indiscards)), by:{`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`}\n| fieldsRemove  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`]\n\n| append [timeseries t_indiscards=avg( `com.dynatrace.extension.palo-alto.generic.if.in.discards`,rate:1s),\nby: {`dt.entity.palo-alto:interface`},interval:1m\n| summarize InDiscards=sum(arrayAvg(t_indiscards)), by:{`dt.entity.palo-alto:interface`}\n| fieldsRemove  `dt.entity.palo-alto:interface`]\n\n| summarize sum_indiscards=sum(InDiscards)\n",
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "thresholds": [
+                    {
+                        "id": 1,
+                        "field": "sum_indiscards",
+                        "title": "",
+                        "isEnabled": true,
+                        "rules": [
+                            {
+                                "id": 0,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-09-default, #649438)"
+                                },
+                                "comparator": "<",
+                                "label": "",
+                                "value": 10000
+                            },
+                            {
+                                "id": 1,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-14-default, #d56b1a)"
+                                },
+                                "comparator": "\u2265",
+                                "label": ""
+                            },
+                            {
+                                "id": 2,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-12-default, #cd3741)"
+                                },
+                                "comparator": "\u2265",
+                                "label": "",
+                                "value": 10000
+                            },
+                            {
+                                "id": 3,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-09-default, #649438)"
+                                },
+                                "comparator": "\u2265",
+                                "label": ""
+                            }
+                        ]
+                    }
+                ],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {}
+                },
+                "singleValue": {
+                    "label": "Inbound Discards",
+                    "prefixIcon": "CloseIcon",
+                    "autoscale": true,
+                    "sparklineSettings": {
+                        "isVisible": false,
+                        "showTicks": false,
+                        "variant": "line",
+                        "color": {
+                            "Default": "var(--dt-colors-charts-categorical-color-01-default, #134fc9)"
+                        }
+                    },
+                    "alignment": "center",
+                    "recordField": "sum_indiscards",
+                    "trend": {
+                        "isVisible": true
+                    },
+                    "showLabel": false
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "t_out",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707726485748
+                    },
+                    {
+                        "identifier": "t_in",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707726485748
+                    },
+                    {
+                        "identifier": "sum_indiscards",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count_per_second",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1700675701787
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "sum_indiscards",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "16": {
+            "type": "data",
+            "title": "Network devices open Problems",
+            "query": "fetch `dt.entity.f5:instance`\n| lookup sourceField: id, lookupField:affected_entity_id, fields: {affected_entity_id, display_id, status,event_name, event_id}, \n [fetch events\n| filter event.kind == \"DAVIS_PROBLEM\"\n| sort timestamp desc\n| fieldsAdd affected_entity_id = affected_entity_ids[0], status,event.id,  display_id, event.name\n| summarize {status = takeFirst(event.status), id = takeFirst(display_id),event_name = takeFirst(event.name), event_id = takeFirst(event.id), duplicate = takeFirst(dt.davis.is_duplicate)}, by:{affected_entity_id,display_id}\n| filter duplicate == false\n| filter status == \"ACTIVE\"]\n| filter isnotNull(status)\n| fieldsadd `DNS Name` = NodeName, display_id, event_name, event_id\n\n|append [fetch `dt.entity.palo-alto:device`\n| lookup sourceField: id, lookupField:affected_entity_id, fields: {affected_entity_id, display_id, status,event_name, event_id}, \n [fetch events\n| filter event.kind == \"DAVIS_PROBLEM\"\n| sort timestamp desc\n| fieldsAdd affected_entity_id = affected_entity_ids[0], status,event.id,  display_id, event.name\n| summarize {status = takeFirst(event.status), id = takeFirst(display_id),event_name = takeFirst(event.name), event_id = takeFirst(event.id), duplicate = takeFirst(dt.davis.is_duplicate)}, by:{affected_entity_id,display_id}\n| filter duplicate == false\n| filter status == \"ACTIVE\"]\n| filter isnotNull(status)\n|fields  `DNS Name`= SystemName ,display_id, event_name, event_id]\n\n|append [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`\n| lookup sourceField: id, lookupField:affected_entity_id, fields: {affected_entity_id, display_id, status,event_name, event_id}, \n [fetch events\n| filter event.kind == \"DAVIS_PROBLEM\"\n| sort timestamp desc\n| fieldsAdd affected_entity_id = affected_entity_ids[0], status,event.id,  display_id, event.name\n| summarize {status = takeFirst(event.status), id = takeFirst(display_id),event_name = takeFirst(event.name), event_id = takeFirst(event.id), duplicate = takeFirst(dt.davis.is_duplicate)}, by:{affected_entity_id,display_id}\n| filter duplicate == false\n| filter status == \"ACTIVE\"]\n| filter isnotNull(status)\n|fields  `DNS Name`= system_name, display_id, event_name, event_id]\n\n| append [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`\n| lookup sourceField: id, lookupField:affected_entity_id, fields: {affected_entity_id, display_id, status,event_name, event_id}, \n [fetch events\n| filter event.kind == \"DAVIS_PROBLEM\"\n| sort timestamp desc\n| fieldsAdd affected_entity_id = affected_entity_ids[0], status,event.id,  display_id, event.name\n| summarize {status = takeFirst(event.status), id = takeFirst(display_id),event_name = takeFirst(event.name), event_id = takeFirst(event.id), duplicate = takeFirst(dt.davis.is_duplicate)}, by:{affected_entity_id,display_id}\n| filter duplicate == false\n| filter status == \"ACTIVE\"]\n| filter isnotNull(status)\n| fields  `DNS Name` = system_name,  display_id, event_name, event_id]\n\n|fields  `Problem id`  = display_id, Description=event_name, `DNS Name`,`Problem link`  = concat(\"https://guu84124.apps.dynatrace.com/ui/apps/dynatrace.classic.problems/#problems/problemdetails;gtf=-2h;gf=all;pid=\", event_id)",
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxisLabel": "Device",
+                        "valueAxisLabel": "Problems #"
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "DNS Name"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [
+                        [
+                            "entity_tags"
+                        ]
+                    ],
+                    "columnWidths": {
+                        "[\"DNS name\"]": 261.83331298828125,
+                        "[\"Type\"]": 447.6500244140625,
+                        "[\"Problems #\"]": 121.06666564941406,
+                        "[\"DNS Name\"]": 116.37153625488281,
+                        "[\"Problem id\"]": 368,
+                        "[\"Description\"]": 600
+                    },
+                    "enableLineWrap": true
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "Problem id",
+                        "value": "Description"
+                    },
+                    "legend": "auto"
+                },
+                "histogram": {
+                    "dataMappings": []
+                }
+            }
+        },
+        "17": {
+            "type": "data",
+            "title": "TOTAL TRAFFIC",
+            "query": "timeseries t_out=avg(`com.dynatrace.extension.snmp-generic-cisco-device.if.hc.out.octets.count`,rate:1s),t_in=avg(`com.dynatrace.extension.snmp-generic-cisco-device.if.hc.in.octets.count`,rate:1s),interval:1m\n| fieldsAdd sum_traffic= tolong(arraySum(t_in)+ arraySum(t_out))*8\n|  fields sum_traffic\n| append  [timeseries t_in=avg(`com.dynatrace.extension.palo-alto.generic.if.in.octets`,rate:1s), t_out=avg( `com.dynatrace.extension.palo-alto.generic.if.out.octets`,rate:1s),interval:1m\n| fieldsAdd sum_traffic= tolong(arraySum(t_in)+ arraySum(t_out))*8\n|  fields sum_traffic]\n| append  [timeseries  t_in=avg(`com.dynatrace.extension.juniper.generic.if.in.bits`), t_out=avg(`com.dynatrace.extension.juniper.generic.if.out.bits`),interval:1m\n| fieldsAdd sum_traffic= tolong(arraySum(t_in)+ arraySum(t_out))\n|  fields sum_traffic]\n| append  [timeseries t_in=avg(`com.dynatrace.extension.f5.bigip.sys.interface.stat.bytes.out.count`,rate:1s), t_out=avg(`com.dynatrace.extension.f5.bigip.sys.interface.stat.bytes.in.count`,rate:1s),interval:1m\n| fieldsAdd sum_traffic= tolong(arraySum(t_in)+ arraySum(t_out))*8\n|  fields sum_traffic]\n| append  [timeseries t_in=avg(`com.dynatrace.extension.snmp-generic-device.if.hc.in.octets.count`,rate:1s), t_out=avg(`com.dynatrace.extension.snmp-generic-device.if.hc.out.octets.count`,rate:1s),interval:1m\n| fieldsAdd sum_traffic= tolong(arraySum(t_in)+ arraySum(t_out))*8\n|  fields sum_traffic]\n| summarize sum_traffic=sum(sum_traffic)",
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {}
+                },
+                "singleValue": {
+                    "label": "Total",
+                    "prefixIcon": "LineChartIcon",
+                    "autoscale": true,
+                    "sparklineSettings": {
+                        "isVisible": true,
+                        "showTicks": false,
+                        "variant": "line",
+                        "color": {
+                            "Default": "var(--dt-colors-charts-categorical-color-01-default, #134fc9)"
+                        }
+                    },
+                    "alignment": "center",
+                    "showLabel": false,
+                    "recordField": "sum_traffic",
+                    "trend": {
+                        "isVisible": true,
+                        "isRelative": false
+                    }
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "t_out",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707726485749
+                    },
+                    {
+                        "identifier": "t_in",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707726485749
+                    },
+                    {
+                        "identifier": "sum_traffic",
+                        "unitCategory": "datarate",
+                        "baseUnit": "bitps",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1700674919627
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "sum_traffic",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "18": {
+            "type": "data",
+            "title": "OUTBOUND DISCARDS",
+            "query": "timeseries t_outdiscards=avg( `com.dynatrace.extension.snmp-generic-cisco-device.if.out.discards`,rate:1s),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`},interval:1m\n| summarize outDiscards=sum(arrayAvg(t_outdiscards)),\nby:{`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`}\n| fieldsRemove `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`\n\n| append [timeseries t_outdiscards=avg(`com.dynatrace.extension.f5.bigip.sys.interface.stat.drops.out.count`,rate:1s),\nby: {`dt.entity.f5:outterface`},interval:1m\n| summarize outDiscards=sum(arrayAvg(t_outdiscards)),by:{`dt.entity.f5:outterface`}\n| fieldsRemove `dt.entity.f5:outterface`]\n\n| append [timeseries t_outdiscards=avg( `com.dynatrace.extension.snmp-generic-device.if.out.discards.count`,rate:1s),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`},interval:1m\n| summarize outDiscards=sum(arrayAvg(t_outdiscards)), by: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`}\n| fieldsRemove `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`]\n\n| append [timeseries t_outdiscards=avg( `com.dynatrace.extension.juniper.generic.if.out.discards.count`,rate:1s),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`},interval:1m\n| summarize outDiscards=sum(arrayAvg(t_outdiscards)), by:{`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`}\n| fieldsRemove  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`]\n\n| append [timeseries t_outdiscards=avg( `com.dynatrace.extension.palo-alto.generic.if.out.discards`,rate:1s),\nby: {`dt.entity.palo-alto:interface`},interval:1m\n| summarize outDiscards=sum(arrayAvg(t_outdiscards)), by:{`dt.entity.palo-alto:interface`}\n| fieldsRemove  `dt.entity.palo-alto:interface`]\n| summarize sum_outdiscards=sum(outDiscards)\n",
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "thresholds": [
+                    {
+                        "id": 1,
+                        "field": "sum_outdiscards",
+                        "title": "",
+                        "isEnabled": true,
+                        "rules": [
+                            {
+                                "id": 0,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-09-default, #649438)"
+                                },
+                                "comparator": "<",
+                                "label": "",
+                                "value": 10000
+                            },
+                            {
+                                "id": 1,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-14-default, #d56b1a)"
+                                },
+                                "comparator": "\u2265",
+                                "label": ""
+                            },
+                            {
+                                "id": 2,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-12-default, #cd3741)"
+                                },
+                                "comparator": "\u2265",
+                                "label": "",
+                                "value": 10000
+                            },
+                            {
+                                "id": 3,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-09-default, #649438)"
+                                },
+                                "comparator": "\u2265",
+                                "label": ""
+                            }
+                        ]
+                    }
+                ],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {}
+                },
+                "singleValue": {
+                    "label": "Outbound Discards",
+                    "prefixIcon": "CloseIcon",
+                    "autoscale": true,
+                    "sparklineSettings": {
+                        "isVisible": false,
+                        "showTicks": false,
+                        "variant": "line",
+                        "color": {
+                            "Default": "var(--dt-colors-charts-categorical-color-01-default, #134fc9)"
+                        }
+                    },
+                    "alignment": "center",
+                    "recordField": "sum_outdiscards",
+                    "trend": {
+                        "isVisible": true
+                    },
+                    "showLabel": false
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "t_out",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707726485749
+                    },
+                    {
+                        "identifier": "t_in",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707726485749
+                    },
+                    {
+                        "identifier": "sum_outdiscards",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count_per_second",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1700675368557
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "sum_outdiscards",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "19": {
+            "type": "data",
+            "title": "OUTBOUND ERRORS",
+            "query": "timeseries t_outerrors=avg(`com.dynatrace.extension.snmp-generic-cisco-device.if.out.errors`,rate:1s),\nby: `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`,interval:1m\n| summarize OutErrors=sum(arrayAvg(t_outerrors)),\nby:{`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`}\n| fieldsRemove `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`\n\n| append [timeseries t_outerrors=avg( `com.dynatrace.extension.f5.bigip.sys.interface.stat.errors.out.count`,rate:1s),\nby: `dt.entity.f5:interface`,interval:1m\n| summarize OutErrors=sum(arrayAvg(t_outerrors)),\nby:{`dt.entity.f5:interface`}\n| fieldsRemove `dt.entity.f5:interface`]\n\n| append [timeseries t_outerrors=avg( `com.dynatrace.extension.snmp-generic-device.if.out.errors.count`,rate:1s),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`},interval:1m\n| summarize OutErrors=sum(arrayAvg(t_outerrors)),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`}\n| fieldsRemove `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`]\n\n| append [timeseries t_outerrors=avg( `com.dynatrace.extension.juniper.generic.if.out.err.count`,rate:1s),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`},interval:1m\n| summarize OutErrors=sum(arrayAvg(t_outerrors)),\nby:{`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`}\n| fieldsRemove  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`]\n\n| append [timeseries  t_outerrors=avg( `com.dynatrace.extension.palo-alto.generic.if.out.err`,rate:1s),\nby: {`dt.entity.palo-alto:interface`},interval:1m\n| summarize OutErrors=sum(arrayAvg(t_outerrors)),\nby:{`dt.entity.palo-alto:interface`}\n| fieldsRemove  `dt.entity.palo-alto:interface`]\n\n| summarize sum_errors=sum(OutErrors)",
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "thresholds": [
+                    {
+                        "id": 1,
+                        "field": "sum_errors",
+                        "title": "",
+                        "isEnabled": true,
+                        "rules": [
+                            {
+                                "id": 0,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-09-default, #649438)"
+                                },
+                                "comparator": "<",
+                                "label": "",
+                                "value": 10000
+                            },
+                            {
+                                "id": 1,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-14-default, #d56b1a)"
+                                },
+                                "comparator": "\u2265",
+                                "label": ""
+                            },
+                            {
+                                "id": 2,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-12-default, #cd3741)"
+                                },
+                                "comparator": "\u2265",
+                                "label": "",
+                                "value": 10000
+                            }
+                        ]
+                    }
+                ],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {}
+                },
+                "singleValue": {
+                    "label": "Outbound Errors",
+                    "prefixIcon": "ErrorIcon",
+                    "autoscale": true,
+                    "sparklineSettings": {
+                        "isVisible": false,
+                        "showTicks": true,
+                        "variant": "line",
+                        "color": {
+                            "Default": "var(--dt-colors-charts-categorical-color-01-default, #134fc9)"
+                        }
+                    },
+                    "alignment": "center",
+                    "showLabel": false,
+                    "recordField": "sum_errors",
+                    "trend": {
+                        "isVisible": true
+                    }
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "t_out",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707726485750
+                    },
+                    {
+                        "identifier": "t_in",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707726485750
+                    },
+                    {
+                        "identifier": "sum_errors",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count_per_second",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1700675794041
+                    },
+                    {
+                        "identifier": "sum_outerrors",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count_per_second",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1705594342446
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "sum_errors",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "21": {
+            "type": "data",
+            "title": "INBOUND ERRORS",
+            "query": "timeseries t_inerrors=avg(`com.dynatrace.extension.snmp-generic-cisco-device.if.in.errors`,rate:1s),\nby: `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`,interval:1m\n| summarize inErrors=sum(arrayAvg(t_inerrors)),\nby:{`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`}\n| fieldsRemove `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`\n\n| append [timeseries t_inerrors=avg( `com.dynatrace.extension.f5.bigip.sys.interface.stat.errors.in.count`,rate:1s),\nby: `dt.entity.f5:interface`,interval:1m\n| summarize inErrors=sum(arrayAvg(t_inerrors)),\nby:{`dt.entity.f5:interface`}\n| fieldsRemove `dt.entity.f5:interface`]\n\n| append [timeseries t_inerrors=avg( `com.dynatrace.extension.snmp-generic-device.if.in.errors.count`,rate:1s),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`},interval:1m\n| summarize inErrors=sum(arrayAvg(t_inerrors)),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`}\n| fieldsRemove `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`]\n\n| append [timeseries t_inerrors=avg( `com.dynatrace.extension.juniper.generic.if.in.err.count`,rate:1s),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`},interval:1m\n| summarize inErrors=sum(arrayAvg(t_inerrors)),\nby:{`dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`}\n| fieldsRemove  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_network_interface`]\n\n| append [timeseries  t_inerrors=avg( `com.dynatrace.extension.palo-alto.generic.if.in.err`,rate:1s),\nby: {`dt.entity.palo-alto:interface`},interval:1m\n| summarize inErrors=sum(arrayAvg(t_inerrors)),\nby:{`dt.entity.palo-alto:interface`}\n| fieldsRemove  `dt.entity.palo-alto:interface`]\n\n| summarize sum_errors=sum(inErrors)",
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "thresholds": [
+                    {
+                        "id": 1,
+                        "field": "sum_errors",
+                        "title": "",
+                        "isEnabled": true,
+                        "rules": [
+                            {
+                                "id": 0,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-09-default, #649438)"
+                                },
+                                "comparator": "<",
+                                "label": "",
+                                "value": 10000
+                            },
+                            {
+                                "id": 1,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-14-default, #d56b1a)"
+                                },
+                                "comparator": "\u2265",
+                                "label": ""
+                            },
+                            {
+                                "id": 2,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-12-default, #cd3741)"
+                                },
+                                "comparator": "\u2265",
+                                "label": "",
+                                "value": 10000
+                            }
+                        ]
+                    }
+                ],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {}
+                },
+                "singleValue": {
+                    "label": "Inbound Errors",
+                    "prefixIcon": "ErrorIcon",
+                    "autoscale": true,
+                    "sparklineSettings": {
+                        "isVisible": false,
+                        "showTicks": true,
+                        "variant": "line",
+                        "color": {
+                            "Default": "var(--dt-colors-charts-categorical-color-01-default, #134fc9)"
+                        }
+                    },
+                    "alignment": "center",
+                    "showLabel": false,
+                    "recordField": "sum_errors",
+                    "trend": {
+                        "isVisible": true
+                    }
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "t_out",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707726485751
+                    },
+                    {
+                        "identifier": "t_in",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707726485751
+                    },
+                    {
+                        "identifier": "sum_errors",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count_per_second",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1700675910054
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "sum_errors",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "23": {
+            "type": "data",
+            "title": "UNRESPONSIVE DEVICES",
+            "query": "fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`\n| append `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`\n| append `dt.entity.f5:instance`\n| append `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`\n| append `dt.entity.palo-alto:device`\n| filter lifetime[end]  <  now() - 5m\n| summarize count()",
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "thresholds": [
+                    {
+                        "id": 1,
+                        "field": "count()",
+                        "title": "",
+                        "isEnabled": true,
+                        "rules": [
+                            {
+                                "id": 0,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-09-default, #649438)"
+                                },
+                                "comparator": "<",
+                                "label": "",
+                                "value": 1
+                            },
+                            {
+                                "id": 1,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-14-default, #d56b1a)"
+                                },
+                                "comparator": "\u2265",
+                                "label": ""
+                            },
+                            {
+                                "id": 2,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-12-default, #cd3741)"
+                                },
+                                "comparator": "\u2265",
+                                "label": ""
+                            }
+                        ]
+                    }
+                ],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {}
+                },
+                "singleValue": {
+                    "label": "Unresponsive devices",
+                    "prefixIcon": "StorageIcon",
+                    "autoscale": true,
+                    "sparklineSettings": {
+                        "isVisible": false,
+                        "showTicks": true,
+                        "variant": "line",
+                        "color": {
+                            "Default": "var(--dt-colors-charts-categorical-color-01-default, #134fc9)"
+                        }
+                    },
+                    "alignment": "center",
+                    "showLabel": false,
+                    "recordField": "count()",
+                    "trend": {
+                        "isVisible": true
+                    }
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "t_out",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707726485751
+                    },
+                    {
+                        "identifier": "t_in",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707726485751
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "count()",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "25": {
+            "type": "data",
+            "title": "MONITORED DEVICES",
+            "query": "fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`\n| append `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`\n| append `dt.entity.f5:instance`\n| append `dt.entity.f5:instance`\n| append `dt.entity.palo-alto:device`\n| summarize count()",
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "thresholds": [
+                    {
+                        "id": 1,
+                        "field": "",
+                        "title": "",
+                        "isEnabled": true,
+                        "rules": [
+                            {
+                                "id": 0,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-09-default, #649438)"
+                                },
+                                "comparator": "\u2265",
+                                "label": ""
+                            },
+                            {
+                                "id": 1,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-14-default, #d56b1a)"
+                                },
+                                "comparator": "\u2265",
+                                "label": ""
+                            },
+                            {
+                                "id": 2,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-12-default, #cd3741)"
+                                },
+                                "comparator": "\u2265",
+                                "label": ""
+                            }
+                        ]
+                    }
+                ],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {}
+                },
+                "singleValue": {
+                    "label": "Monitored devices",
+                    "prefixIcon": "StorageIcon",
+                    "autoscale": true,
+                    "sparklineSettings": {
+                        "isVisible": false,
+                        "showTicks": true,
+                        "variant": "line",
+                        "color": {
+                            "Default": "var(--dt-colors-charts-categorical-color-01-default, #134fc9)"
+                        }
+                    },
+                    "alignment": "center",
+                    "showLabel": false,
+                    "recordField": "count()",
+                    "trend": {
+                        "isVisible": true
+                    }
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "t_out",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707726485752
+                    },
+                    {
+                        "identifier": "t_in",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "count",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": true,
+                        "added": 1707726485752
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "count()",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "26": {
+            "type": "data",
+            "title": "OPEN DEVICE PROBLEMS",
+            "query": "fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device` \n| lookup sourceField: id, lookupField: affected_id, fields: {problems},\n [fetch events\n| filter event.kind == \"DAVIS_PROBLEM\" | fieldsAdd affected_entity_id = affected_entity_ids[0] | summarize collectDistinct(event.status), by:{display_id, affected_entity_id}, alias:problem_status | filter NOT in(problem_status, \"CLOSED\")| summarize problems = count(), by: {affected_id = affected_entity_id}]\n| fields id, name=entity.name, type=entity.type, lifetime=toString(lifetime), problem_count = if(isNull(problems), 0, else: problems) \n| fieldsRemove id, lifetime, type\n| summarize result = sum(problem_count )\n\n|append[fetch `dt.entity.f5:instance` \n| lookup sourceField: id, lookupField: affected_id, fields: {problems},\n [fetch events\n| filter event.kind == \"DAVIS_PROBLEM\" | fieldsAdd affected_entity_id = affected_entity_ids[0] | summarize collectDistinct(event.status), by:{display_id, affected_entity_id}, alias:problem_status | filter NOT in(problem_status, \"CLOSED\")| summarize problems = count(), by: {affected_id = affected_entity_id}]\n| fields id, name=entity.name, type=entity.type, lifetime=toString(lifetime), problem_count = if(isNull(problems), 0, else: problems)\n| fieldsRemove id, lifetime, type\n| summarize result = sum(problem_count )]\n\n|append[fetch `dt.entity.palo-alto:device` \n| lookup sourceField: id, lookupField: affected_id, fields: {problems},\n [fetch events\n| filter event.kind == \"DAVIS_PROBLEM\" | fieldsAdd affected_entity_id = affected_entity_ids[0] | summarize collectDistinct(event.status), by:{display_id, affected_entity_id}, alias:problem_status | filter NOT in(problem_status, \"CLOSED\")| summarize problems = count(), by: {affected_id = affected_entity_id}]\n| fields id, name=entity.name, type=entity.type, lifetime=toString(lifetime), problem_count = if(isNull(problems), 0, else: problems)\n| fieldsRemove id, lifetime, type\n| summarize result = sum(problem_count )]\n\n|append[fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device` \n| lookup sourceField: id, lookupField: affected_id, fields: {problems},\n [fetch events\n| filter event.kind == \"DAVIS_PROBLEM\" | fieldsAdd affected_entity_id = affected_entity_ids[0] | summarize collectDistinct(event.status), by:{display_id, affected_entity_id}, alias:problem_status | filter NOT in(problem_status, \"CLOSED\")| summarize problems = count(), by: {affected_id = affected_entity_id}]\n| fields id, name=entity.name, type=entity.type, lifetime=toString(lifetime), problem_count = if(isNull(problems), 0, else: problems)\n| fieldsRemove id, lifetime, type\n| summarize result = sum(problem_count )]\n\n|append[fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device` \n| lookup sourceField: id, lookupField: affected_id, fields: {problems},\n [fetch events\n| filter event.kind == \"DAVIS_PROBLEM\" | fieldsAdd affected_entity_id = affected_entity_ids[0] | summarize collectDistinct(event.status), by:{display_id, affected_entity_id}, alias:problem_status | filter NOT in(problem_status, \"CLOSED\")| summarize problems = count(), by: {affected_id = affected_entity_id}]\n| fields id, name=entity.name, type=entity.type, lifetime=toString(lifetime), problem_count = if(isNull(problems), 0, else: problems)\n| fieldsRemove id, lifetime, type\n| summarize result = sum(problem_count )]\n\n| summarize countdown=sum(result)\n",
+            "visualization": "singleValue",
+            "visualizationSettings": {
+                "thresholds": [
+                    {
+                        "id": 1,
+                        "field": "",
+                        "title": "",
+                        "isEnabled": true,
+                        "rules": [
+                            {
+                                "id": 0,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-09-default, #649438)"
+                                },
+                                "comparator": "<",
+                                "label": "",
+                                "value": 1
+                            },
+                            {
+                                "id": 1,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-14-default, #d56b1a)"
+                                },
+                                "comparator": "\u2265",
+                                "label": ""
+                            },
+                            {
+                                "id": 2,
+                                "color": {
+                                    "Default": "var(--dt-colors-charts-categorical-color-12-default, #cd3741)"
+                                },
+                                "comparator": ">",
+                                "label": "",
+                                "value": 0
+                            }
+                        ]
+                    }
+                ],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {}
+                },
+                "singleValue": {
+                    "label": "Open device problems",
+                    "prefixIcon": "DavisAiIcon",
+                    "autoscale": true,
+                    "sparklineSettings": {
+                        "isVisible": false,
+                        "showTicks": true,
+                        "variant": "area",
+                        "color": {
+                            "Default": "var(--dt-colors-charts-categorical-color-12-default, #d50b34)",
+                            "Hover": "var(--dt-colors-charts-categorical-color-12-hover, #b30024)",
+                            "Active": "var(--dt-colors-charts-categorical-color-12-active, #7e071d)",
+                            "DefaultTransparent": "var(--dt-colors-charts-categorical-color-12-default-transparent, #c5000ccc)",
+                            "HoverTransparent": "var(--dt-colors-charts-categorical-color-12-hover-transparent, #83000fcc)",
+                            "ActiveTransparent": "var(--dt-colors-charts-categorical-color-12-active-transparent, #140000cc)"
+                        }
+                    },
+                    "alignment": "center",
+                    "showLabel": false,
+                    "trend": {
+                        "isVisible": true
+                    },
+                    "recordField": "countdown"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "countdown",
+                            "rangeAxis": ""
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        },
+        "27": {
+            "type": "data",
+            "title": "Top interface Inbound load",
+            "query": "timeseries t_ino=avg( `com.dynatrace.extension.snmp-generic-cisco-device.if.hc.in.octets.count`,rate:1s),  t_speed=avg(`com.dynatrace.extension.snmp-generic-cisco-device.if.highspeed`),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`}, interval:1m\n| lookup [fetch`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface` | fields id, description , child_of[`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`]],\n    sourceField: `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`,\n    lookupField:id,\n    fields:{  description, `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device\\`]` }\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`| fields id, system_name],\n    sourceField:`child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device\\`]`,\n    lookupField:id,\n    fields:{ system_name }    \n| fieldsRemove   `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`,  `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device\\`]`\n| fieldsAdd `Interface` = concat( description,\"-\",system_name ), `InLoad`=  8*100*t_ino[]/(power(10, 6)*tolong(t_speed[]))\n| fieldsAdd SumLoad = arraySum(`InLoad`)\n\n| append [timeseries t_ino=avg( `com.dynatrace.extension.snmp-generic-device.if.hc.in.octets.count`,rate:1s),  t_speed=avg(`com.dynatrace.extension.snmp-generic-device.if.highspeed`),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`}, interval:1m\n| lookup [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface` | fields id, description , child_of[`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`]],\n    sourceField: `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`,\n    lookupField:id,\n    fields:{  description, `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device\\`]` }\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`| fields id, system_name],\n    sourceField:`child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device\\`]`,\n    lookupField:id,\n    fields:{ system_name }    \n| fieldsRemove `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`,  `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device\\`]`\n| fieldsAdd `Interface` = concat( description,\"-\",system_name ), `InLoad`=  8*100*t_ino[]/(power(10, 6)*tolong(t_speed[]))\n| fieldsAdd SumLoad = arraySum(`InLoad`)]\n\n| sort SumLoad desc\n| limit 10\n| fieldsRemove description,system_name, t_ino,t_speed,SumLoad",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "Interface",
+                        "categoryAxisLabel": "Interface",
+                        "valueAxis": "interval",
+                        "valueAxisLabel": "interval"
+                    },
+                    "leftYAxisSettings": {
+                        "min": 0,
+                        "max": 100
+                    },
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "InLoad"
+                        ],
+                        "leftAxisDimensions": [
+                            "Interface"
+                        ],
+                        "fields": [],
+                        "values": []
+                    },
+                    "hiddenLegendFields": []
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "Interface"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "Interface",
+                        "value": "Interface"
+                    },
+                    "legend": "auto"
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "InLoad",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1705596229663
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            }
+        },
+        "28": {
+            "type": "data",
+            "title": "Top interfaces Outbound load",
+            "query": "timeseries t_ouo=avg( `com.dynatrace.extension.snmp-generic-cisco-device.if.hc.out.octets.count`, rate:1s),  t_speed=avg(`com.dynatrace.extension.snmp-generic-cisco-device.if.highspeed`),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`},interval:1m\n| lookup [fetch`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface` | fields id, description , child_of[`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`]],\n    sourceField: `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`,\n    lookupField:id,\n    fields:{  description, `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device\\`]` }\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`| fields id, system_name],\n    sourceField:`child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device\\`]`,\n    lookupField:id,\n    fields:{ system_name }    \n| fieldsRemove   `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_network_interface`,  `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device\\`]`\n| fieldsAdd `Interface` = concat( description,\"-\",system_name ), `OutLoad`= 8*100*t_ouo[]/(power(10, 6)*tolong(t_speed[]))\n| fieldsAdd SumLoad = arraySum(`OutLoad`)\n\n| append [timeseries t_ouo=avg( `com.dynatrace.extension.snmp-generic-device.if.hc.out.octets.count`, rate:1s),  t_speed=avg(`com.dynatrace.extension.snmp-generic-device.if.highspeed`),\nby: {`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`},interval:1m\n| lookup [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface` | fields id, description , child_of[`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`]],\n    sourceField: `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`,\n    lookupField:id,\n    fields:{  description, `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device\\`]` }\n| lookup [fetch  `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device`| fields id, system_name],\n    sourceField:`child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device\\`]`,\n    lookupField:id,\n    fields:{ system_name }    \n| fieldsRemove `dt.entity.snmp:com_dynatrace_extension_snmp_generic_device_interface`,  `child_of[\\`dt.entity.snmp:com_dynatrace_extension_snmp_generic_device\\`]`\n| fieldsAdd `Interface` = concat( description,\"-\",system_name ), `OutLoad`=  8*100*t_ouo[]/(power(10, 6)*tolong(t_speed[]))\n| fieldsAdd SumLoad = arraySum(`OutLoad`)]\n\n| sort SumLoad desc\n| limit 10\n| fieldsRemove description,system_name, t_ouo,t_speed,SumLoad",
+            "davis": {
+                "enabled": false
+            },
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "Interface",
+                        "categoryAxisLabel": "Interface",
+                        "valueAxis": "interval",
+                        "valueAxisLabel": "interval"
+                    },
+                    "leftYAxisSettings": {
+                        "min": 0,
+                        "max": 100
+                    },
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "OutLoad"
+                        ],
+                        "leftAxisDimensions": [
+                            "Interface"
+                        ],
+                        "fields": [],
+                        "values": []
+                    },
+                    "hiddenLegendFields": []
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "Interface"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "Interface",
+                        "value": "Interface"
+                    },
+                    "legend": "auto"
+                },
+                "unitsOverrides": [
+                    {
+                        "identifier": "OutLoad",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1705596269432
+                    }
+                ],
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            }
+        },
+        "30": {
+            "type": "markdown",
+            "title": "",
+            "content": "#\n# **Network level health indicators**\n#"
+        },
+        "31": {
+            "type": "data",
+            "title": "Network devices open Problems",
+            "query": "fetch `dt.entity.f5:instance`\n| lookup sourceField: id, lookupField:affected_entity_id, fields: {problem,affected_entity_id,display_id},\n [fetch events\n| filter event.kind == \"DAVIS_PROBLEM\"\n| fieldsAdd affected_entity_id = affected_entity_ids[0], status,event.id,  display_id, event.name\n| summarize {problem = takeMax(record(display_id, event.name,event.status,event.id)) },by:{affected_entity_id,display_id}\n| filter problem[`event.status`] == \"ACTIVE\"\n| fieldsFlatten problem]\n| filter isnotNull(problem) \n| fieldsadd `DNS Name` = NodeName\n| fields  `DNS Name`,  problem[display_id],problem[`event.name`],problem[`event.id`]\n\n|append [fetch `dt.entity.palo-alto:device`\n| lookup sourceField: id, lookupField:affected_entity_id, fields: {problem,affected_entity_id,display_id},\n [fetch events\n| filter event.kind == \"DAVIS_PROBLEM\"\n| fieldsAdd affected_entity_id = affected_entity_ids[0], status,event.id,  display_id, event.name\n| summarize {problem = takeMax(record(display_id, event.name,event.status,event.id)) },by:{affected_entity_id,display_id}\n| filter problem[`event.status`] == \"ACTIVE\"\n| fieldsFlatten problem]\n| filter isnotNull(problem) \n|fieldsadd `DNS Name` = SystemName\n|fields  `DNS Name`,  problem[display_id], problem[`event.name`],problem[`event.id`]]\n\n|append [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_cisco_device`\n| lookup sourceField: id, lookupField:affected_entity_id, fields: {problem,affected_entity_id,display_id},\n [fetch events\n| filter event.kind == \"DAVIS_PROBLEM\"\n| fieldsAdd affected_entity_id = affected_entity_ids[0], status,event.id,  display_id, event.name\n| summarize {problem = takeMax(record(display_id, event.name,event.status,event.id)) },by:{affected_entity_id,display_id}\n| filter problem[`event.status`] == \"ACTIVE\"\n| fieldsFlatten problem]\n| filter isnotNull(problem) \n|fieldsadd `DNS Name` = system_name\n|fields  `DNS Name`,  problem[display_id], problem[`event.name`],problem[`event.id`]]\n\n| append [fetch `dt.entity.snmp:com_dynatrace_extension_snmp_generic_juniper_device`\n| lookup sourceField: id, lookupField:affected_entity_id, fields: {problem,affected_entity_id,display_id},\n [fetch events\n| filter event.kind == \"DAVIS_PROBLEM\"\n| fieldsAdd affected_entity_id = affected_entity_ids[0], status,event.id,  display_id, event.name\n| summarize {problem = takeMax(record(display_id, event.name,event.status,event.id)) },by:{affected_entity_id,display_id}\n| filter problem[`event.status`] == \"ACTIVE\"\n| fieldsFlatten problem]\n| filter isnotNull(problem) \n| fieldsadd `DNS Name` = system_name\n| fields  `DNS Name`,  problem[display_id], problem[`event.name`],problem[`event.id`]]\n\n|fieldsrename  Description=`problem[event.name]`\n|fieldsadd `Problem link`  = concat(\"https://guu84124.apps.dynatrace.com/ui/apps/dynatrace.classic.problems/#problems/problemdetails;gtf=-2h;gf=all;pid=\", `problem[event.id]`)\n|fieldsrename `Problem id`  = `problem[display_id]`\n| fieldsRemove  `problem[event.id]`",
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "Device",
+                        "categoryAxisLabel": "Device",
+                        "valueAxis": "Problems #",
+                        "valueAxisLabel": "Problems #"
+                    }
+                },
+                "singleValue": {
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "recordField": "DNS Name"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [
+                        [
+                            "entity_tags"
+                        ]
+                    ],
+                    "columnWidths": {
+                        "[\"DNS name\"]": 261.83331298828125,
+                        "[\"Type\"]": 447.6500244140625,
+                        "[\"Problems #\"]": 121.06666564941406,
+                        "[\"DNS Name\"]": 116.37153625488281,
+                        "[\"Problem id\"]": 368,
+                        "[\"Description\"]": 600
+                    },
+                    "enableLineWrap": true
+                },
+                "histogram": {
+                    "dataMappings": []
+                },
+                "honeycomb": {
+                    "shape": "square"
+                }
+            }
+        }
+    },
+    "layouts": {
+        "4": {
+            "x": 0,
+            "y": 24,
+            "w": 21,
+            "h": 7
+        },
+        "7": {
+            "x": 0,
+            "y": 0,
+            "w": 21,
+            "h": 3
+        },
+        "8": {
+            "x": 0,
+            "y": 11,
+            "w": 7,
+            "h": 7
+        },
+        "10": {
+            "x": 9,
+            "y": 6,
+            "w": 6,
+            "h": 3
+        },
+        "11": {
+            "x": 6,
+            "y": 3,
+            "w": 3,
+            "h": 3
+        },
+        "16": {
+            "x": 7,
+            "y": 11,
+            "w": 14,
+            "h": 7
+        },
+        "17": {
+            "x": 0,
+            "y": 3,
+            "w": 3,
+            "h": 3
+        },
+        "18": {
+            "x": 3,
+            "y": 3,
+            "w": 3,
+            "h": 3
+        },
+        "19": {
+            "x": 9,
+            "y": 3,
+            "w": 3,
+            "h": 3
+        },
+        "21": {
+            "x": 12,
+            "y": 3,
+            "w": 3,
+            "h": 3
+        },
+        "23": {
+            "x": 6,
+            "y": 6,
+            "w": 3,
+            "h": 3
+        },
+        "25": {
+            "x": 0,
+            "y": 6,
+            "w": 3,
+            "h": 3
+        },
+        "26": {
+            "x": 3,
+            "y": 6,
+            "w": 3,
+            "h": 3
+        },
+        "27": {
+            "x": 0,
+            "y": 18,
+            "w": 10,
+            "h": 6
+        },
+        "28": {
+            "x": 10,
+            "y": 18,
+            "w": 11,
+            "h": 6
+        },
+        "30": {
+            "x": 0,
+            "y": 9,
+            "w": 21,
+            "h": 2
+        },
+        "31": {
+            "x": 0,
+            "y": 31,
+            "w": 14,
+            "h": 7
+        }
+    },
+    "importedWithCode": false
+}

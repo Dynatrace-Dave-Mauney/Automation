@@ -14,11 +14,12 @@ def main():
         ('DPS Usage Details', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000811'),
         ('Licensing Overview', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000801'),
         ('Billing', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000805'),
-        ('Host Health Breakdown', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000807'),
-        ('Problem Notifications Health Overview', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000809'),
-        ('3rd Party XHR Detection', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000808'),
         ('Dynatrace Self-Monitoring: Home', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000820'),
         ('OneAgent Health Overview', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000810'),
+        ('Problem Notifications Health Overview', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000809'),
+        ('Host Health Breakdown', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000807'),
+        ('Management Zone Coverage', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000813'),
+        ('3rd Party XHR Detection', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000808'),
     ]
 
     view_links = [

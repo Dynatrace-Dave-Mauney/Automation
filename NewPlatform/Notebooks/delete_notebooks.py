@@ -40,7 +40,8 @@ def process(env, client_id, client_secret):
 				line_split = line.split(':')
 				dashboard_id = line_split[1]
 				dashboard_version = line_split[2]
-				response = new_platform_api.delete(oauth_bearer_token, f'{env}/platform/document/v1/documents/{dashboard_id}', dashboard_version)
+				params = {'optimistic-locking-version': document_version}
+				response = new_platform_api.delete(oauth_bearer_token, f'{env}/platform/document/v1/documents/{dashboard_id}', params)
 				print(f'DELETED: {line}', response.text)
 				count += 1
 
@@ -51,6 +52,10 @@ def main():
 	friendly_function_name = 'Dynatrace Automation'
 	env_name_supplied = environment.get_env_name(friendly_function_name)
 	# For easy control from IDE
+	# env_name_supplied = 'Upper'
+	# env_name_supplied = 'Lower'
+	# env_name_supplied = 'Sandbox'
+	#
 	# env_name_supplied = 'Prod'
 	# env_name_supplied = 'PreProd'
 	# env_name_supplied = 'Sandbox'

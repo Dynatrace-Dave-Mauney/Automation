@@ -1,0 +1,1064 @@
+{
+    "version": 11,
+    "variables": [
+        {
+            "key": "Status",
+            "type": "csv",
+            "input": "WARN, ERROR, INFO, NONE",
+            "multiple": true
+        },
+        {
+            "key": "EventKind",
+            "type": "query",
+            "input": "fetch events, scanLimitGBytes:10\n| summarize count(), by:{event.kind}\n| fields event.kind\n| limit 100",
+            "multiple": true
+        }
+    ],
+    "tiles": {
+        "1": {
+            "title": "",
+            "type": "markdown",
+            "content": "### Steps\n\n1. Select\u202f**+**. \n2. Select **Query Grail**. \n3. In the tile editor, choose a command from the DQL commands dropdown. For example, type logs.\n4. Select\u202f**Run Query**. For logs, your results will be generated in a table by default. \n5. Select **Select visualization** to display the results differently. \n6. If you want to display the same results in different visualizations, select **Duplicate**. \n    "
+        },
+        "2": {
+            "title": "",
+            "type": "markdown",
+            "content": "![Getting started - step 1](https://dt-cdn.net/images/dashboards-app-getting-started-1-810bf45b93.gif)"
+        },
+        "3": {
+            "title": "",
+            "type": "markdown",
+            "content": "### Results\nOn the right are three ways to visualize your results.\n* Table: with a **fetch logs** command - good for complex query results\n* Single value: with an added [Summarize](https://www.dynatrace.com/support/help/shortlink/dql-commands#summarize) command.\n* Bar chart: with a **Summarize** command, then [Bin](https://www.dynatrace.com/support/help/shortlink/dql-functions#bin) by timestamp. "
+        },
+        "15": {
+            "type": "data",
+            "title": "Bar chart",
+            "query": "fetch logs, scanLimitGBytes:10\n| summarize count(), alias:loglines, by:{bin(timestamp, 1m), alias:timeframe, status}",
+            "visualizationSettings": {
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "legend": {
+                        "hidden": true
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "autoscale": true
+                },
+                "table": {
+                    "enableLineWrap": true,
+                    "hiddenColumns": [
+                        [
+                            "dataPond"
+                        ],
+                        [
+                            "rollupType"
+                        ],
+                        [
+                            "tenant"
+                        ],
+                        [
+                            "recordType"
+                        ]
+                    ],
+                    "lineWrapIds": []
+                },
+                "tableSettings": {
+                    "displayMode": "edit"
+                }
+            },
+            "visualization": "barChart"
+        },
+        "16": {
+            "type": "data",
+            "title": "Table",
+            "query": "fetch logs, scanLimitGBytes:1",
+            "visualizationSettings": {
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "legend": {
+                        "hidden": true
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "autoscale": true
+                },
+                "table": {
+                    "enableLineWrap": true,
+                    "hiddenColumns": [
+                        [
+                            "dataPond"
+                        ],
+                        [
+                            "rollupType"
+                        ],
+                        [
+                            "tenant"
+                        ],
+                        [
+                            "recordType"
+                        ]
+                    ],
+                    "lineWrapIds": [
+                        [
+                            "content"
+                        ]
+                    ]
+                },
+                "tableSettings": {
+                    "displayMode": "edit"
+                }
+            },
+            "visualization": "table"
+        },
+        "18": {
+            "title": "",
+            "type": "markdown",
+            "content": "## Add external data\n\nNow try correlating the data from your first tile with external data.  \n\nMake sure your administrator has enabled your external data sources for this part. Otherwise, your requests will be blocked. "
+        },
+        "19": {
+            "title": "",
+            "type": "markdown",
+            "content": "### Steps\n\n1. Select `+`.\n2. Choose any snippet in the **Code** section.    \n4. Add more snippets and see how you can:\n    * Fetch your external data via APIs.  \n    * Combine external data with your query results.\n    * Map code results to your visualizations. "
+        },
+        "20": {
+            "title": "",
+            "type": "markdown",
+            "content": "![Add a code tile](https://dt-cdn.net/images/screenshot-2023-03-23-at-19-20-13-1200-97a0c9f862.webp)"
+        },
+        "21": {
+            "title": "",
+            "type": "markdown",
+            "content": "### Results\nHere you can see the results for some Code snippets at a glance.\n\nNote that the **Fetch external data snippet** will only work if external data sources (APIs) have been added to your environment\u2019s settings under\u202fPreferences\u202fand\u202f**Limit Outbound Connections**. "
+        },
+        "24": {
+            "type": "data",
+            "title": "Single value",
+            "query": "fetch logs, scanLimitGBytes:1\n| summarize `log lines`=count()",
+            "visualizationSettings": {
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "legend": {
+                        "hidden": true
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "autoscale": true
+                },
+                "table": {
+                    "enableLineWrap": true,
+                    "hiddenColumns": [
+                        [
+                            "dataPond"
+                        ],
+                        [
+                            "rollupType"
+                        ],
+                        [
+                            "tenant"
+                        ],
+                        [
+                            "recordType"
+                        ]
+                    ],
+                    "lineWrapIds": []
+                },
+                "tableSettings": {
+                    "displayMode": "edit"
+                }
+            },
+            "visualization": "singleValue"
+        },
+        "27": {
+            "title": "",
+            "type": "markdown",
+            "content": "![](https://dt-cdn.net/images/dashboards-app-getting-started-4-504613451e.gif)"
+        },
+        "28": {
+            "title": "",
+            "type": "markdown",
+            "content": "### Results\n\nNow that you've added a variable you can include them in: \n* Markdown tiles.\n* The query or code of tiles.\n* The titles of query or code tiles.\n\nTo try it for yourself, go to the top of your dashboard, change a variable dropdown. Then check back here to see the result. "
+        },
+        "42": {
+            "title": "",
+            "type": "markdown",
+            "content": "## Keep learning\nNow that you know the basics, you're ready to jam. You might like to expand your dashboard by adding more visualizations, context, and variables. Explore more examples and use cases in our [documentation](https://dt-url.net/dashboards)."
+        },
+        "44": {
+            "title": "",
+            "type": "markdown",
+            "content": "## Query Grail and visualize"
+        },
+        "52": {
+            "title": "",
+            "type": "markdown",
+            "content": "### Copy and paste tiles \n* Copy tile (**CTRL/CMD+C**)\n* Pasting tile (**CTRL/CMD+V**). \n* You can paste tiles to the same dashboard or a different one."
+        },
+        "53": {
+            "title": "",
+            "type": "markdown",
+            "content": "### Select multiple tiles  \n* SHIFT/CTRL/CMD + click. "
+        },
+        "54": {
+            "title": "",
+            "type": "markdown",
+            "content": "### Add tiles\n* Add query tile (**SHIFT+D**).\n* Add code tile (**SHIFT+C**).\n* Add markdown tile (**SHIFT+A**).\n"
+        },
+        "55": {
+            "title": "",
+            "type": "markdown",
+            "content": "### Use variables in markdown\nYou selected the following log status in the **Status** variable drop-down on top of the dashboard: \n\n`$Status`"
+        },
+        "56": {
+            "title": "",
+            "type": "markdown",
+            "content": "### Delete tiles\n* Select one or more tiles (see **Select multiple tiles**) + **DEL**. "
+        },
+        "61": {
+            "type": "data",
+            "title": "Logs for status $Status",
+            "query": "fetch logs, scanLimitGBytes:10\n| summarize count(), alias:loglines, by:{bin(timestamp, 1m), alias:timeframe, status}\n| filter in(status, array($Status))",
+            "visualizationSettings": {
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "legend": {
+                        "hidden": false,
+                        "position": "bottom"
+                    },
+                    "leftYAxisSettings": {
+                        "scale": "linear"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "autoscale": true
+                },
+                "table": {
+                    "enableLineWrap": true,
+                    "hiddenColumns": [
+                        [
+                            "dataPond"
+                        ],
+                        [
+                            "rollupType"
+                        ],
+                        [
+                            "tenant"
+                        ],
+                        [
+                            "recordType"
+                        ]
+                    ],
+                    "lineWrapIds": []
+                },
+                "tableSettings": {
+                    "displayMode": "edit",
+                    "lineWrapIds": []
+                }
+            },
+            "visualization": "lineChart"
+        },
+        "62": {
+            "title": "",
+            "type": "markdown",
+            "content": "# Getting started with Dashboards\n\nGet your first fully functional dashboard up and running in minutes with this quick guided tour. We\u2019ll show you how to add queries, external data, markdown, and variables\u2014without long explanations or tutorials. \n\nIf you're already familiar with Dashboards, you can get going with an\u202fempty dashboard. \n\nIf you ever want to revisit this page, you\u2019ll find it under Getting started in the (?) menu.\n\n### With Dashboards, you can: \n* Query, visualize, and observe all your data stored in [Grail](https://www.dynatrace.com/support/help/shortlink/dynatrace-grail)\ufeff. \n* Write custom JavaScript with [ad-hoc functions](https://dt-url.net/functions-help) to fetch external data. \n* Annotate all your visualizations with markdown to enrich them with context. \n* Add variables to filter your results and make your dashboard dynamic. \n\nLet\u2019s start. "
+        },
+        "63": {
+            "title": "",
+            "type": "markdown",
+            "content": "## Add variables\n\nNow that you have your first tiles, you can make them more dynamic with variables. Use the existing  variable **Status** to get a jumpstart. You can read its definition by selecting the filter icon at the top of your dashboard. "
+        },
+        "64": {
+            "title": "",
+            "type": "markdown",
+            "content": "### Steps\n\n1. Open your first query tile by clicking **Edit** in the toolbar.\n2. Check how we added the variable Status in the query. \n3. Now use the Status dropdown at the top of your dashboard to see your changes in action. "
+        },
+        "65": {
+            "title": "",
+            "type": "markdown",
+            "content": "## Add markdown\n\nNow that your dashboard has a few tiles, you can use markdown to add some context or messages for colleagues."
+        },
+        "66": {
+            "title": "",
+            "type": "markdown",
+            "content": "### Steps\n\nNow that you have your first tile, let's give it some context with annotations.\n\n1. Select **+**. \n2. Select **Add markdown**.\n3. Enter markdown into the editor to: \n\t* Describe your results.\n \t* Linking to other resources.\n  \t* Add images to support your results.   "
+        },
+        "67": {
+            "title": "",
+            "type": "markdown",
+            "content": "![Getting started - step 2](https://dt-cdn.net/images/screenshot-2023-03-23-at-19-22-16-1200-75b2eb536f.webp)"
+        },
+        "72": {
+            "type": "code",
+            "title": "Run a query via SDK snippet",
+            "input": "/*\n* This will run JavaScript in the DYNATRACE serverless environment.\n* For information visit https://dt-url.net/serverless-runtime\n*/\nimport { queryExecutionClient } from '@dynatrace-sdk/client-query-v09';\n\nexport default async function () {\n  const timeout = 60;\n  const query = 'fetch dt.entity.host | fieldsAdd managementZones | limit 5';\n  const response = await queryExecutionClient.queryExecute({ body: { query, requestTimeoutMilliseconds: timeout * 1000, fetchTimeoutSeconds: timeout  } });\n\n  return response.result;\n}",
+            "visualizationSettings": {
+                "chartSettings": {
+                    "gapPolicy": "connect"
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "autoscale": true
+                },
+                "table": {
+                    "enableLineWrap": true,
+                    "hiddenColumns": [
+                        [
+                            "dataPond"
+                        ],
+                        [
+                            "rollupType"
+                        ],
+                        [
+                            "tenant"
+                        ],
+                        [
+                            "recordType"
+                        ]
+                    ],
+                    "lineWrapIds": [
+                        [
+                            "managementZones"
+                        ]
+                    ]
+                },
+                "singleValueSettings": {
+                    "showLabel": false,
+                    "suffix": "% probability of Davis being a man",
+                    "autoscale": true
+                }
+            },
+            "visualization": "table"
+        },
+        "73": {
+            "type": "code",
+            "title": "Return timeseries data snippet",
+            "input": "/*\n* This example shows how to map data to use the built-in visualization for custom data.\n*/\n\nexport default async function () {\n  // Sample the exponential function 10 times at 1-minute intervals.\n  const sampleCount = 10;\n\n  return {\n    records: new Array(sampleCount).fill(null).map((_, index, array) => {\n      const invertedIndex = array.length - index;\n      const time = new Date().getTime();\n      return {\n        value: Math.exp((index * 3) / 10),\n        timeframe: {\n          start: time - 1000 * 60 * invertedIndex,\n          end: time - 1000 * 60 * (invertedIndex - 1),\n        },\n      };\n    }),\n    types: [\n      {\n        indexRange: [0, sampleCount - 1],\n        mappings: {\n          timeframe: { type: 'timeframe' },\n          value: { type: 'double' },\n        },\n      },\n    ],\n  };\n}\n",
+            "visualizationSettings": {
+                "chartSettings": {
+                    "gapPolicy": "connect"
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "autoscale": true
+                },
+                "table": {
+                    "enableLineWrap": true,
+                    "hiddenColumns": [
+                        [
+                            "dataPond"
+                        ],
+                        [
+                            "rollupType"
+                        ],
+                        [
+                            "tenant"
+                        ],
+                        [
+                            "recordType"
+                        ]
+                    ],
+                    "lineWrapIds": []
+                }
+            },
+            "visualization": "lineChart"
+        },
+        "74": {
+            "type": "code",
+            "title": "Fetch external data snippet",
+            "input": "/*\n* To fetch external data make sure to configure outbound connections.\n* Visit https://dt-url.net/allow-outbound-connections for details.\n*/\n\nexport default async function () {\n  //const response = await fetch(/* YOUR_ENDPOINT */);\n  //const result = await response.json();\n  return \"Add your API URL \";\n}",
+            "visualizationSettings": {
+                "chartSettings": {
+                    "gapPolicy": "connect"
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "autoscale": true
+                },
+                "table": {
+                    "enableLineWrap": true,
+                    "hiddenColumns": [
+                        [
+                            "dataPond"
+                        ],
+                        [
+                            "rollupType"
+                        ],
+                        [
+                            "tenant"
+                        ],
+                        [
+                            "recordType"
+                        ]
+                    ],
+                    "lineWrapIds": []
+                },
+                "tableSettings": {
+                    "displayMode": "edit",
+                    "lineWrapIds": [
+                        [
+                            "browser.user_agent"
+                        ],
+                        [
+                            "event.provider"
+                        ],
+                        [
+                            "browser.user_agent"
+                        ],
+                        [
+                            "event.provider"
+                        ],
+                        [
+                            "browser.user_agent"
+                        ]
+                    ]
+                }
+            },
+            "visualization": "singleValue"
+        },
+        "75": {
+            "title": "",
+            "type": "markdown",
+            "content": " "
+        },
+        "76": {
+            "title": "",
+            "type": "markdown",
+            "content": " "
+        },
+        "78": {
+            "title": "",
+            "type": "markdown",
+            "content": " ## Use shortcuts"
+        },
+        "79": {
+            "title": "",
+            "type": "markdown",
+            "content": " "
+        },
+        "83": {
+            "title": "",
+            "type": "markdown",
+            "content": " "
+        },
+        "86": {
+            "title": "",
+            "type": "markdown",
+            "content": " "
+        },
+        "87": {
+            "type": "data",
+            "title": "Events with event.kind of $EventKind",
+            "query": "fetch events, scanLimitGBytes:1\n| filter in(event.kind, array($EventKind))\n| limit 100",
+            "visualizationSettings": {
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "legend": {
+                        "hidden": false,
+                        "position": "auto"
+                    },
+                    "leftYAxisSettings": {
+                        "scale": "linear"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "autoscale": true
+                },
+                "table": {
+                    "enableLineWrap": true,
+                    "hiddenColumns": [
+                        [
+                            "timestamp"
+                        ],
+                        [
+                            "app.version"
+                        ],
+                        [
+                            "client.ip"
+                        ],
+                        [
+                            "data.agentGenZip"
+                        ],
+                        [
+                            "data.agentTechnologyType"
+                        ],
+                        [
+                            "data.agentVersion"
+                        ],
+                        [
+                            "data.appBuilderVersion"
+                        ],
+                        [
+                            "data.atdTraceId"
+                        ],
+                        [
+                            "data.author"
+                        ],
+                        [
+                            "data.beaconProtocolVersion"
+                        ],
+                        [
+                            "data.browserType"
+                        ],
+                        [
+                            "data.buildUrl"
+                        ],
+                        [
+                            "data.className"
+                        ],
+                        [
+                            "data.clusterTest"
+                        ],
+                        [
+                            "data.compatibilityTest"
+                        ],
+                        [
+                            "data.correlationTest"
+                        ],
+                        [
+                            "data.debugAgentActive"
+                        ],
+                        [
+                            "data.environment"
+                        ],
+                        [
+                            "data.facility"
+                        ],
+                        [
+                            "data.failed"
+                        ],
+                        [
+                            "data.gen3Test"
+                        ],
+                        [
+                            "data.host"
+                        ],
+                        [
+                            "data.injectionType"
+                        ],
+                        [
+                            "data.jsagentVersion"
+                        ],
+                        [
+                            "data.jsagentWorldVersion"
+                        ],
+                        [
+                            "data.jtfVersion"
+                        ],
+                        [
+                            "data.platform"
+                        ],
+                        [
+                            "data.qualifiedTestName"
+                        ],
+                        [
+                            "data.retryCount"
+                        ],
+                        [
+                            "data.rumDisabled"
+                        ],
+                        [
+                            "data.skipped"
+                        ],
+                        [
+                            "data.skippedReason"
+                        ],
+                        [
+                            "data.testDurations.TEST_METHOD_RUNTIME"
+                        ],
+                        [
+                            "data.testFrameworkMode"
+                        ],
+                        [
+                            "data.testName"
+                        ],
+                        [
+                            "data.testRunDate"
+                        ],
+                        [
+                            "data.type"
+                        ],
+                        [
+                            "data.versionID"
+                        ],
+                        [
+                            "data.warFile"
+                        ],
+                        [
+                            "device.manufacturer"
+                        ],
+                        [
+                            "device.model.identifier"
+                        ],
+                        [
+                            "dt.rum.application.id"
+                        ],
+                        [
+                            "dt.rum.custom_attributes_size"
+                        ],
+                        [
+                            "dt.rum.instance.id"
+                        ],
+                        [
+                            "dt.rum.schema_version"
+                        ],
+                        [
+                            "dt.rum.session.id"
+                        ],
+                        [
+                            "geo.city.name"
+                        ],
+                        [
+                            "geo.continent.name"
+                        ],
+                        [
+                            "geo.country.name"
+                        ],
+                        [
+                            "geo.region.name"
+                        ],
+                        [
+                            "os.name"
+                        ],
+                        [
+                            "data.actualConfigFlags"
+                        ],
+                        [
+                            "data.actualModules"
+                        ],
+                        [
+                            "data.expectedConfigFlags"
+                        ],
+                        [
+                            "data.expectedModules"
+                        ],
+                        [
+                            "data.injectionMode"
+                        ],
+                        [
+                            "data.sessionId"
+                        ],
+                        [
+                            "data.testDurations.WAITING_FOR_START_PAGE"
+                        ],
+                        [
+                            "data.testDurations.WAITING_FOR_TEST_FINISHED"
+                        ],
+                        [
+                            "data.testPageUrl"
+                        ],
+                        [
+                            "data.testDurations.CONFIGURATION_UPDATE"
+                        ],
+                        [
+                            "data.branch"
+                        ],
+                        [
+                            "data.dontValidateGen3EventsReason"
+                        ],
+                        [
+                            "data.validateGen3Events"
+                        ],
+                        [
+                            "data.unit"
+                        ],
+                        [
+                            "data.value"
+                        ],
+                        [
+                            "kpi.measurement"
+                        ],
+                        [
+                            "kpi.name"
+                        ],
+                        [
+                            "testName"
+                        ],
+                        [
+                            "data.testDurations.TEST_CLASS_RUNTIME"
+                        ],
+                        [
+                            "data.log"
+                        ],
+                        [
+                            "data.testDurations.APP_SERVER_SHUTDOWN"
+                        ],
+                        [
+                            "data.testDurations.BROWSER_SHUTDOWN"
+                        ],
+                        [
+                            "data.testDurations.FULL_TEST_RUNTIME"
+                        ],
+                        [
+                            "data.failureMessage"
+                        ]
+                    ],
+                    "lineWrapIds": [
+                        [
+                            "event.description"
+                        ]
+                    ]
+                },
+                "tableSettings": {
+                    "displayMode": "edit",
+                    "lineWrapIds": []
+                }
+            },
+            "visualization": "table"
+        },
+        "88": {
+            "title": "",
+            "type": "markdown",
+            "content": " "
+        },
+        "89": {
+            "title": "",
+            "type": "markdown",
+            "content": " "
+        },
+        "90": {
+            "title": "",
+            "type": "markdown",
+            "content": " "
+        },
+        "91": {
+            "title": "",
+            "type": "markdown",
+            "content": " "
+        },
+        "92": {
+            "type": "data",
+            "title": "Logs over time",
+            "query": "fetch logs\n| summarize count(), alias:loglines, by:{bin(timestamp, 1m), alias:timeframe, status}",
+            "visualization": "barChart",
+            "visualizationSettings": {
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "legend": {
+                        "hidden": true
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "autoscale": true
+                },
+                "table": {
+                    "enableLineWrap": true,
+                    "hiddenColumns": [
+                        [
+                            "dataPond"
+                        ],
+                        [
+                            "rollupType"
+                        ],
+                        [
+                            "tenant"
+                        ],
+                        [
+                            "recordType"
+                        ]
+                    ],
+                    "lineWrapIds": []
+                },
+                "tableSettings": {
+                    "displayMode": "edit",
+                    "lineWrapIds": []
+                }
+            }
+        },
+        "93": {
+            "type": "markdown",
+            "title": "",
+            "content": "![](https://dt-cdn.net/images/oneagent-logstructure-589-8033e11f60.png)"
+        },
+        "94": {
+            "type": "markdown",
+            "title": "",
+            "content": "### Logs from APAC-East\nLogs over time on the left is just an example to show off one possibility.\nYou can include [links](https://www.dynatrace.com/intheway/) of course too."
+        },
+        "95": {
+            "type": "markdown",
+            "title": "",
+            "content": "### Results\nHere's how we added context to our Logs over time with an image and an annotation.  "
+        }
+    },
+    "layouts": {
+        "1": {
+            "x": 0,
+            "y": 8,
+            "w": 7,
+            "h": 7
+        },
+        "2": {
+            "x": 7,
+            "y": 8,
+            "w": 17,
+            "h": 7
+        },
+        "3": {
+            "x": 0,
+            "y": 16,
+            "w": 7,
+            "h": 4
+        },
+        "15": {
+            "x": 18,
+            "y": 16,
+            "w": 6,
+            "h": 4
+        },
+        "16": {
+            "x": 7,
+            "y": 16,
+            "w": 6,
+            "h": 4
+        },
+        "18": {
+            "x": 0,
+            "y": 21,
+            "w": 24,
+            "h": 2
+        },
+        "19": {
+            "x": 0,
+            "y": 23,
+            "w": 7,
+            "h": 7
+        },
+        "20": {
+            "x": 7,
+            "y": 23,
+            "w": 17,
+            "h": 7
+        },
+        "21": {
+            "x": 0,
+            "y": 31,
+            "w": 7,
+            "h": 6
+        },
+        "24": {
+            "x": 13,
+            "y": 16,
+            "w": 5,
+            "h": 4
+        },
+        "27": {
+            "x": 7,
+            "y": 55,
+            "w": 17,
+            "h": 7
+        },
+        "28": {
+            "x": 0,
+            "y": 63,
+            "w": 7,
+            "h": 6
+        },
+        "42": {
+            "x": 0,
+            "y": 75,
+            "w": 24,
+            "h": 2
+        },
+        "44": {
+            "x": 0,
+            "y": 7,
+            "w": 24,
+            "h": 1
+        },
+        "52": {
+            "x": 12,
+            "y": 71,
+            "w": 6,
+            "h": 3
+        },
+        "53": {
+            "x": 6,
+            "y": 71,
+            "w": 6,
+            "h": 3
+        },
+        "54": {
+            "x": 0,
+            "y": 71,
+            "w": 6,
+            "h": 3
+        },
+        "55": {
+            "x": 7,
+            "y": 63,
+            "w": 5,
+            "h": 6
+        },
+        "56": {
+            "x": 18,
+            "y": 71,
+            "w": 6,
+            "h": 3
+        },
+        "61": {
+            "x": 12,
+            "y": 63,
+            "w": 6,
+            "h": 6
+        },
+        "62": {
+            "x": 0,
+            "y": 0,
+            "w": 24,
+            "h": 7
+        },
+        "63": {
+            "x": 0,
+            "y": 53,
+            "w": 24,
+            "h": 2
+        },
+        "64": {
+            "x": 0,
+            "y": 55,
+            "w": 7,
+            "h": 7
+        },
+        "65": {
+            "x": 0,
+            "y": 38,
+            "w": 24,
+            "h": 2
+        },
+        "66": {
+            "x": 0,
+            "y": 40,
+            "w": 7,
+            "h": 6
+        },
+        "67": {
+            "x": 7,
+            "y": 40,
+            "w": 17,
+            "h": 6
+        },
+        "72": {
+            "x": 15,
+            "y": 33,
+            "w": 9,
+            "h": 4
+        },
+        "73": {
+            "x": 7,
+            "y": 33,
+            "w": 8,
+            "h": 4
+        },
+        "74": {
+            "x": 7,
+            "y": 31,
+            "w": 17,
+            "h": 2
+        },
+        "75": {
+            "x": 0,
+            "y": 69,
+            "w": 24,
+            "h": 1
+        },
+        "76": {
+            "x": 0,
+            "y": 52,
+            "w": 24,
+            "h": 1
+        },
+        "78": {
+            "x": 0,
+            "y": 70,
+            "w": 24,
+            "h": 1
+        },
+        "79": {
+            "x": 0,
+            "y": 20,
+            "w": 24,
+            "h": 1
+        },
+        "83": {
+            "x": 0,
+            "y": 37,
+            "w": 24,
+            "h": 1
+        },
+        "86": {
+            "x": 0,
+            "y": 15,
+            "w": 24,
+            "h": 1
+        },
+        "87": {
+            "x": 18,
+            "y": 63,
+            "w": 6,
+            "h": 6
+        },
+        "88": {
+            "x": 0,
+            "y": 62,
+            "w": 24,
+            "h": 1
+        },
+        "89": {
+            "x": 0,
+            "y": 46,
+            "w": 24,
+            "h": 1
+        },
+        "90": {
+            "x": 0,
+            "y": 30,
+            "w": 24,
+            "h": 1
+        },
+        "91": {
+            "x": 0,
+            "y": 74,
+            "w": 24,
+            "h": 1
+        },
+        "92": {
+            "x": 7,
+            "y": 47,
+            "w": 11,
+            "h": 5
+        },
+        "93": {
+            "x": 18,
+            "y": 47,
+            "w": 6,
+            "h": 2
+        },
+        "94": {
+            "x": 18,
+            "y": 49,
+            "w": 6,
+            "h": 3
+        },
+        "95": {
+            "x": 0,
+            "y": 47,
+            "w": 7,
+            "h": 5
+        }
+    },
+    "refreshRate": 0
+}

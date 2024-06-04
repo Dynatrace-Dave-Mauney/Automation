@@ -1,0 +1,1221 @@
+{
+    "metadata": {
+        "configurationVersions": [
+            6
+        ],
+        "clusterVersion": "1.261.134.20230302-084304"
+    },
+    "id": "00000000-dddd-bbbb-ffff-000000000813",
+    "dashboardMetadata": {
+        "name": "TEMPLATE: Management Zone Coverage",
+        "shared": true,
+        "preset": false,
+        "tilesNameSize": "small",
+        "hasConsistentColors": true,
+        "owner": "nobody@example.com"
+    },
+    "tiles": [
+        {
+            "name": "Web Applications",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 0,
+                "width": 1482,
+                "height": 532
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:apps.web.actionCount.category",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.application"
+                    ],
+                    "sortBy": "ASC",
+                    "sortByDimension": "dt.entity.application",
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "limit": -1,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TABLE",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "columnId": "Action count (by Apdex category) [web]",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "queryId": "A",
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": [
+                        "A:dt.entity.application.name"
+                    ]
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:apps.web.actionCount.category:splitBy(\"dt.entity.application\"):names:sort(dimension(\"dt.entity.application.name\",ascending))):names"
+            ]
+        },
+        {
+            "name": "Services",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 532,
+                "left": 0,
+                "width": 1482,
+                "height": 532
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.service.name",
+                        "dt.entity.service"
+                    ],
+                    "metricSelector": "builtin:service.requestCount.total:filter(and(or(in(\"dt.entity.service\",entitySelector(\"type(service),not(serviceType(~\"DATABASE_SERVICE~\"))\"))))):splitBy(\"dt.entity.service\"):names:sort(dimension(\"dt.entity.service.name\",ascending))",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TABLE",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "columnId": "Request count",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "queryId": "A",
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": [
+                        "A:dt.entity.application.name",
+                        "A:dt.entity.process_group_instance.name",
+                        "A:dt.entity.service.name"
+                    ]
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:service.requestCount.total:filter(and(or(in(\"dt.entity.service\",entitySelector(\"type(service),not(serviceType(~\"DATABASE_SERVICE~\"))\"))))):splitBy(\"dt.entity.service\"):names:sort(dimension(\"dt.entity.service.name\",ascending))):names"
+            ]
+        },
+        {
+            "name": "Database Services",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1064,
+                "left": 0,
+                "width": 1482,
+                "height": 532
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:service.requestCount.total",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.service"
+                    ],
+                    "sortBy": "ASC",
+                    "sortByDimension": "dt.entity.service",
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [
+                            {
+                                "filter": "dt.entity.service",
+                                "filterType": "ENTITY_ATTRIBUTE",
+                                "filterOperator": "OR",
+                                "entityAttribute": "serviceType",
+                                "nestedFilters": [],
+                                "criteria": [
+                                    {
+                                        "value": "DATABASE_SERVICE",
+                                        "evaluator": "IN"
+                                    }
+                                ]
+                            }
+                        ],
+                        "criteria": []
+                    },
+                    "limit": -1,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TABLE",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "columnId": "Request count",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "queryId": "A",
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": [
+                        "A:dt.entity.application.name",
+                        "A:dt.entity.process_group_instance.name",
+                        "A:dt.entity.service.name"
+                    ]
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:service.requestCount.total:filter(and(or(in(\"dt.entity.service\",entitySelector(\"type(service),serviceType(~\"DATABASE_SERVICE~\")\"))))):splitBy(\"dt.entity.service\"):names:sort(dimension(\"dt.entity.service.name\",ascending))):names"
+            ]
+        },
+        {
+            "name": "Process Groups",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1596,
+                "left": 0,
+                "width": 1482,
+                "height": 532
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:tech.generic.cpu.usage",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "sortBy": "ASC",
+                    "sortByDimension": "dt.entity.process_group_instance",
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "limit": -1,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TABLE",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "columnId": "Process CPU usage",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "queryId": "A",
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": [
+                        "A:dt.entity.application.name",
+                        "A:dt.entity.process_group_instance.name"
+                    ]
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:tech.generic.cpu.usage:splitBy(\"dt.entity.process_group_instance\"):names:sort(dimension(\"dt.entity.process_group_instance.name\",ascending))):names"
+            ]
+        },
+        {
+            "name": "Hosts",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2128,
+                "left": 0,
+                "width": 1482,
+                "height": 532
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:host.cpu.usage",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.host"
+                    ],
+                    "sortBy": "ASC",
+                    "sortByDimension": "dt.entity.host",
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "limit": -1,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TABLE",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "columnId": "CPU usage %",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "queryId": "A",
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": [
+                        "A:dt.entity.application.name",
+                        "A:dt.entity.host.name"
+                    ]
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:host.cpu.usage:splitBy(\"dt.entity.host\"):names:sort(dimension(\"dt.entity.host.name\",ascending))):names"
+            ]
+        },
+        {
+            "name": "Queues (Incoming)",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2660,
+                "left": 0,
+                "width": 760,
+                "height": 646
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:queue.incoming_requests",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.queue"
+                    ],
+                    "sortBy": "DESC",
+                    "sortByDimension": "",
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "limit": -1,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TABLE",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE",
+                    "showLabels": false
+                },
+                "singleValueSettings": {
+                    "showTrend": true,
+                    "showSparkLine": true,
+                    "linkTileColorToThreshold": true
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "columnId": "Incoming messages",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "queryId": "A",
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": [
+                        "A:dt.entity.queue.name"
+                    ]
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:queue.incoming_requests:splitBy(\"dt.entity.queue\"):sort(value(auto,descending))):names"
+            ]
+        },
+        {
+            "name": "Queues (Outgoing)",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2660,
+                "left": 760,
+                "width": 722,
+                "height": 646
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:queue.outgoing_requests",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.queue"
+                    ],
+                    "sortBy": "DESC",
+                    "sortByDimension": "",
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "limit": -1,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TABLE",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE",
+                    "showLabels": false
+                },
+                "singleValueSettings": {
+                    "showTrend": true,
+                    "showSparkLine": true,
+                    "linkTileColorToThreshold": true
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "columnId": "Outgoing messages",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "queryId": "A",
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": [
+                        "A:dt.entity.queue.name"
+                    ]
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:queue.outgoing_requests:splitBy(\"dt.entity.queue\"):sort(value(auto,descending))):names"
+            ]
+        },
+        {
+            "name": "Kubernetes Clusters",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3306,
+                "left": 0,
+                "width": 760,
+                "height": 646
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:kubernetes.nodes",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.kubernetes_cluster"
+                    ],
+                    "sortBy": "ASC",
+                    "sortByDimension": "dt.entity.kubernetes_cluster",
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "limit": -1,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TABLE",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE",
+                    "showLabels": false
+                },
+                "singleValueSettings": {
+                    "showTrend": true,
+                    "showSparkLine": true,
+                    "linkTileColorToThreshold": true
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "columnId": "Kubernetes: Node count",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "queryId": "A",
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": [
+                        "A:dt.entity.queue.name",
+                        "A:dt.entity.kubernetes_cluster.name"
+                    ]
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:kubernetes.nodes:splitBy(\"dt.entity.kubernetes_cluster\"):names:sort(dimension(\"dt.entity.kubernetes_cluster.name\",ascending))):names"
+            ]
+        },
+        {
+            "name": "Kubernetes Nodes",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3306,
+                "left": 760,
+                "width": 722,
+                "height": 646
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:kubernetes.node.pods",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.kubernetes_node"
+                    ],
+                    "sortBy": "ASC",
+                    "sortByDimension": "dt.entity.kubernetes_node",
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "limit": -1,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TABLE",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE",
+                    "showLabels": false
+                },
+                "singleValueSettings": {
+                    "showTrend": true,
+                    "showSparkLine": true,
+                    "linkTileColorToThreshold": true
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "columnId": "Kubernetes: Pod count (by node)",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "queryId": "A",
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": [
+                        "A:dt.entity.queue.name",
+                        "A:dt.entity.kubernetes_cluster.name",
+                        "A:dt.entity.kubernetes_node.name"
+                    ]
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:kubernetes.node.pods:splitBy(\"dt.entity.kubernetes_node\"):names:sort(dimension(\"dt.entity.kubernetes_node.name\",ascending))):names"
+            ]
+        },
+        {
+            "name": "Kubernetes Workloads",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3952,
+                "left": 0,
+                "width": 760,
+                "height": 646
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:kubernetes.workload.pods_desired",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.cloud_application"
+                    ],
+                    "sortBy": "ASC",
+                    "sortByDimension": "dt.entity.cloud_application",
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "limit": -1,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TABLE",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE",
+                    "showLabels": false
+                },
+                "singleValueSettings": {
+                    "showTrend": true,
+                    "showSparkLine": true,
+                    "linkTileColorToThreshold": true
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "columnId": "Kubernetes: Workload - desired pod count",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "queryId": "A",
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": [
+                        "A:dt.entity.queue.name",
+                        "A:dt.entity.kubernetes_cluster.name",
+                        "A:dt.entity.cloud_application.name"
+                    ]
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:kubernetes.workload.pods_desired:splitBy(\"dt.entity.cloud_application\"):names:sort(dimension(\"dt.entity.cloud_application.name\",ascending))):names"
+            ]
+        },
+        {
+            "name": "Kubernetes Namespaces",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3952,
+                "left": 760,
+                "width": 722,
+                "height": 646
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:kubernetes.workloads",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.cloud_application_namespace"
+                    ],
+                    "sortBy": "ASC",
+                    "sortByDimension": "dt.entity.cloud_application_namespace",
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "limit": -1,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TABLE",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE",
+                    "showLabels": false
+                },
+                "singleValueSettings": {
+                    "showTrend": true,
+                    "showSparkLine": true,
+                    "linkTileColorToThreshold": true
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "columnId": "Kubernetes: Workload count",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "queryId": "A",
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": [
+                        "A:dt.entity.queue.name",
+                        "A:dt.entity.kubernetes_cluster.name",
+                        "A:dt.entity.cloud_application.name",
+                        "A:dt.entity.cloud_application_namespace.name"
+                    ]
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:kubernetes.workloads:splitBy(\"dt.entity.cloud_application_namespace\"):names:sort(dimension(\"dt.entity.cloud_application_namespace.name\",ascending))):names"
+            ]
+        },
+        {
+            "name": "Kubernetes Static Pod Names",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3952,
+                "left": 1482,
+                "width": 722,
+                "height": 646
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:kubernetes.containers",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "k8s.staticpod.name"
+                    ],
+                    "sortBy": "ASC",
+                    "sortByDimension": "k8s.staticpod.name",
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "limit": -1,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TABLE",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE",
+                    "showLabels": false
+                },
+                "singleValueSettings": {
+                    "showTrend": true,
+                    "showSparkLine": true,
+                    "linkTileColorToThreshold": true
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "columnId": "Kubernetes: Container count",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "queryId": "A",
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": [
+                        "A:dt.entity.queue.name",
+                        "A:dt.entity.kubernetes_cluster.name",
+                        "A:dt.entity.kubernetes_node.name",
+                        "A:container_state.name"
+                    ]
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:kubernetes.containers:splitBy(\"k8s.staticpod.name\"):names:sort(dimension(\"k8s.staticpod.name\",ascending))):names"
+            ]
+        }
+    ]
+}
