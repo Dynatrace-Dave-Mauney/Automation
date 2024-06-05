@@ -12,6 +12,7 @@ def process():
     root_page = "https://docs.dynatrace.com/docs/platform/semantic-dictionary/model/dt-system-events"
     root_page = "https://docs.dynatrace.com/docs/platform/semantic-dictionary/model/davis"
     root_page = "https://docs.dynatrace.com/docs/shortlink/semantic-dictionary-topology"
+    root_page = "https://docs.dynatrace.com/docs/observe-and-explore/metrics/built-in-metrics-on-grail"
 
     r = requests.get(root_page)
     soup = BeautifulSoup(r.text, 'html.parser')
