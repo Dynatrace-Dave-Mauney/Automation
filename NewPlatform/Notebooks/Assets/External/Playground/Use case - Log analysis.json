@@ -1,0 +1,267 @@
+{
+    "version": "5",
+    "defaultTimeframe": {
+        "from": "now-24h",
+        "to": "now",
+        "details": {
+            "from": {
+                "type": "expression",
+                "normalized": "now-24h",
+                "date": "2023-10-30T11:47:21.311Z"
+            },
+            "to": {
+                "type": "expression",
+                "normalized": "now",
+                "date": "2023-10-31T11:47:21.311Z"
+            }
+        }
+    },
+    "sections": [
+        {
+            "id": "fa1ab8ae-1407-4112-96f5-c0231853d114",
+            "type": "markdown",
+            "markdown": "# Log Analytics with DQL\n\n- Notebooks give you access to data and allow collaboration (share ...)\n- Start with DQL Snippets (Add section > Snippets > Logs > Aggregated overview)\n- Try different visualization options\n",
+            "showTitle": false
+        },
+        {
+            "id": "226cbbce-1572-40aa-aaea-d7822b38e65d",
+            "type": "markdown",
+            "markdown": "We did also prepare a dashboard showcasing log analysis. [Click here to have a look at it](https://wkf10640.apps.dynatrace.com/ui/apps/dynatrace.dashboards/dashboard/f19ce5f3-8207-4cec-8384-c9c76ee636b1#vfilter_Status=ANY&vfilter_RiskLevel=ANY&vfilter_ComponentName=ANY&from=now-2h&to=now&vfilter_status=ERROR%2CWARN%2CINFO%2CNONE).\n\nYou want to learn more? Have a look at the Log DQL examples [in our documentation](https://docs.dynatrace.com/docs/observe-and-explore/logs/log-management-and-analytics/logs-on-grail-examples). "
+        },
+        {
+            "id": "0b41c052-d728-4ef2-b223-8f020b08b27c",
+            "type": "dql",
+            "title": "Aggregated overview of logs",
+            "showTitle": true,
+            "state": {
+                "input": {
+                    "value": "fetch logs, from:now() - 1h\n| filterOut loglevel == \"NONE\"\n| summarize logCount = count(), by:{loglevel}\n| sort logCount desc",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "state": "success",
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        },
+                        "categoricalBarChartSettings": {
+                            "categoryAxis": "loglevel",
+                            "categoryAxisLabel": "loglevel",
+                            "valueAxis": "logCount",
+                            "valueAxisLabel": "logCount"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "prefixIcon": "",
+                        "autoscale": true,
+                        "alignment": "center"
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0,
+                        "columnWidths": {}
+                    }
+                },
+                "visualization": "categoricalBarChart",
+                "davis": {
+                    "includeLogs": true,
+                    "isDavisVisualizationAvailable": true
+                }
+            },
+            "davisAnalysis": {
+                "analyzerComponentState": {
+                    "resultState": {}
+                }
+            },
+            "height": 450,
+            "showInput": true
+        },
+        {
+            "id": "2b16850c-ce4a-4a77-b0c4-9c887de774ae",
+            "type": "dql",
+            "showTitle": false,
+            "state": {
+                "input": {
+                    "value": "fetch logs, from:now() - 1h\n| filter status == \"ERROR\"",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "state": "success",
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "autoscale": true
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [
+                            [
+                                "content"
+                            ]
+                        ],
+                        "firstVisibleRowIndex": 1
+                    }
+                },
+                "visualization": "table",
+                "davis": {
+                    "includeLogs": true,
+                    "isDavisVisualizationAvailable": true
+                }
+            },
+            "height": 450,
+            "davisAnalysis": {
+                "analyzerComponentState": {
+                    "resultState": {}
+                }
+            }
+        },
+        {
+            "id": "19591b63-1400-4994-b829-1e6425833e4c",
+            "type": "markdown",
+            "markdown": "# Log Analytics with schema-on-read\n\n- With schema-on-read you don't have to care about indexing and fields extraction on ingest. Run any query any time and extract fields on read \n\n```\"AddItemAsync called with userId=\"LD:userId\", productId=\"LD:productId, \"quantity=\"INT:quantity```\n- You can use DPL Architect to create and manage your patterns\n\n```\nfetch logs | filter k8s.deployment.name == \"cartservice-*\"\n| parse content, \"\\\"AddItemAsync called with userId=\\\"LD:userId\\\", productId=\\\"LD:productId, \\\"quantity=\\\"INT:quantity\"\n| filterOut isNull(productId)\n| summarize sum(quantity), by: productId\n```",
+            "showTitle": false
+        },
+        {
+            "id": "f0dde2f1-a045-438a-b92d-15a74ae2acc5",
+            "type": "dql",
+            "showTitle": false,
+            "state": {
+                "input": {
+                    "value": "fetch logs\n| filter k8s.deployment.name == \"cartservice-*\" and matchesPhrase(content, \"AddItemAsync\")\n| parse content, \"\"\"LD\"AddItemAsync called with userId=\"LD:userId\", productId=\"LD:productId, \"quantity=\"INT:quantity\"\"\"\n| summarize sum(quantity), by: {productId}",
+                    "timeframe": {
+                        "from": "now-24h",
+                        "to": "now",
+                        "details": {
+                            "from": {
+                                "type": "expression",
+                                "normalized": "now-24h",
+                                "date": "2023-10-30T11:47:21.311Z"
+                            },
+                            "to": {
+                                "type": "expression",
+                                "normalized": "now",
+                                "date": "2023-10-31T11:47:21.311Z"
+                            }
+                        }
+                    }
+                },
+                "state": "success",
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "autoscale": true
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [
+                            [
+                                "content"
+                            ]
+                        ],
+                        "firstVisibleRowIndex": 0
+                    }
+                },
+                "visualization": "pieChart",
+                "davis": {
+                    "includeLogs": true,
+                    "isDavisVisualizationAvailable": true
+                }
+            },
+            "height": 450,
+            "davisAnalysis": {
+                "analyzerComponentState": {
+                    "resultState": {}
+                }
+            }
+        },
+        {
+            "id": "1738c971-9f3d-418b-a84b-6b7d8f325163",
+            "type": "markdown",
+            "markdown": "# Log Analytics in context\n\n- Logs have context. Thanks to our Platform intents you can navigate to domain specific Apps for more details.\n- Kubernetes, when you click on dt.entity.cloud_application you can Open Kubernetes Workload details\n- Traces, APM use case for troubleshooting click on trace_id to view Trace details",
+            "showTitle": false
+        },
+        {
+            "id": "0849b921-880c-46ce-af12-6cd8cb72cd62",
+            "type": "dql",
+            "showTitle": false,
+            "state": {
+                "input": {
+                    "value": "fetch logs , from: now()-24h\n| filter status == \"ERROR\" \n| filterOut isNull(dt.entity.cloud_application) // has topology connection\n| filterOut isNull(trace_id) // has connection to trace\n| fields timestamp, content, dt.entity.cloud_application, trace_id\n",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "state": "success",
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "autoscale": true
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [
+                            [
+                                "content"
+                            ]
+                        ],
+                        "firstVisibleRowIndex": 12
+                    }
+                },
+                "visualization": "table",
+                "davis": {
+                    "includeLogs": true,
+                    "isDavisVisualizationAvailable": true
+                }
+            },
+            "height": 450,
+            "davisAnalysis": {
+                "analyzerComponentState": {
+                    "resultState": {}
+                }
+            }
+        }
+    ]
+}

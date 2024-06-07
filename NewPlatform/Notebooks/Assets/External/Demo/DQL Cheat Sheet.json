@@ -1,0 +1,735 @@
+{
+    "version": "5",
+    "defaultTimeframe": {
+        "from": "now-2h",
+        "to": "now"
+    },
+    "sections": [
+        {
+            "id": "d9292d2f-94bf-481d-80fe-a0ec28a76801",
+            "type": "markdown",
+            "markdown": "# COMMANDS\n## Load Data\n\n|  | [DQL Commands Documentation](https://www.dynatrace.com/support/help/shortlink/dql-commands) \n --- | ---\n Command | Description\ndata | Generates sample data for testing queries. Can enter data in record format or json format\nfetch | Defines which data to load from Dynatrace and optionally process in the following processing pipeline steps.\ntimeseries | Loads, filters, and groups metric data over a time frame"
+        },
+        {
+            "id": "acea6513-e8ed-4e7f-8d34-4c6628da0bc1",
+            "type": "dql",
+            "title": "data example - creates sample data with single record",
+            "showTitle": false,
+            "state": {
+                "input": {
+                    "value": "data json: \"\"\"[{\"timestamp\": \"2023-03-31T05:57:42.451304000Z\",\n\"severity\":\"ERROR\", \"event\":\"failed to find product\"}]\"\"\"",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "autoscale": true
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0
+                    }
+                }
+            }
+        },
+        {
+            "id": "b2900d63-2904-4159-8a06-b1cfa42329fc",
+            "type": "dql",
+            "title": "data example - creates sample data at current timestamp",
+            "showTitle": false,
+            "state": {
+                "input": {
+                    "value": "data record(timestamp=now()-1m, severity=\"INFO\", event=\"search\nsuccessful\"), record(timestamp=now(), severity=\"ERROR\", event=\"failed\nto find product\")",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "autoscale": true
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0
+                    }
+                },
+                "state": "idle"
+            },
+            "height": 0
+        },
+        {
+            "id": "95a2f575-3892-4cb7-b86c-0fbfae727eb6",
+            "type": "dql",
+            "title": "fetch example - fetches logs from relative timeframe",
+            "showTitle": false,
+            "state": {
+                "input": {
+                    "value": "fetch logs, from:now() - 24h, to:now() - 2h",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "state": "idle",
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "autoscale": true
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0
+                    }
+                }
+            }
+        },
+        {
+            "id": "6a796eee-d529-40e6-9952-7c298ca56c33",
+            "type": "dql",
+            "title": "fetch example - fetches logs from fixed timeframe",
+            "showTitle": false,
+            "state": {
+                "input": {
+                    "value": "fetch logs, timeframe:\"2023-06-20T00:00:00Z/2023-06-28T12:00:00Z\"",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "autoscale": true
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0
+                    }
+                },
+                "state": "idle"
+            }
+        },
+        {
+            "id": "c5e80b11-fa58-448b-bcee-d887b319b7ba",
+            "type": "dql",
+            "title": "timeseries example - Create visualization from metric data",
+            "showTitle": false,
+            "state": {
+                "input": {
+                    "value": "timeseries avg(dt.host.cpu.usage)",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "autoscale": true
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0
+                    }
+                },
+                "state": "idle"
+            }
+        },
+        {
+            "id": "589653e3-95d1-49a4-a80d-b1ea23b1608a",
+            "type": "dql",
+            "title": "timeseries + filter example - Chart average CPU by Host, where hostname contains Easytravel",
+            "showTitle": false,
+            "state": {
+                "input": {
+                    "value": "timeseries cpu=avg(dt.host.cpu.usage), by:{host.name}\n| filter contains(host.name,\"easytravel\")",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "autoscale": true
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0
+                    }
+                },
+                "state": "idle"
+            }
+        },
+        {
+            "id": "13ebdff2-70b3-4980-bb18-a49f6e6aa53a",
+            "type": "markdown",
+            "markdown": "## Filtering and Formatting \n|  | [DQL Commands Documentation](https://www.dynatrace.com/support/help/shortlink/dql-commands) \n --- | --- |\n Command | Description\nfields | Selects just the relevant fields\nfieldsAdd | Appends or replaces an existing field\nfieldsRemove | Removes a column (field)\nfieldsRename | Renames a column (field) \nfieldsSummary | Calculates the cardinality of field values \nfilter | Narrows the number of records based on the filter expression\nfilterOut | Remove records (logs, events, etc.) based on a condition\nlimit | Limits the number of returned records.\nlookup | Adds fields from lookup table to source table by finding  match between both tables\nparse | parse and extract data from a field's value\nsort | Sorts value in ascending or descending order\nsummarize | Group records together that have the same value"
+        },
+        {
+            "id": "2adf0a9a-3481-4981-ad70-bd39b81c2404",
+            "type": "dql",
+            "title": "fields example - display only the selected fields in result",
+            "showTitle": false,
+            "state": {
+                "input": {
+                    "value": "fetch logs\n| fields timestamp, loglevel, log.source, content",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "state": "idle",
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "autoscale": true
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0
+                    }
+                }
+            }
+        },
+        {
+            "id": "58219133-5e62-4550-8031-66e1b57aca9b",
+            "type": "dql",
+            "title": "fieldsAdd example - Adds new, lowercase 'severity' field to dataset",
+            "showTitle": false,
+            "state": {
+                "input": {
+                    "value": "fetch logs\n| fieldsAdd severity = lower(loglevel)\n| fields severity",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "autoscale": true
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0
+                    }
+                },
+                "state": "idle"
+            }
+        },
+        {
+            "id": "09e3e44c-fc7c-4046-8dd0-a2f1720a355f",
+            "type": "dql",
+            "title": "fieldsRemove example - Remove default loglevel and replace with new field",
+            "showTitle": false,
+            "state": {
+                "input": {
+                    "value": "fetch logs\n| fieldsAdd severity = lower(loglevel)\n| fieldsRemove loglevel\n| fields severity, loglevel",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "autoscale": true
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0
+                    }
+                },
+                "state": "idle"
+            }
+        },
+        {
+            "id": "a52180b9-8c17-4016-8b65-7cdfc48463b5",
+            "type": "dql",
+            "title": "fieldsSummary example - Summarize 'Host' field",
+            "showTitle": false,
+            "state": {
+                "input": {
+                    "value": "fetch logs, samplingRatio: 100000\n| fieldsSummary dt.entity.host, topValues: 10, extrapolateSamples: true",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "autoscale": true
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0
+                    }
+                },
+                "state": "idle"
+            }
+        },
+        {
+            "id": "cf82d862-97c6-4589-81e7-e5cf28a1c575",
+            "type": "dql",
+            "title": "filter example - Select records where loglevel = 'ERROR'",
+            "showTitle": false,
+            "state": {
+                "input": {
+                    "value": "fetch logs\n| filter loglevel == \"ERROR\" ",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "autoscale": true
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0
+                    }
+                },
+                "state": "idle"
+            }
+        },
+        {
+            "id": "2d582edc-f158-47d9-954f-733b7ae64ddd",
+            "type": "dql",
+            "title": "filterOut example - Select all records except those where event category equals 'INFO'",
+            "showTitle": false,
+            "state": {
+                "input": {
+                    "value": "fetch events\n| filterOut event.category == \"INFO\"",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "autoscale": true
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0
+                    }
+                },
+                "state": "idle"
+            }
+        },
+        {
+            "id": "ae01e905-5296-424c-b804-9ed661800fe5",
+            "type": "dql",
+            "title": "limit example - Limit results to 10",
+            "showTitle": false,
+            "state": {
+                "input": {
+                    "value": "fetch logs\n| limit 10",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "state": "idle",
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "autoscale": true
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0
+                    }
+                }
+            }
+        },
+        {
+            "id": "18b3add9-0cca-4709-9f4a-2b68502308c0",
+            "type": "dql",
+            "title": "lookup example - Add fields from lookup table",
+            "showTitle": false,
+            "state": {
+                "input": {
+                    "value": "fetch events\n| summarize restart_count = countIf(event.type == \"PROCESS_RESTART\"),\nby:{dt.entity.process_group_instance}\n| lookup [ fetch logs\n| summarize count = countIf(loglevel == \"ERROR\"),\nby:{dt.entity.process_group_instance}\n], sourceField:dt.entity.process_group_instance,\nlookupField:dt.entity.process_group_instance, prefix:\"log.\"",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "autoscale": true
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0
+                    }
+                },
+                "state": "idle"
+            }
+        },
+        {
+            "id": "50d3e743-b439-44e5-a3d7-4a104892141a",
+            "type": "dql",
+            "title": "parse example - extract timestamp, ip and text from value",
+            "showTitle": false,
+            "state": {
+                "input": {
+                    "value": "fetch events\n| limit 1\n| fields timestamp\n| fieldsAdd fieldToParse = \"117.169.75.66--[14/Mar/2016:23:34:25 +0200] GET//db/scripts/setup.php HTTP/1.1 404 474\n\"\n| parse fieldToParse, \"ipv4:ip LD HTTPDATE:time ']' ld:text EOL\"",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "autoscale": true
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0
+                    }
+                },
+                "state": "idle"
+            }
+        },
+        {
+            "id": "fa4ea9f8-baef-41a5-8e10-ff7a96509d33",
+            "type": "dql",
+            "title": "sort example - sort by newest record to oldest",
+            "showTitle": false,
+            "state": {
+                "input": {
+                    "value": "fetch logs\n| sort timestamp desc\n| fields timestamp",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "autoscale": true
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0
+                    }
+                },
+                "state": "idle"
+            }
+        },
+        {
+            "id": "2fe0975e-de3f-47ae-b4e8-b76eb396e136",
+            "type": "dql",
+            "title": "summarize example - summarize number of events by category",
+            "showTitle": false,
+            "state": {
+                "input": {
+                    "value": "fetch events\n| summarize count(), by:{event.category}",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "autoscale": true
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0
+                    }
+                },
+                "state": "idle"
+            }
+        },
+        {
+            "id": "839dba09-1349-4beb-9b1b-44ea048f35b8",
+            "type": "markdown",
+            "markdown": "## Functions - Aggregation\n|  | [DQL Functions Documentation](https://www.dynatrace.com/support/help/shortlink/dql-functions#dql-aggregation-functions) \n --- | --- |\n Function | Description\navg() | Calculates the average value of a field\ncollectDistinct() | Collects the values of the provided field into an array\ncorrelation() | Calculates the Pearson correlation of two numeric fields\ncount() | Counts the total number of records\ncountDistinct() | Calculates the cardinality of unique values of a field\ncountIf() | Counts the number of records that match the condition\nmax() | Calculates the maximum value of a field\nmedian() | Calculates the median of an expression\nmin() | Calculates the minimum value of a field\npercentile() | Calculates a given percentile of an expression\nstddev() | Calculates the standard deviation of a field\nsum() | Calculates the sum of a fields\ntakeAny() | Returns the first non-null value of a field for a list of records.\ntakeFirst() | Returns the first value of a field\ntakeLast() | Returns the last value of a field\ntakeMax() | Retrieves the maximum from a list of records\ntakeMin() | Retrieves the minimum from a list of records\nvariance() | Calculates the variance of a field"
+        },
+        {
+            "id": "12ba0f36-aff0-44d1-9d75-51d88cc4857b",
+            "type": "dql",
+            "title": "timeseries + aggregation example - Chart Max CPU by Host",
+            "showTitle": false,
+            "state": {
+                "input": {
+                    "value": "timeseries cpu=max(dt.host.cpu.usage), by:{host.name}",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "state": "idle",
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "autoscale": true
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0
+                    }
+                }
+            }
+        },
+        {
+            "id": "b4476dc6-9f7e-418b-99f6-8b58acd35c53",
+            "type": "markdown",
+            "markdown": "## Functions - Array\n|  | [DQL Functions Documentation](https://www.dynatrace.com/support/help/shortlink/dql-functions#dql-aggregation-functions) \n --- | --- |\n Function | Description\narray() | Creates an ARRAY from the list of given parameters.\narrayAvg() | Returns the average of an array. Values that are not numeric are ignored. 0 if there is no matching element.\narrayDistinct() | Returns the array without duplicates\narrayFirst() | Returns the first element of an array\narrayLast() | Returns the last element of an array\narrayMax() | Returns the maximum (biggest) number of an array. Values that are not numeric are ignored. NULL if there is no matching element.\narrayMin() | Returns the minimum (smallest) number of an array. Values that are not numeric are ignored. NULL if there is no matching element.\narrayPercentile () | Calculates a given percentile of an array\narraySize() | Returns the size of an array.\narraySum() | Returns the sum of an array. Values that are not numeric are ignored. 0 if there is no matching element.\ncollectArray() | Collects the values of the provided field into an array (preservation of order not guaranteed)."
+        },
+        {
+            "id": "7ab272a3-030c-4d62-b40d-bebcf93cade7",
+            "type": "markdown",
+            "markdown": "## Functions - Conversion\n|  | [DQL Functions Documentation](https://www.dynatrace.com/support/help/shortlink/dql-functions#dql-aggregation-functions) \n --- | --- |\n Function | Description\ntoArray() | Returns the value if it is an array. Otherwise, converts a value to the single element array holding that value.\ntoBoolean() | Converts a value to Boolean if the value is of a suitable type. If the argument is an array, the element at position 0 is converted.\ntoDouble() | Converts a value to DOUBLE if the value is of a suitable type. If the argument is an ARRAY, the element at position 0 is converted.\ntoDuration() | Converts a value to DURATION if the value is of a suitable type. If the argument is an ARRAY, the element at position 0 is converted.\ntoLong() | Converts a value to LONG if the value is of a suitable type. If the argument is an ARRAY, the element at position 0 is converted.\ntoTimeframe() | Converts a value to TIMEFRAME if the value is of a suitable type. If the argument is an ARRAY, the element at position 0 is converted.\ntoTimestamp() | Converts a value to TIMESTAMP if the value is of a suitable type. If the argument is an ARRAY, the element at position 0 is converted.\nradianToDegree() | Converts the numeric expression of an angle in radians to an approximately equivalent angle as expressed in degrees. Returns null if <numeric_expr> evaluates to NULL.\ndegreeToRadian() | Converts the numeric expression of an angle in degrees to an approximately equivalent angle as expressed in radians. Returns null if <numeric_expr> evaluates to NULL.\nasArray() | Functions prefixed with as<Type> will try to cast the input data type to the target but not do any conversions. It will fail for strongly typed fields and produce null for incompatible variants. These functions are applicable after parsing. Returns <Type> value if the value is in the right type, otherwise NULL.\nasBoolean() | See asArray()\nasDouble() | See asArray()\nasDuration() | See asArray()\nasLong() | See asArray()\nasString() | See asArray()\nasSummaryStats() | See asArray()\nasTimeframe() | See asArray()\nasTimestamp() | See asArray()\nencodeBase16() | Encodes a given binary/string to a BASE16 string\nencodeBase64() | Encode a given binary/string to a BASE64 string\ndecodeBase16ToString() | Decodes a given BASE16 string to plaintext\ndecodeBase16ToBinary() | Decodes a given BASE16 string to a binary\ndecodeBase64ToString() | Decodes a given BASE64 string to plaintext\ndecodeBase64ToBinary() | Decodes a given BASE64 string to a binary"
+        },
+        {
+            "id": "66edac76-ef78-48c1-a457-1ef6a5267b07",
+            "type": "markdown",
+            "markdown": "## Functions - Time\n|  | [DQL Functions Documentation](https://www.dynatrace.com/support/help/shortlink/dql-functions#dql-aggregation-functions) \n --- | --- |\n Function | Description\nduration() | Creates a duration from the given amount and time unit.\nformatTimestamp() | Formats a given timestamp according to a format string using a given pattern. Timestamps according to the ISO-8061 standard can be parsed and converted to the timestamp datatype.\ntimeframe() | Creates a timeframe structure from the given start and end timestamps.\ntimestamp() | Creates a timestamp using provided values in mandatory parameters.\ntimestampFromUnixMillis() | Creates a timestamp from the given milliseconds since Unix epoch.\ntimestampFromUnixNanos() | Creates a timestamp from the given nanoseconds since Unix epoch.\ntimestampFromUnixSeconds() | Creates a timestamp from the given seconds since Unix epoch."
+        },
+        {
+            "id": "ee3c2c84-94e4-45eb-9fde-c8728118d85b",
+            "type": "markdown",
+            "markdown": "## Functions - Mathematical\n|  | [DQL Functions Documentation](https://www.dynatrace.com/support/help/shortlink/dql-functions#dql-aggregation-functions) \n --- | --- |\n Function | Description\nsin() | Computes the trigonometric sine of angle <expression> (in radians). Returns null if <expression> evaluates to NULL.\nsinh() | Computes the hyperbolic sine of <expression>. Returns null if <expression> evaluates to NULL.\nasin() | Computes arc sine of <expression>. The returned angle is in the range -pi/2 through pi/2. Returns null if <expression> evaluates to NULL.\ncos() | Computes the trigonometric cosine of an angle expression> (in radians). Returns null if <expression> evaluates to NULL.\ncosh() | Computes the hyperbolic cosine of an angle <expression>. Returns null if <expression> evaluates to NULL.\nacos() | Computes arc cosine of <expression>. The returned angle is in the range 0.0 through pi. Returns null if <expression> evaluates to NULL.\ntan() | Computes the trigonometric tangent of angle <expression> (in radians). Returns null if <expression> evaluates to NULL.\ntanh() | Computes the hyperbolic tangent of <expression>. Returns null if <expression> evaluates to NULL.\natan() | Computes the arc tangent of <expression>. The returned angle is in the range -p/2 through pi/2. Returns null if <expression> evaluates to NULL.\natan2() | Computes the angle theta from the conversion of rectangular coordinates (x, y) to polar coordinates (r, theta). Returns null if either of the expressions evaluates to NULL.\nabs() | Returns the absolute value of numeric_expression. Returns NULL if numeric_expression evaluates to NULL.\ncbrt() | Calculates the real cubic root of a numeric expression.\nceil() | Calculates the smallest (closest to negative infinity) DOUBLE value greater than or equal to the numeric_expression; is equal to a mathematical integer. Returns null if numeric_expression evaluates to NULL.\ne() | Returns Euler\u2019s number.\nexp() | Calculates the exponential function e^x, where e is the Euler's number and x is a numeric expression.\nfloor() | Calculates the largest (closest to positive infinity) DOUBLE value less than or equal to the numeric_expression; and is equal to a mathematical integer. Returns NULL if numeric_expression evaluates to NULL.\nhashMd5() | Computes the MD5 hash for a given string expression.\nhashSha1() | Computes the SHA-1 hash for a given string expression.\nhypotenuse() | Returns sqrt(x^2 + y^2). Returns null if <expression> evaluates to NULL.\nlog() | Calculates the natural logarithm (the base is e, the Euler's number) of a numeric expression.\nlog10() | Calculates the decadic (common) logarithm (the base is 10) of a numeric expression.\nlog1p() | Calculates log(1+x), where log is the natural logarithm and x is a numeric expression.\npi() | Returns the constant value of PI (Archimedes\u2019 number).\npower() | Raises a numeric expression to a given power.\nround() | Rounds any numeric value to the specified number of decimal places. If you don't specify the number of decimal places, it rounds to the nearest integer.\nsignum() | Returns the signum (sign) result of an argument. It returns one of four possible values: -1 (if numeric_expression evaluates to a value less than 0), 0 (if numeric_expression evaluates to 0), 1 (if numeric_expression evaluates to a value greater than 0), or null (if numeric_expression evaluates to NULL).\nsqrt() | Computes the positive square root of a numeric expression.\n"
+        },
+        {
+            "id": "18f0de2c-10ad-4335-9999-07d39a07a98f",
+            "type": "markdown",
+            "markdown": "## Functions - String\n|  | [DQL Functions Documentation](https://www.dynatrace.com/support/help/shortlink/dql-functions#dql-aggregation-functions) \n --- | --- |\n Function | Description\nconcat() | Concatenates the expressions into a single string.\ncontains() | Searches the string expression for a substring. Returns TRUE if the substring was found, FALSE otherwise.\nendsWith() | Checks if a string expression ends with a suffix. Returns TRUE if does, FALSE otherwise.\ngetCharacter() | Returns the character for a given position from a string expression.\nindexOf() | Returns the index of the first occurrence of a substring in a string expression.\nlastIndexOf() | Returns the index of the last occurrence of a substring in a string expression.\nlike() | Tests if a string expression matches a pattern. If the pattern does not contain percent signs, like() acts as the == operator (equality check). A percent character in the pattern (%) matches any sequence of zero or more characters. An underscore in the pattern (\\_) matches a single character.\nlower() | Converts a string to lowercase. matchesPhrase() | Matches a phrase against the input string expression using token matchers.\nsplitString() | Splits a string according to parameters set.Retrieves an array of substrings of the specified expression that are adjacent to occurrences of the given pattern.\nstartsWith() | Checks if a string expression starts with a refix. Returns TRUE if does, FALSE otherwise.\nstringLength() | Returns the length of a string expression. substring() | Gets a code unit range using a start index (inclusive) and an end index (exclusive).\ntrim() | Removes leading and trailing whitespaces. Any code point <= ASCII 32 in decimal is considered a whitespace, where ASCII 32 is a blank space.\nupper() | Converts a string to uppercase.\n"
+        },
+        {
+            "id": "0abb4416-9ec0-4e99-b80f-6a738472c2db",
+            "type": "markdown",
+            "markdown": "## Functions - Other\n|  | [DQL Functions Documentation](https://www.dynatrace.com/support/help/shortlink/dql-functions#dql-aggregation-functions) \n --- | --- |\n Function | Description\nbin() | Aligns the value of the numeric or timestamp into buckets of the given interval starting at 0 (numeric) or Unix epoch (timestamp).\nif() | Evaluates the condition, and returns the value of either the then or else parameter, depending on whether the condition evaluated to true (then) or false or null (else - or null if the else parameter is missing).\nin() | Tests if a value is a member of an ARRAY.The in function supports multiple haystacks and allows arrays in all arguments.\nisFalseOrNull() | Evaluates if an expression is FALSE or NULL.\nisNotNull() | Tests if a value is not NULL\nisNull() | Tests if a value is NULL.\nisTrueOrNull() | Evaluates if an expression is TRUE or NULL.\nmatchesValue() | Searches records for a specific value in a given attribute. Returns true or false.\nnow() | Returns the current time as a fixed timestamp of the query start.\nrecord() | Creates a complex RECORD from the keys and values of the parameters.\ntype() | Returns the type of a value as STRING"
+        },
+        {
+            "id": "84486a01-c8d8-4dd4-aab3-4b2a8fcdbfba",
+            "type": "markdown",
+            "markdown": "## Numerical Operators\n|  | [DQL Functions Documentation](https://www.dynatrace.com/support/help/shortlink/dql-operators#numerical-operators)\n --- | --- |\nOperator | Description\n'+' | Addition\n'-' | Subtraction\n'*' | Multiplication\n'/' | Division\n% | Modulo\n< | Lower\n<= | Lower than or equal\n'>' | Greater\n'>=' | Greater than or equal\n== | Equals\n!= | Not equals\n\n\n\n\n\n\n"
+        },
+        {
+            "id": "164f4098-5597-4150-bb7e-7388e8ce5357",
+            "type": "markdown",
+            "markdown": "## Logical Operators\n|  | [DQL Functions Documentation](https://www.dynatrace.com/support/help/shortlink/dql-operators#dql-logical-or-equality-operators)\n --- | --- |\nOperator | Description\n== | Equals\n!= | Not equals\nNOT | Negation\nAND | Logical and (multiplication)\nOR | Logical or (addition)\nXOR | Exclusive or"
+        },
+        {
+            "id": "fc3eac10-c1e3-42a8-9a99-ea40bd4efb61",
+            "type": "markdown",
+            "markdown": "## String Operators\n|  | [DQL Functions Documentation](https://www.dynatrace.com/support/help/shortlink/dql-operators#string-operators)\n --- | --- |\nOperator | Description\n== | Equals\n!= | Not equals\n< | Lower\n<= | Lower than or equal\n'>' | Greater\n'>=' | Greater than or equal\n\n\n\n\n\n"
+        }
+    ]
+}

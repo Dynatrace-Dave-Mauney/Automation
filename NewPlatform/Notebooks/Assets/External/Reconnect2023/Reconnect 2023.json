@@ -1,0 +1,331 @@
+{
+    "version": "5",
+    "defaultTimeframe": {
+        "from": "now-2h",
+        "to": "now"
+    },
+    "sections": [
+        {
+            "id": "45b2c764-8630-42aa-973e-df16536293b7",
+            "type": "markdown",
+            "markdown": "Adding fields and relationships"
+        },
+        {
+            "id": "81a618f2-563b-4f1c-af65-06747dd6a276",
+            "type": "dql",
+            "showTitle": false,
+            "state": {
+                "input": {
+                    "value": "fetch dt.entity.host\n| fieldsAdd monitoringMode, state, host_group_id = instance_of[dt.entity.host_group]\n| limit 10",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "state": "success",
+                "davis": {
+                    "includeLogs": true,
+                    "isDavisVisualizationAvailable": true
+                },
+                "visualizationSettings": {
+                    "thresholds": [],
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        },
+                        "categoryOverrides": {}
+                    },
+                    "singleValue": {
+                        "label": "",
+                        "prefixIcon": "",
+                        "autoscale": true,
+                        "alignment": "center"
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0,
+                        "columnWidths": {}
+                    }
+                },
+                "visualization": "table"
+            },
+            "height": 450
+        },
+        {
+            "id": "96d6df1a-a77a-40a7-89de-ee713dc28132",
+            "type": "markdown",
+            "markdown": "Use describe to see what field names are present for an entity"
+        },
+        {
+            "id": "a934d606-1fd4-42a9-ac0b-5178635b123b",
+            "type": "dql",
+            "showTitle": false,
+            "state": {
+                "input": {
+                    "value": "describe dt.entity.host\n\n// Filter by field name\n// | filter contains(field, \"\")\n// | filter contains(field, \"tag\")\n\n// Filter by data type (STRING|TIMEFRAME|RELATIONSHIP\\MAP|ARRAY_OF_STRING|BOOLEAN|LONG|INTEGER|TAGS|ICON)\n| filter contains(toString(data_types), \"TAGS\")\n",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "state": "success",
+                "davis": {
+                    "includeLogs": true,
+                    "isDavisVisualizationAvailable": true
+                },
+                "visualizationSettings": {
+                    "thresholds": [],
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        },
+                        "categoryOverrides": {}
+                    },
+                    "singleValue": {
+                        "label": "",
+                        "prefixIcon": "",
+                        "autoscale": true,
+                        "alignment": "center"
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0,
+                        "columnWidths": {}
+                    }
+                },
+                "visualization": "recordView"
+            },
+            "height": 450
+        },
+        {
+            "id": "e7b2edb2-0dff-4195-987c-b159f3ab57d6",
+            "type": "dql",
+            "showTitle": false,
+            "state": {
+                "input": {
+                    "value": "fetch dt.entity.service_instance\n| fieldsAdd host_id = runs_on[dt.entity.host]\n| lookup sourceField:host_id, lookupField:id, [ fetch dt.entity.host ]",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "state": "success",
+                "davis": {
+                    "includeLogs": true,
+                    "isDavisVisualizationAvailable": true
+                },
+                "visualizationSettings": {
+                    "thresholds": [],
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        },
+                        "categoryOverrides": {}
+                    },
+                    "singleValue": {
+                        "label": "",
+                        "prefixIcon": "",
+                        "autoscale": true,
+                        "alignment": "center"
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [
+                            [
+                                "entity.name"
+                            ]
+                        ],
+                        "firstVisibleRowIndex": 0,
+                        "columnWidths": {}
+                    }
+                },
+                "visualization": "table"
+            },
+            "height": 450
+        },
+        {
+            "id": "4591bdb0-dbd0-4459-999c-bdf8b8e86b19",
+            "type": "dql",
+            "showTitle": false,
+            "state": {
+                "input": {
+                    "value": "fetch dt.entity.host\n| fieldsAdd monitoringMode, state, host_group_id = instance_of[dt.entity.host_group]\n| lookup sourceField: host_group_id, lookupField: id, [fetch dt.entity.host_group]\n| limit 10",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "state": "success",
+                "davis": {
+                    "includeLogs": true,
+                    "isDavisVisualizationAvailable": true
+                },
+                "visualizationSettings": {
+                    "thresholds": [],
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        },
+                        "categoryOverrides": {}
+                    },
+                    "singleValue": {
+                        "label": "",
+                        "prefixIcon": "",
+                        "autoscale": true,
+                        "alignment": "center"
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0,
+                        "columnWidths": {}
+                    }
+                },
+                "visualization": "table"
+            },
+            "height": 450
+        },
+        {
+            "id": "61d8b2b3-c748-42e5-9678-c14a98bb9429",
+            "type": "markdown",
+            "markdown": "To see what metrics are in grail use Metrics view with \"Supported in Grail: Yes\" filter [Example](https://guu84124.apps.dynatrace.com/ui/apps/dynatrace.classic.metrics/ui/metrics?gtf=-2h&gf=all&filters=exported%3Dtrue)"
+        },
+        {
+            "id": "1b46d456-0119-44d8-8fe3-1c6759df9541",
+            "type": "markdown",
+            "markdown": "The Grail timeseries name will differ from the old metric id, so use the open with feature from Metrics to let it build the query for you, or reference the [help page](https://www.dynatrace.com/support/help/observe-and-explore/metrics/built-in-metrics-on-grail)"
+        },
+        {
+            "id": "4de3152c-5023-40ca-a85d-97f8378daf79",
+            "type": "markdown",
+            "markdown": "There are some complex timeseries examples [here](https://www.dynatrace.com/support/help/shortlink/metrics-on-grail-examples)"
+        },
+        {
+            "id": "d9d6f779-3909-4301-8454-5ac179e531fc",
+            "type": "markdown",
+            "markdown": "Example of basic timeseries DQL generated via the Metrics \"open with\""
+        },
+        {
+            "id": "22e73534-dd65-4249-848b-eaa6d385a405",
+            "type": "dql",
+            "showTitle": false,
+            "state": {
+                "input": {
+                    "value": "timeseries usage=avg(dt.host.cpu.usage),by:{dt.entity.host}",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "state": "success",
+                "davis": {
+                    "includeLogs": true,
+                    "isDavisVisualizationAvailable": true
+                },
+                "visualizationSettings": {
+                    "thresholds": [],
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        },
+                        "categoryOverrides": {}
+                    },
+                    "singleValue": {
+                        "label": "",
+                        "prefixIcon": "",
+                        "autoscale": true,
+                        "alignment": "center"
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "firstVisibleRowIndex": 0,
+                        "columnWidths": {}
+                    },
+                    "unitsOverrides": [
+                        {
+                            "identifier": "dt.host.cpu.usage",
+                            "unitCategory": "percentage",
+                            "baseUnit": "percent",
+                            "displayUnit": null,
+                            "decimals": 2,
+                            "suffix": "",
+                            "delimiter": true
+                        }
+                    ]
+                },
+                "visualization": "lineChart"
+            },
+            "height": 450
+        },
+        {
+            "id": "9280ec95-40a4-4d53-bf8c-824266cecc1d",
+            "type": "markdown",
+            "markdown": "There's no easy way to see the available splits to use with by.\nYou can use the Metrics view to see possibilities (but they are not complete:  host cpu allows host.name but it does not fully work for example!)\n\nTo get examples, use Slack and so forth for ideas..."
+        },
+        {
+            "id": "f6e294ff-b0d4-4f1f-b653-942a2724abd7",
+            "type": "dql",
+            "showTitle": false,
+            "state": {
+                "input": {
+                    "value": "// Which DQL is expensive\n// fetch logs and fetch events have per-query cost, \n// timeseries, entities, and system_execution table queries are free\n\nfetch dt.system.query_executions\n//| fields user\n//| filter user == \"dave.mauney@dynatrace.com\"\n//| limit 10",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "state": "success",
+                "davis": {
+                    "includeLogs": true,
+                    "isDavisVisualizationAvailable": true
+                },
+                "visualizationSettings": {
+                    "thresholds": [],
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        },
+                        "categoryOverrides": {}
+                    },
+                    "singleValue": {
+                        "label": "",
+                        "prefixIcon": "",
+                        "autoscale": true,
+                        "alignment": "center"
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0,
+                        "columnWidths": {}
+                    }
+                },
+                "visualization": "recordView"
+            },
+            "height": 450
+        }
+    ]
+}

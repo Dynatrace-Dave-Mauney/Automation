@@ -1,0 +1,314 @@
+{
+    "version": "5",
+    "defaultTimeframe": {
+        "from": "now-24h",
+        "to": "now",
+        "details": {
+            "from": {
+                "type": "expression",
+                "normalized": "now-24h",
+                "date": "2023-08-08T14:08:09.885Z"
+            },
+            "to": {
+                "type": "expression",
+                "normalized": "now",
+                "date": "2023-08-09T14:08:09.885Z"
+            }
+        }
+    },
+    "sections": [
+        {
+            "id": "99673253-fd9f-4b17-a4bb-578931ddc1a9",
+            "type": "markdown",
+            "markdown": "# This is a sample notebook to analyze logs\nCreate your own Notebook or copy this one. Then  experiment with DQL (Dynatrace Query Language)"
+        },
+        {
+            "id": "c3382f91-7c43-4969-8fce-b5c369fc57eb",
+            "type": "dql",
+            "title": "Aggregated overview of logs",
+            "showTitle": true,
+            "state": {
+                "input": {
+                    "value": "fetch logs, from:now() - 10m\n| summarize logCount = count(), by:{loglevel}\n| sort logCount desc",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "state": "success",
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "autoscale": true
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0,
+                        "columnWidths": {}
+                    }
+                },
+                "visualization": "table"
+            },
+            "davisAnalytics": {
+                "analyzerComponentState": {
+                    "resultState": {}
+                }
+            },
+            "height": 253,
+            "davisAnalysis": {
+                "analyzerComponentState": {
+                    "resultState": {}
+                }
+            }
+        },
+        {
+            "id": "24876c8e-6965-409c-924a-56a0e25351da",
+            "type": "dql",
+            "title": "Logs over time split by loglevel",
+            "showTitle": true,
+            "state": {
+                "input": {
+                    "value": "fetch logs\n| sort timestamp desc\n| summarize count = count(), by: {`1m interval` = bin(timestamp, 1m), loglevel}",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "state": "success",
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "autoscale": true
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [
+                            [
+                                "content"
+                            ]
+                        ],
+                        "firstVisibleRowIndex": 0,
+                        "columnWidths": {}
+                    }
+                },
+                "visualization": "barChart"
+            },
+            "davisAnalytics": {
+                "analyzerComponentState": {
+                    "resultState": {}
+                }
+            },
+            "height": 450,
+            "davisAnalysis": {
+                "analyzerComponentState": {
+                    "resultState": {}
+                }
+            }
+        },
+        {
+            "id": "61156dba-6c1c-4164-87d3-f1843646a30e",
+            "type": "function",
+            "showTitle": false,
+            "state": {
+                "input": {
+                    "value": "/*\n* This function will run in the DYNATRACE JavaScript runtime.\n* For information visit https://dt-url.net/functions-help\n*/\nexport default async function () {\n  return \"Hello, world!\";\n}",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "state": "success",
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "autoscale": true
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "firstVisibleRowIndex": 0,
+                        "columnWidths": {}
+                    }
+                },
+                "visualization": "singleValue"
+            },
+            "foldings": [],
+            "height": 450
+        },
+        {
+            "id": "b7ac91d2-d256-42d1-a6d4-488f7b0c6e3e",
+            "type": "function",
+            "title": "Run a query",
+            "showTitle": true,
+            "state": {
+                "input": {
+                    "value": "/*\n* This function will run in the DYNATRACE JavaScript runtime.\n* For information visit https://dt-url.net/functions-help\n*/\nimport { queryExecutionClient } from '@dynatrace-sdk/client-query';\n\nexport default async function () {\n  const timeout = 60;\n  const query = 'fetch dt.entity.host | fieldsAdd managementZones | limit 5';\n  const response = await queryExecutionClient.queryExecute({ body: { query, requestTimeoutMilliseconds: timeout * 1000, fetchTimeoutSeconds: timeout  } });\n\n  return response.result;\n}",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "state": "idle"
+            },
+            "foldings": []
+        },
+        {
+            "id": "b0082626-f770-40a7-8d7c-76721d262e6f",
+            "type": "dql",
+            "title": "Chart average CPU across all hosts",
+            "showTitle": true,
+            "state": {
+                "input": {
+                    "value": "timeseries avg(dt.host.cpu.usage)\n| fields `avg(dt.host.cpu.usage)`, `interval`, `timeframe`",
+                    "timeframe": {
+                        "from": "now-24h",
+                        "to": "now",
+                        "details": {
+                            "from": {
+                                "type": "expression",
+                                "normalized": "now-24h",
+                                "date": "2023-08-08T14:08:09.885Z"
+                            },
+                            "to": {
+                                "type": "expression",
+                                "normalized": "now",
+                                "date": "2023-08-09T14:08:09.885Z"
+                            }
+                        }
+                    }
+                },
+                "state": "success",
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "autoscale": true
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0,
+                        "columnWidths": {}
+                    }
+                },
+                "visualization": "bandChart"
+            },
+            "davisAnalysis": {
+                "analyzerComponentState": {
+                    "resultState": {}
+                }
+            },
+            "height": 450
+        },
+        {
+            "id": "43c31c92-55ca-4ea2-8f88-b82648b4ed74",
+            "type": "dql",
+            "title": "Chart CPU usage for hosts filtered by condition",
+            "showTitle": true,
+            "state": {
+                "input": {
+                    "value": "timeseries avg(dt.host.cpu.usage), by:{dt.entity.host}, filter:contains(dt.entity.host,\"HOST\")\n| limit 10",
+                    "timeframe": {
+                        "from": "now-24h",
+                        "to": "now",
+                        "details": {
+                            "from": {
+                                "type": "expression",
+                                "normalized": "now-24h",
+                                "date": "2023-08-08T14:08:09.885Z"
+                            },
+                            "to": {
+                                "type": "expression",
+                                "normalized": "now",
+                                "date": "2023-08-09T14:08:09.885Z"
+                            }
+                        }
+                    }
+                },
+                "state": "success",
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "autoscale": true
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0,
+                        "columnWidths": {}
+                    }
+                },
+                "visualization": "lineChart"
+            },
+            "davisAnalysis": {
+                "analyzerComponentState": {
+                    "resultState": {}
+                }
+            },
+            "height": 450
+        },
+        {
+            "id": "1dd2ea5b-e458-41c4-9073-8499630cfedf",
+            "type": "function",
+            "title": "Run a query",
+            "showTitle": true,
+            "state": {
+                "input": {
+                    "value": "/*\n* This function will run in the DYNATRACE JavaScript runtime.\n* For information visit https://dt-url.net/functions-help\n*/\nimport { queryExecutionClient } from '@dynatrace-sdk/client-query';\n\nexport default async function () {\n  const timeout = 60;\n  const query = 'fetch dt.entity.host | fieldsAdd managementZones | limit 5';\n  const response = await queryExecutionClient.queryExecute({ body: { query, requestTimeoutMilliseconds: timeout * 1000, fetchTimeoutSeconds: timeout  } });\n\n  return response.result;\n}",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "state": "idle"
+            },
+            "foldings": []
+        }
+    ]
+}

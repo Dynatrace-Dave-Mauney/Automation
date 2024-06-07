@@ -1,0 +1,164 @@
+{
+    "version": "5",
+    "defaultTimeframe": {
+        "from": "now-2h",
+        "to": "now"
+    },
+    "sections": [
+        {
+            "id": "34564dfe-6058-4cfd-b84c-a338f91d1b5a",
+            "type": "markdown",
+            "markdown": "DQL Beginner Exercise Answer (DOES NOT WORK IN THIS TENANT!)"
+        },
+        {
+            "id": "8c2ba13c-7bb9-4829-af7f-4a465ae63e75",
+            "type": "dql",
+            "showTitle": false,
+            "state": {
+                "input": {
+                    "value": "fetch logs\n| filter contains(log.source,\"dql-exercise\") and contains(content, \"FunctionInvocation\")\n| fields timestamp, content\n| parse content, \"LD 'tenandId=' WORD:tenantId ',duration=' INTEGER:duration\"\n| sort duration desc\n| summarize sum(duration), by:{tenantId, bin(timestamp, 1m)}",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "state": "success",
+                "davis": {
+                    "includeLogs": true,
+                    "isDavisVisualizationAvailable": true
+                },
+                "visualizationSettings": {
+                    "thresholds": [],
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        },
+                        "categoryOverrides": {}
+                    },
+                    "singleValue": {
+                        "label": "",
+                        "prefixIcon": "",
+                        "autoscale": true,
+                        "alignment": "center"
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [
+                            [
+                                "content"
+                            ]
+                        ],
+                        "firstVisibleRowIndex": 0,
+                        "columnWidths": {}
+                    }
+                },
+                "visualization": "table"
+            },
+            "height": 450
+        },
+        {
+            "id": "3bd9972a-0304-43e3-bb30-5297795d9c47",
+            "type": "markdown",
+            "markdown": "How to see what data objects can be fetched"
+        },
+        {
+            "id": "d85d5ac9-a915-4456-b247-268e7cc009bc",
+            "type": "dql",
+            "showTitle": false,
+            "state": {
+                "input": {
+                    "value": "fetch dt.system.data_objects | fields name",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "state": "success",
+                "davis": {
+                    "includeLogs": true,
+                    "isDavisVisualizationAvailable": true
+                },
+                "visualizationSettings": {
+                    "thresholds": [],
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        },
+                        "categoryOverrides": {}
+                    },
+                    "singleValue": {
+                        "label": "",
+                        "prefixIcon": "",
+                        "autoscale": true,
+                        "alignment": "center"
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0,
+                        "columnWidths": {}
+                    }
+                },
+                "visualization": "table"
+            },
+            "height": 450
+        },
+        {
+            "id": "12eb3b22-714c-49c4-a415-bdfd4aac9dbd",
+            "type": "dql",
+            "showTitle": false,
+            "state": {
+                "input": {
+                    "value": "// Who is consuming DQL cost? \nfetch dt.system.query_executions, from:-24h\n//| fields user\n// | filter user == \"dave.mauney@dynatrace.com\"\n//| limit 10",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "state": "success",
+                "davis": {
+                    "includeLogs": true,
+                    "isDavisVisualizationAvailable": true
+                },
+                "visualizationSettings": {
+                    "thresholds": [],
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        },
+                        "categoryOverrides": {}
+                    },
+                    "singleValue": {
+                        "label": "",
+                        "prefixIcon": "",
+                        "autoscale": true,
+                        "alignment": "center"
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0,
+                        "columnWidths": {}
+                    }
+                },
+                "visualization": "recordView"
+            },
+            "height": 450
+        },
+        {
+            "id": "4b0be16c-6104-4c6d-a51d-efe6ad8b2230",
+            "type": "markdown",
+            "markdown": "// TEMPLATE FOR QUERY COST TRACKING\nfetch dt.system.query_executions\n| filter user == \"[YOUR EMAIL HERE]\" and client.application_context == \"dynatrace.notebooks\"\n| fieldsAdd scanned_gb = scanned_bytes / 1000000000.0\n| fields timestamp, execution_duration_ms, scanned_gb, query_string, user\n| sort [INSERT METRIC HERE] desc"
+        }
+    ]
+}

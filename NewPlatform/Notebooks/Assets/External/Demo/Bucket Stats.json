@@ -1,0 +1,400 @@
+{
+    "version": "5",
+    "defaultTimeframe": {
+        "from": "now-2h",
+        "to": "now"
+    },
+    "sections": [
+        {
+            "id": "1933f034-117f-42fd-8273-16f50027f2cf",
+            "type": "dql",
+            "title": "Investigate origin of business event",
+            "showTitle": true,
+            "height": 450,
+            "state": {
+                "input": {
+                    "value": "fetch bizevents\n| summarize eventsCount = count(), by:{event.provider,event.type}\n| sort eventsCount desc",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "visualizationSettings": {
+                    "thresholds": [],
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        },
+                        "categoryOverrides": {}
+                    },
+                    "singleValue": {
+                        "label": "",
+                        "prefixIcon": "",
+                        "autoscale": true,
+                        "alignment": "center"
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0,
+                        "columnWidths": {}
+                    }
+                },
+                "querySettings": {
+                    "maxResultRecords": 1000,
+                    "defaultScanLimitGbytes": 500,
+                    "maxResultMegaBytes": 1,
+                    "defaultSamplingRatio": 10,
+                    "enableSampling": false
+                },
+                "state": "success",
+                "davis": {
+                    "includeLogs": true,
+                    "isDavisVisualizationAvailable": true,
+                    "davisVisualization": {}
+                },
+                "visualization": "recordView"
+            }
+        },
+        {
+            "id": "7d3e1e36-f667-4404-8503-21b2c2ac3cd8",
+            "type": "dql",
+            "showTitle": false,
+            "height": 450,
+            "state": {
+                "input": {
+                    "value": "fetch logs, from: now() - 365d ,// scanLimitGBytes: 500, samplingRatio: 1000\n| fieldsKeep timestamp, dt.system.bucket\n| fieldsAdd Log_age_seconds = toDouble((now()-timestamp)/1000000000)\n| fieldsAdd Log_age_minutes = Log_age_seconds / 60\n| fieldsAdd Log_age_days = Log_age_minutes / (60 * 24)\n| fieldsAdd dt.system.bucket\n| sort timestamp asc\n| summarize AgeOfLogs = max(Log_age_days), by:{dt.system.bucket} \n",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "visualizationSettings": {
+                    "thresholds": [],
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        },
+                        "categoricalBarChartSettings": {
+                            "categoryAxis": "dt.system.bucket",
+                            "categoryAxisLabel": "dt.system.bucket",
+                            "valueAxis": "AgeOfLogs",
+                            "valueAxisLabel": "AgeOfLogs"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "prefixIcon": "",
+                        "autoscale": true,
+                        "alignment": "center"
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0,
+                        "columnWidths": {}
+                    }
+                },
+                "querySettings": {
+                    "maxResultRecords": 1000,
+                    "defaultScanLimitGbytes": 500,
+                    "maxResultMegaBytes": 1,
+                    "defaultSamplingRatio": 10,
+                    "enableSampling": false
+                },
+                "state": "success",
+                "davis": {
+                    "includeLogs": true,
+                    "isDavisVisualizationAvailable": true,
+                    "davisVisualization": {}
+                },
+                "visualization": "categoricalBarChart"
+            }
+        },
+        {
+            "id": "675fa23b-0f11-4c06-8d09-c2a7cd5cf500",
+            "type": "dql",
+            "showTitle": false,
+            "height": 450,
+            "state": {
+                "input": {
+                    "value": "fetch dt.system.buckets\n| filter dt.system.table == \"logs\"\n| fields name, retention_days",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "visualizationSettings": {
+                    "thresholds": [],
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "prefixIcon": "",
+                        "autoscale": true,
+                        "alignment": "center"
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0,
+                        "columnWidths": {}
+                    }
+                },
+                "querySettings": {
+                    "maxResultRecords": 1000,
+                    "defaultScanLimitGbytes": 500,
+                    "maxResultMegaBytes": 1,
+                    "defaultSamplingRatio": 10,
+                    "enableSampling": false
+                },
+                "state": "success",
+                "davis": {
+                    "includeLogs": true,
+                    "isDavisVisualizationAvailable": true,
+                    "davisVisualization": {}
+                },
+                "visualization": "table"
+            }
+        },
+        {
+            "id": "2bf3101b-d01d-4131-9a60-c0e25a4c976b",
+            "type": "dql",
+            "showTitle": false,
+            "height": 450,
+            "state": {
+                "input": {
+                    "value": "fetch logs, from: -65d, to: -15d //, scanLimitGBytes: 500, samplingRatio: 1000\n| filter dt.system.bucket == \"defaultLogs\"\n| summarize by: {dt.system.bucket}, min_ts=min(timestamp) \n| fieldsAdd duration=now()-min_ts\n| sort duration",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "visualizationSettings": {
+                    "thresholds": [],
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "prefixIcon": "",
+                        "autoscale": true,
+                        "alignment": "center"
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [
+                            [
+                                "content"
+                            ]
+                        ],
+                        "firstVisibleRowIndex": 0,
+                        "columnWidths": {}
+                    }
+                },
+                "querySettings": {
+                    "maxResultRecords": 1000,
+                    "defaultScanLimitGbytes": 500,
+                    "maxResultMegaBytes": 1,
+                    "defaultSamplingRatio": 10,
+                    "enableSampling": false
+                },
+                "state": "success",
+                "davis": {
+                    "includeLogs": true,
+                    "isDavisVisualizationAvailable": true,
+                    "davisVisualization": {}
+                },
+                "visualization": "table"
+            }
+        },
+        {
+            "id": "bf414fdb-c7a4-4678-bb0a-edcb4af7b111",
+            "type": "dql",
+            "showTitle": false,
+            "height": 450,
+            "state": {
+                "input": {
+                    "value": "fetch logs, from: now() - 365d\n| summarize by: dt.system.bucket, min(timestamp) ",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "visualizationSettings": {
+                    "thresholds": [],
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "prefixIcon": "",
+                        "autoscale": true,
+                        "alignment": "center"
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0,
+                        "columnWidths": {}
+                    }
+                },
+                "querySettings": {
+                    "maxResultRecords": 1000,
+                    "defaultScanLimitGbytes": 500,
+                    "maxResultMegaBytes": 1,
+                    "defaultSamplingRatio": 10,
+                    "enableSampling": false
+                },
+                "state": "success",
+                "davis": {
+                    "includeLogs": true,
+                    "isDavisVisualizationAvailable": true,
+                    "davisVisualization": {}
+                },
+                "visualization": "table"
+            }
+        },
+        {
+            "id": "f4917bb6-aef6-4610-b31d-6ea34cec9e2d",
+            "type": "dql",
+            "showTitle": false,
+            "height": 450,
+            "state": {
+                "input": {
+                    "value": "fetch logs, from: now() - 365d\n| summarize by: dt.system.bucket, min_ts=min(timestamp) \n| fieldsAdd duration=now()-min_ts\n| sort duration",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "visualizationSettings": {
+                    "thresholds": [],
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "prefixIcon": "",
+                        "autoscale": true,
+                        "alignment": "center"
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0,
+                        "columnWidths": {},
+                        "enableLineWrap": true
+                    }
+                },
+                "querySettings": {
+                    "maxResultRecords": 1000,
+                    "defaultScanLimitGbytes": 500,
+                    "maxResultMegaBytes": 1,
+                    "defaultSamplingRatio": 10,
+                    "enableSampling": false
+                },
+                "state": "success",
+                "davis": {
+                    "includeLogs": true,
+                    "isDavisVisualizationAvailable": true,
+                    "davisVisualization": {}
+                },
+                "visualization": "table"
+            }
+        },
+        {
+            "id": "5a7920c0-8521-4a1f-9386-1e4d642da949",
+            "type": "dql",
+            "showTitle": false,
+            "height": 450,
+            "state": {
+                "input": {
+                    "value": "fetch logs\n| fieldsAdd dt.system.bucket",
+                    "timeframe": {
+                        "from": "now-2h",
+                        "to": "now"
+                    }
+                },
+                "visualizationSettings": {
+                    "thresholds": [],
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "absolute"
+                        },
+                        "categoryOverrides": {}
+                    },
+                    "singleValue": {
+                        "label": "",
+                        "prefixIcon": "",
+                        "autoscale": true,
+                        "alignment": "center"
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableLineWrap": true,
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "lineWrapIds": [
+                            [
+                                "content"
+                            ]
+                        ],
+                        "firstVisibleRowIndex": 0,
+                        "columnWidths": {}
+                    }
+                },
+                "querySettings": {
+                    "maxResultRecords": 1000,
+                    "defaultScanLimitGbytes": 500,
+                    "maxResultMegaBytes": 1,
+                    "defaultSamplingRatio": 10,
+                    "enableSampling": false
+                },
+                "state": "success",
+                "davis": {
+                    "includeLogs": true,
+                    "isDavisVisualizationAvailable": true,
+                    "davisVisualization": {}
+                },
+                "visualization": "table"
+            }
+        }
+    ]
+}

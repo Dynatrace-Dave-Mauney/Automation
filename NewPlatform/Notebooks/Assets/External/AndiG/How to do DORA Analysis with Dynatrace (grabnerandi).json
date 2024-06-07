@@ -1,0 +1,540 @@
+{
+    "version": "5",
+    "defaultTimeframe": {
+        "from": "now-24h",
+        "to": "now"
+    },
+    "sections": [
+        {
+            "id": "a5ccc628-7428-468f-8454-543025fb1665",
+            "type": "markdown",
+            "markdown": "# How to do DORA Analysis with Dynatrace\nThis notebook provides best practices on using Dynatrace to monitor some of the DORA metrics.\n\n**Got questions or feedback?**: [devrel@dynatrace.com](mailto:devrel@dynatrace.com?subject=Feedback%20on%20DORA)\n\n**Target Audience**: DevSecOps, Platform Engineers, SREs\n\n**What are DORA metrics and their performance levels?**\nhttps://cloud.google.com/blog/products/devops-sre/using-the-four-keys-to-measure-your-devops-performance\n\n![](https://raw.githubusercontent.com/dynatrace-perfclinics/dynatrace-getting-started/main/images/howto_dora_overview.png)",
+            "hasContent": true
+        },
+        {
+            "id": "87219f8b-99bf-4b61-b5bf-d36fa31d3d6f",
+            "type": "markdown",
+            "markdown": "---"
+        },
+        {
+            "id": "c550789b-34e2-43de-98f6-31640b085f4b",
+            "type": "markdown",
+            "markdown": "# Step 1: Sending Deployment Events to Dynatrace\nTo make Dynatrace aware of deployments the best practice is to send a CUSTOM_DEPLOYMENT event or a BizEvent to Dynatrace from your CI/CD pipeline, e.g: Jenkins, GitHub, GitLab, Azure DevOps, ArgoCD ...\n\n## Option 1: Sending a CUSTOM_DEPLOYMENT Event\nThe documentation on [Version detection strategies](https://www.dynatrace.com/support/help/platform-modules/cloud-automation/release-monitoring/version-detection-strategies#events-ingestion) includes an example on how to send a CUSTOM_DEPLOYMENT Event to Dynatrace using the Events API v2.\n\n```\n{\n  \"eventType\": \"CUSTOM_DEPLOYMENT\",\n  \"title\": \"Easytravel 1.1\",\n  \"entitySelector\": \"type(PROCESS_GROUP_INSTANCE),tag(easytravel)\",\n  \"properties\": {\n    \"dt.event.deployment.name\":\"Easytravel 1.1\",\n    \"dt.event.deployment.version\": \"1.1\",\n    \"dt.event.deployment.release_stage\": \"production\" ,\n    \"dt.event.deployment.release_product\": \"frontend\",\n    \"dt.event.deployment.release_build_version\": \"123\",\n    \"approver\": \"Jason Miller\",\n    \"dt.event.deployment.ci_back_link\": \"https://pipelines/easytravel/123\",\n    \"gitcommit\": \"e5a6baac7eb\",\n    \"change-request\": \"CR-42\",\n    \"dt.event.deployment.remediation_action_link\": \"https://url.com\",\n    \"dt.event.is_rootcause_relevant\": true\n  }\n}\n```\n\n## Option 2: Sending a BizEvent\nAnother option is to send a BizEvent as shown in **CI/CD Pipeline Triggers SRG** workflow on the Dynatrace Playground Tenant. This one leverages the BizEvent Ingest API to send an event about a deployment.\n\n```\n// default function that will be run for the task\nexport default async function () {\n  // derive vesion from date\n  const now = new Date();\n  let hour = now.getHours();\n  var start = new Date(now.getFullYear(), 0, 0);\n  var diff = now - start;\n  var oneDay = 1000 * 60 * 60 * 24;\n  var day = Math.floor(diff / oneDay);\n  var buildId = 4711 + day + hour;\n\n  \n  // event that triggers validation\n  const event = { \n    \"timeframe.from\": \"now-32m\",\n    \"timeframe.to\": \"now-2m\",   \n    execution_context: {\n        buildId: \"\"+ buildId,\n        version: \"0.\" + day + \".\" + hour,\n        id: crypto.randomUUID().toString()\n    }, \n    \"tag.service\": \"carts\",\n\t\"tag.application\": \"sockshop\",\n\t\"tag.stage\": \"production\",\n    \"event.id\": crypto.randomUUID().toString(),\n    \"event.provider\": \"Jenkins\",\n    \"event.type\": \"DEPLOYMENT\"    \n  };\n\n  console.log(\"Ingesting event: \", event);\n\n  const ingestResponse = await fetch('/platform/classic/environment-api/v2/bizevents/ingest', {\n    method: 'POST',\n    headers: { 'Content-Type': 'application/json' },\n    body: JSON.stringify(event),\n  }); \n\n  console.log(\"Event ingested\", ingestResponse.status, await ingestResponse.text());\n\n  return event[\"execution_context\"]\n}\n```"
+        },
+        {
+            "id": "0a786b4f-1839-434b-989d-53e234e490b9",
+            "type": "markdown",
+            "markdown": "---"
+        },
+        {
+            "id": "c0f65a02-1004-46cb-9197-b43af7111185",
+            "type": "markdown",
+            "markdown": "# Step 2: Analyze Events to measure Deployment Frequency\nThe following tiles use DQL to query the number of deployment events sent to Dynatrace. The power of DQL allows us to filter or split by environment, service and make calculations to get the value that you need, e.g: Deployments per Hour"
+        },
+        {
+            "id": "9473e3db-e8ee-4cd1-bcf7-4449778bb6ae",
+            "type": "dql",
+            "title": "Prod Deployment Rate",
+            "showTitle": false,
+            "height": 122,
+            "showInput": true,
+            "state": {
+                "input": {
+                    "value": "fetch events\n| filter event.kind == \"DAVIS_EVENT\"\n| filter event.type == \"CUSTOM_DEPLOYMENT\"\n| summarize count()",
+                    "timeframe": {
+                        "from": "now-24h",
+                        "to": "now",
+                        "details": {
+                            "from": {
+                                "type": "expression",
+                                "normalized": "now-24h",
+                                "date": "2023-04-18T17:12:43.970Z"
+                            },
+                            "to": {
+                                "type": "expression",
+                                "normalized": "now",
+                                "date": "2023-04-19T17:12:43.970Z"
+                            }
+                        }
+                    }
+                },
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect"
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "Deployments Last 24 hours",
+                        "autoscale": true
+                    },
+                    "table": {
+                        "enableLineWrap": true,
+                        "hiddenColumns": [
+                            [
+                                "dataPond"
+                            ],
+                            [
+                                "rollupType"
+                            ],
+                            [
+                                "tenant"
+                            ],
+                            [
+                                "recordType"
+                            ]
+                        ],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0
+                    }
+                },
+                "state": "success",
+                "visualization": "singleValue",
+                "davis": {
+                    "includeLogs": true,
+                    "isDavisVisualizationAvailable": true,
+                    "davisVisualization": {
+                        "isAvailable": true
+                    }
+                }
+            },
+            "davisAnalysis": {
+                "analyzerComponentState": {
+                    "resultState": {}
+                }
+            }
+        },
+        {
+            "id": "286fd2d5-962a-4eec-8bca-9fc4da7cfc09",
+            "type": "dql",
+            "title": "Prod Deployments",
+            "showTitle": false,
+            "height": 146,
+            "showInput": true,
+            "state": {
+                "input": {
+                    "value": "fetch events\n| filter event.kind == \"DAVIS_EVENT\"\n| filter event.type == \"CUSTOM_DEPLOYMENT\"\n| summarize count(), by:{timestamp, 1d}",
+                    "timeframe": {
+                        "from": "now-24h",
+                        "to": "now",
+                        "details": {
+                            "from": {
+                                "type": "expression",
+                                "normalized": "now-24h",
+                                "date": "2023-04-18T17:12:00.131Z"
+                            },
+                            "to": {
+                                "type": "expression",
+                                "normalized": "now",
+                                "date": "2023-04-19T17:12:00.131Z"
+                            }
+                        }
+                    }
+                },
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "legend": {
+                            "hidden": true
+                        },
+                        "colorPalette": "swamps"
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "autoscale": true
+                    },
+                    "table": {
+                        "enableLineWrap": true,
+                        "hiddenColumns": [
+                            [
+                                "dataPond"
+                            ],
+                            [
+                                "rollupType"
+                            ],
+                            [
+                                "tenant"
+                            ],
+                            [
+                                "recordType"
+                            ]
+                        ],
+                        "lineWrapIds": [],
+                        "firstVisibleRowIndex": 0
+                    }
+                },
+                "state": "success",
+                "visualization": "barChart",
+                "davis": {
+                    "includeLogs": true,
+                    "isDavisVisualizationAvailable": true,
+                    "davisVisualization": {
+                        "isAvailable": true
+                    }
+                }
+            },
+            "davisAnalysis": {
+                "analyzerComponentState": {
+                    "resultState": {}
+                }
+            }
+        },
+        {
+            "id": "48f98712-59b1-49e0-a29a-9cd1d878be35",
+            "type": "markdown",
+            "markdown": "# Step 3: Validate Release with Site Reliability Guardian (SRG)\nThe [Site Reliability Guardian (SRG)](https://guu84124.apps.dynatrace.com/ui/apps/dynatrace.site.reliability.guardian/) allows you to automatically validate a release against a set of objectives. Ideally the SRG is triggered through a Workflow to automatically validate the Guardian definition for every new deployment as shown in the Dynatrace Playground Tenant Workflow **Carts Reliability Validation**\n\nThe guardian itself will create two BizEvents (event.provider=\"dynatrace.site.reliability.guardian\"):\n* event.type=\"guardian.validation.started\"\n* event.type=\"guardian.validation.finished\"\n\nTo fetch all finished events for instance you can use this\n```\nfetch bizevents\n| filter event.provider == \"dynatrace.site.reliability.guardian\"\n| filter event.type == \"guardian.validation.finished\"\n```\n\nThis can be used to get an overview of failed vs successful releases as you can see in the following chart"
+        },
+        {
+            "id": "ba631e03-e6ff-4fab-861b-01341d119efd",
+            "type": "markdown",
+            "markdown": "---"
+        },
+        {
+            "id": "d3a15300-adbf-46e1-bf4a-c8115b6d5020",
+            "type": "markdown",
+            "markdown": "# Step 4: Analyze Release Quality based on Site Reliability Guardian (SRG) Results\nWith the triggering of the Site Reliability Guardian we can now analyze the releases by its evaluation status as you can see in the chart below. With the power of DQL you can calculate your Deployment Failure Rate metrics to match your definition of success, e.g: warning and pass could be considered pass - or - you can even factor in additional data from other tools such as pulling in data from your Code Coverage or Functional Test Results. This could be done by executing JavaScript to pull in that data from external sources."
+        },
+        {
+            "id": "e507b491-3f25-49a1-9907-947cedb0c75c",
+            "type": "dql",
+            "title": "Guardian Results split by status",
+            "showTitle": false,
+            "height": 342,
+            "showInput": true,
+            "state": {
+                "input": {
+                    "value": "fetch bizevents\n| filter event.provider == \"dynatrace.site.reliability.guardian\"\n| filter event.type == \"guardian.validation.finished\"\n| summarize count(), by:{validation.status}",
+                    "timeframe": {
+                        "from": "now-24h",
+                        "to": "now",
+                        "details": {
+                            "from": {
+                                "type": "expression",
+                                "normalized": "now-24h",
+                                "date": "2023-04-18T17:52:21.220Z"
+                            },
+                            "to": {
+                                "type": "expression",
+                                "normalized": "now",
+                                "date": "2023-04-19T17:52:21.220Z"
+                            }
+                        }
+                    }
+                },
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect",
+                        "categoricalBarChartSettings": {
+                            "categoryAxis": "validation.status",
+                            "categoryAxisLabel": "validation.status",
+                            "valueAxis": "count()",
+                            "valueAxisLabel": "count()"
+                        }
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "",
+                        "autoscale": true
+                    },
+                    "table": {
+                        "enableLineWrap": true,
+                        "hiddenColumns": [
+                            [
+                                "dataPond"
+                            ],
+                            [
+                                "rollupType"
+                            ],
+                            [
+                                "tenant"
+                            ],
+                            [
+                                "recordType"
+                            ],
+                            [
+                                "Keptn Service"
+                            ],
+                            [
+                                "KeptnContext"
+                            ],
+                            [
+                                "Keptns Bridge"
+                            ]
+                        ],
+                        "lineWrapIds": [
+                            [
+                                "Keptns Bridge"
+                            ]
+                        ],
+                        "firstVisibleRowIndex": 0
+                    }
+                },
+                "state": "success",
+                "visualization": "categoricalBarChart",
+                "davis": {
+                    "includeLogs": true,
+                    "isDavisVisualizationAvailable": true,
+                    "davisVisualization": {
+                        "isAvailable": true
+                    }
+                }
+            },
+            "davisAnalysis": {
+                "analyzerComponentState": {
+                    "resultState": {}
+                }
+            }
+        },
+        {
+            "id": "c83aff2d-5c68-4b57-a1d7-51638aac76f3",
+            "type": "markdown",
+            "markdown": "---"
+        },
+        {
+            "id": "a46cf9a3-6c95-4e7d-ba6d-bcb7f1512213",
+            "type": "markdown",
+            "markdown": "# Step 5: Measure Time to Restore Service upon an error\nDynatrace Davis automatically detects problems in case errors happen. Those problems are stored in Grail with all context about Problem Impact, Start & Endtime, root cause components and more \n\nDQL can now be used to query DORA metrics around *Time to Restore Service* as you can see from some of the query examples below!\n\n**Explanation of Elite, High, Medium & Low Performance Level**\nThese are queries that highlight how many problems have been solved very fast, medium fast or where it took long to fix them. This is a great way to categorize your problem resolution time and gives you an indication of maturity!"
+        },
+        {
+            "id": "a7b1f09b-5ff9-49df-837f-c332a6d99927",
+            "type": "dql",
+            "showTitle": true,
+            "height": 257,
+            "title": "Problem resolution Time",
+            "showInput": true,
+            "state": {
+                "input": {
+                    "timeframe": {
+                        "from": "now-24h",
+                        "to": "now",
+                        "details": {
+                            "from": {
+                                "type": "expression",
+                                "normalized": "now-24h",
+                                "date": "2023-04-18T16:23:32.920Z"
+                            },
+                            "to": {
+                                "type": "expression",
+                                "normalized": "now",
+                                "date": "2023-04-19T16:23:32.920Z"
+                            }
+                        }
+                    },
+                    "value": "fetch events\n| filter event.kind == \"DAVIS_PROBLEM\"\n| summarize minutes_to_resolve=avg(toDouble(resolved_problem_duration)/60000), by:{bin(timestamp, 1m)}"
+                },
+                "showConsole": true,
+                "state": "success",
+                "visualization": "barChart",
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect"
+                    },
+                    "table": {
+                        "lineWrapIds": [],
+                        "enableLineWrap": true,
+                        "firstVisibleRowIndex": 31
+                    }
+                },
+                "davis": {
+                    "includeLogs": true,
+                    "isDavisVisualizationAvailable": true,
+                    "davisVisualization": {
+                        "isAvailable": true
+                    }
+                }
+            },
+            "davisAnalysis": {
+                "analyzerComponentState": {
+                    "resultState": {}
+                }
+            }
+        },
+        {
+            "id": "6894cd87-19a2-4989-8590-78d1cdf3458d",
+            "type": "dql",
+            "showTitle": true,
+            "height": 88,
+            "title": "Time to Restore",
+            "showInput": true,
+            "state": {
+                "input": {
+                    "timeframe": {
+                        "from": "now-24h",
+                        "to": "now",
+                        "details": {
+                            "from": {
+                                "type": "expression",
+                                "normalized": "now-24h",
+                                "date": "2023-04-18T16:23:32.920Z"
+                            },
+                            "to": {
+                                "type": "expression",
+                                "normalized": "now",
+                                "date": "2023-04-19T16:23:32.920Z"
+                            }
+                        }
+                    },
+                    "value": "fetch events\n| filter event.kind == \"DAVIS_PROBLEM\"\n| filter (toDouble(resolved_problem_duration)/60000) < 60\n| summarize count()"
+                },
+                "showConsole": true,
+                "state": "success",
+                "visualization": "singleValue",
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect"
+                    },
+                    "table": {
+                        "lineWrapIds": [],
+                        "enableLineWrap": true,
+                        "firstVisibleRowIndex": 31
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "Number of events at Elite performance level",
+                        "autoscale": false
+                    }
+                },
+                "davis": {
+                    "includeLogs": true,
+                    "isDavisVisualizationAvailable": true,
+                    "davisVisualization": {
+                        "isAvailable": true
+                    }
+                }
+            },
+            "davisAnalysis": {
+                "analyzerComponentState": {
+                    "resultState": {}
+                }
+            }
+        },
+        {
+            "id": "5edb917b-a42a-418b-8be2-4e348ab0e46a",
+            "type": "dql",
+            "showTitle": true,
+            "height": 85,
+            "title": "Time to Restore",
+            "showInput": true,
+            "state": {
+                "input": {
+                    "timeframe": {
+                        "from": "now-24h",
+                        "to": "now",
+                        "details": {
+                            "from": {
+                                "type": "expression",
+                                "normalized": "now-24h",
+                                "date": "2023-04-18T16:23:32.920Z"
+                            },
+                            "to": {
+                                "type": "expression",
+                                "normalized": "now",
+                                "date": "2023-04-19T16:23:32.920Z"
+                            }
+                        }
+                    },
+                    "value": "fetch events\n| filter event.kind == \"DAVIS_PROBLEM\"\n| filter (toDouble(resolved_problem_duration)/60000) > 60 and (toDouble(resolved_problem_duration)/60000) < 1440 \n| summarize count()"
+                },
+                "showConsole": true,
+                "state": "success",
+                "visualization": "singleValue",
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect"
+                    },
+                    "table": {
+                        "lineWrapIds": [],
+                        "enableLineWrap": true,
+                        "firstVisibleRowIndex": 31
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "Number of events at High performance level",
+                        "autoscale": false
+                    }
+                },
+                "davis": {
+                    "includeLogs": true,
+                    "isDavisVisualizationAvailable": true,
+                    "davisVisualization": {
+                        "isAvailable": true
+                    }
+                }
+            },
+            "davisAnalysis": {
+                "analyzerComponentState": {
+                    "resultState": {}
+                }
+            }
+        },
+        {
+            "id": "ac8d10a9-6c45-4ded-a2d8-a044912350c5",
+            "type": "dql",
+            "showTitle": true,
+            "height": 85,
+            "title": "Time to Restore",
+            "showInput": true,
+            "state": {
+                "input": {
+                    "timeframe": {
+                        "from": "now-24h",
+                        "to": "now",
+                        "details": {
+                            "from": {
+                                "type": "expression",
+                                "normalized": "now-24h",
+                                "date": "2023-04-18T16:23:32.920Z"
+                            },
+                            "to": {
+                                "type": "expression",
+                                "normalized": "now",
+                                "date": "2023-04-19T16:23:32.920Z"
+                            }
+                        }
+                    },
+                    "value": "fetch events\n| filter event.kind == \"DAVIS_PROBLEM\"\n| filter (toDouble(resolved_problem_duration)/60000) > 1400\n| summarize count()"
+                },
+                "showConsole": true,
+                "state": "success",
+                "visualization": "singleValue",
+                "visualizationSettings": {
+                    "chartSettings": {
+                        "gapPolicy": "connect"
+                    },
+                    "table": {
+                        "lineWrapIds": [],
+                        "enableLineWrap": true,
+                        "firstVisibleRowIndex": 31
+                    },
+                    "singleValue": {
+                        "showLabel": true,
+                        "label": "Number of events at Medium or Low performance level",
+                        "autoscale": false
+                    }
+                },
+                "davis": {
+                    "includeLogs": true,
+                    "isDavisVisualizationAvailable": true,
+                    "davisVisualization": {
+                        "isAvailable": true
+                    }
+                }
+            },
+            "davisAnalysis": {
+                "analyzerComponentState": {
+                    "resultState": {}
+                }
+            }
+        },
+        {
+            "id": "691a9d53-2f26-42c2-ba16-6f0306be34c1",
+            "type": "markdown",
+            "markdown": "---"
+        },
+        {
+            "id": "b7464a67-6169-4375-bb5e-402bc028f860",
+            "type": "markdown",
+            "markdown": "# Next Steps: Dynatrace is working on more out-of-the-box capabilities\nWhile you can extract all the DORA metrics yourself by querying the events through DQL Dynatrace is working on more out-of-the-box solutions to provide you DORA, SPACE and other DevOps, SRE & Platform Engineering Maturity Metrics.\n\nIf you are interested let us know by sending us a quick note: [devrel@dynatrace.com](mailto:devrel@dynatrace.com?subect=Better%20DORA%20Monitoring)\n\n![](https://raw.githubusercontent.com/dynatrace-perfclinics/dynatrace-getting-started/main/images/howto_dora_doradashboard.png)"
+        }
+    ]
+}
