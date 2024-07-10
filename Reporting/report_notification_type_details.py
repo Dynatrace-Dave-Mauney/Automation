@@ -14,17 +14,18 @@ def process(env, token):
         for inner_notifications_json in inner_notifications_json_list:
             entity_id = inner_notifications_json.get('id')
             name = inner_notifications_json.get('name')
-            if name.endswith('-PROD') or name.endswith('-DR'):
+            # if name.endswith('-PROD') or name.endswith('-DR'):
+            if True:
                 endpoint = '/api/config/v1/notifications/' + entity_id
                 params = ''
                 r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
                 notification = r.json()
                 # print(notification)
                 notification_type = notification.get('type')
-                if notification_type == 'WEBHOOK':
-                    url = notification.get('url')
-                    if url and 'pagerduty' in url:
-                        notification_type = 'PagerDuty Integration'
+                # if notification_type == 'WEBHOOK':
+                #     url = notification.get('url')
+                #     if url and 'pagerduty' in url:
+                #         notification_type = 'PagerDuty Integration'
 
                 # alerting_profile = notification.get('alertingProfile')
                 # active = notification.get('active')

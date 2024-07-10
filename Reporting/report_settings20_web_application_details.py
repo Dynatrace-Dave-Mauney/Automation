@@ -21,8 +21,8 @@ def process_report(env, token, summary_mode):
 		entity_id = web_applications_dict.get('id')
 		name = web_applications_dict.get('name')
 
-		if 'PRD' not in name.upper():
-			continue
+		# if 'PRD' not in name.upper():
+		# 	continue
 
 		# DEBUG: only process one web application
 		# if 'TEMPLATE' in name:

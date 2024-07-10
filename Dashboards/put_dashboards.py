@@ -135,6 +135,10 @@ def run():
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000800-v3.json', owner=owner, skip_list=current_customer_skip_list)
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000813.json', owner=owner, skip_list=current_customer_skip_list)
 
+    # Added Queues dashboard, and make use of the environment-specific menu
+    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000001-v4_{env_name}.json', owner=owner, skip_list=current_customer_skip_list)
+    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000036.json', owner=owner, skip_list=current_customer_skip_list)
+
 def put_dashboards(env_name, path, **kwargs):
     prefix = kwargs.get('prefix')
     owner = kwargs.get('owner')

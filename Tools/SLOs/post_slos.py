@@ -14,59 +14,72 @@ POST SLOs based on a template, changing the following fields per SLO:
 
 import json
 
+from Reuse import directories_and_files
 from Reuse import dynatrace_api
 from Reuse import environment
 
 
 def process():
+    target_env_name = 'Personal'
+    # target_env_name = 'Upper'
+
     # Fake examples
-    asn_list = [
-        'FAKE1-PROD',
-        'FAKE2-PROD',
+    management_zone_name_list = [
+        'App: KEEP - PROD',
+        # 'FAKE1-PERSONAL',
+        # 'FAKE2-PERSONAL',
     ]
 
-    for asn in asn_list:
-        dash_index = asn.find('-') + 1
-        env = asn[dash_index:]
-        if env == 'PROD':
-            target_env_name = 'Prod'
-        else:
-            if env in ['DEV', 'STG']:
-                target_env_name = 'NonProd'
-            else:
-                if env in ['PERSONAL']:
-                    target_env_name = 'Personal'
-                else:
-                    print('Unsupported target environment!')
+    for management_zone_name in management_zone_name_list:
+        post_http_check_availability_slo(target_env_name, management_zone_name)
+        post_browser_availability_slo(target_env_name, management_zone_name)
+        post_service_slo(target_env_name, management_zone_name)
+        post_host_slo(target_env_name, management_zone_name)
 
-        post_default_http_check_availability_slo(target_env_name=target_env_name, monitor_name=asn)
-        # post_default_service_slos(target_env_name=target_env_name, asn=asn)
-
-
-def post_default_service_slos(target_env_name, asn):
+def post_http_check_availability_slo(target_env_name, management_zone_name):
+    management_zone_name_clean = directories_and_files.get_clean_file_name(management_zone_name, '_').replace(' ', '')
+    monitor_type = 'Synthetic Availability (HTTP)'
+    summary = f'{management_zone_name} - {monitor_type}'
     author = 'Dynatrace support user #262974423'
-    slo_filter = f'type(SERVICE), mzName({asn})'
+    metric_name = f'{management_zone_name_clean.lower().replace("-", "_")}_synthetic_availability'
+    metric_expression = 'builtin:synthetic.http.availability.location.total:splitBy()'
+    slo_filter = f'type(HTTP_CHECK), mzName({management_zone_name})'
+    post_slo(target_env_name, summary, author, metric_name, metric_expression, slo_filter)
 
-    summary = f'{asn} - Service Errors'
-    metric_name = f'{asn.lower().replace("-", "_")}_service_errors'
+
+def post_browser_availability_slo(target_env_name, management_zone_name):
+    management_zone_name_clean = directories_and_files.get_clean_file_name(management_zone_name, '_').replace(' ', '')
+    monitor_type = 'Synthetic Availability (Browser)'
+    summary = f'{management_zone_name} - {monitor_type}'
+    author = 'Dynatrace support user #262974423'
+    metric_name = f'{management_zone_name_clean.lower().replace("-", "_")}_synthetic_browser_availability'
+    metric_expression = 'builtin:synthetic.browser.availability.location.total:splitBy()'
+    slo_filter = f'type(SYNTHETIC_TEST), mzName({management_zone_name})'
+    post_slo(target_env_name, summary, author, metric_name, metric_expression, slo_filter)
+
+
+def post_service_slo(target_env_name, management_zone_name):
+    management_zone_name_clean = directories_and_files.get_clean_file_name(management_zone_name, '_').replace(' ', '')
+    author = 'Dynatrace support user #262974423'
+    slo_filter = f'type(SERVICE), mzName({management_zone_name})'
+    summary = f'{management_zone_name} - Service Errors'
+    metric_name = f'{management_zone_name_clean.lower().replace("-", "_")}_service_errors'
     metric_expression = '100-(builtin:service.errors.total.rate:splitby())'
     post_slo(target_env_name, summary, author, metric_name, metric_expression, slo_filter)
 
-    summary = f'{asn} - Service Performance'
-    metric_name = f'{asn.lower().replace("-", "_")}_service_performance'
+    summary = f'{management_zone_name} - Service Performance'
+    metric_name = f'{management_zone_name_clean.lower().replace("-", "_")}_service_performance'
     metric_expression = '((builtin:service.response.time:avg:partition("latency",value("good",lt(10000))):splitBy():count:default(0))/(builtin:service.response.time:avg:splitBy():count)*(100))'
     post_slo(target_env_name, summary, author, metric_name, metric_expression, slo_filter)
 
 
-def post_default_http_check_availability_slo(target_env_name, monitor_name):
-    monitor_type = 'Synthetic Availability (HTTP)'
-    summary = f'{monitor_name} - {monitor_type}'
+def post_host_slo(target_env_name, management_zone_name):
+    management_zone_name_clean = directories_and_files.get_clean_file_name(management_zone_name, '_').replace(' ', '')
     author = 'Dynatrace support user #262974423'
-    metric_name = f'{monitor_name.lower().replace("-", "_")}_synthetic_availability'
-    metric_expression = 'builtin:synthetic.http.availability.location.total:splitBy()'
-    if monitor_name == 'FAKE1-PERSONAL':
-        monitor_name = 'ReadOnly'
-    slo_filter = f'type(HTTP_CHECK), mzName({monitor_name})'
+    slo_filter = f'type(HOST), mzName({management_zone_name})'
+    summary = f'{management_zone_name} - Host Availability'
+    metric_name = f'{management_zone_name_clean.lower().replace("-", "_")}_host_availability'
+    metric_expression = 'builtin:host.availability:avg:setUnit(Percent):splitBy()'
     post_slo(target_env_name, summary, author, metric_name, metric_expression, slo_filter)
 
 
@@ -99,7 +112,7 @@ def post_slo(target_env_name, summary, author, metric_name, metric_expression, s
 
 
 def load_slo_template():
-    with open('slo_template.json', 'r', encoding='utf-8') as infile:
+    with open('../../$Backups/slo_template.json', 'r', encoding='utf-8') as infile:
         string = infile.read()
         return json.loads(string)
 

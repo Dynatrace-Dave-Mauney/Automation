@@ -147,7 +147,7 @@ def put_slo_overview_menu_dashboard(env, token, dashboard_coverage):
 
 
 def load_slo_overview_menu_dashboard_template():
-    with open('slo_overview_menu_dashboard_template.json', 'r', encoding='utf-8') as infile:
+    with open('standard_slo_overview_menu_dashboard_template.json', 'r', encoding='utf-8') as infile:
         string = infile.read()
         return json.loads(string)
 
@@ -194,7 +194,7 @@ def object_id_to_entity_id(object_id):
 
 
 def load_slo_overview_dashboard_template():
-    with open('slo_overview_dashboard_template.json', 'r', encoding='utf-8') as infile:
+    with open('standard_slo_overview_dashboard_template.json', 'r', encoding='utf-8') as infile:
         string = infile.read()
         return json.loads(string)
 
@@ -213,6 +213,9 @@ def main():
     friendly_function_name = 'Dynatrace Automation Tools'
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
+    # env_name_supplied = 'Upper'
+    # env_name_supplied = 'Lower'
+    # env_name_supplied = 'Sandbox'
     # env_name_supplied = 'Prod'
     # env_name_supplied = 'PreProd'
     # env_name_supplied = 'Sandbox'

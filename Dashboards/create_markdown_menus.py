@@ -6,8 +6,8 @@ import glob
 import json
 # import pathlib
 
-env_name = 'Upper'
-# env_name = 'Lower'
+# env_name = 'Upper'
+env_name = 'Lower'
 
 ootb_dashboards = [
     ('Palo Alto', 'ab163c60-07f5-7e82-40d5-35cd6a8be991')
@@ -197,6 +197,7 @@ def write_markdown_menus(dashboard_lookup):
         'Node.js',
         'Palo Alto',
         'Processes',
+        'Queues',
         'Redis - Home',
         'Service Errors',
         'Service HTTP Errors',

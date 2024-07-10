@@ -3,13 +3,13 @@
     "configurationVersions": [
       7
     ],
-    "clusterVersion": "1.266.100.20230510-201314"
+    "clusterVersion": "1.278.64.20231023-103821"
   },
   "id": "",
   "dashboardMetadata": {
-    "name": "TEMPLATE: HTTP Check Availability SLOs",
+    "name": "TEMPLATE: Host SLOs",
     "shared": true,
-    "owner": "nobody@example.com",
+    "owner": "Admin",
     "dashboardFilter": {
       "timeframe": "today",
       "managementZone": {
@@ -21,9 +21,8 @@
       "RobotAdmin"
     ],
     "preset": true,
-    "popularity": 1,
     "tilesNameSize": "small",
-    "hasConsistentColors": false
+    "hasConsistentColors": true
   },
   "tiles": [
     {
@@ -40,9 +39,9 @@
       "tileFilter": {},
       "isAutoRefreshDisabled": false,
       "assignedEntities": [
-        ""
+        "53b5fe51-0304-3580-8b35-638c81794120"
       ],
-      "metric": "METRICS=true;LEGEND=true;PROBLEMS=true;decimals=10;customTitle=Synthetic Availability (HTTP);"
+      "metric": "METRICS=true;LEGEND=true;PROBLEMS=true;COLORIZE_BACKGROUND=false;decimals=10;customTitle=CNRWM-PROD - Host Availability;"
     },
     {
       "name": "Service-level objective",
@@ -60,9 +59,9 @@
       },
       "isAutoRefreshDisabled": false,
       "assignedEntities": [
-        ""
+        "53b5fe51-0304-3580-8b35-638c81794120"
       ],
-      "metric": "METRICS=true;LEGEND=true;PROBLEMS=true;decimals=10;customTitle=Synthetic Availability (HTTP);"
+      "metric": "METRICS=true;LEGEND=true;PROBLEMS=true;COLORIZE_BACKGROUND=false;decimals=10;customTitle=CNRWM-PROD - Host Availability;"
     },
     {
       "name": "Service-level objective",
@@ -80,9 +79,9 @@
       },
       "isAutoRefreshDisabled": false,
       "assignedEntities": [
-        ""
+        "53b5fe51-0304-3580-8b35-638c81794120"
       ],
-      "metric": "METRICS=true;LEGEND=true;PROBLEMS=true;decimals=10;customTitle=Synthetic Availability (HTTP);"
+      "metric": "METRICS=true;LEGEND=true;PROBLEMS=true;COLORIZE_BACKGROUND=false;decimals=10;customTitle=CNRWM-PROD - Host Availability;"
     },
     {
       "name": "Last Week",
@@ -111,116 +110,6 @@
       "isAutoRefreshDisabled": false
     },
     {
-      "name": "HTTP Monitor Status Counts",
-      "nameSize": "",
-      "tileType": "DATA_EXPLORER",
-      "configured": true,
-      "bounds": {
-        "top": 418,
-        "left": 722,
-        "width": 342,
-        "height": 228
-      },
-      "tileFilter": {},
-      "isAutoRefreshDisabled": false,
-      "customName": "ApdexCategory",
-      "queries": [
-        {
-          "id": "A",
-          "metric": "builtin:synthetic.http.resultStatus",
-          "spaceAggregation": "SUM",
-          "timeAggregation": "DEFAULT",
-          "splitBy": [
-            "Result status"
-          ],
-          "sortBy": "DESC",
-          "filterBy": {
-            "nestedFilters": [],
-            "criteria": []
-          },
-          "limit": 20,
-          "rate": "NONE",
-          "enabled": true
-        }
-      ],
-      "visualConfig": {
-        "type": "TOP_LIST",
-        "global": {
-          "hideLegend": false
-        },
-        "rules": [
-          {
-            "matcher": "A:",
-            "unitTransform": "auto",
-            "valueFormat": "auto",
-            "properties": {
-              "color": "DEFAULT",
-              "seriesType": "STACKED_AREA"
-            },
-            "seriesOverrides": [
-              {
-                "name": "SUCCESS",
-                "color": "#008000"
-              },
-              {
-                "name": "Select series",
-                "color": "#f5d30f"
-              },
-              {
-                "name": "FAILURE",
-                "color": "#FF0000"
-              }
-            ]
-          }
-        ],
-        "axes": {
-          "xAxis": {
-            "visible": true
-          },
-          "yAxes": []
-        },
-        "heatmapSettings": {
-          "yAxis": "VALUE"
-        },
-        "thresholds": [
-          {
-            "axisTarget": "LEFT",
-            "rules": [
-              {
-                "color": "#7dc540"
-              },
-              {
-                "color": "#f5d30f"
-              },
-              {
-                "color": "#dc172a"
-              }
-            ],
-            "queryId": "",
-            "visible": true
-          }
-        ],
-        "tableSettings": {
-          "isThresholdBackgroundAppliedToCell": false,
-          "hiddenColumns": []
-        },
-        "graphChartSettings": {
-          "connectNulls": false
-        },
-        "honeycombSettings": {
-          "showHive": true,
-          "showLegend": true,
-          "showLabels": false
-        }
-      },
-      "queriesSettings": {
-        "resolution": ""
-      },
-      "metricExpressions": [
-        "resolution=Inf&(builtin:synthetic.http.resultStatus:splitBy(\"Result status\"):sum:sort(value(sum,descending)):limit(20)):limit(100):names"
-      ]
-    },
-    {
       "name": "Selected Timeframe",
       "tileType": "HEADER",
       "configured": true,
@@ -232,100 +121,6 @@
       },
       "tileFilter": {},
       "isAutoRefreshDisabled": false
-    },
-    {
-      "name": "HTTP Monitor availability",
-      "nameSize": "",
-      "tileType": "DATA_EXPLORER",
-      "configured": true,
-      "bounds": {
-        "top": 418,
-        "left": 0,
-        "width": 722,
-        "height": 228
-      },
-      "tileFilter": {},
-      "isAutoRefreshDisabled": false,
-      "customName": "Data explorer results",
-      "queries": [
-        {
-          "id": "A",
-          "spaceAggregation": "AUTO",
-          "timeAggregation": "DEFAULT",
-          "splitBy": [
-            "dt.entity.http_check"
-          ],
-          "metricSelector": "builtin:synthetic.http.availability.location.total:splitBy(\"dt.entity.http_check\"):sort(value(auto,ascending)):limit(2)",
-          "rate": "NONE",
-          "enabled": true
-        }
-      ],
-      "visualConfig": {
-        "type": "TABLE",
-        "global": {
-          "hideLegend": true
-        },
-        "rules": [
-          {
-            "matcher": "A:",
-            "properties": {
-              "color": "DEFAULT"
-            },
-            "seriesOverrides": []
-          }
-        ],
-        "axes": {
-          "xAxis": {
-            "visible": true
-          },
-          "yAxes": []
-        },
-        "heatmapSettings": {
-          "yAxis": "DIMENSIONS",
-          "xAxisBuckets": 60,
-          "showLabels": true
-        },
-        "thresholds": [
-          {
-            "axisTarget": "LEFT",
-            "columnId": "Availability rate (by location) [HTTP monitor]",
-            "rules": [
-              {
-                "value": 98,
-                "color": "#7dc540"
-              },
-              {
-                "value": 95,
-                "color": "#f5d30f"
-              },
-              {
-                "value": 0,
-                "color": "#dc172a"
-              }
-            ],
-            "queryId": "A",
-            "visible": true
-          }
-        ],
-        "tableSettings": {
-          "isThresholdBackgroundAppliedToCell": true,
-          "hiddenColumns": []
-        },
-        "graphChartSettings": {
-          "connectNulls": false
-        },
-        "honeycombSettings": {
-          "showHive": true,
-          "showLegend": true,
-          "showLabels": false
-        }
-      },
-      "queriesSettings": {
-        "resolution": ""
-      },
-      "metricExpressions": [
-        "resolution=Inf&(builtin:synthetic.http.availability.location.total:splitBy(\"dt.entity.http_check\"):sort(value(auto,ascending)):limit(2)):names"
-      ]
     },
     {
       "name": "",
@@ -343,7 +138,7 @@
       "queries": [
         {
           "id": "A",
-          "metric": "func:slo.xxx_synthetic_availability",
+          "metric": "func:slo.cnrwm_prod_host_availability",
           "spaceAggregation": "AUTO",
           "timeAggregation": "DEFAULT",
           "splitBy": [],
@@ -426,7 +221,7 @@
         "resolution": ""
       },
       "metricExpressions": [
-        "resolution=null&(func:slo.xxx_synthetic_availability:splitBy():sort(value(auto,descending)):limit(20)):limit(100):names"
+        "resolution=null&(func:slo.cnrwm_prod_host_availability:splitBy():sort(value(auto,descending)):limit(20)):limit(100):names"
       ]
     },
     {
@@ -447,7 +242,7 @@
       "queries": [
         {
           "id": "A",
-          "metric": "func:slo.xxx_synthetic_availability",
+          "metric": "func:slo.cnrwm_prod_host_availability",
           "spaceAggregation": "AUTO",
           "timeAggregation": "DEFAULT",
           "splitBy": [],
@@ -530,7 +325,7 @@
         "resolution": ""
       },
       "metricExpressions": [
-        "resolution=null&(func:slo.xxx_synthetic_availability:splitBy():sort(value(auto,descending)):limit(20)):limit(100):names"
+        "resolution=null&(func:slo.cnrwm_prod_host_availability:splitBy():sort(value(auto,descending)):limit(20)):limit(100):names"
       ]
     },
     {
@@ -551,7 +346,7 @@
       "queries": [
         {
           "id": "A",
-          "metric": "func:slo.xxx_synthetic_availability",
+          "metric": "func:slo.cnrwm_prod_host_availability",
           "spaceAggregation": "AUTO",
           "timeAggregation": "DEFAULT",
           "splitBy": [],
@@ -634,7 +429,7 @@
         "resolution": ""
       },
       "metricExpressions": [
-        "resolution=null&(func:slo.xxx_synthetic_availability:splitBy():sort(value(auto,descending)):limit(20)):limit(100):names"
+        "resolution=null&(func:slo.cnrwm_prod_host_availability:splitBy():sort(value(auto,descending)):limit(20)):limit(100):names"
       ]
     }
   ]

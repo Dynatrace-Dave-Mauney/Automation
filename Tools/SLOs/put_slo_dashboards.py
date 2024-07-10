@@ -2,71 +2,42 @@
 
 PUT SLO dashboards based on a template after changing the necessary fields.
 
+Supported dashboard_type values: 'HTTP_CHECK', 'SYNTHETIC_TEST', 'SERVICE' and 'HOST'
+
 """
 
 import base64
 import json
+# import os
+import requests
+import time
+import traceback
 import urllib.parse
 
-from Reuse import dynatrace_api
+from json import JSONDecodeError
+from requests import Response
+
+from Reuse import directories_and_files
 from Reuse import environment
 
-
-lookups = {}
-slo_dashboard_prefix = 'FF000001-0000-0000-0000-'
-
-friendly_function_name = 'Dynatrace Automation Tools'
+# slo_dashboard_prefix = '00000001-0000-0000-0000-'
+allow_rewrites = True
 
 
-def process():
-    dashboard_put_count = 0
+def load_lookups(target_env_name, target_env, target_token):
+    # if target_env_name not in lookups:
+    # print('Loading lookups...')
+    lookups = {target_env_name: {'management_zones': {}, 'slos': {}}}
+    lookups = load_lookup_management_zones(lookups, target_env_name, target_env, target_token)
+    lookups = load_lookup_slos(lookups, target_env_name, target_env, target_token)
 
-    # Fake examples
-    asn_list = [
-        'FAKE1-PROD',
-        'FAKE2-PROD',
-    ]
-
-    for asn in asn_list:
-        dash_index = asn.find('-') + 1
-        env = asn[dash_index:]
-        target_env_name = ''
-        if env == 'PROD':
-            target_env_name = 'Prod'
-        else:
-            if env in ['DEV', 'STG']:
-                target_env_name = 'NonProd'
-            else:
-                print('Unsupported target environment!')
-        print(f'Procssing ASN "{asn}" with target environment of "{target_env_name}"')
-
-        put_default_http_check_availability_slo_dashboard(target_env_name=target_env_name, monitor_name=asn)
-        # put_default_service_slo_dashboard(target_env_name=target_env_name, asn=asn)
-        dashboard_put_count += 1
-
-    print(f'{dashboard_put_count} dashboards were put')
+    return lookups
 
 
-def load_lookups(target_env_name):
-    global lookups
-
-    if target_env_name not in lookups:
-        lookups = {target_env_name: {'management_zones': {}, 'metrics': {}, 'slos': {}}}
-        load_lookup_management_zones(target_env_name)
-        load_lookup_metrics(target_env_name)
-        load_lookup_slos(target_env_name)
-
-    # print('DEBUG lookups:')
-    # print(lookups)
-
-
-def load_lookup_management_zones(target_env_name):
-    global lookups
-
-    env_name, env, token = environment.get_environment_for_function_print_control(target_env_name, friendly_function_name, False)
-
+def load_lookup_management_zones(lookups, target_env_name,  target_env, target_token):
     endpoint = '/api/config/v1/managementZones'
-    management_zones_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
+    params = ''
+    management_zones_json_list = get(target_env, target_token, endpoint, params)
     for management_zones_json in management_zones_json_list:
         inner_management_zones_json_list = management_zones_json.get('values')
         for inner_management_zones_json in inner_management_zones_json_list:
@@ -74,67 +45,44 @@ def load_lookup_management_zones(target_env_name):
             management_zone_name = inner_management_zones_json.get('name')
             lookups[target_env_name]['management_zones'][management_zone_name] = management_zone_id
 
-
-def load_lookup_metrics(target_env_name):
-    global lookups
-
-    env_name, env, token = environment.get_environment_for_function_print_control(target_env_name, friendly_function_name, False)
-
-    endpoint = '/api/v2/metrics'
-    params = 'text=func:slo'
-    metrics_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
-    for metrics_json in metrics_json_list:
-        inner_metrics_json_list = metrics_json.get('metrics')
-        for inner_metrics_json in inner_metrics_json_list:
-            metric_id = inner_metrics_json.get('metricId')
-            metric_name = inner_metrics_json.get('displayName')
-            if 'burn' not in metric_id and 'Budget' not in metric_id:
-                lookups[target_env_name]['metrics'][metric_id] = metric_name
+    return lookups
 
 
-def load_lookup_slos(target_env_name):
-    global lookups
-
-    env_name, env, token = environment.get_environment_for_function_print_control(target_env_name, friendly_function_name, False)
-
+def load_lookup_slos(lookups, target_env_name, target_env, target_token):
     endpoint = '/api/v2/settings/objects'
     raw_params = 'schemaIds=builtin:monitoring.slo'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    slos_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
+    slos_json_list = get(target_env, target_token, endpoint, params)
     for slos_json in slos_json_list:
         inner_slos_json_list = slos_json.get('items')
         for inner_slos_json in inner_slos_json_list:
             slo_id = inner_slos_json.get('objectId')
             slo_name = inner_slos_json.get('value').get('name')
-            if 'Synthetic Availability (HTTP)' in slo_name or '- Service Errors' in slo_name or '- Service Performance' in slo_name:
+            if '- Synthetic Availability' in slo_name or '- Service Errors' in slo_name or '- Service Performance' in slo_name or '- Host Availability' in slo_name:
                 lookups[target_env_name]['slos'][slo_name] = slo_id
 
+    return lookups
 
-def get_management_zone_id(target_env_name, management_zone_name):
+
+def get_management_zone_id(lookups, target_env_name, management_zone_name):
     try:
         management_zone_id = lookups[target_env_name]['management_zones'][management_zone_name]
         return management_zone_id
     except KeyError:
         print(f'Management Zone ID lookup failed for {management_zone_name} in environment {target_env_name}')
-        exit(1)
+        return None
 
 
-def get_metric_name(target_env_name, metric_id):
-    try:
-        metric_name = lookups[target_env_name]['metrics'][metric_id]
-        return metric_name
-    except KeyError:
-        print(f'Metric name lookup failed for {metric_id} in environment {target_env_name}')
-        exit(1)
-
-
-def get_slo_id(target_env_name, slo_name):
+def get_slo_id(lookups, target_env_name, slo_name):
     try:
         slo_id = lookups[target_env_name]['slos'][slo_name]
         return slo_id
     except KeyError:
         print(f'SLO ID lookup failed for {slo_name} in environment {target_env_name}')
-        exit(1)
+        # DEBUG
+        # traceback.print_exc()
+        # raise KeyError
+        return None
 
 
 def object_id_to_entity_id(object_id):
@@ -148,106 +96,82 @@ def object_id_to_entity_id(object_id):
     # Truncate after the first byte delimiter that indicates the end of the schema id
     entity_id = schema_id[:schema_id.find('\\')]
 
-    # print(f'DEBUG object_id_to_entity_id parameters - entity_id: "{entity_id}" for object_id: {object_id} ')
-
     return entity_id
 
 
-def put_default_http_check_availability_slo_dashboard(target_env_name, monitor_name):
-    load_lookups(target_env_name)
-
-    owner = 'dave.mauney@dynatrace.com'
-    put_http_check_availability_slo_dashboard(target_env_name, monitor_name, owner)
-
-
 def load_http_check_availability_slo_dashboard_template():
-    with open('http_check_availability_slo_dashboard_template.json', 'r', encoding='utf-8') as infile:
+    file_path = 'standard_http_slo_dashboard_template.json'
+    with open(file_path, 'r', encoding='utf-8') as infile:
         string = infile.read()
         return json.loads(string)
 
 
-def put_default_service_slo_dashboard(target_env_name, asn):
-    load_lookups(target_env_name)
-    owner = 'dave.mauney@dynatrace.com'
-    put_service_slo_dashboard(target_env_name, asn, owner)
+def load_browser_availability_slo_dashboard_template():
+    file_path = 'standard_browser_slo_dashboard_template.json'
+    with open(file_path, 'r', encoding='utf-8') as infile:
+        string = infile.read()
+        return json.loads(string)
 
 
 def load_service_slo_dashboard_template():
-    with open('service_slo_dashboard_template.json', 'r', encoding='utf-8') as infile:
+    file_path = 'standard_service_slo_dashboard_template.json'
+    with open(file_path, 'r', encoding='utf-8') as infile:
         string = infile.read()
         return json.loads(string)
 
 
-def convert_asn_to_numbers(asn):
-    numbers = ''
-    for character in asn.lower():
-        if character.isalpha():
-            decrement = 96
-        else:
-            decrement = 18  # Normally it would be 48, but to avoid collisions numbers will be 30 - 39 instead of 00 - 09
-
-        ordinal = ord(character) - decrement
-        ordinal_string = f'{ordinal:02}'
-        # print(character, ordinal_string)
-        numbers += ordinal_string
-
-    return str(numbers)
+def load_host_availability_slo_dashboard_template():
+    file_path = 'standard_host_slo_dashboard_template.json'
+    with open(file_path, 'r', encoding='utf-8') as infile:
+        string = infile.read()
+        return json.loads(string)
 
 
-def put_http_check_availability_slo_dashboard(target_env_name, monitor_name, owner):
-    env_name, env, token = environment.get_environment_for_function_print_control(target_env_name, friendly_function_name, False)
+def put_synthetic_slo_dashboard(env_name, env, token, management_zone_name, dashboard_type, lookups):
 
-    dash_index = monitor_name.find('-')
+    dashboard_id = get_dashboard_id(management_zone_name, dashboard_type)
 
-    asn = monitor_name[0:dash_index]
-    monitor_env = monitor_name[dash_index+1:]
+    management_zone_id = get_management_zone_id(lookups, env_name, management_zone_name)
+    if not management_zone_id:
+        print(f'Cannot build Synthetic SLO Dashboard: Management zone not found for "{management_zone_name}"')
+        return
 
-    # Always keep the order of existing items when adding new ones!!!
-    monitor_env_list = ['PROD', 'DEV', 'STG', 'UAT', 'QA', 'TEST']
+    management_zone_name_clean = directories_and_files.get_clean_file_name(management_zone_name, '_').replace(' ', '')
 
-    if monitor_env not in monitor_env_list:
-        print(f'Unknown monitor environment: {monitor_env}')
-        print(asn, monitor_name, monitor_env)
-        exit(1)
+    if dashboard_type == 'HTTP_CHECK':
+        synthetic_slo_dashboard = load_http_check_availability_slo_dashboard_template()
+        dashboard_name = f'{management_zone_name} Synthetic HTTP SLOs'
+        metric_id = f'func:slo.{management_zone_name_clean.lower().replace("-", "_")}_synthetic_availability'
+        metrics_string = f'METRICS=true;LEGEND=true;PROBLEMS=true;decimals=10;customTitle={management_zone_name} - Synthetic Availability (HTTP);'
+        slo_name = f'{management_zone_name} - Synthetic Availability (HTTP)'
+    else:
+        synthetic_slo_dashboard = load_browser_availability_slo_dashboard_template()
+        dashboard_name = f'{management_zone_name} Synthetic Browser SLOs'
+        metric_id = f'func:slo.{management_zone_name_clean.lower().replace("-", "_")}_synthetic_browser_availability'
+        metrics_string = f'METRICS=true;LEGEND=true;PROBLEMS=true;decimals=10;customTitle={management_zone_name} - Synthetic Availability (Browser);'
+        slo_name = f'{management_zone_name} - Synthetic Availability (Browser)'
 
-    monitor_env_index = monitor_env_list.index(monitor_env)
-    monitor_env_number = f'{monitor_env_index:02}'
-
-    dashboard_id = slo_dashboard_prefix + monitor_env_number + convert_asn_to_numbers(asn)
-    dashboard_name = f'{monitor_name} SLOs'
-
-    management_zone_id = get_management_zone_id(target_env_name, monitor_name)
-    # print('DEBUG put_http_check_availability_slo_dashboard management zone details:', management_zone_id, monitor_name)
-
-    metric_id = f'func:slo.{monitor_name.lower().replace("-", "_")}_synthetic_availability'
-    # metric_name = get_metric_name(target_env_name, metric_id)
-    # print('DEBUG put_http_check_availability_slo_dashboard metric details:', metric_id, metric_name')
-
-    metrics_string = f'METRICS=true;LEGEND=true;PROBLEMS=true;decimals=10;customTitle={monitor_name} - Synthetic Availability (HTTP);'
-
-    slo_name = f'{monitor_name} - Synthetic Availability (HTTP)'
-    slo_id = get_slo_id(target_env_name, slo_name)
-    # print(f'DEBUG put_http_check_availability_slo_dashboard slo details: slo_id: {slo_id} slo_name: {slo_name}')
+    slo_id = get_slo_id(lookups, env_name, slo_name)
+    if not slo_id:
+        print(f'Cannot build Synthetic SLO Dashboard: SLO id not found for SLO name "{slo_name}"')
+        return
 
     # TODO: This is a hack to get the entity id from an update token to add as dashboard tile reference
     endpoint = '/api/v2/settings/objects'
-    r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{slo_id}', token)
-    settings_object = r.json()
+    settings_object = get_by_object_id(env, token, endpoint, slo_id)
     update_token = settings_object.get('updateToken')
-    # print('DEBUG put_http_check_availability_slo_dashboard update token decode details:', slo_id, slo_name, update_token)
 
     assigned_entity = object_id_to_entity_id(update_token)
 
-    http_check_availability_slo_dashboard = load_http_check_availability_slo_dashboard_template()
+    synthetic_slo_dashboard['id'] = dashboard_id
+    synthetic_slo_dashboard['dashboardMetadata']['name'] = dashboard_name
+    synthetic_slo_dashboard['dashboardMetadata']['owner'] = 'Admin'
+    synthetic_slo_dashboard['dashboardMetadata']['dashboardFilter']['managementZone']['id'] = management_zone_id
+    synthetic_slo_dashboard['dashboardMetadata']['dashboardFilter']['managementZone']['name'] = management_zone_name
+    if synthetic_slo_dashboard.get('dashboardMetadata').get('popularity', None):
+        synthetic_slo_dashboard['dashboardMetadata'].pop('popularity')
 
-    http_check_availability_slo_dashboard['id'] = dashboard_id
-    http_check_availability_slo_dashboard['dashboardMetadata']['name'] = dashboard_name
-    http_check_availability_slo_dashboard['dashboardMetadata']['owner'] = owner
-    http_check_availability_slo_dashboard['dashboardMetadata']['dashboardFilter']['managementZone']['id'] = management_zone_id
-    http_check_availability_slo_dashboard['dashboardMetadata']['dashboardFilter']['managementZone']['name'] = monitor_name
-    http_check_availability_slo_dashboard['dashboardMetadata'].pop('popularity')
-
-    tiles = http_check_availability_slo_dashboard['tiles']
+    tiles = synthetic_slo_dashboard['tiles']
 
     for tile in tiles:
         if tile['tileType'] == 'SLO':
@@ -258,59 +182,55 @@ def put_http_check_availability_slo_dashboard(target_env_name, monitor_name, own
                 tile['queries'][0]['metric'] = metric_id
 
     endpoint = '/api/config/v1/dashboards'
-    formatted_slo = json.dumps(http_check_availability_slo_dashboard, indent=4, sort_keys=False)
-    dynatrace_api.put_object(f'{env}{endpoint}/{dashboard_id}', token, formatted_slo)
-    print(f'PUT {monitor_name} dashboard to {env_name} ({env}) with id: {dashboard_id}')
+    formatted_slo = json.dumps(synthetic_slo_dashboard, indent=4, sort_keys=False)
+    r = put(env, token, endpoint, dashboard_id, formatted_slo)
+    if r and 200 < r.status_code < 300:
+        print(f'PUT {dashboard_name} to {env}/#dashboard;id={dashboard_id};gf={management_zone_id}')
     print('')
 
 
-def put_service_slo_dashboard(target_env_name, asn, owner):
-    env_name, env, token = environment.get_environment_for_function_print_control(target_env_name, friendly_function_name, False)
+def put_service_slo_dashboard(env_name, env, token, management_zone_name, lookups):
 
-    dash_index = asn.find('-')
+    dashboard_id = get_dashboard_id(management_zone_name, 'SERVICE')
 
-    asn_proper = asn[0:dash_index]
-    asn_env = asn[dash_index+1:]
+    dashboard_name = f'{management_zone_name} Service SLOs'
 
-    # Always keep the order of existing items when adding new ones!!!
-    # The index is used in the dashboard id.
-    # TODO: Make global (used two places now)
-    env_list = ['PROD', 'DEV', 'STG', 'UAT', 'QA', 'TEST']
-
-    if asn_env not in env_list:
-        print(f'Unknown asn environment: {asn_env}')
-        print(asn, asn_proper, asn_env)
-        exit(1)
-
-    env_index = env_list.index(asn_env)
-    asn_env_number = f'{env_index:02}'
-
-    dashboard_id = slo_dashboard_prefix + asn_env_number + convert_asn_to_numbers(asn_proper)
-    dashboard_name = f'{asn} Service SLOs'
-
-    management_zone_id = get_management_zone_id(target_env_name, asn)
+    management_zone_id = get_management_zone_id(lookups, env_name, management_zone_name)
+    if not management_zone_id:
+        print(f'Cannot build Service SLO Dashboard: Management zone not found for "{management_zone_name}"')
+        return
 
     # Service Errors
-    service_errors_metric_id = f'func:slo.{asn.lower().replace("-", "_")}_service_errors'
-    service_errors_metrics_string = f'METRICS=true;LEGEND=true;PROBLEMS=true;decimals=10;customTitle={asn} - Service Errors;'
-    service_errors_slo_name = f'{asn} - Service Errors'
-    service_errors_slo_id = get_slo_id(target_env_name, service_errors_slo_name)
+    management_zone_name_clean = directories_and_files.get_clean_file_name(management_zone_name, '_').replace(' ', '')
+    service_errors_metric_id = f'func:slo.{management_zone_name_clean.lower().replace("-", "_")}_service_errors'
+
+    service_errors_metrics_string = f'METRICS=true;LEGEND=true;PROBLEMS=true;decimals=10;customTitle={management_zone_name} - Service Errors;'
+    service_errors_slo_name = f'{management_zone_name} - Service Errors'
+    service_errors_slo_id = get_slo_id(lookups, env_name, service_errors_slo_name)
+    if not service_errors_slo_id:
+        print(f'Cannot build Service SLO Dashboard: SLO id not found for "{service_errors_slo_name}"')
+        return
+
     # TODO: This is a hack to get the entity id from an update token to add as dashboard tile reference
     endpoint = '/api/v2/settings/objects'
-    r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{service_errors_slo_id}', token)
-    settings_object = r.json()
+    settings_object = get_by_object_id(env, token, endpoint, service_errors_slo_id)
     update_token = settings_object.get('updateToken')
     service_errors_assigned_entity = object_id_to_entity_id(update_token)
 
     # Service Performance
-    service_performance_metric_id = f'func:slo.{asn.lower().replace("-", "_")}_service_performance'
-    service_performance_metrics_string = f'METRICS=true;LEGEND=true;PROBLEMS=true;decimals=10;customTitle={asn} - Service Performance;'
-    service_performance_slo_name = f'{asn} - Service Performance'
-    service_performance_slo_id = get_slo_id(target_env_name, service_performance_slo_name)
+    management_zone_name_clean = directories_and_files.get_clean_file_name(management_zone_name, '_').replace(' ', '')
+    service_performance_metric_id = f'func:slo.{management_zone_name_clean.lower().replace("-", "_")}_service_performance'
+
+    service_performance_metrics_string = f'METRICS=true;LEGEND=true;PROBLEMS=true;decimals=10;customTitle={management_zone_name} - Service Performance;'
+    service_performance_slo_name = f'{management_zone_name} - Service Performance'
+    service_performance_slo_id = get_slo_id(lookups, env_name, service_performance_slo_name)
+    if not service_errors_slo_id:
+        print(f'Cannot build Service SLO Dashboard: SLO id not found for "{service_performance_slo_name}"')
+        return
+
     # TODO: This is a hack to get the entity id from an update token to add as dashboard tile reference
     endpoint = '/api/v2/settings/objects'
-    r = dynatrace_api.get_without_pagination(f'{env}{endpoint}/{service_performance_slo_id}', token)
-    settings_object = r.json()
+    settings_object = get_by_object_id(env, token, endpoint, service_performance_slo_id)
     update_token = settings_object.get('updateToken')
     service_performance_assigned_entity = object_id_to_entity_id(update_token)
 
@@ -318,12 +238,11 @@ def put_service_slo_dashboard(target_env_name, asn, owner):
 
     service_slo_dashboard['id'] = dashboard_id
     service_slo_dashboard['dashboardMetadata']['name'] = dashboard_name
-    service_slo_dashboard['dashboardMetadata']['owner'] = owner
+    service_slo_dashboard['dashboardMetadata']['owner'] = 'Admin'
     service_slo_dashboard['dashboardMetadata']['shared'] = True
     service_slo_dashboard['dashboardMetadata']['preset'] = True
     service_slo_dashboard['dashboardMetadata']['dashboardFilter']['managementZone']['id'] = management_zone_id
-    service_slo_dashboard['dashboardMetadata']['dashboardFilter']['managementZone']['name'] = asn_proper
-
+    service_slo_dashboard['dashboardMetadata']['dashboardFilter']['managementZone']['name'] = management_zone_name
     if service_slo_dashboard.get('dashboardMetadata').get('popularity', None):
         service_slo_dashboard['dashboardMetadata'].pop('popularity')
 
@@ -349,15 +268,314 @@ def put_service_slo_dashboard(target_env_name, asn, owner):
                 if tile['tileType'] == 'DATA_EXPLORER' and tile['name'] == '':
                     tile['queries'][0]['metric'] = service_performance_metric_id
                     index += 1
+
     endpoint = '/api/config/v1/dashboards'
     formatted_slo = json.dumps(service_slo_dashboard, indent=4, sort_keys=False)
-    dynatrace_api.put_object(f'{env}{endpoint}/{dashboard_id}', token, formatted_slo)
-    print(f'PUT {asn} dashboard to {env_name} ({env}) with id: {dashboard_id}')
+    r = put(env, token, endpoint, dashboard_id, formatted_slo)
+    if r and 200 < r.status_code < 300:
+        print(f'PUT {dashboard_name} to {env}/#dashboard;id={dashboard_id};gf={management_zone_id}')
     print('')
 
 
+def put_host_slo_dashboard(env_name, env, token, management_zone_name, lookups):
+
+    dashboard_id = get_dashboard_id(management_zone_name, 'HOST')
+
+    management_zone_id = get_management_zone_id(lookups, env_name, management_zone_name)
+    if not management_zone_id:
+        print(f'Cannot build Host SLO Dashboard: Management zone not found for "{management_zone_name}"')
+        return
+
+    management_zone_name_clean = directories_and_files.get_clean_file_name(management_zone_name, '_').replace(' ', '')
+
+    dashboard_name = f'{management_zone_name} Host SLOs'
+    metric_id = f'func:slo.{management_zone_name_clean.lower().replace("-", "_")}_host_availability'
+    metrics_string = f'METRICS=true;LEGEND=true;PROBLEMS=true;COLORIZE_BACKGROUND=false;decimals=10;customTitle={management_zone_name} - Host Availability;'
+    slo_name = f'{management_zone_name} - Host Availability'
+
+    slo_id = get_slo_id(lookups, env_name, slo_name)
+    if not slo_id:
+        print(f'Cannot build Host SLO Dashboard: SLO id not found for "{slo_name}"')
+        return
+
+    # TODO: This is a hack to get the entity id from an update token to add as dashboard tile reference
+    endpoint = '/api/v2/settings/objects'
+    settings_object = get_by_object_id(env, token, endpoint, slo_id)
+    update_token = settings_object.get('updateToken')
+
+    assigned_entity = object_id_to_entity_id(update_token)
+
+    host_availability_slo_dashboard = load_host_availability_slo_dashboard_template()
+
+    host_availability_slo_dashboard['id'] = dashboard_id
+    host_availability_slo_dashboard['dashboardMetadata']['name'] = dashboard_name
+    host_availability_slo_dashboard['dashboardMetadata']['owner'] = 'Admin'
+    host_availability_slo_dashboard['dashboardMetadata']['dashboardFilter']['managementZone']['id'] = management_zone_id
+    host_availability_slo_dashboard['dashboardMetadata']['dashboardFilter']['managementZone']['name'] = management_zone_name
+    if host_availability_slo_dashboard.get('dashboardMetadata').get('popularity', None):
+        host_availability_slo_dashboard['dashboardMetadata'].pop('popularity')
+
+    tiles = host_availability_slo_dashboard['tiles']
+
+    for tile in tiles:
+        if tile['tileType'] == 'SLO':
+            tile['assignedEntities'] = [assigned_entity]
+            tile['metric'] = metrics_string
+        else:
+            if tile['tileType'] == 'DATA_EXPLORER' and tile['name'] == '':
+                tile['queries'][0]['metric'] = metric_id
+
+    endpoint = '/api/config/v1/dashboards'
+    formatted_slo = json.dumps(host_availability_slo_dashboard, indent=4, sort_keys=False)
+    r = put(env, token, endpoint, dashboard_id, formatted_slo)
+    if r and 200 < r.status_code < 300:
+        print(f'PUT {dashboard_name} to {env}/#dashboard;id={dashboard_id};gf={management_zone_id}')
+    print('')
+
+
+def put(env, token, endpoint, object_id, payload):
+    if not allow_rewrites:
+        # Testing logic can be uncommented when needed:
+        # allow rewrite of host SLO dashboards to fix "preset" issue on initial create
+        # allow rewrite of specific SLO dashboards to test
+        # if not object_id.startswith('00000001-0000-0000-0003') and not object_id.endswith('000609120517') and not object_id.endswith('000314150304'):
+        # if not object_id == '00000001-0000-0000-0000-000136163726':
+        if True:
+            if get_by_object_id(env, token, endpoint, object_id):
+                print(f'Skipping dashboard  {object_id} since it already exists!')
+                return
+
+    # In general, favor put over post so "fixed ids" can be used
+    json_data = json.dumps(json.loads(payload), indent=4, sort_keys=False)
+    url = env + endpoint + '/' + object_id
+    try:
+        r: Response = requests.put(url, json_data.encode('utf-8'), headers={'Authorization': 'Api-Token ' + token, 'Content-Type': 'application/json; charset=utf-8'})
+        if r.status_code not in [200, 201, 204]:
+            print('Status Code: %d' % r.status_code)
+            print('Reason: %s' % r.reason)
+            if len(r.text) > 0:
+                print(r.text)
+            error_filename = '$put_error_payload.json'
+            with open(error_filename, 'w') as file:
+                file.write(json_data)
+                print('Error in "put(env, token, endpoint, object_id, payload)" method')
+                print('See ' + error_filename + ' for more details')
+            r.raise_for_status()
+        return r
+    except requests.exceptions.RequestException as e:
+        print(f'Failed to Put object id "{object_id}" to endpoint "{endpoint}"')
+        if e.response.text:
+            print("Please check the following HTTP response to troubleshoot the issue:")
+            print(e.response.text)
+        print("Exiting Program")
+        traceback.print_exc()
+        raise SystemExit(e)
+        # For debugging, if you want a more detailed stack trace
+        # raise e
+
+
+def get(url, token, endpoint, params):
+    full_url = url + endpoint
+    try:
+        resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token}, timeout=60.0)
+    except (ConnectionError, TimeoutError):
+        print('Sleeping 30 seconds before retrying due to connection or timeout error...')
+        time.sleep(30)
+        resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
+
+    if resp.status_code != 200 and resp.status_code != 404:
+        print('REST API Call Failed!')
+        print(f'GET {full_url} {params} {resp.status_code} - {resp.reason}')
+        exit(1)
+
+    try:
+        json_data = resp.json()
+
+        # Some json is just a list of dictionaries.
+        # Config V1 AWS Credentials is the only example I am aware of.
+        # For these, I have never seen pagination.
+        if type(json_data) is list:
+            return json_data
+
+        json_list = [json_data]
+        next_page_key = json_data.get('nextPageKey')
+
+        while next_page_key is not None:
+            params = {'nextPageKey': next_page_key}
+            full_url = url + endpoint
+            resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
+
+            if resp.status_code != 200:
+                print('Paginated REST API Call Failed!')
+                print(f'GET {full_url} {resp.status_code} - {resp.reason}')
+                exit(1)
+
+            json_data = resp.json()
+
+            next_page_key = json_data.get('nextPageKey')
+            json_list.append(json_data)
+
+        return json_list
+
+    except JSONDecodeError:
+        print('JSON decode error. Response: ')
+        print(resp)
+        print(resp.text)
+        exit(1)
+
+
+def get_by_object_id(env, token, endpoint, object_id):
+    url = env + endpoint + '/' + object_id
+    try:
+        r = requests.get(url, params='', headers={'Authorization': 'Api-Token ' + token})
+        if r.status_code == 200:
+            return json.loads(r.text)
+        else:
+            if r.status_code == 404:
+                return None
+            else:
+                print('Error in "get_by_object_id(env, token, endpoint, object_id)" method')
+                print(f'Endpoint: {endpoint}')
+                print(f'Object ID: {object_id}')
+                print(f'Status Code: {r.status_code}')
+                print(f'Text: {r.text}')
+                print('Exit code shown below is the source code line number of the exit statement invoked')
+                print("Exiting Program")
+                traceback.print_exc()
+    except requests.exceptions.RequestException as e:
+        print(f'Failed to get object id "{object_id}" from endpoint "{endpoint}"')
+        if e.response.text:
+            print("Please check the following HTTP response to troubleshoot the issue:")
+            print(e.response.text)
+        print("Exiting Program")
+        traceback.print_exc()
+        raise SystemExit(e)
+        # For debugging, if you want a more detailed stack trace
+        # raise e
+
+
+def get_object_list(env, token, endpoint):
+    url = env + endpoint
+    try:
+        r = requests.get(url, params='', headers={'Authorization': 'Api-Token ' + token})
+        if r.status_code != 200:
+            print('Error in "get_object_list(env, token, endpoint)" method')
+            r.raise_for_status()
+        return r
+    except requests.exceptions.RequestException as e:
+        print(f'Failed to get object list from endpoint "{endpoint}"')
+        if e.response.text:
+            print("Please check the following HTTP response to troubleshoot the issue:")
+            print(e.response.text)
+        print("Exiting Program")
+        traceback.print_exc()
+        raise SystemExit(e)
+        # For debugging, if you want a more detailed stack trace
+        # raise e
+
+
+def get_dashboard_id(management_zone_name, dashboard_type):
+    dashboard_type_list = ['HTTP_CHECK', 'SYNTHETIC_TEST', 'SERVICE', 'HOST']
+
+    if dashboard_type not in dashboard_type_list:
+        print(f'Unknown dashboard type: {dashboard_type}')
+        exit(1)
+
+    suffix = str(dashboard_type_list.index(dashboard_type))
+    # print('suffix:', suffix)
+
+    dashboard_id = convert_string_to_uuid(management_zone_name + suffix)
+
+    return dashboard_id
+
+
+def convert_string_to_uuid(string):
+    numbers = convert_string_to_numbers(string)
+    uuid = convert_numbers_to_uuid(numbers)
+    return uuid
+
+
+def convert_string_to_numbers(string):
+    string = string.replace(' ', '')
+    string = string.replace('App:', '')
+    string = string.replace('-', '')
+    string = string.replace(':', '')
+    numbers = ''
+    for character in string.lower():
+        if character.isalpha():
+            decrement = 96
+        else:
+            decrement = 18  # Normally it would be 48, but to avoid collisions numbers will be 30 - 39 instead of 00 - 09
+
+        ordinal = ord(character) - decrement
+        ordinal_string = f'{ordinal:02}'
+        # print(character, ordinal_string)
+        numbers += ordinal_string
+
+    return str(numbers)
+
+
+def convert_numbers_to_uuid(number_string):
+    if len(number_string) > 32:
+        print('UUID cannot be generated: String converted to numbers is greater than 32 in length')
+
+    number_string_32 = number_string.zfill(32)
+
+    # print(type(number_string_32))
+
+    # print('number_string_32:', number_string_32)
+    # print(number_string_32[0:8])
+    # print(number_string_32[8:12])
+    # print(number_string_32[12:16])
+    # print(number_string_32[16:20])
+    # print(number_string_32[20:32])
+
+    uuid = f'{number_string_32[0:8]}-{number_string_32[8:12]}-{number_string_32[12:16]}-{number_string_32[16:20]}-{number_string_32[20:32]}'
+
+    # print('uuid:', uuid)
+
+    return str(uuid)
+
+
+def process(target_env_name, management_zone_name, create_http_check_slo_dashboard, create_browser_slo_dashboard, create_service_slo_dashboard, create_host_slo_dashboard):
+    friendly_function_name = 'Dynatrace Automation Tools'
+
+    # print(target_env_name, management_zone_name, create_http_check_slo_dashboard, create_browser_slo_dashboard, create_service_slo_dashboard, create_host_slo_dashboard)
+
+    env_name, env, token = environment.get_environment_for_function_print_control(target_env_name, friendly_function_name, False)
+
+    lookups = load_lookups(target_env_name, env, token)
+
+    if create_http_check_slo_dashboard:
+        dashboard_type = 'HTTP_CHECK'
+        print(f'Putting {dashboard_type} SLO Dashboard for Management Zone "{management_zone_name}"')
+        put_synthetic_slo_dashboard(env_name, env, token, management_zone_name, dashboard_type, lookups)
+    if create_browser_slo_dashboard:
+        dashboard_type = 'SYNTHETIC_TEST'
+        print(f'Putting {dashboard_type} SLO Dashboard for Management Zone "{management_zone_name}"')
+        put_synthetic_slo_dashboard(env_name, env, token, management_zone_name, dashboard_type, lookups)
+    if create_service_slo_dashboard:
+        dashboard_type = 'SERVICE'
+        print(f'Putting {dashboard_type} SLO Dashboard for Management Zone "{management_zone_name}"')
+        put_service_slo_dashboard(env_name, env, token, management_zone_name, lookups)
+    if create_host_slo_dashboard:
+        dashboard_type = 'HOST'
+        print(f'Putting {dashboard_type} SLO Dashboard for Management Zone "{management_zone_name}"')
+        put_host_slo_dashboard(env_name, env, token, management_zone_name, lookups)
+
+
 def main():
-    process()
+    # target_env_name = 'Personal'
+    target_env_name = 'Upper'
+
+    management_zone_name = 'App: KEEP - PROD'
+
+    create_http_check_slo_dashboard = True
+    create_browser_slo_dashboard = False
+    create_service_slo_dashboard = True
+    create_host_slo_dashboard = True
+
+    process(target_env_name, management_zone_name, create_http_check_slo_dashboard, create_browser_slo_dashboard, create_service_slo_dashboard, create_host_slo_dashboard)
 
 
 if __name__ == '__main__':
