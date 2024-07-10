@@ -8,19 +8,12 @@ Supported dashboard_type values: 'HTTP_CHECK', 'SYNTHETIC_TEST', 'SERVICE' and '
 
 import base64
 import json
-# import os
-import requests
-import time
-import traceback
 import urllib.parse
 
-from json import JSONDecodeError
-from requests import Response
-
 from Reuse import directories_and_files
+from Reuse import dynatrace_api
 from Reuse import environment
 
-# slo_dashboard_prefix = '00000001-0000-0000-0000-'
 allow_rewrites = True
 
 
@@ -36,8 +29,8 @@ def load_lookups(target_env_name, target_env, target_token):
 
 def load_lookup_management_zones(lookups, target_env_name,  target_env, target_token):
     endpoint = '/api/config/v1/managementZones'
-    params = ''
-    management_zones_json_list = get(target_env, target_token, endpoint, params)
+    url = target_env + endpoint
+    management_zones_json_list = dynatrace_api.get_json_list_with_pagination(url, target_token)
     for management_zones_json in management_zones_json_list:
         inner_management_zones_json_list = management_zones_json.get('values')
         for inner_management_zones_json in inner_management_zones_json_list:
@@ -52,7 +45,9 @@ def load_lookup_slos(lookups, target_env_name, target_env, target_token):
     endpoint = '/api/v2/settings/objects'
     raw_params = 'schemaIds=builtin:monitoring.slo'
     params = urllib.parse.quote(raw_params, safe='/,&=')
-    slos_json_list = get(target_env, target_token, endpoint, params)
+    url = target_env + endpoint
+    slos_json_list = dynatrace_api.get_json_list_with_pagination(url, target_token, params=params)
+
     for slos_json in slos_json_list:
         inner_slos_json_list = slos_json.get('items')
         for inner_slos_json in inner_slos_json_list:
@@ -158,7 +153,10 @@ def put_synthetic_slo_dashboard(env_name, env, token, management_zone_name, dash
 
     # TODO: This is a hack to get the entity id from an update token to add as dashboard tile reference
     endpoint = '/api/v2/settings/objects'
-    settings_object = get_by_object_id(env, token, endpoint, slo_id)
+    url = env + endpoint + '/' + slo_id
+    # settings_object = get_by_object_id(env, token, endpoint, slo_id)
+    settings_object = dynatrace_api.get_without_pagination(url, token).json()
+
     update_token = settings_object.get('updateToken')
 
     assigned_entity = object_id_to_entity_id(update_token)
@@ -184,6 +182,7 @@ def put_synthetic_slo_dashboard(env_name, env, token, management_zone_name, dash
     endpoint = '/api/config/v1/dashboards'
     formatted_slo = json.dumps(synthetic_slo_dashboard, indent=4, sort_keys=False)
     r = put(env, token, endpoint, dashboard_id, formatted_slo)
+
     if r and 200 < r.status_code < 300:
         print(f'PUT {dashboard_name} to {env}/#dashboard;id={dashboard_id};gf={management_zone_id}')
     print('')
@@ -213,7 +212,9 @@ def put_service_slo_dashboard(env_name, env, token, management_zone_name, lookup
 
     # TODO: This is a hack to get the entity id from an update token to add as dashboard tile reference
     endpoint = '/api/v2/settings/objects'
-    settings_object = get_by_object_id(env, token, endpoint, service_errors_slo_id)
+    url = env + endpoint + '/' + service_errors_slo_id
+    settings_object = dynatrace_api.get_without_pagination(url, token).json()
+
     update_token = settings_object.get('updateToken')
     service_errors_assigned_entity = object_id_to_entity_id(update_token)
 
@@ -230,7 +231,10 @@ def put_service_slo_dashboard(env_name, env, token, management_zone_name, lookup
 
     # TODO: This is a hack to get the entity id from an update token to add as dashboard tile reference
     endpoint = '/api/v2/settings/objects'
-    settings_object = get_by_object_id(env, token, endpoint, service_performance_slo_id)
+    url = env + endpoint + '/' + service_performance_slo_id
+    # settings_object = get_by_object_id(env, token, endpoint, service_performance_slo_id)
+    settings_object = dynatrace_api.get_without_pagination(url, token).json()
+
     update_token = settings_object.get('updateToken')
     service_performance_assigned_entity = object_id_to_entity_id(update_token)
 
@@ -272,6 +276,7 @@ def put_service_slo_dashboard(env_name, env, token, management_zone_name, lookup
     endpoint = '/api/config/v1/dashboards'
     formatted_slo = json.dumps(service_slo_dashboard, indent=4, sort_keys=False)
     r = put(env, token, endpoint, dashboard_id, formatted_slo)
+
     if r and 200 < r.status_code < 300:
         print(f'PUT {dashboard_name} to {env}/#dashboard;id={dashboard_id};gf={management_zone_id}')
     print('')
@@ -300,7 +305,9 @@ def put_host_slo_dashboard(env_name, env, token, management_zone_name, lookups):
 
     # TODO: This is a hack to get the entity id from an update token to add as dashboard tile reference
     endpoint = '/api/v2/settings/objects'
-    settings_object = get_by_object_id(env, token, endpoint, slo_id)
+    url = env + endpoint + '/' + slo_id
+    # settings_object = get_by_object_id(env, token, endpoint, slo_id)
+    settings_object = dynatrace_api.get_without_pagination(url, token).json()
     update_token = settings_object.get('updateToken')
 
     assigned_entity = object_id_to_entity_id(update_token)
@@ -328,6 +335,7 @@ def put_host_slo_dashboard(env_name, env, token, management_zone_name, lookups):
     endpoint = '/api/config/v1/dashboards'
     formatted_slo = json.dumps(host_availability_slo_dashboard, indent=4, sort_keys=False)
     r = put(env, token, endpoint, dashboard_id, formatted_slo)
+
     if r and 200 < r.status_code < 300:
         print(f'PUT {dashboard_name} to {env}/#dashboard;id={dashboard_id};gf={management_zone_id}')
     print('')
@@ -341,137 +349,17 @@ def put(env, token, endpoint, object_id, payload):
         # if not object_id.startswith('00000001-0000-0000-0003') and not object_id.endswith('000609120517') and not object_id.endswith('000314150304'):
         # if not object_id == '00000001-0000-0000-0000-000136163726':
         if True:
-            if get_by_object_id(env, token, endpoint, object_id):
+            url = env + endpoint + '/' + object_id
+            # if get_by_object_id(env, token, endpoint, object_id):
+            if dynatrace_api.get_without_pagination(url, token).json():
                 print(f'Skipping dashboard  {object_id} since it already exists!')
                 return
 
     # In general, favor put over post so "fixed ids" can be used
     json_data = json.dumps(json.loads(payload), indent=4, sort_keys=False)
     url = env + endpoint + '/' + object_id
-    try:
-        r: Response = requests.put(url, json_data.encode('utf-8'), headers={'Authorization': 'Api-Token ' + token, 'Content-Type': 'application/json; charset=utf-8'})
-        if r.status_code not in [200, 201, 204]:
-            print('Status Code: %d' % r.status_code)
-            print('Reason: %s' % r.reason)
-            if len(r.text) > 0:
-                print(r.text)
-            error_filename = '$put_error_payload.json'
-            with open(error_filename, 'w') as file:
-                file.write(json_data)
-                print('Error in "put(env, token, endpoint, object_id, payload)" method')
-                print('See ' + error_filename + ' for more details')
-            r.raise_for_status()
-        return r
-    except requests.exceptions.RequestException as e:
-        print(f'Failed to Put object id "{object_id}" to endpoint "{endpoint}"')
-        if e.response.text:
-            print("Please check the following HTTP response to troubleshoot the issue:")
-            print(e.response.text)
-        print("Exiting Program")
-        traceback.print_exc()
-        raise SystemExit(e)
-        # For debugging, if you want a more detailed stack trace
-        # raise e
-
-
-def get(url, token, endpoint, params):
-    full_url = url + endpoint
-    try:
-        resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token}, timeout=60.0)
-    except (ConnectionError, TimeoutError):
-        print('Sleeping 30 seconds before retrying due to connection or timeout error...')
-        time.sleep(30)
-        resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
-
-    if resp.status_code != 200 and resp.status_code != 404:
-        print('REST API Call Failed!')
-        print(f'GET {full_url} {params} {resp.status_code} - {resp.reason}')
-        exit(1)
-
-    try:
-        json_data = resp.json()
-
-        # Some json is just a list of dictionaries.
-        # Config V1 AWS Credentials is the only example I am aware of.
-        # For these, I have never seen pagination.
-        if type(json_data) is list:
-            return json_data
-
-        json_list = [json_data]
-        next_page_key = json_data.get('nextPageKey')
-
-        while next_page_key is not None:
-            params = {'nextPageKey': next_page_key}
-            full_url = url + endpoint
-            resp = requests.get(full_url, params=params, headers={'Authorization': "Api-Token " + token})
-
-            if resp.status_code != 200:
-                print('Paginated REST API Call Failed!')
-                print(f'GET {full_url} {resp.status_code} - {resp.reason}')
-                exit(1)
-
-            json_data = resp.json()
-
-            next_page_key = json_data.get('nextPageKey')
-            json_list.append(json_data)
-
-        return json_list
-
-    except JSONDecodeError:
-        print('JSON decode error. Response: ')
-        print(resp)
-        print(resp.text)
-        exit(1)
-
-
-def get_by_object_id(env, token, endpoint, object_id):
-    url = env + endpoint + '/' + object_id
-    try:
-        r = requests.get(url, params='', headers={'Authorization': 'Api-Token ' + token})
-        if r.status_code == 200:
-            return json.loads(r.text)
-        else:
-            if r.status_code == 404:
-                return None
-            else:
-                print('Error in "get_by_object_id(env, token, endpoint, object_id)" method')
-                print(f'Endpoint: {endpoint}')
-                print(f'Object ID: {object_id}')
-                print(f'Status Code: {r.status_code}')
-                print(f'Text: {r.text}')
-                print('Exit code shown below is the source code line number of the exit statement invoked')
-                print("Exiting Program")
-                traceback.print_exc()
-    except requests.exceptions.RequestException as e:
-        print(f'Failed to get object id "{object_id}" from endpoint "{endpoint}"')
-        if e.response.text:
-            print("Please check the following HTTP response to troubleshoot the issue:")
-            print(e.response.text)
-        print("Exiting Program")
-        traceback.print_exc()
-        raise SystemExit(e)
-        # For debugging, if you want a more detailed stack trace
-        # raise e
-
-
-def get_object_list(env, token, endpoint):
-    url = env + endpoint
-    try:
-        r = requests.get(url, params='', headers={'Authorization': 'Api-Token ' + token})
-        if r.status_code != 200:
-            print('Error in "get_object_list(env, token, endpoint)" method')
-            r.raise_for_status()
-        return r
-    except requests.exceptions.RequestException as e:
-        print(f'Failed to get object list from endpoint "{endpoint}"')
-        if e.response.text:
-            print("Please check the following HTTP response to troubleshoot the issue:")
-            print(e.response.text)
-        print("Exiting Program")
-        traceback.print_exc()
-        raise SystemExit(e)
-        # For debugging, if you want a more detailed stack trace
-        # raise e
+    r = dynatrace_api.put_object(url, token, json_data)
+    return r
 
 
 def get_dashboard_id(management_zone_name, dashboard_type):
@@ -482,7 +370,6 @@ def get_dashboard_id(management_zone_name, dashboard_type):
         exit(1)
 
     suffix = str(dashboard_type_list.index(dashboard_type))
-    # print('suffix:', suffix)
 
     dashboard_id = convert_string_to_uuid(management_zone_name + suffix)
 
@@ -521,26 +408,13 @@ def convert_numbers_to_uuid(number_string):
 
     number_string_32 = number_string.zfill(32)
 
-    # print(type(number_string_32))
-
-    # print('number_string_32:', number_string_32)
-    # print(number_string_32[0:8])
-    # print(number_string_32[8:12])
-    # print(number_string_32[12:16])
-    # print(number_string_32[16:20])
-    # print(number_string_32[20:32])
-
     uuid = f'{number_string_32[0:8]}-{number_string_32[8:12]}-{number_string_32[12:16]}-{number_string_32[16:20]}-{number_string_32[20:32]}'
-
-    # print('uuid:', uuid)
 
     return str(uuid)
 
 
 def process(target_env_name, management_zone_name, create_http_check_slo_dashboard, create_browser_slo_dashboard, create_service_slo_dashboard, create_host_slo_dashboard):
     friendly_function_name = 'Dynatrace Automation Tools'
-
-    # print(target_env_name, management_zone_name, create_http_check_slo_dashboard, create_browser_slo_dashboard, create_service_slo_dashboard, create_host_slo_dashboard)
 
     env_name, env, token = environment.get_environment_for_function_print_control(target_env_name, friendly_function_name, False)
 
@@ -565,8 +439,8 @@ def process(target_env_name, management_zone_name, create_http_check_slo_dashboa
 
 
 def main():
-    # target_env_name = 'Personal'
-    target_env_name = 'Upper'
+    target_env_name = 'Personal'
+    # target_env_name = 'Upper'
 
     management_zone_name = 'App: KEEP - PROD'
 
