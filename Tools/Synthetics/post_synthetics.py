@@ -16,15 +16,20 @@ POST HTTP_CHECK synthetics based on a template, changing the following fields pe
 
 """
 import copy
-
-locations = {
-    'Personal': ['GEOLOCATION-A'],
-    'NonProd': ['SYNTHETIC_LOCATION-X'],
-    'Prod': ['SYNTHETIC_LOCATION-Y', 'SYNTHETIC_LOCATION-Z']
-    }
+import os
 
 
 def process():
+    # Test locations: use configurations.yaml to set these for production use
+    # AWS N. Virginia: GEOLOCATION-9999453BE4BDB3CD
+    locations = {
+        'Personal': ['GEOLOCATION-9999453BE4BDB3CD'],
+    }
+
+    configuration_path = 'configurations.yaml'
+    if os.path.isfile(configuration_path):
+        locations = environment.get_configuration('locations', configuration_file=configuration_path)
+
     # Test
     post_default_http_check(target_env_name='Personal', monitor_name='A', monitor_urls=['https://dynatrace.com'])
 
@@ -47,8 +52,8 @@ def post_http_check(target_env_name, monitor_name, monitor_urls):
     # env_name_supplied = 'PreProd'
     # env_name_supplied = 'Sandbox'
     # env_name_supplied = 'Dev'
-    # env_name_supplied = 'Personal'
-    env_name_supplied = 'Demo'
+    env_name_supplied = 'Personal'
+    # env_name_supplied = 'Demo'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 
     endpoint = '/api/v1/synthetic/monitors'
