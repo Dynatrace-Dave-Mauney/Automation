@@ -112,7 +112,7 @@ def post_slo(target_env_name, summary, author, metric_name, metric_expression, s
 
 
 def load_slo_template():
-    with open('../../$Backups/slo_template.json', 'r', encoding='utf-8') as infile:
+    with open('standard_slo_template.json', 'r', encoding='utf-8') as infile:
         string = infile.read()
         return json.loads(string)
 
