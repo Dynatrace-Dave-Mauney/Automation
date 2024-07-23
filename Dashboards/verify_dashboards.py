@@ -33,6 +33,9 @@ def verify_dashboard(filename):
 
     violations = []
 
+    if not filename.endswith(".json"):
+        return
+
     with open(filename, 'r', encoding='utf-8') as f:
         dashboard = f.read()
         try:
@@ -84,7 +87,7 @@ def verify_dashboard(filename):
                 print(f'{dashboard_name}|{dashboard_id}|{dashboard_owner}| has bad {violations}')
 
         except JSONDecodeError:
-            print(f'Skipping non-JSON file (or non-parsable JSON file): {filename}')
+            print(f'Skipping file because the contents are not parseable JSON: {filename}')
 
 
 def main():

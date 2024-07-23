@@ -29,6 +29,8 @@ file_skip_list = [
     'Templates/Overview\demo_dashboard_notes.txt',
     'Templates/Overview\markdown_aws_menu.json',
     'Templates/Overview\markdown_menu-BACKUP.json',
+    'Templates/Overview\markdown_menu_Lower.json',
+    'Templates/Overview\markdown_menu_Upper.json',
     'Templates/Overview\markdown_menu-v1.json',
     'Templates/Overview\markdown_menu.json',
 ]

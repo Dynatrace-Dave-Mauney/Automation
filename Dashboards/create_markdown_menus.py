@@ -178,6 +178,7 @@ def write_markdown_menus(dashboard_lookup):
         'Application Overview - Home',
         'Azure - Home',
         'Backend Overview',
+        'Calls To Databases',
         'Containers',
         'Detailed Drilldowns Menu',
         'F5 - Home',
@@ -218,15 +219,16 @@ def write_markdown_menus(dashboard_lookup):
         markdown_item_id = dashboard_lookup.get(menu_item)
         if not markdown_item_id:
             print(f'Dashboard lookup dictionary missing menu item: {menu_item}')
+            exit(1)
         if not (env_name == 'Lower' and menu_item in lower_skips):
             markdown_menu += f'[{menu_item}](#dashboard;id={markdown_item_id})  \\n'
     markdown_menu += '"'
 
-    filename = 'Templates/Overview/markdown_menu.json'
+    filename = f'Templates/Overview/markdown_menu_{env_name}.json'
     with open(filename, 'w') as file:
         file.write(markdown_menu)
 
-    print(f'Output File: {filename}')
+    print(f'Output File: {filename} for environment {env_name}')
 
 
 def main():
