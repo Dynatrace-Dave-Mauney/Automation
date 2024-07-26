@@ -36,6 +36,9 @@ def verify_dashboard(filename):
     if not filename.endswith(".json"):
         return
 
+    if "markdown_" in filename:
+        return
+
     with open(filename, 'r', encoding='utf-8') as f:
         dashboard = f.read()
         try:

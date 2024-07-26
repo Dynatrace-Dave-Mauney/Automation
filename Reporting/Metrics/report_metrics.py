@@ -15,8 +15,7 @@ def process(env, token):
     for metrics_json in metrics_json_list:
         inner_metrics_json_list = metrics_json.get('metrics')
         for inner_metrics_json in inner_metrics_json_list:
-            print(inner_metrics_json)
-            exit(123)
+            # print(inner_metrics_json)
             metric_id = inner_metrics_json.get('metricId')
 
             # To report specific metric types
