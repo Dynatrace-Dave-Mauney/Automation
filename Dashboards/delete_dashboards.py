@@ -30,7 +30,8 @@ def process(env_name, env, token):
 			# if owner == 'dave.mauney@dynatrace.com':
 			# print(owner, dashboard_id)
 			# if 'mauney' in owner.lower() or 'capes' in owner.lower():
-			if 'mauney' in owner.lower():
+			# if 'mauney' in owner.lower() and not name.startswith('Upper'):
+			if False:
 				# print(name)
 				# if dashboard_id.startswith('aaaaaaaa'):
 				# if name.endswith('-PROD SLOs'):
@@ -102,10 +103,10 @@ def process(env_name, env, token):
 def run():
 	friendly_function_name = 'Dynatrace Automation'
 	env_name_supplied = environment.get_env_name(friendly_function_name)
-	# For easy control from IDE\
+	# For easy control from IDE
 	# env_name_supplied = 'Upper'
 	# env_name_supplied = 'Lower'
-	env_name_supplied = 'Sandbox'
+	# env_name_supplied = 'Sandbox'
 	#
 	# env_name_supplied = 'Prod'
 	# env_name_supplied = 'PreProd'
