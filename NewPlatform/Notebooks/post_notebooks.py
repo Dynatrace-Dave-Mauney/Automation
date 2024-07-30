@@ -40,6 +40,10 @@ def run():
     # post_notebooks('Lower', 'Assets/External/Playground/*.json')
     # post_notebooks('Lower', 'Assets/External/Reconnect2023/*.json')
 
+    # post_notebooks('Sandbox', 'Assets/*.json')
+    # post_notebooks('Lower', 'Assets/*.json')
+    # post_notebooks('Upper', 'Assets/*.json')
+
 
 def post_notebooks(env_name, path):
     friendly_function_name = 'Dynatrace Automation'
