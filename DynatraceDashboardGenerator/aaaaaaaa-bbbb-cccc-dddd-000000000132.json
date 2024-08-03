@@ -3,11 +3,11 @@
         "configurationVersions": [
             3
         ],
-        "clusterVersion": "1.289.99.20240419-025534"
+        "clusterVersion": "1.296.57.20240727-051437"
     },
-    "id": "aaaaaaaa-bbbb-cccc-dddd-000000000112",
+    "id": "aaaaaaaa-bbbb-cccc-dddd-000000000132",
     "dashboardMetadata": {
-        "name": "Synthetics 5",
+        "name": "SLO T",
         "shared": false,
         "owner": "nobody@example.com",
         "sharingDetails": {
@@ -27,7 +27,7 @@
     },
     "tiles": [
         {
-            "name": "Node health status count [synthetic]",
+            "name": "tyk Pod availability",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -37,16 +37,14 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Node health status count [synthetic]",
+            "customName": "tyk Pod availability",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:synthetic.location.node.component.healthStatus",
-                    "spaceAggregation": "AVG",
+                    "metric": "func:slo.tyk_pod_availability",
+                    "spaceAggregation": "AUTO",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.synthetic_location"
-                    ],
+                    "splitBy": [],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -98,7 +96,7 @@
             }
         },
         {
-            "name": "Private location health status count [synthetic]",
+            "name": "Tyk Process Availability",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -108,16 +106,83 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Private location health status count [synthetic]",
+            "customName": "Tyk Process Availability",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:synthetic.location.healthStatus",
-                    "spaceAggregation": "AVG",
+                    "metric": "func:slo.tyk_process_availability",
+                    "spaceAggregation": "AUTO",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.synthetic_location"
-                    ],
+                    "splitBy": [],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Tyk Synthetic Availability",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 608,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Tyk Synthetic Availability",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "func:slo.tyk_synthetic_availability",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],

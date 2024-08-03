@@ -7,8 +7,12 @@ friendly_function_name = 'Dynatrace Automation Token Management'
 env_name_supplied = environment.get_env_name(friendly_function_name)
 # For easy control from IDE
 # env_name_supplied = 'Prod'
-# env_name_supplied = 'PreProd'
+# env_name_supplied = 'NonProd'
 # env_name_supplied = 'Sandbox'
+#
+# env_name_supplied = 'Upper'
+# env_name_supplied = 'Lower'
+# env_name_supplied = 'PreProd'
 # env_name_supplied = 'Dev'
 # env_name_supplied = 'Personal'
 # env_name_supplied = 'Demo'
@@ -29,7 +33,8 @@ def process():
 
 	# Create some tokens!
 	# These are the most important ones for the "Automation" project...
-	post_dynatrace_automation_token()
+	post_reduced_power_dynatrace_automation_token()
+	# post_dynatrace_automation_token()
 	# post_reporting_token()
 	# post_tools_token()
 
@@ -51,6 +56,47 @@ def process():
 
 def post_api_token():
 	return post_token('API Tokens (Read/Write)', ["apiTokens.read", "apiTokens.write"])
+
+
+def post_reduced_power_dynatrace_automation_token():
+	# Supports Token Key: DYNATRACE_AUTOMATION_PERSONAL_TOKEN (where "PERSONAL" can be any environment name).
+	# Has every known permission needed by the automation project (and maybe some more!)
+	return post_token('Automation', [
+		"DTAQLAccess",
+		"DataExport",
+		"DssFileManagement",
+		"ReadConfig",
+		"ReadSyntheticData",
+		"RumJavaScriptTagManagement",
+		"WriteConfig",
+		"activeGateTokenManagement.read",
+		"activeGates.read",
+		"apiTokens.read",
+		"auditLogs.read",
+		"credentialVault.read",
+		"entities.read",
+		"entities.write",
+		"events.ingest",
+		"events.read",
+		"events.read",
+		"extensionConfigurations.read",
+		"extensionEnvironment.read",
+		"extensions.read",
+		"geographicRegions.read",
+		"hub.read",
+		"logs.ingest",
+		"metrics.ingest",
+		"metrics.read",
+		"networkZones.read",
+		"problems.read",
+		"releases.read",
+		"settings.read",
+		"settings.write",
+		"slo.read",
+		"slo.write",
+		"syntheticExecutions.read",
+		"syntheticLocations.read",
+		])
 
 
 def post_dynatrace_automation_token():

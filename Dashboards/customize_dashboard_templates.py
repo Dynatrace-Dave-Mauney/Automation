@@ -8,14 +8,17 @@ from inspect import currentframe
 
 from Reuse import dynatrace_api
 
-# env_name = 'Upper'
-# env_name = 'Lower'
+env_name = 'Prod'
+# env_name = 'NonProd'
 # env_name = 'Sandbox'
-# env_name = 'Prod'
-# env_name = 'PreProd'
-# env_name = 'Dev'
 # env_name = 'Personal'
 # env_name = 'Demo'
+
+# OLD:
+# env_name = 'Upper'
+# env_name = 'Lower'
+# env_name = 'PreProd'
+# env_name = 'Dev'
 
 tenant = os.getenv(f'DYNATRACE_{env_name.upper()}_TENANT')
 env = f'https://{tenant}.live.dynatrace.com'
@@ -290,6 +293,7 @@ def customize_dashboards():
 
 
 def customize_dashboard(dashboard):
+    # print(dashboard)
     dashboard_json = json.loads(dashboard)
     new_dashboard_json = copy.deepcopy(dashboard_json)
     dashboard_id = dashboard_json.get('id')

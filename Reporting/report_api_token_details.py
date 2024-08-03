@@ -57,7 +57,8 @@ def write_strings(string_list):
 
 
 def main():
-    friendly_function_name = 'Dynatrace Automation Reporting'
+    friendly_function_name = 'Dynatrace Automation Token Management'
+
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
     # env_name_supplied = 'Prod'

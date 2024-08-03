@@ -540,8 +540,7 @@ def main():
                 top = top + tile_height
                 left = 0
             if top > max_top:
-                print('too many tiles... ' + dashboard_id)
-                print('last metric was: ' + metric_id)
+                print(f'Too many tiles: {dashboard_name} ({dashboard_id}.  Last metric: {metric_id}')
                 break
 
             if metric_id:

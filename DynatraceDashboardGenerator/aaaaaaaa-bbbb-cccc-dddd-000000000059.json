@@ -3,11 +3,11 @@
         "configurationVersions": [
             3
         ],
-        "clusterVersion": "1.289.99.20240419-025534"
+        "clusterVersion": "1.296.57.20240727-051437"
     },
     "id": "aaaaaaaa-bbbb-cccc-dddd-000000000059",
     "dashboardMetadata": {
-        "name": "Kafka Connect",
+        "name": "F5 Metrics 1",
         "shared": false,
         "owner": "nobody@example.com",
         "sharingDetails": {
@@ -27,7 +27,7 @@
     },
     "tiles": [
         {
-            "name": "Kafka Connect - Incoming byte rate",
+            "name": "Free Disk",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -37,16 +37,14 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Kafka Connect - Incoming byte rate",
+            "customName": "Free Disk",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "kafka.connect.connect-metrics.incoming-byte-rate",
+                    "metric": "func:com.dynatrace.extension.f5.bigip.sys.host.disk.free.byte",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.process_group_instance"
-                    ],
+                    "splitBy": [],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -98,7 +96,7 @@
             }
         },
         {
-            "name": "Kafka Connect - Outgoing byte rate",
+            "name": "Free Disk (%)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -108,16 +106,14 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Kafka Connect - Outgoing byte rate",
+            "customName": "Free Disk (%)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "kafka.connect.connect-metrics.outgoing-byte-rate",
+                    "metric": "func:com.dynatrace.extension.f5.bigip.sys.host.disk.free.percent",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.process_group_instance"
-                    ],
+                    "splitBy": [],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -169,7 +165,7 @@
             }
         },
         {
-            "name": "Kafka Connect - Requests",
+            "name": "Used Disk",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -179,16 +175,14 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Kafka Connect - Requests",
+            "customName": "Used Disk",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "kafka.connect.connect-metrics.request-rate",
+                    "metric": "func:com.dynatrace.extension.f5.bigip.sys.host.disk.used.byte",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.process_group_instance"
-                    ],
+                    "splitBy": [],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -240,7 +234,7 @@
             }
         },
         {
-            "name": "Kafka Connect - Request size",
+            "name": "Used Disk (%)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -250,15 +244,84 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Kafka Connect - Request size",
+            "customName": "Used Disk (%)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "kafka.connect.connect-metrics.request-size-avg",
+                    "metric": "func:com.dynatrace.extension.f5.bigip.sys.host.disk.used.percent",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Memory used (%)",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Memory used (%)",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "func:com.dynatrace.extension.f5.bigip.sys.host.memory.used.percent",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.f5:instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -311,24 +374,26 @@
             }
         },
         {
-            "name": "Kafka Connector - Status",
+            "name": "System uptime (sec)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
                 "top": 0,
-                "left": 1216,
+                "left": 1520,
                 "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Kafka Connector - Status",
+            "customName": "System uptime (sec)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "kafka.connector.status",
+                    "metric": "func:com.dynatrace.extension.f5.bigip.sys.uptime.sec",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.f5:instance"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],

@@ -24,17 +24,27 @@ def run():
     # prefix = ''
 
     current_customer_skip_list = [
-        ': AWS',
-        ': DB2',
-        ': IBM',
-        ': Oracle',
+        ': Azure',
+        ': Microsoft SQL Server',
+        ': Palo Alto',
+        ': Redis',
         ': SAP',
         ': SOLR',
-        # ': VMware',
-        ': Weblogic',
-        ': WebSphere',
+        ': WebLogic',
     ]
 
+    # LAST-MONTH-JULY2024-current_customer_skip_list = [
+    #     ': AWS',
+    #     ': DB2',
+    #     ': IBM',
+    #     ': Oracle',
+    #     ': SAP',
+    #     ': SOLR',
+    #     # ': VMware',
+    #     ': Weblogic',
+    #     ': WebSphere',
+    # ]
+    #
     # Customer-1 skips
     # current_customer_skip_list = [
     #     ': AWS',
@@ -89,7 +99,7 @@ def run():
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000034.json', owner=owner, skip_list=current_customer_skip_list)
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000035.json', owner=owner, skip_list=current_customer_skip_list)
 
-    # CURRENT CUSTOMER!
+    # PRIOR CUSTOMER!
     # env_name = 'Upper'
     # env_name = 'Lower'
     # env_name = 'Sandbox'
@@ -150,6 +160,29 @@ def run():
     # Add "VMware"
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000001-v4_{env_name}.json', owner=owner, skip_list=current_customer_skip_list)
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000048.json', owner=owner, skip_list=current_customer_skip_list)
+
+    # PRIOR CUSTOMER!
+    env_name = 'Prod'
+    # env_name = 'NonProd'
+    # env_name = 'Sandbox'
+    # Overview and Children
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-*.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000001-v4_{env_name}.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000110-v1.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000800-v3.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000900-v2.json', owner=owner, skip_list=current_customer_skip_list)
+
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000001-v4_{env_name}.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000068.json', owner=owner, skip_list=current_customer_skip_list)
+
+    # Generated Dashboards
+    # put_dashboards(env_name, f'../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000000.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-*.json', owner=owner, skip_list=current_customer_skip_list)
+
+    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000001-v4_{env_name}.json', owner=owner, skip_list=current_customer_skip_list)
+    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-00000000013*.json', owner=owner, skip_list=current_customer_skip_list)
+    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-00000000014*.json', owner=owner, skip_list=current_customer_skip_list)
+
 
 def put_dashboards(env_name, path, **kwargs):
     prefix = kwargs.get('prefix')

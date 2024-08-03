@@ -11,14 +11,12 @@ GENERATED_NAME = 'Generated Dashboards Menu'
 # GENERATED_ID = 'aaaaaaaa-bbbb-cccc-eeee-f00000000000'
 # GENERATED_NAME = 'AWS Supporting Services (Improved)'
 
-
 # GENERATED_ID = 'aaaaaaaa-bbbb-cccc-eeee-000000000000'
 # GENERATED_NAME = 'Detailed Drilldowns Menu'
 # GENERATED_NAME = 'AWS Supporting Services'
 # GENERATED_ID = 'aaaaaaaa-bbbb-cccc-0000-000000000000'
 # GENERATED_NAME = 'AWS Metrics via CloudWatch Metric Stream'
 # GENERATED_ID = 'aaaaaaaa-bbbb-cccc-abcd-000000000000'
-
 
 # path='./????????-????-????-????-????????????.json'
 # path='./????????-????-????-????-????????????'
@@ -275,6 +273,9 @@ ignore_list.append(GENERATED_ID)
 
 top = dashboard_template_top.replace('$$GENERATED_ID$$', GENERATED_ID).replace('$$GENERATED_NAME$$', GENERATED_NAME)
 print(top)
+
+links_list = []
+
 for filename in glob.glob(path):
     with open(filename, 'r', encoding='utf-8') as f:
         dashboard = json.loads(f.read())
@@ -289,13 +290,16 @@ for filename in glob.glob(path):
                 dashboard_name = dashboard_name + warn_emoji
             if compare_name in x_list:
                 dashboard_name = dashboard_name + x_emoji
-            links = links + '[' + dashboard_name + '](#dashboard;id=' + dashboard_id + ')  \\n'
+            # links = links + '[' + dashboard_name + '](#dashboard;id=' + dashboard_id + ')  \\n'
+            links_list.append('[' + dashboard_name + '](#dashboard;id=' + dashboard_id + ')  \\n')
             # print(links)
             # print(dashboard["id"])
             # print(dashboard["dashboardMetadata"]["name"])
             # id = filename.replace(".\\" ,"").replace(".json", "")
             # print(id)
             # md = [link](https://dynatrace.com)
+for link in sorted(links_list):
+    links = links + link
 print('"markdown": "' + links + '"')
 print(dashboard_template_bottom)
 

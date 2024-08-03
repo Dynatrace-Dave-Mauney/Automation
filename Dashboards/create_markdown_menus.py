@@ -6,6 +6,9 @@ import glob
 import json
 # import pathlib
 
+env_name = 'Prod'
+# env_name = 'NonProd'
+# env_name = 'Sandbox'
 # env_name = 'Upper'
 # env_name = 'Lower'
 
@@ -34,6 +37,58 @@ def load_dashboard_lookup():
 
 
 def write_markdown_menus(dashboard_lookup):
+    # Current/Customer3-specific list
+    menu_item_list_v4 = [
+        '.NET',
+        'Administration',
+        'Application Overview - Home',
+        'AWS Home',
+        'Backend Overview',
+        'Calls To Databases',
+        'CICS',
+        'Cloud Foundry',
+        'Containers',
+        'ControlM',
+        'DB2 - Home',
+        'Detailed Drilldowns Menu',
+        'F5 - Home',
+        'Full Stack Overview',
+        'Go',
+        'HikariCP',
+        'Hosts (Detailed)',
+        'IBM MQ Metrics by Best Split',
+        'IBM MQ Metrics by Queue Manager and Best Split',
+        'IBM MQ Metrics by Queue Manager',
+        'Java',
+        'Java Memory',
+        'Kafka - Home',
+        'Key Requests',
+        'Key User Actions',
+        'Kubernetes - Home',
+        'Microsoft Exchange',
+        'Monitoring Overview',
+        'Network (Host-Level Details)',
+        'Network (Process-Level Details)',
+        'NGIS',
+        'Node.js',
+        'Processes',
+        'Queues',
+        'R2DBC',
+        'Resilience4j',
+        'Service Errors',
+        'Service HTTP Errors',
+        'Snowflake',
+        'Spark',
+        'Spring',
+        'Suspicious Activity Audit',
+        'Synthetics: Browser Monitor Events',
+        'Tomcat',
+        'VMware',
+        'Web Application Insights',
+        'Web Servers',
+        'WebSphere',
+    ]
+
     # Demo
     # menu_item_list = [
     #     '.NET',
@@ -172,43 +227,43 @@ def write_markdown_menus(dashboard_lookup):
     #     'WebLogic by Process',
     # ]
     # Customer3-specific list
-    menu_item_list_v4 = [
-        '.NET',
-        'Administration',
-        'Application Overview - Home',
-        'Azure - Home',
-        'Backend Overview',
-        'Calls To Databases',
-        'Containers',
-        'Detailed Drilldowns Menu',
-        'F5 - Home',
-        'Full Stack Overview',
-        'Go',
-        'Hosts (Detailed)',
-        'Java',
-        'Java Memory',
-        'Kafka - Home',
-        'Key Requests',
-        'Key User Actions',
-        'Kubernetes - Home',
-        'Microsoft SQL Server - Home',
-        'Monitoring Overview',
-        'Network (Host-Level Details)',
-        'Network (Process-Level Details)',
-        'Node.js',
-        'Palo Alto',
-        'Processes',
-        'Queues',
-        'Redis - Home',
-        'Service Errors',
-        'Service HTTP Errors',
-        'Suspicious Activity Audit',
-        'Synthetics: Browser Monitor Events',
-        'Tomcat',
-        'VMware',
-        'Web Application Insights',
-        'Web Servers',
-    ]
+    # menu_item_list_v4 = [
+    #     '.NET',
+    #     'Administration',
+    #     'Application Overview - Home',
+    #     'Azure - Home',
+    #     'Backend Overview',
+    #     'Calls To Databases',
+    #     'Containers',
+    #     'Detailed Drilldowns Menu',
+    #     'F5 - Home',
+    #     'Full Stack Overview',
+    #     'Go',
+    #     'Hosts (Detailed)',
+    #     'Java',
+    #     'Java Memory',
+    #     'Kafka - Home',
+    #     'Key Requests',
+    #     'Key User Actions',
+    #     'Kubernetes - Home',
+    #     'Microsoft SQL Server - Home',
+    #     'Monitoring Overview',
+    #     'Network (Host-Level Details)',
+    #     'Network (Process-Level Details)',
+    #     'Node.js',
+    #     'Palo Alto',
+    #     'Processes',
+    #     'Queues',
+    #     'Redis - Home',
+    #     'Service Errors',
+    #     'Service HTTP Errors',
+    #     'Suspicious Activity Audit',
+    #     'Synthetics: Browser Monitor Events',
+    #     'Tomcat',
+    #     'VMware',
+    #     'Web Application Insights',
+    #     'Web Servers',
+    # ]
 
     markdown_menu = '			"markdown": "More Details\\n\\n'
     # for menu_item in menu_item_list_v1:
