@@ -310,6 +310,7 @@ def generate_metric_tile(top, left, metric_id, tile_dictionary):
     tile['bounds']['height'] = 304
 
     name = tile_dictionary['name']
+
     tile['name'] = name
     tile['tileType'] = 'CUSTOM_CHARTING'
     tile['configured'] = True
@@ -376,6 +377,10 @@ def generate_new_metric_tile(top, left, metric_id, tile_dictionary, mode):
     tile['bounds']['height'] = 304
 
     name = tile_dictionary['name']
+
+    if not name:
+        name = tile_dictionary['metric']
+
     tile['name'] = name
     tile['tileType'] = 'DATA_EXPLORER'
     tile['configured'] = True

@@ -161,27 +161,20 @@ def run():
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000001-v4_{env_name}.json', owner=owner, skip_list=current_customer_skip_list)
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000048.json', owner=owner, skip_list=current_customer_skip_list)
 
-    # PRIOR CUSTOMER!
-    env_name = 'Prod'
+    # CURRENT CUSTOMER!
+    # env_name = 'Prod'
     # env_name = 'NonProd'
     # env_name = 'Sandbox'
     # Overview and Children
-    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-*.json', owner=owner, skip_list=current_customer_skip_list)
-    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000001-v4_{env_name}.json', owner=owner, skip_list=current_customer_skip_list)
-    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000110-v1.json', owner=owner, skip_list=current_customer_skip_list)
-    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000800-v3.json', owner=owner, skip_list=current_customer_skip_list)
-    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000900-v2.json', owner=owner, skip_list=current_customer_skip_list)
-
-    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000001-v4_{env_name}.json', owner=owner, skip_list=current_customer_skip_list)
-    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000068.json', owner=owner, skip_list=current_customer_skip_list)
+    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-*.json', owner=owner, skip_list=current_customer_skip_list)
+    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000001-v4_{env_name}.json', owner=owner, skip_list=current_customer_skip_list)
+    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000110-v1.json', owner=owner, skip_list=current_customer_skip_list)
+    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000800-v3.json', owner=owner, skip_list=current_customer_skip_list)
+    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000900-v2.json', owner=owner, skip_list=current_customer_skip_list)
 
     # Generated Dashboards
     # put_dashboards(env_name, f'../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000000.json', owner=owner, skip_list=current_customer_skip_list)
     # put_dashboards(env_name, f'../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-*.json', owner=owner, skip_list=current_customer_skip_list)
-
-    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000001-v4_{env_name}.json', owner=owner, skip_list=current_customer_skip_list)
-    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-00000000013*.json', owner=owner, skip_list=current_customer_skip_list)
-    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-00000000014*.json', owner=owner, skip_list=current_customer_skip_list)
 
 
 def put_dashboards(env_name, path, **kwargs):

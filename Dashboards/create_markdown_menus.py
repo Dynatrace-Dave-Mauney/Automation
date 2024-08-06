@@ -6,7 +6,7 @@ import glob
 import json
 # import pathlib
 
-env_name = 'Prod'
+# env_name = 'Prod'
 # env_name = 'NonProd'
 # env_name = 'Sandbox'
 # env_name = 'Upper'
@@ -56,12 +56,14 @@ def write_markdown_menus(dashboard_lookup):
         'Go',
         'HikariCP',
         'Hosts (Detailed)',
-        'IBM MQ Metrics by Best Split',
-        'IBM MQ Metrics by Queue Manager and Best Split',
-        'IBM MQ Metrics by Queue Manager',
+        'IBM MQ Home',
+        # 'IBM MQ Metrics by Best Split',
+        # 'IBM MQ Metrics by Queue Manager and Best Split',
+        # 'IBM MQ Metrics by Queue Manager',
         'Java',
         'Java Memory',
-        'Kafka - Home',
+        'Kafka Home',
+        # 'Kafka - Home',
         'Key Requests',
         'Key User Actions',
         'Kubernetes - Home',

@@ -86,8 +86,15 @@ def verify_dashboard(filename):
             if not dashboard_has_consistent_colors:
                 violations.append('ConsistentColors')
 
+            no_back_to_overview_expected_list = [
+                '00000000-dddd-bbbb-ffff-000000000001',
+            ]
+            if not "Overview](#dashboard;id=00000000-dddd-bbbb-ffff-000000000001" in dashboard:
+                if dashboard_id not in no_back_to_overview_expected_list:
+                    violations.append('No "Back to Overview" markdown tile')
+
             if violations:
-                print(f'{dashboard_name}|{dashboard_id}|{dashboard_owner}| has bad {violations}')
+                print(f'{dashboard_name}|{dashboard_id}|{dashboard_owner}| has violations: {violations}')
 
         except JSONDecodeError:
             print(f'Skipping file because the contents are not parseable JSON: {filename}')
