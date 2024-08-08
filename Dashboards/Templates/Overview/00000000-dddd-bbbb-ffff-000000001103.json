@@ -5,18 +5,19 @@
         ],
         "clusterVersion": "1.261.134.20230302-084304"
     },
-    "id": "00000000-dddd-bbbb-ffff-000000000147",
+    "id": "00000000-dddd-bbbb-ffff-000000001103",
     "dashboardMetadata": {
-        "name": "TEMPLATE: IBM MQ Topic",
+        "name": "TEMPLATE: AWS AZ",
         "shared": true,
         "owner": "nobody@example.com",
+        "dashboardFilter": null,
         "preset": false,
         "tilesNameSize": "small",
         "hasConsistentColors": true
     },
     "tiles": [
         {
-            "name": "Inhibit publish",
+            "name": "Number of running EC2 instances (AZ)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -26,15 +27,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Inhibit publish",
+            "customName": "Number of running EC2 instances (AZ)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ibmmq.topic.inhibit_pub",
+                    "metric": "builtin:cloud.aws.az.running",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.ibmmq:topic"
+                        "dt.entity.aws_credentials"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -87,7 +88,7 @@
             }
         },
         {
-            "name": "Inhibit subscription",
+            "name": "Number of stopped EC2 instances (AZ)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -97,15 +98,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Inhibit subscription",
+            "customName": "Number of stopped EC2 instances (AZ)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ibmmq.topic.inhibit_sub",
+                    "metric": "builtin:cloud.aws.az.stopped",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.ibmmq:topic"
+                        "dt.entity.aws_credentials"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -158,7 +159,7 @@
             }
         },
         {
-            "name": "Publish count",
+            "name": "Number of terminated EC2 instances (AZ)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -168,86 +169,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Publish count",
+            "customName": "Number of terminated EC2 instances (AZ)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ibmmq.topic.pub_cnt",
+                    "metric": "builtin:cloud.aws.az.terminated",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.ibmmq:topic"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Subcription count",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 0,
-                "left": 912,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Subcription count",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "ibmmq.topic.sub_cnt",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.ibmmq:topic"
+                        "dt.entity.aws_credentials"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -304,7 +234,7 @@
             "tileType": "MARKDOWN",
             "configured": true,
             "bounds": {
-                "top": 38,
+                "top": 0,
                 "left": 1368,
                 "width": 152,
                 "height": 38

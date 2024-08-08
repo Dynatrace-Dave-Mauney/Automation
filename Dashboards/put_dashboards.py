@@ -25,7 +25,7 @@ def run():
 
     current_customer_skip_list = [
         ': Azure',
-        ': Microsoft SQL Server',
+        # ': Microsoft SQL Server',
         ': Palo Alto',
         ': Redis',
         ': SAP',
@@ -166,11 +166,27 @@ def run():
     # env_name = 'NonProd'
     # env_name = 'Sandbox'
     # Overview and Children
-    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-*.json', owner=owner, skip_list=current_customer_skip_list)
-    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000001-v4_{env_name}.json', owner=owner, skip_list=current_customer_skip_list)
-    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000110-v1.json', owner=owner, skip_list=current_customer_skip_list)
-    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000800-v3.json', owner=owner, skip_list=current_customer_skip_list)
-    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000900-v2.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-*.json', owner=owner, skip_list=current_customer_skip_list)
+
+    # Overrides are no longer needed as the customization step should take care of it now...
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000001-v4_Prod.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000800-v3.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000900-v2.json', owner=owner, skip_list=current_customer_skip_list)
+
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000001-v4_Prod.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000038.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000058.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000068.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000098.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000100.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000147.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000148.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000802.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000803.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000001000.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000001024.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000001025.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-0000000011??.json', owner=owner, skip_list=current_customer_skip_list)
 
     # Generated Dashboards
     # put_dashboards(env_name, f'../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000000.json', owner=owner, skip_list=current_customer_skip_list)

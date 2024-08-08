@@ -5,18 +5,19 @@
         ],
         "clusterVersion": "1.261.134.20230302-084304"
     },
-    "id": "00000000-dddd-bbbb-ffff-000000000147",
+    "id": "00000000-dddd-bbbb-ffff-000000001120",
     "dashboardMetadata": {
-        "name": "TEMPLATE: IBM MQ Topic",
+        "name": "TEMPLATE: AWS SES",
         "shared": true,
         "owner": "nobody@example.com",
+        "dashboardFilter": null,
         "preset": false,
         "tilesNameSize": "small",
         "hasConsistentColors": true
     },
     "tiles": [
         {
-            "name": "Inhibit publish",
+            "name": "Delivery Sum (by Region)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -26,15 +27,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Inhibit publish",
+            "customName": "Delivery Sum (by Region)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ibmmq.topic.inhibit_pub",
+                    "metric": "ext:cloud.aws.ses.deliverySumByRegion",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.ibmmq:topic"
+                        "dt.entity.custom_device_group"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -87,7 +88,7 @@
             }
         },
         {
-            "name": "Inhibit subscription",
+            "name": "Reject Sum (by Region)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -97,15 +98,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Inhibit subscription",
+            "customName": "Reject Sum (by Region)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ibmmq.topic.inhibit_sub",
+                    "metric": "ext:cloud.aws.ses.rejectSumByRegion",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.ibmmq:topic"
+                        "dt.entity.custom_device_group"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -158,7 +159,7 @@
             }
         },
         {
-            "name": "Publish count",
+            "name": "Reputation.BounceRate Average (by Region)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -168,15 +169,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Publish count",
+            "customName": "Reputation.BounceRate Average (by Region)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ibmmq.topic.pub_cnt",
+                    "metric": "ext:cloud.aws.ses.reputationBounceRateAverageByRegion",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.ibmmq:topic"
+                        "dt.entity.custom_device_group"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -229,7 +230,7 @@
             }
         },
         {
-            "name": "Subcription count",
+            "name": "Reputation.ComplaintRate Average (by Region)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -239,15 +240,86 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Subcription count",
+            "customName": "Reputation.ComplaintRate Average (by Region)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ibmmq.topic.sub_cnt",
+                    "metric": "ext:cloud.aws.ses.reputationComplaintRateAverageByRegion",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.ibmmq:topic"
+                        "dt.entity.custom_device_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Send Sum (by Region)",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Send Sum (by Region)",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.aws.ses.sendSumByRegion",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device_group"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -304,8 +376,8 @@
             "tileType": "MARKDOWN",
             "configured": true,
             "bounds": {
-                "top": 38,
-                "left": 1368,
+                "top": 0,
+                "left": 1520,
                 "width": 152,
                 "height": 38
             },

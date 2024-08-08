@@ -5,18 +5,19 @@
         ],
         "clusterVersion": "1.261.134.20230302-084304"
     },
-    "id": "00000000-dddd-bbbb-ffff-000000000147",
+    "id": "00000000-dddd-bbbb-ffff-000000001118",
     "dashboardMetadata": {
-        "name": "TEMPLATE: IBM MQ Topic",
+        "name": "TEMPLATE: AWS Route 53",
         "shared": true,
         "owner": "nobody@example.com",
+        "dashboardFilter": null,
         "preset": false,
         "tilesNameSize": "small",
         "hasConsistentColors": true
     },
     "tiles": [
         {
-            "name": "Inhibit publish",
+            "name": "DNSQueries",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -26,15 +27,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Inhibit publish",
+            "customName": "DNSQueries",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ibmmq.topic.inhibit_pub",
+                    "metric": "ext:cloud.aws.route53.dnsQueries",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.ibmmq:topic"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -87,7 +88,7 @@
             }
         },
         {
-            "name": "Inhibit subscription",
+            "name": "DNSQueries Sum",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -97,15 +98,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Inhibit subscription",
+            "customName": "DNSQueries Sum",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ibmmq.topic.inhibit_sub",
+                    "metric": "ext:cloud.aws.route53.dnsQueriesSum",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.ibmmq:topic"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -158,7 +159,7 @@
             }
         },
         {
-            "name": "Publish count",
+            "name": "InboundQueryVolume Sum",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -168,15 +169,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Publish count",
+            "customName": "InboundQueryVolume Sum",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ibmmq.topic.pub_cnt",
+                    "metric": "ext:cloud.aws.route53resolver.inboundQueryVolumeSum",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.ibmmq:topic"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -229,7 +230,7 @@
             }
         },
         {
-            "name": "Subcription count",
+            "name": "InboundQueryVolume Sum (by Region)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -239,15 +240,157 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Subcription count",
+            "customName": "InboundQueryVolume Sum (by Region)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ibmmq.topic.sub_cnt",
+                    "metric": "ext:cloud.aws.route53resolver.inboundQueryVolumeSumByRegion",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.ibmmq:topic"
+                        "dt.entity.custom_device_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "OutboundQueryAggregateVolume Sum",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "OutboundQueryAggregateVolume Sum",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.aws.route53resolver.outboundQueryAggregateVolumeSum",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "OutboundQueryVolume Sum",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "OutboundQueryVolume Sum",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.aws.route53resolver.outboundQueryVolumeSum",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -304,13 +447,84 @@
             "tileType": "MARKDOWN",
             "configured": true,
             "bounds": {
-                "top": 38,
-                "left": 1368,
+                "top": 0,
+                "left": 1824,
                 "width": 152,
                 "height": 38
             },
             "tileFilter": {},
             "markdown": "#### [\u21e6 Overview](#dashboard;id=00000000-dddd-bbbb-ffff-000000000001)\n![BackButton]()"
+        },
+        {
+            "name": "OutboundQueryVolume Sum (by Region)",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "OutboundQueryVolume Sum (by Region)",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.aws.route53resolver.outboundQueryVolumeSumByRegion",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
         }
     ]
 }

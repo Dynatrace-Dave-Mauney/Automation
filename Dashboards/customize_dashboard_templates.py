@@ -8,7 +8,7 @@ from inspect import currentframe
 
 from Reuse import dynatrace_api
 
-# env_name = 'Prod'
+env_name = 'Prod'
 # env_name = 'NonProd'
 # env_name = 'Sandbyox'
 # env_name = 'Personal'
@@ -45,6 +45,88 @@ skip_file_name_list = [
     '00000000-dddd-bbbb-ffff-000000000001-v3a.json',
     '00000000-dddd-bbbb-ffff-000000000001-v3b.json',
     '00000000-dddd-bbbb-ffff-000000000001-v3c.json',
+    '00000000-dddd-bbbb-ffff-000000000001-v4_Lower.json',
+    '00000000-dddd-bbbb-ffff-000000000001-v4_Upper.json',
+    '00000000-dddd-bbbb-ffff-000000000014-v1.json',
+    '00000000-dddd-bbbb-ffff-000000000015.json',
+    '00000000-dddd-bbbb-ffff-000000000016.json',
+    '00000000-dddd-bbbb-ffff-000000000025.json',
+    '00000000-dddd-bbbb-ffff-000000000026.json',
+    '00000000-dddd-bbbb-ffff-000000000027.json',
+    '00000000-dddd-bbbb-ffff-000000000028.json',
+    '00000000-dddd-bbbb-ffff-000000000029.json',
+    '00000000-dddd-bbbb-ffff-000000000030.json',
+    '00000000-dddd-bbbb-ffff-000000000031.json',
+    '00000000-dddd-bbbb-ffff-000000000032.json',
+    '00000000-dddd-bbbb-ffff-000000000046.json',
+    '00000000-dddd-bbbb-ffff-000000000060.json',
+    '00000000-dddd-bbbb-ffff-000000000061.json',
+    '00000000-dddd-bbbb-ffff-000000000062.json',
+    '00000000-dddd-bbbb-ffff-000000000063.json',
+    '00000000-dddd-bbbb-ffff-000000000064.json',
+    '00000000-dddd-bbbb-ffff-000000000065.json',
+    '00000000-dddd-bbbb-ffff-000000000066.json',
+    '00000000-dddd-bbbb-ffff-000000000071.json',
+    '00000000-dddd-bbbb-ffff-000000000072.json',
+    '00000000-dddd-bbbb-ffff-000000000077.json',
+    '00000000-dddd-bbbb-ffff-000000000078.json',
+    '00000000-dddd-bbbb-ffff-000000000079.json',
+    '00000000-dddd-bbbb-ffff-000000000080.json',
+    '00000000-dddd-bbbb-ffff-000000000081.json',
+    '00000000-dddd-bbbb-ffff-000000000082.json',
+    '00000000-dddd-bbbb-ffff-000000000083.json',
+    '00000000-dddd-bbbb-ffff-000000000084.json',
+    '00000000-dddd-bbbb-ffff-000000000085.json',
+    '00000000-dddd-bbbb-ffff-000000000086.json',
+    '00000000-dddd-bbbb-ffff-000000000087.json',
+    '00000000-dddd-bbbb-ffff-000000000088.json',
+    '00000000-dddd-bbbb-ffff-000000000089.json',
+    '00000000-dddd-bbbb-ffff-000000000090.json',
+    '00000000-dddd-bbbb-ffff-000000000091.json',
+    '00000000-dddd-bbbb-ffff-000000000092.json',
+    '00000000-dddd-bbbb-ffff-000000000093.json',
+    '00000000-dddd-bbbb-ffff-000000000094.json',
+    '00000000-dddd-bbbb-ffff-000000000095.json',
+    '00000000-dddd-bbbb-ffff-000000000096.json',
+    '00000000-dddd-bbbb-ffff-000000000097.json',
+    '00000000-dddd-bbbb-ffff-000000000110.json',
+    '00000000-dddd-bbbb-ffff-000000000110-v1.json',
+    '00000000-dddd-bbbb-ffff-000000000111.json',
+    '00000000-dddd-bbbb-ffff-000000000130.json',
+    '00000000-dddd-bbbb-ffff-000000000800.json',
+    '00000000-dddd-bbbb-ffff-000000000800-v1.json',
+    '00000000-dddd-bbbb-ffff-000000000800-v2.json',
+    '00000000-dddd-bbbb-ffff-000000000800-v3_BACKUP.json',
+    '00000000-dddd-bbbb-ffff-000000000800-v3_BACKUP2.json',
+    '00000000-dddd-bbbb-ffff-000000000806.json',
+    '00000000-dddd-bbbb-ffff-000000000807.json',
+    '00000000-dddd-bbbb-ffff-000000000900.json',
+    '00000000-dddd-bbbb-ffff-000000000900-v1.json',
+    '00000000-dddd-bbbb-ffff-000000001001.json',
+    '00000000-dddd-bbbb-ffff-000000001002.json',
+    '00000000-dddd-bbbb-ffff-000000001003.json',
+    '00000000-dddd-bbbb-ffff-000000001004.json',
+    '00000000-dddd-bbbb-ffff-000000001005.json',
+    '00000000-dddd-bbbb-ffff-000000001006.json',
+    '00000000-dddd-bbbb-ffff-000000001007.json',
+    '00000000-dddd-bbbb-ffff-000000001008.json',
+    '00000000-dddd-bbbb-ffff-000000001009.json',
+    '00000000-dddd-bbbb-ffff-000000001010.json',
+    '00000000-dddd-bbbb-ffff-000000001011.json',
+    '00000000-dddd-bbbb-ffff-000000001012.json',
+    '00000000-dddd-bbbb-ffff-000000001013.json',
+    '00000000-dddd-bbbb-ffff-000000001014.json',
+    '00000000-dddd-bbbb-ffff-000000001015.json',
+    '00000000-dddd-bbbb-ffff-000000001016.json',
+    '00000000-dddd-bbbb-ffff-000000001017.json',
+    '00000000-dddd-bbbb-ffff-000000001018.json',
+    '00000000-dddd-bbbb-ffff-000000001019.json',
+    '00000000-dddd-bbbb-ffff-000000001020.json',
+    '00000000-dddd-bbbb-ffff-000000001021.json',
+    '00000000-dddd-bbbb-ffff-000000001022.json',
+    '00000000-dddd-bbbb-ffff-000000001023.json',
+    '00000000-dddd-bbbb-ffff-000000001024.json',
+    '00000000-dddd-bbbb-ffff-000000001025.json',
 
 ]
 
@@ -321,7 +403,8 @@ def customize_dashboard(dashboard):
                 filters.append('HOST_TAG_KEY:' + value)
             filters.extend(HOST_FILTERS)
         else:
-            if ': Processes' in name or ': Java' in name or ': .NET' in name or ': Tomcat' in name or ': WebLogic' in name or ': WebSphere' in name:
+            # if ': Processes' in name or ': Java' in name or ': .NET' in name or ': Tomcat' in name or ': WebLogic' in name or ': WebSphere' in name:
+            if ': Processes' in name or ': Java' in name or ': .NET' in name or ': Tomcat' in name:
                 # print(f'Processes or Process Technology in {name}')
                 for value in PROCESS_GROUP_TAGS:
                     filters.append('PROCESS_GROUP_INSTANCE_TAG_KEY:' + value)
@@ -364,7 +447,8 @@ def customize_dashboard(dashboard):
                                             filters.append('PROCESS_GROUP_INSTANCE_TAG_KEY:' + value)
                                         filters.extend(PROCESS_GROUP_FILTERS)
                             else:
-                                if 'DataPower' in name or 'F5' in name or 'IBM MQ' in name or 'SAP Hana' in name:
+                                # if 'DataPower' in name or 'F5' in name or 'IBM MQ' in name or 'SAP Hana' in name:
+                                if 'DataPower' in name or 'F5' in name or 'SAP Hana' in name:
                                     # print(f'Extension in *{name}')
                                     # print('Adding custom device filter...')
                                     filters.extend(CUSTOM_DEVICE_FILTERS)

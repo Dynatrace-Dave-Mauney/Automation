@@ -5,18 +5,19 @@
         ],
         "clusterVersion": "1.261.134.20230302-084304"
     },
-    "id": "00000000-dddd-bbbb-ffff-000000000147",
+    "id": "00000000-dddd-bbbb-ffff-000000000038",
     "dashboardMetadata": {
-        "name": "TEMPLATE: IBM MQ Topic",
+        "name": "TEMPLATE: Executor",
         "shared": true,
         "owner": "nobody@example.com",
+        "dashboardFilter": null,
         "preset": false,
         "tilesNameSize": "small",
         "hasConsistentColors": true
     },
     "tiles": [
         {
-            "name": "Inhibit publish",
+            "name": "executor.completed.count",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -26,15 +27,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Inhibit publish",
+            "customName": "executor.completed.count",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ibmmq.topic.inhibit_pub",
+                    "metric": "executor.completed.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.ibmmq:topic"
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -87,7 +88,7 @@
             }
         },
         {
-            "name": "Inhibit subscription",
+            "name": "executor.pool.core",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -97,15 +98,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Inhibit subscription",
+            "customName": "executor.pool.core",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ibmmq.topic.inhibit_sub",
+                    "metric": "executor.pool.core",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.ibmmq:topic"
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -158,7 +159,7 @@
             }
         },
         {
-            "name": "Publish count",
+            "name": "executor.pool.max",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -168,15 +169,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Publish count",
+            "customName": "executor.pool.max",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ibmmq.topic.pub_cnt",
+                    "metric": "executor.pool.max",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.ibmmq:topic"
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -229,7 +230,7 @@
             }
         },
         {
-            "name": "Subcription count",
+            "name": "executor.pool.size",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -239,15 +240,157 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Subcription count",
+            "customName": "executor.pool.size",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ibmmq.topic.sub_cnt",
+                    "metric": "executor.pool.size",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.ibmmq:topic"
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "executor.queue.remaining",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "executor.queue.remaining",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "executor.queue.remaining",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "executor.active",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "executor.active",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "executor.active",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -304,13 +447,85 @@
             "tileType": "MARKDOWN",
             "configured": true,
             "bounds": {
-                "top": 38,
-                "left": 1368,
+                "top": 0,
+                "left": 1824,
                 "width": 152,
                 "height": 38
             },
             "tileFilter": {},
+            "isAutoRefreshDisabled": false,
             "markdown": "#### [\u21e6 Overview](#dashboard;id=00000000-dddd-bbbb-ffff-000000000001)\n![BackButton]()"
+        },
+        {
+            "name": "executor.queued",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "executor.queued",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "executor.queued",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
         }
     ]
 }

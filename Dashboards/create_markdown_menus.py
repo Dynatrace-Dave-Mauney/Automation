@@ -6,7 +6,7 @@ import glob
 import json
 # import pathlib
 
-# env_name = 'Prod'
+env_name = 'Prod'
 # env_name = 'NonProd'
 # env_name = 'Sandbox'
 # env_name = 'Upper'
@@ -49,14 +49,17 @@ def write_markdown_menus(dashboard_lookup):
         'Cloud Foundry',
         'Containers',
         'ControlM',
+        'Custom PMI Metrics',
         'DB2 - Home',
         'Detailed Drilldowns Menu',
+        'Executor',
         'F5 - Home',
         'Full Stack Overview',
         'Go',
         'HikariCP',
         'Hosts (Detailed)',
         'IBM MQ Home',
+        'IBM WebSphere Home',
         # 'IBM MQ Metrics by Best Split',
         # 'IBM MQ Metrics by Queue Manager and Best Split',
         # 'IBM MQ Metrics by Queue Manager',
@@ -68,6 +71,7 @@ def write_markdown_menus(dashboard_lookup):
         'Key User Actions',
         'Kubernetes - Home',
         'Microsoft Exchange',
+        'Microsoft SQL Server',
         'Monitoring Overview',
         'Network (Host-Level Details)',
         'Network (Process-Level Details)',
@@ -84,11 +88,11 @@ def write_markdown_menus(dashboard_lookup):
         'Spring',
         'Suspicious Activity Audit',
         'Synthetics: Browser Monitor Events',
+        'Third Party Services',
         'Tomcat',
         'VMware',
         'Web Application Insights',
         'Web Servers',
-        'WebSphere',
     ]
 
     # Demo

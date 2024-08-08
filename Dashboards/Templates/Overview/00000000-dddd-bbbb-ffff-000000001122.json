@@ -5,18 +5,19 @@
         ],
         "clusterVersion": "1.261.134.20230302-084304"
     },
-    "id": "00000000-dddd-bbbb-ffff-000000000147",
+    "id": "00000000-dddd-bbbb-ffff-000000001122",
     "dashboardMetadata": {
-        "name": "TEMPLATE: IBM MQ Topic",
+        "name": "TEMPLATE: AWS SQS",
         "shared": true,
         "owner": "nobody@example.com",
+        "dashboardFilter": null,
         "preset": false,
         "tilesNameSize": "small",
         "hasConsistentColors": true
     },
     "tiles": [
         {
-            "name": "Inhibit publish",
+            "name": "ApproximateAgeOfOldestMessage",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -26,15 +27,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Inhibit publish",
+            "customName": "ApproximateAgeOfOldestMessage",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ibmmq.topic.inhibit_pub",
+                    "metric": "ext:cloud.aws.sqs.approximateAgeOfOldestMessage",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.ibmmq:topic"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -87,7 +88,7 @@
             }
         },
         {
-            "name": "Inhibit subscription",
+            "name": "ApproximateNumberOfMessagesDelayed Sum",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -97,15 +98,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Inhibit subscription",
+            "customName": "ApproximateNumberOfMessagesDelayed Sum",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ibmmq.topic.inhibit_sub",
+                    "metric": "ext:cloud.aws.sqs.approximateNumberOfMessagesDelayedSum",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.ibmmq:topic"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -158,7 +159,7 @@
             }
         },
         {
-            "name": "Publish count",
+            "name": "ApproximateNumberOfMessagesNotVisible Sum",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -168,15 +169,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Publish count",
+            "customName": "ApproximateNumberOfMessagesNotVisible Sum",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ibmmq.topic.pub_cnt",
+                    "metric": "ext:cloud.aws.sqs.approximateNumberOfMessagesNotVisibleSum",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.ibmmq:topic"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -229,7 +230,7 @@
             }
         },
         {
-            "name": "Subcription count",
+            "name": "ApproximateNumberOfMessagesVisible",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -239,15 +240,157 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Subcription count",
+            "customName": "ApproximateNumberOfMessagesVisible",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ibmmq.topic.sub_cnt",
+                    "metric": "ext:cloud.aws.sqs.approximateNumberOfMessagesVisible",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.ibmmq:topic"
+                        "dt.entity.custom_device"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "ApproximateNumberOfMessagesVisible Sum",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "ApproximateNumberOfMessagesVisible Sum",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.aws.sqs.approximateNumberOfMessagesVisibleSum",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "NumberOfMessagesReceived Sum",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "NumberOfMessagesReceived Sum",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.aws.sqs.numberOfMessagesReceivedSum",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -304,13 +447,84 @@
             "tileType": "MARKDOWN",
             "configured": true,
             "bounds": {
-                "top": 38,
-                "left": 1368,
+                "top": 0,
+                "left": 1824,
                 "width": 152,
                 "height": 38
             },
             "tileFilter": {},
             "markdown": "#### [\u21e6 Overview](#dashboard;id=00000000-dddd-bbbb-ffff-000000000001)\n![BackButton]()"
+        },
+        {
+            "name": "NumberOfMessagesSent Sum",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "NumberOfMessagesSent Sum",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.aws.sqs.numberOfMessagesSentSum",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
         }
     ]
 }
