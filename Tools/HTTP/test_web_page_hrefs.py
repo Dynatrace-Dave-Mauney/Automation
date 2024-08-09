@@ -14,13 +14,21 @@ def process():
         print(f'A value for "root_page" must be provided in {configuration_file}')
         exit(1)
 
-    r = requests.get(root_page)
+    print('Root Page:', root_page)
+
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/119.0'}
+
+    r = requests.get(root_page, headers=headers)
+
+    # print(r.text)
+
     soup = BeautifulSoup(r.text, 'html.parser')
 
     href_list = []
     for link in soup.find_all('a'):
-        href = link.get('href')
-        href_list.append(href)
+        # print(link.text)
+        if link.has_attr('href'):
+            href_list.append(link['href'])
 
     unique_hrefs = remove_duplicates(sorted(href_list))
 
