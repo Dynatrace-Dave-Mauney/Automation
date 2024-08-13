@@ -53,6 +53,7 @@ def main():
         ('Problem Alerting Profiles', '/ui/settings/builtin:alerting.profile'),
         ('Problem Notifications', '/ui/settings/builtin:problem.notifications'),
         ('Request Attributes', '#settings/requestattributes'),
+        ('RUM JS API Documentation and Samples Download', '#settings/rum/advancedsetup'),
     ]
 
     drilldown_title = '## {{.title}}  \\n'
