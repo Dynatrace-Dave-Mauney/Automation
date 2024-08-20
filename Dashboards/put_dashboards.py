@@ -192,9 +192,11 @@ def run():
     # put_dashboards(env_name, f'../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000000.json', owner=owner, skip_list=current_customer_skip_list)
     # put_dashboards(env_name, f'../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-*.json', owner=owner, skip_list=current_customer_skip_list)
 
-    env_name = 'Prod'
-    # env_name = 'NonProd'
-    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000800-v3.json', owner=owner, skip_list=current_customer_skip_list)
+    # env_name = 'Prod'
+    env_name = 'NonProd'
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000800-v3.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-Prod/00000000-dddd-bbbb-ffff-000000000001-v4_Prod.json', owner=owner, skip_list=current_customer_skip_list)
+    put_dashboards(env_name, f'Custom/Overview-Prod/00000000-dddd-bbbb-ffff-000000000800-v3.json', owner=owner, skip_list=current_customer_skip_list)
 
 def put_dashboards(env_name, path, **kwargs):
     prefix = kwargs.get('prefix')
@@ -237,6 +239,12 @@ def put_dashboards(env_name, path, **kwargs):
 
                 dashboard_json['dashboardMetadata']['name'] = dashboard_name
 
+            # Currently, for current customer I am deploying from one custom directory (Prod) for
+            # Prod and NonProd, so this is just convenient...
+            if dashboard_name.startswith('Prod:') and env_name == 'NonProd':
+                dashboard_name = dashboard_name.replace('Prod: ', 'NonProd:')
+                dashboard_json['dashboardMetadata']['name'] = dashboard_name
+
             if owner:
                 dashboard_owner = dashboard_json.get('dashboardMetadata').get('owner')
                 dashboard_owner = dashboard_owner.replace('nobody@example.com', owner)
@@ -273,7 +281,22 @@ def put_dashboards(env_name, path, **kwargs):
                         tile_string = tile_string.replace('{{.tenant}}', tenant)
                         new_tiles.append(eval(tile_string))
                     else:
-                        new_tiles.append(tile)
+                        if '{{.new_ui_tenant}}' in tile_string:
+                            found = True
+                            tile_string = tile_string.replace('{{.new_ui_tenant}}', tenant.replace('live', 'apps'))
+                            configuration_file = 'configurations.yaml'
+                            new_ui_shared_notebooks_id = environment.get_configuration(f'new_ui_shared_notebooks_id_{tenant}', configuration_file=configuration_file)
+                            if not new_ui_shared_notebooks_id:
+                                print(f'A value for "new_ui_shared_notebooks_id_{tenant}" must be provided in {configuration_file}')
+                                exit(1)
+
+                            tile_string = tile_string.replace('{{.new_ui_shared_notebooks_id}}', new_ui_shared_notebooks_id)
+
+                            new_tiles.append(eval(tile_string))
+                        else:
+                            new_tiles.append(tile)
+                else:
+                    new_tiles.append(tile)
 
             if found:
                 dashboard_json['tiles'] = new_tiles

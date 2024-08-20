@@ -16,6 +16,10 @@ ootb_dashboards = [
     ('Palo Alto', 'ab163c60-07f5-7e82-40d5-35cd6a8be991')
 ]
 
+new_ui_links = [
+    ('New Platform: Shared Notebooks', 'https://{{.new_ui_tenant}}.apps.dynatrace.com/ui/document/v0/#share={{.new_ui_shared_notebooks_id}}')
+]
+
 def load_dashboard_lookup():
     dashboard_lookup = {}
 
@@ -32,6 +36,11 @@ def load_dashboard_lookup():
         dashboard_name = ootb_dashboard[0]
         dashboard_id = ootb_dashboard[1]
         dashboard_lookup[dashboard_name] = dashboard_id
+
+    for new_ui_link in new_ui_links:
+        link_name = new_ui_link[0]
+        link_url = new_ui_link[1]
+        dashboard_lookup[link_name] = link_url
 
     return dashboard_lookup
 
@@ -75,6 +84,7 @@ def write_markdown_menus(dashboard_lookup):
         'Monitoring Overview',
         'Network (Host-Level Details)',
         'Network (Process-Level Details)',
+        'New Platform: Shared Notebooks',
         'NGIS',
         'Node.js',
         'Processes',
@@ -283,7 +293,10 @@ def write_markdown_menus(dashboard_lookup):
             print(f'Dashboard lookup dictionary missing menu item: {menu_item}')
             exit(1)
         if not (env_name == 'Lower' and menu_item in lower_skips):
-            markdown_menu += f'[{menu_item}](#dashboard;id={markdown_item_id})  \\n'
+            if '{{.new_ui_tenant}}' in markdown_item_id:
+                markdown_menu += f'[{menu_item}]({markdown_item_id})  \\n'
+            else:
+                markdown_menu += f'[{menu_item}](#dashboard;id={markdown_item_id})  \\n'
     markdown_menu += '"'
 
     filename = f'Templates/Overview/markdown_menu_{env_name}.json'

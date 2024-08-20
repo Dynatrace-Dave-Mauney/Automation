@@ -1,7 +1,6 @@
 import copy
 import json
 import os
-import re
 import xlsxwriter
 
 all_query_tokens = []
@@ -29,8 +28,8 @@ def write_new_relic_dashboard_summary_xlsx():
 	worksheet.write('D1', 'Widget Title', bold)
 	worksheet.write('E1', 'Widget Visualization', bold)
 	worksheet.write('F1', 'Widget Query', bold)
-	worksheet.write('G1', 'Table', bold)
-	worksheet.write('H1', 'Application', bold)
+	worksheet.write('G1', 'Threshold Alert Severity', bold)
+	worksheet.write('H1', 'Threshold Value', bold)
 
 	row = 1
 
@@ -42,41 +41,11 @@ def write_new_relic_dashboard_summary_xlsx():
 			worksheet.write(row, 3, widget_title)
 			worksheet.write(row, 4, widget_visualization_id)
 			worksheet.write(row, 5, widget_query)
-			table = get_table_from_query(widget_query)
-			application = get_application_from_query(widget_query)
-			worksheet.write(row, 6, table)
-			worksheet.write(row, 7, application)
+			worksheet.write(row, 6, threshold_alert_severity)
+			worksheet.write(row, 7, threshold_value)
 		row += 1
 
 	workbook.close()
-
-
-"""
-			table = get_table_from_query(widget_query)
-			application = get_application_from_query(widget_query)
-
-"""
-def get_table_from_query(widget_query):
-	table = re.sub('.* from ', '', widget_query.lower())
-	table = re.sub('where .*', '', table)
-	return table
-
-
-def get_application_from_query(widget_query):
-	widget_query = widget_query.lower()
-	if 'appname' not in widget_query:
-		return ''
-
-	application = re.sub(".* where appname = '", '', widget_query.lower())
-	application = re.sub(".* where appname='", '', application)
-	print('1', application)
-	application = re.sub("'.*", '', application)
-	print('2', application)
-
-	if application.startswith('select '):
-		return ''
-
-	return application
 
 
 def process_new_relic_dashboard(filename):
