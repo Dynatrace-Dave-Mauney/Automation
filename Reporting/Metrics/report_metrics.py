@@ -1,4 +1,4 @@
-import datetime
+# import datetime
 import urllib
 
 from Reuse import dynatrace_api
@@ -27,7 +27,9 @@ def process(env, token):
             # https://www.epochconverter.com/
             # Use Epoch timestamp in milliseconds format
             # if created and created > 1668574800000:
-            rows.append((metric_id, display_name, report_writer.convert_epoch_in_milliseconds_to_local(created)))
+
+            if 'kafka' in display_name.lower() or 'kafka' in metric_id:
+                rows.append((metric_id, display_name, report_writer.convert_epoch_in_milliseconds_to_local(created)))
 
     rows = sorted(rows)
     report_name = 'Metrics'

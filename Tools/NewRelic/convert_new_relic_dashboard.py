@@ -4,16 +4,25 @@ import os
 import re
 import xlsxwriter
 
+from Reuse import environment
+
+# get from configurations.yaml
+keep_list = []
+keep_page = ''
+root_directory = 'NewRelicDashboards/customer_specific'
+
 all_query_tokens = []
 
 new_relic_data = []
 dynatrace_dashboard_template = ''
 id_prefix = 'faaaaaaa-faaa-faaa-fbbb-'
 
+
 def save_new_relic_dashboard_summary_data(filename, new_relic_dashboard_name, page_name, widget_title, widget_visualization_id, widget_query, threshold_alert_severity, threshold_value):
 	data = [filename, new_relic_dashboard_name, page_name, widget_title, widget_visualization_id, widget_query, threshold_alert_severity, threshold_value]
 	# print('data:' + str(data))
 	new_relic_data.append(data)
+
 
 def write_new_relic_dashboard_summary_xlsx():
 	workbook = xlsxwriter.Workbook('NewRelicDashboardSummary.xlsx')
@@ -56,6 +65,8 @@ def write_new_relic_dashboard_summary_xlsx():
 			application = get_application_from_query(widget_query)
 
 """
+
+
 def get_table_from_query(widget_query):
 	table = re.sub('.* from ', '', widget_query.lower())
 	table = re.sub('where .*', '', table)
@@ -94,6 +105,13 @@ def process_new_relic_dashboard(filename):
 		for widget in widgets:
 			# print(str(widget))
 			widget_title = widget.get('title')
+
+			if keep_page and keep_list:
+				if page_name == keep_page and widget_title in keep_list:
+					pass
+				else:
+					continue
+
 			# print(widget_title)
 			widget_visualization = widget.get('visualization')
 			widget_visualization_id = widget_visualization.get('id')
@@ -109,31 +127,42 @@ def process_new_relic_dashboard(filename):
 					# Workaround for carriage returns in string causing problems
 					widget_query = widget_query.replace('\r ', '')
 					analyze_query(widget_query)
-			widget_thresholds = widget_raw_configuration.get('thresholds')
-			# print(widget_thresholds)
-			if widget_thresholds:
-				# print(widget_thresholds)
-				for widget_threshold in widget_thresholds:
-					continue
-					# print(widget_threshold)
-					# threshold_alert_severity = widget_threshold.get('alertSeverity')
-					# threshold_value = widget_threshold.get('value')
-					# print(threshold_alert_severity + ':' + str(threshold_value))
-			threshold_alert_severity = None
-			threshold_value = None
-			save_new_relic_dashboard_summary_data(filename, new_relic_dashboard_name, page_name, widget_title, widget_visualization_id, widget_query, threshold_alert_severity, threshold_value)
+					# widget_thresholds = widget_raw_configuration.get('thresholds')
+					# print(widget_thresholds)
+					# if widget_thresholds:
+					# 	print(widget_thresholds)
+					# 	for widget_threshold in widget_thresholds:
+					# 		continue
+					# 		print(widget_threshold)
+					# 		threshold_alert_severity = widget_threshold.get('alertSeverity')
+					# 		threshold_value = widget_threshold.get('value')
+					# 		print(threshold_alert_severity + ':' + str(threshold_value))
+					threshold_alert_severity = None
+					threshold_value = None
+					save_new_relic_dashboard_summary_data(filename, new_relic_dashboard_name, page_name, widget_title, widget_visualization_id, widget_query, threshold_alert_severity, threshold_value)
+
 
 def read_json(filename):
 	with open(filename, 'r', encoding='utf-8') as file:
 		json_data = json.loads(file.read())
 		return json_data
 
+
 def process_new_relic_dashboards():
+	configuration_file = 'configurations.yaml'
+	global keep_list
+	global keep_page
+	global root_directory
+	keep_list = environment.get_configuration('keep_list', configuration_file=configuration_file)
+	keep_page = environment.get_configuration('keep_page', configuration_file=configuration_file)
+	root_directory = environment.get_configuration('root_directory', configuration_file=configuration_file)
+
+	print(root_directory, keep_page, keep_list)
+
 	global dynatrace_dashboard_template
 	dynatrace_dashboard_template = get_dashboard_template()
 	# print(dynatrace_dashboard_template)
-	root = 'NewRelicDashboards/customer_specific/NWM'
-	filenames = [os.path.join(path, name) for path, subdirs, files in os.walk(root) for name in files]
+	filenames = [os.path.join(path, name) for path, subdirs, files in os.walk(root_directory) for name in files]
 	for filename in filenames:
 		if filename.endswith('.json'):
 			process_new_relic_dashboard(filename)
@@ -154,7 +183,7 @@ def generate_dynatrace_dashboard():
 	# print('generate_dynatrace_dashboard()')
 	dashboard = copy.deepcopy(dynatrace_dashboard_template)
 	tiles = dashboard.get('tiles')
-	template_header = tiles[0]
+	# template_header = tiles[0]
 	template_data_explorer = tiles[1]
 	# print(template_header)
 	# print(template_data_explorer)
@@ -169,13 +198,13 @@ def generate_dynatrace_dashboard():
 			if filename != last_filename:
 				top = 0
 				left = 0
-				if last_filename != None:
+				if last_filename is not None:
 					write_dashboard(last_filename, dashboard)
 					id_number += 1
 				id = id_prefix + format_id_number(id_number)
 				dashboard['id'] = id
-				dashboardMetadata = dashboard.get('dashboardMetadata')
-				dashboardMetadata['name'] = new_relic_dashboard_name
+				dashboard_metadata = dashboard.get('dashboardMetadata')
+				dashboard_metadata['name'] = new_relic_dashboard_name
 				dashboard['tiles'] = []
 				last_filename = filename
 			data_explorer_tile = copy.deepcopy(template_data_explorer)
@@ -184,7 +213,7 @@ def generate_dynatrace_dashboard():
 			name += ': ' + widget_query
 			data_explorer_tile['name'] = name
 			data_explorer_tile['customName'] = short_name
-			visualization_conversion = {'viz.pie': 'PIE_CHART', 'viz.bar': 'TOP_LIST', 'viz.table': 'TABLE', 'viz.billboard': 'SINGLE_VALUE', 'viz.line': 'GRAPH_CHART', 'viz.area': 'STACKED_AREA'}
+			# visualization_conversion = {'viz.pie': 'PIE_CHART', 'viz.bar': 'TOP_LIST', 'viz.table': 'TABLE', 'viz.billboard': 'SINGLE_VALUE', 'viz.line': 'GRAPH_CHART', 'viz.area': 'STACKED_AREA'}
 			# dynatrace_vizualization = visualization_conversion[widget_visualization_id]
 			# data_explorer_tile['visualConfig']['type'] = dynatrace_vizualization
 			data_explorer_tile['bounds']['top'] = top
@@ -193,12 +222,14 @@ def generate_dynatrace_dashboard():
 			if top >= 4712:
 				print('Too many tiles...skipping this tile')
 			else:
-				if left >= (5 * width): # Allow 6 Tiles per row
+				if left >= (5 * width):  # Allow 6 Tiles per row
 					top += height
 					left = 0
 				else:
 					left += width
-	write_dashboard(filename, dashboard)
+
+			write_dashboard(filename, dashboard)
+
 
 def write_dashboard(filename, dashboard):
 	# print('write_dashboard()')
@@ -207,6 +238,7 @@ def write_dashboard(filename, dashboard):
 	with open(dashboard_file_name, 'w') as file:
 		file.write(json.dumps(dashboard, indent=4, sort_keys=False))
 	print('wrote: ' + dashboard_file_name)
+
 
 def format_id_number(id_number):
 	len_zeros = 12 - len(str(id_number))
@@ -249,12 +281,14 @@ def add_relevant_token(token):
 						if token.upper() not in ['SELECT', 'FROM', 'WHERE', 'AND', 'OR', 'NOT', 'PLUS', 'UNTIL', 'AS', 'LIKE', 'LIMIT', 'FACET', 'TIMESERIES', 'AUTO', 'SINCE', 'MINUTE', 'MINUTES', 'AGO']:
 							all_query_tokens.append(token)
 
+
 def main():
 	process_new_relic_dashboards()
 	print('')
 	print('Query Tokens:')
 	for token in sorted(all_query_tokens):
 		print(token)
+
 
 if __name__ == '__main__':
 	main()

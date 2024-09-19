@@ -6,10 +6,11 @@ from Reuse import report_writer
 
 
 include_list = [
-    'builtin:anomaly-detection.metric-events',
-    'builtin:logmonitoring.schemaless-log-metric',
-    'builtin:logmonitoring.log-events',
-    'builtin:logmonitoring.log-storage-settings',
+    'builtin:rum.web.app-detection',
+    # 'builtin:anomaly-detection.metric-events',
+    # 'builtin:logmonitoring.schemaless-log-metric',
+    # 'builtin:logmonitoring.log-events',
+    # 'builtin:logmonitoring.log-storage-settings',
 ]
 
 
@@ -25,21 +26,30 @@ def process(env, token):
         items = settings_object.get('items')
         for item in items:
             schema_id = item.get('schemaId')
-            row = format_schema(schema_id, item)
-            if row:
-                rows.append(row)
+            if schema_id in include_list:
+                row = format_schema(schema_id, item)
+                if row:
+                    rows.append(row)
 
     rows = sorted(rows)
     report_name = 'Settings 2.0'
     report_writer.initialize_text_file(None)
-    report_headers = ('Setting', 'Values of Interest', 'Enabled')
-    report_writer.write_console(report_name, report_headers, rows, delimiter='|')
-    report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
+    # report_headers = ('Setting', 'Values of Interest', 'Enabled')
+    report_headers = ('Web Application Detection Pattern')
+    # report_writer.write_console(report_name, report_headers, rows, delimiter='|')
+    report_writer.write_console(report_name, report_headers, rows, delimiter='')
+    # report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
+    report_writer.write_text(None, report_name, report_headers, rows, delimiter='')
     report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
     report_writer.write_html(None, report_name, report_headers, rows)
 
 
 def format_schema(schema_id, json_data):
+    if schema_id == 'builtin:rum.web.app-detection':
+        value = json_data.get('value')
+        pattern = value.get('pattern')
+        return [pattern]
+
     if schema_id == 'builtin:anomaly-detection.metric-events':
         value = json_data.get('value')
         event_template = value.get('eventTemplate')
@@ -77,8 +87,12 @@ def main():
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
     # env_name_supplied = 'Prod'
-    # env_name_supplied = 'PreProd'
+    env_name_supplied = 'NonProd'
     # env_name_supplied = 'Sandbox'
+    #
+    # env_name_supplied = 'Upper'
+    # env_name_supplied = 'Lower'
+    # env_name_supplied = 'PreProd'
     # env_name_supplied = 'Dev'
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'Demo'

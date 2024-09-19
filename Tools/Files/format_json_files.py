@@ -9,15 +9,16 @@ import json
 
 def main():
     try:
+        input_glob_pattern = ""
         # input_glob_pattern = "../../NewPlatform/Dashboards/Assets/External/**"
         # input_glob_pattern = "../../NewPlatform/Dashboards/Assets/*.json"
-        input_glob_pattern = "../../NewPlatform/Dashboards/Assets/External/Playground/*.json"
-        input_glob_pattern = "../../NewPlatform/Dashboards/Assets/External/TM/*.json"
-        input_glob_pattern = "../../NewPlatform/Notebooks/Assets/External/AndiG/*.json"
-        input_glob_pattern = "../../NewPlatform/Notebooks/Assets/External/Demo/*.json"
-        input_glob_pattern = "../../NewPlatform/Dashboards/Assets/External/Demo/*.json"
-        input_glob_pattern = "../../NewPlatform/Dashboards/Assets/External/AndiG/*.json"
-        input_glob_pattern = "../../NewPlatform/Notebooks/Assets/External/Playground/*.json"
+        # input_glob_pattern = "../../NewPlatform/Dashboards/Assets/External/Playground/*.json"
+        # input_glob_pattern = "../../NewPlatform/Dashboards/Assets/External/TM/*.json"
+        # input_glob_pattern = "../../NewPlatform/Notebooks/Assets/External/AndiG/*.json"
+        # input_glob_pattern = "../../NewPlatform/Notebooks/Assets/External/Demo/*.json"
+        # input_glob_pattern = "../../NewPlatform/Dashboards/Assets/External/Demo/*.json"
+        # input_glob_pattern = "../../NewPlatform/Dashboards/Assets/External/AndiG/*.json"
+        # input_glob_pattern = "../../NewPlatform/Notebooks/Assets/External/Playground/*.json"
         # input_glob_pattern = "../../NewPlatform/Notebooks/Assets/*.json"
 
         output_directory_name = '/Temp/Formatted'
@@ -33,7 +34,7 @@ def main():
                     formatted_json = json.dumps(original_json, indent=4, sort_keys=False)
                     with open(dst, 'w', encoding='utf-8') as outfile:
                         outfile.writelines(formatted_json)
-                        print(f'Wrote {base_file_name}')
+                        print(f'Wrote {output_directory_name}/{base_file_name}')
     except FileNotFoundError:
         print('The directory name does not exist')
 

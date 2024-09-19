@@ -32,8 +32,25 @@ def process_report(env, token, summary_mode):
             request_attribute = r.json()
             # print(request_attribute)
 
+            data_source_details = []
+            enabled = request_attribute.get('enabled')
+            data_sources = request_attribute.get('dataSources')
+            for data_source in data_sources:
+                source = data_source.get('source')
+                source_enabled = data_source.get('enabled')
+                parameter_name = data_source.get('parameterName')
+                if parameter_name:
+                    source = source + ': ' + parameter_name
+                if source_enabled:
+                    data_source_details.append(source)
+
+            if len(data_source_details) == 1:
+                data_source_details = data_source_details[0]
+            # else:
+            #     print(request_attribute)
+
             if not summary_mode:
-                rows.append((name, entity_id))
+                rows.append((name, enabled, str(data_source_details)))
 
             count_total += 1
 
@@ -43,7 +60,7 @@ def process_report(env, token, summary_mode):
         rows = sorted(rows)
         report_name = 'Request Attributes'
         report_writer.initialize_text_file(None)
-        report_headers = ('name', 'id')
+        report_headers = ('Name', 'Enabled', 'Enabled Source(s)')
         report_writer.write_console(report_name, report_headers, rows, delimiter='|')
         report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
         write_strings(['Total request_attributes: ' + str(count_total)])
@@ -64,8 +81,12 @@ def main():
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
     # env_name_supplied = 'Prod'
-    # env_name_supplied = 'PreProd'
+    env_name_supplied = 'NonProd'
     # env_name_supplied = 'Sandbox'
+    #
+    # env_name_supplied = 'Upper'
+    # env_name_supplied = 'Lower'
+    # env_name_supplied = 'PreProd'
     # env_name_supplied = 'Dev'
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'Demo'
