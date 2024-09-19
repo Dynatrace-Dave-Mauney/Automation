@@ -1,0 +1,13 @@
+type(KUBERNETES_CLUSTER),entityName.in("<YOUR KUBERNETES CLUSTER NAME>")
+type(CLOUD_APPLICATION_NAMESPACE),toRelationships.isClusterOfNamespace(type(KUBERNETES_CLUSTER),entityName.in("<YOUR KUBERNETES CLUSTER NAME>"))
+type(CLOUD_APPLICATION),toRelationships.isClusterOfCa(type(KUBERNETES_CLUSTER),entityName.in("<YOUR KUBERNETES CLUSTER NAME>"))
+type(KUBERNETES_SERVICE),toRelationships.isClusterOfKubernetesSvc(type(KUBERNETES_CLUSTER),entityName.in("<YOUR KUBERNETES CLUSTER NAME>"))
+type(CONTAINER_GROUP),toRelationships.isInstanceOf(type(CONTAINER_GROUP_INSTANCE),fromRelationships.isCgiOfCluster(type(KUBERNETES_CLUSTER),entityName.in("<YOUR KUBERNETES CLUSTER NAME>")))
+type(CONTAINER_GROUP_INSTANCE),fromRelationships.isCgiOfCluster(type(KUBERNETES_CLUSTER),entityName.in("<YOUR KUBERNETES CLUSTER NAME>"))
+type(HOST),toRelationships.isClusterOfHost(type(KUBERNETES_CLUSTER),entityName.in("<YOUR KUBERNETES CLUSTER NAME>"))
+type(PROCESS_GROUP),fromRelationships.runsOn(type(HOST),toRelationships.isClusterOfHost(type(KUBERNETES_CLUSTER),entityName.in("<YOUR KUBERNETES CLUSTER NAME>")))
+type(PROCESS_GROUP_INSTANCE),fromRelationships.isProcessOf(type(HOST),toRelationships.isClusterOfHost(type(KUBERNETES_CLUSTER),entityName.in("<YOUR KUBERNETES CLUSTER NAME>")))
+type(SERVICE),fromRelationships.runsOnHost(type(HOST),toRelationships.isClusterOfHost(type(KUBERNETES_CLUSTER),entityName.in("<YOUR KUBERNETES CLUSTER NAME>")))
+
+From:
+https://dynatrace.slack.com/archives/C74NG8NUC/p1708543063278679
