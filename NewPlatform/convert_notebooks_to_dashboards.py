@@ -6,7 +6,7 @@ import json
 import os
 import codecs
 
-pie_to_donut_and_table = True
+add_table_for_donut_charts = True
 
 notebook_input_path = 'customer_specific/NWM/NotebookToDashboardInput/CONVERT_MIX.json'
 # notebook_input_path = 'customer_specific/NWM/NotebookToDashboardInput/CONVERT_PIE.json'
@@ -151,7 +151,7 @@ def convert_notebook(notebook_name, notebook_file_name, formatted_document, note
         tile = copy.deepcopy(tile_template)
         # print(section)
         notebook_section_type = section.get('type')
-        print(notebook_section_type)
+        # print(notebook_section_type)
 
         if notebook_section_type == 'markdown':
             tile = {'type': 'markdown', 'title': '', 'content': section.get('markdown')}
@@ -193,12 +193,20 @@ def convert_notebook(notebook_name, notebook_file_name, formatted_document, note
                             # print(tile.get('type'), tile.get('query'), tile.get('visualization'))
 
         new_tiles[str(index)] = copy.deepcopy(tile)
-        print(tile)
+        # print(tile)
         # print(index)
         # print(new_tiles)
 
         index += 1
         x += 7
+
+        # Optionally, add a table below each donut chart
+        if add_table_for_donut_charts:
+            if tile_state_visualization == 'donutChart':
+                tile['visualization'] = 'table'
+                new_tiles[str(index)] = copy.deepcopy(tile)
+                index += 1
+                x += 7
 
     if new_tiles:
         # print(new_tiles)
@@ -213,7 +221,9 @@ def convert_notebook(notebook_name, notebook_file_name, formatted_document, note
 
     # print(notebook_file_name)
 
-    with open(f'{dashboard_output_path}/CONVERTED-{notebook_file_name}', 'w', encoding='utf-8') as outfile:
+    output_file_name = f'{dashboard_output_path}/CONVERTED-{notebook_file_name}'
+    print(f'Writing to {output_file_name}')
+    with open(output_file_name, 'w', encoding='utf-8') as outfile:
         outfile.write(dashboard_json)
 
 
