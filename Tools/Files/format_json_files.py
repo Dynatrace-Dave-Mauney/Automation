@@ -20,8 +20,8 @@ def main():
         # input_glob_pattern = "../../NewPlatform/Dashboards/Assets/External/AndiG/*.json"
         # input_glob_pattern = "../../NewPlatform/Notebooks/Assets/External/Playground/*.json"
         # input_glob_pattern = "../../NewPlatform/Notebooks/Assets/*.json"
-        input_glob_pattern = "C:\\Users\\dave.mauney\\Downloads\\Sampler.json"
-
+        # input_glob_pattern = "C:\\Users\\dave.mauney\\Downloads\\Sampler.json"
+        input_glob_pattern = "C:\\Users\\dave.mauney\\PycharmProjects\\Automation\\Tools\\NewRelic\\dynatrace_notebook_template.json"
 
         output_directory_name = '/Temp/Formatted'
 
