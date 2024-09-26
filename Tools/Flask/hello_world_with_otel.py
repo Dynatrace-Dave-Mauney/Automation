@@ -6,6 +6,9 @@
 
 import json
 import logging
+
+import random
+
 from opentelemetry.sdk.resources import Resource
 
 # Import exporters
@@ -40,41 +43,47 @@ from flask import Flask
 app = Flask(__name__)
 tracer = get_tracer_provider().get_tracer("hello_world_tracer")
 
+
 @app.route('/')
 def hello():
-    return 'HELLO'
+    return 'Use one of these endpoints to exercise OTEL capabilities: "/spans", "/metrics" or "/logs"'
 
 
-@app.route('/1')
+@app.route('/spans')
 def route1():
     with tracer.start_as_current_span("Call to /1") as span:
         span.set_attribute("http.method", "GET")
         span.set_attribute("net.protocol.version", "1.1")
-    child1()
-    return 'Route 1'
+    return 'OTEL span created'
 
 
-@app.route('/2')
-def route2():
-    child2()
-    return 'Route 2'
+@app.route('/metrics')
+def metrics():
+    meter = get_meter_provider().get_meter("random_number_meter", "1.0")
+    random_number = meter.create_counter(
+        name="random_number",
+        description="A random number"
+    )
+    attributes = {"range": "0 to 100"}
+
+    for i in range(100):
+        random_integer = random.randint(0, 100)
+        print(f'Metric "random_number" added: {random_integer}')
+        random_number.add(random_integer, attributes)
+
+    return 'OTEL metrics created'
 
 
-@app.route('/3')
-def route3():
-    child3()
-    return 'Route 3'
+@app.route('/logs')
+def log():
 
-def child1():
-    pass
-
-
-def child2():
-    pass
-
-
-def child3():
-    pass
+    for i in range(100):
+        logging.critical(f"CRITICAL: OTEL Random Log {random.randint(0, 100)}")
+        logging.debug(f"DEBUG: OTEL Random Log {random.randint(0, 100)}")
+        logging.error(f"ERROR: OTEL Random Log {random.randint(0, 100)}")
+        logging.info(f"INFO: OTEL Random Log {random.randint(0, 100)}")
+        logging.fatal(f"FATAL: OTEL Random Log {random.randint(0, 100)}")
+    return('OTEL log lines written')
 
 
 def otel_setup():
@@ -159,4 +168,6 @@ if __name__ == '__main__':
     print('before otel_setup')
     otel_setup()
     print('after otel_setup')
+    print('http://127.0.0.1:5000/')
+    print('Endpoints: ', 'spans', 'metrics', 'logs')
     app.run()
