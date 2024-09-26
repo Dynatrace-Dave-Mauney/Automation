@@ -1,5 +1,3 @@
-# TODO: Pie to Donut + Table conversion
-
 import copy
 import glob
 import json
@@ -8,7 +6,8 @@ import codecs
 
 add_table_for_donut_charts = True
 
-notebook_input_path = 'customer_specific/NWM/NotebookToDashboardInput/CONVERT_MIX.json'
+notebook_input_path = 'customer_specific/NWM/NotebookToDashboardInput/Dashboard Conversion_ dMHQ.json'
+# notebook_input_path = 'customer_specific/NWM/NotebookToDashboardInput/CONVERT_MIX.json'
 # notebook_input_path = 'customer_specific/NWM/NotebookToDashboardInput/CONVERT_PIE.json'
 # notebook_input_path = 'customer_specific/NWM/NotebookToDashboardInput/*.json'
 # notebook_input_path = 'customer_specific/NWM/DashboardTemplates/TEMPLATE_DONUT.json'
@@ -115,27 +114,20 @@ dashboard_template = {
 def run():
     convert_notebooks(notebook_input_path)
 
-    # convert_notebooks('customer_specific/NWM/NotebookToDashboardInput/CONVERT*.json')
-    # convert_notebooks('customer_specific/NWM/DashboardTemplates/TEMPLATE_ DONUT.json')
-
 
 def convert_notebooks(path):
     for filename in glob.glob(path):
-        # print(filename)
         with codecs.open(filename, encoding='utf-8') as f:
             notebook = f.read()
             notebook_json = json.loads(notebook)
             notebook_file_name = os.path.basename(filename)
             notebook_name = os.path.splitext(notebook_file_name)[0]
-            formatted_document = json.dumps(notebook_json, indent=4, sort_keys=False)
-            # print(formatted_document)
-            # exit(1111)
-            convert_notebook(notebook_name, notebook_file_name, formatted_document, notebook_json)
+            # formatted_document = json.dumps(notebook_json, indent=4, sort_keys=False)
+            convert_notebook(notebook_name, notebook_file_name, notebook_json)
 
 
-def convert_notebook(notebook_name, notebook_file_name, formatted_document, notebook_json):
+def convert_notebook(notebook_name, notebook_file_name, notebook_json):
     print(f'Converting "{notebook_name}" ({notebook_file_name})')
-    # print(formatted_document)
 
     dashboard = copy.deepcopy(dashboard_template)
     tiles = copy.deepcopy(dashboard_template.get('tiles'))
@@ -149,15 +141,12 @@ def convert_notebook(notebook_name, notebook_file_name, formatted_document, note
 
     for section in sections:
         tile = copy.deepcopy(tile_template)
-        # print(section)
         notebook_section_type = section.get('type')
-        # print(notebook_section_type)
+
+        tile_state_visualization = None
 
         if notebook_section_type == 'markdown':
             tile = {'type': 'markdown', 'title': '', 'content': section.get('markdown')}
-            # tile['type'] = 'markdown'
-            # tile['title'] = ''
-            # tile['content'] = section.get('markdown')
         else:
             if notebook_section_type == 'dql':
                 tile['type'] = 'data'
@@ -168,7 +157,6 @@ def convert_notebook(notebook_name, notebook_file_name, formatted_document, note
                     tile['type'] = notebook_section_type
 
             section_title = section.get('title', "No Title")
-            # print('section_title:', section_title, 'section:', section)
             tile['title'] = section_title
             tile_state = section.get('state')
             if tile_state:
@@ -181,21 +169,19 @@ def convert_notebook(notebook_name, notebook_file_name, formatted_document, note
                         else:
                             if notebook_section_type == 'function':
                                 tile['input'] = tile_state_input_value
+
                         tile_state_visualization = section.get('state').get('visualization')
                         tile_state_visualization_settings = section.get('state').get('visualizationSettings')
-                        tile_state_query_settings = section.get('state').get('querySettings')
+                        # tile_state_query_settings = section.get('state').get('querySettings')
+
                         if tile_state_visualization:
                             tile['visualization'] = tile_state_visualization
                             if tile_state_visualization_settings:
                                 tile['visualizationSettings'] = tile_state_visualization_settings
                                 if tile_state_visualization_settings:
                                     tile['visualizationSettings'] = tile_state_visualization_settings
-                            # print(tile.get('type'), tile.get('query'), tile.get('visualization'))
 
         new_tiles[str(index)] = copy.deepcopy(tile)
-        # print(tile)
-        # print(index)
-        # print(new_tiles)
 
         index += 1
         x += 7
@@ -209,17 +195,12 @@ def convert_notebook(notebook_name, notebook_file_name, formatted_document, note
                 x += 7
 
     if new_tiles:
-        # print(new_tiles)
         dashboard['tiles'] = new_tiles
 
     layouts = generate_layouts(new_tiles)
     dashboard['layouts'] = layouts
 
     dashboard_json = json.dumps(dashboard, indent=4, sort_keys=False)
-
-    # print(dashboard_json)
-
-    # print(notebook_file_name)
 
     output_file_name = f'{dashboard_output_path}/CONVERTED-{notebook_file_name}'
     print(f'Writing to {output_file_name}')
@@ -228,7 +209,7 @@ def convert_notebook(notebook_name, notebook_file_name, formatted_document, note
 
 
 def generate_layouts(new_tiles):
-    standard_w = 10
+    standard_w = 30
     standard_h = 10
     layouts = {}
     x = 0
@@ -244,6 +225,7 @@ def generate_layouts(new_tiles):
         y += standard_h
 
     return layouts
+
 
 if __name__ == '__main__':
     run()
