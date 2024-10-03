@@ -165,9 +165,11 @@ def otel_setup():
 
 
 if __name__ == '__main__':
-    print('before otel_setup')
+    # print('before otel_setup')
     otel_setup()
-    print('after otel_setup')
-    print('http://127.0.0.1:5000/')
+    # print('after otel_setup')
+    print('OTEL Setup Seems to Disable Logging to Console so:')
+    print('Should be running on http://127.0.0.1:5000/')
+    print('Should be running on http://192.168.1.247:5000')
     print('Endpoints: ', 'spans', 'metrics', 'logs')
-    app.run()
+    app.run('0.0.0.0', '5000')

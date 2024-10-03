@@ -27,7 +27,7 @@ def process_new_relic_dashboard(filename):
         # Process pages based on include/exclude lists
         if (not include_page_list and not exclude_page_list) or \
                 (page_name in include_page_list and page_name not in exclude_page_list):
-            print(f'PAGE: {page_name} pass')
+            print(f'PAGE: {page_name} pass {include_page_list} {include_page_list}')
             pass
         else:
             print(f'PAGE: {page_name} continue')
@@ -79,6 +79,9 @@ def process_new_relic_dashboards():
     include_page_list = environment.get_configuration('include_page_list', configuration_file=configuration_file)
     include_tile_list = environment.get_configuration('include_tile_list', configuration_file=configuration_file)
     root_directory = environment.get_configuration('root_directory', configuration_file=configuration_file)
+
+    print(include_page_list, include_tile_list, root_directory)
+
     filenames = [os.path.join(path, name) for path, subdirs, files in os.walk(root_directory) for name in files]
     for filename in filenames:
         if filename.endswith('.json'):
