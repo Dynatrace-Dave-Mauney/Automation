@@ -120,8 +120,8 @@ def generate_dynatrace_notebook():
                     last_filename = filename
                     id_number += 1
 
-            comments = f'// Page: {page_name}\n// Title: {widget_title}\n// Visualization: {widget_visualization_id}\n'
-            dql_section['state']['input']['value'] = f'{comments}// Query: {widget_query}'
+            comments = f'// Title: {widget_title}\n// Visualization: {widget_visualization_id}\n'
+            dql_section['state']['input']['value'] = f'{comments}// NRQL: {widget_query}'
             notebook['sections'].append(dql_section)
             print(f'Appending {dql_section}')
 
