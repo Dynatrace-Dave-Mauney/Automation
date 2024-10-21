@@ -19,7 +19,8 @@ def run():
 
     # extract_dql_from_documents('Dashboards/Assets/*.json')
     # extract_dql_from_documents('Notebooks/Assets/*.json')
-    extract_dql_from_documents('customer_specific/*Tracker*.json')
+    # extract_dql_from_documents('customer_specific/*Tracker*.json')
+    extract_dql_from_documents('customer_specific/*.json')
 
     print('')
     print('Bizevents:')

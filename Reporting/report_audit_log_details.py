@@ -1,6 +1,8 @@
 # Report audit log details
 # https://www.dynatrace.com/support/help/shortlink/api-audit-logs-get-log-entry
 
+import datetime
+
 from Reuse import dynatrace_api
 from Reuse import environment
 from Reuse import report_writer
@@ -51,11 +53,12 @@ def process_report(env, token, summary_mode):
             user_type = inner_auditlog_json.get('userType')
             user_origin = inner_auditlog_json.get('userOrigin')
             timestamp = inner_auditlog_json.get('timestamp')
+            timestamp_formatted = convert_epoch_in_milliseconds_to_local(timestamp)
             success = inner_auditlog_json.get('success')
             patch = inner_auditlog_json.get('patch', '')
 
             if not summary_mode:
-                rows.append((str(log_id), event_type, category, entity_id, environment_id, user, user_type, user_origin, str(timestamp), str(success), str(patch)))
+                rows.append((str(log_id), event_type, category, entity_id, environment_id, user, user_type, user_origin, str(timestamp_formatted), str(success), str(patch)))
 
             count_total += 1
 
@@ -89,6 +92,13 @@ def process_report(env, token, summary_mode):
         report_writer.write_html(None, report_name, report_headers, rows)
 
     return summary
+
+
+def convert_epoch_in_milliseconds_to_local(epoch):
+    if epoch == -1:
+        return None
+    else:
+        return datetime.datetime.fromtimestamp(epoch / 1000).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
 
 
 def write_strings(string_list):

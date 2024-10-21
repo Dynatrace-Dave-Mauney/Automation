@@ -45,16 +45,16 @@ tracer = get_tracer_provider().get_tracer("hello_world_tracer")
 
 
 @app.route('/')
-def hello():
+def help():
     return 'Use one of these endpoints to exercise OTEL capabilities: "/spans", "/metrics" or "/logs"'
 
 
 @app.route('/spans')
-def route1():
+def spans():
     with tracer.start_as_current_span("Call to /1") as span:
         span.set_attribute("http.method", "GET")
         span.set_attribute("net.protocol.version", "1.1")
-    return 'OTEL span created'
+    return 'OTEL span "Call to /spans" for "hello_world_with_otel" service created'
 
 
 @app.route('/metrics')
@@ -71,7 +71,7 @@ def metrics():
         print(f'Metric "random_number" added: {random_integer}')
         random_number.add(random_integer, attributes)
 
-    return 'OTEL metrics created'
+    return 'OTEL metric "random_number" created'
 
 
 @app.route('/logs')
@@ -173,3 +173,12 @@ if __name__ == '__main__':
     print('Should be running on http://192.168.1.247:5000')
     print('Endpoints: ', 'spans', 'metrics', 'logs')
     app.run('0.0.0.0', '5000')
+
+
+'''
+Alternative Invocation (from command line):
+. .venv/bin/activate
+sudo pigpiod
+# Run the test app
+flask --app hello run --host=0.0.0.0
+'''
