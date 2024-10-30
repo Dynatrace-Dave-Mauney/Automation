@@ -9,8 +9,8 @@ include_page_list = []
 include_tile_list = []
 exclude_page_list = []
 exclude_tile_list = []
-
-root_directory = 'NewRelicDashboards/customer_specific'
+input_directory = 'NewRelicDashboards/customer_specific'
+output_directory = 'Dynatrace/customer_specific'
 
 new_relic_data = []
 
@@ -75,14 +75,16 @@ def process_new_relic_dashboards():
     configuration_file = 'configurations.yaml'
     global include_page_list
     global include_tile_list
-    global root_directory
+    global input_directory
+    global output_directory
     include_page_list = environment.get_configuration('include_page_list', configuration_file=configuration_file)
     include_tile_list = environment.get_configuration('include_tile_list', configuration_file=configuration_file)
-    root_directory = environment.get_configuration('root_directory', configuration_file=configuration_file)
+    input_directory = environment.get_configuration('input_directory', configuration_file=configuration_file)
+    output_directory = environment.get_configuration('output_directory', configuration_file=configuration_file)
 
-    print(include_page_list, include_tile_list, root_directory)
+    print(include_page_list, include_tile_list, input_directory, output_directory)
 
-    filenames = [os.path.join(path, name) for path, subdirs, files in os.walk(root_directory) for name in files]
+    filenames = [os.path.join(path, name) for path, subdirs, files in os.walk(input_directory) for name in files]
     for filename in filenames:
         if filename.endswith('.json'):
             process_new_relic_dashboard(filename)
@@ -132,7 +134,9 @@ def generate_dynatrace_notebook():
 
 def write_notebook(filename, notebook):
     # print(f'write_notebook({filename}, {notebook})')
-    notebook_file_name = filename.replace('NewRelic', 'Dynatrace').replace('Dashboard', 'Notebook')
+    global input_directory
+    global output_directory
+    notebook_file_name = filename.replace(input_directory, output_directory).replace('Dashboard', 'Notebook')
     with open(notebook_file_name, 'w') as file:
         file.write(json.dumps(notebook, indent=4, sort_keys=False))
     print('wrote: ' + notebook_file_name)
