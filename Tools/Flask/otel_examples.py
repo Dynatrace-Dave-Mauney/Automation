@@ -172,7 +172,7 @@ if __name__ == '__main__':
     print('Should be running on http://127.0.0.1:5000/')
     print('Should be running on http://192.168.1.247:5000')
     print('Endpoints: ', 'spans', 'metrics', 'logs')
-    app.run('0.0.0.0', '5000')
+    app.run('0.0.0.0', 5000)
 
 
 '''

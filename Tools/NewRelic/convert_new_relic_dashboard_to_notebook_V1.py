@@ -1,5 +1,3 @@
-# Add logic to convert NRQL to DQL for logs, bizevents, and USQL scenarios.
-
 import copy
 import json
 import os
@@ -126,19 +124,6 @@ def generate_dynatrace_notebook():
 
             comments = f'// Title: {widget_title}\n// Visualization: {widget_visualization_id}\n'
             dql_section['state']['input']['value'] = f'{comments}// NRQL: {widget_query}'
-
-            widget_query_lower = widget_query.lower()
-            if 'from pageview' in widget_query_lower and 'actionname' in widget_query_lower:
-                print('bizevents Conversion...')
-            else:
-                if 'from pageview' in widget_query_lower:
-                    print('USQL Conversion...')
-                else:
-                    if 'from transaction' in widget_query_lower:
-                        print('bizevents Conversion...')
-                    else:
-                        print('logs Conversion...')
-
             notebook['sections'].append(dql_section)
             print(f'Appending {dql_section}')
 
