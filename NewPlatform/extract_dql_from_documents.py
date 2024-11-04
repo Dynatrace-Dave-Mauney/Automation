@@ -20,7 +20,9 @@ def run():
     # extract_dql_from_documents('Dashboards/Assets/*.json')
     # extract_dql_from_documents('Notebooks/Assets/*.json')
     # extract_dql_from_documents('customer_specific/*Tracker*.json')
-    extract_dql_from_documents('customer_specific/*.json')
+    # extract_dql_from_documents('customer_specific/*.json')
+    # extract_dql_from_documents('/Users/dave.mauney/Downloads/*XP*Auth*.json')
+    extract_dql_from_documents('Notebooks/Downloads/*.json')
 
     print('')
     print('Bizevents:')
@@ -50,6 +52,7 @@ def run():
 
 def extract_dql_from_documents(path):
     for filename in glob.glob(path):
+        # print(filename)
         with codecs.open(filename, encoding='utf-8') as f:
             document = f.read()
             document_json = json.loads(document)
