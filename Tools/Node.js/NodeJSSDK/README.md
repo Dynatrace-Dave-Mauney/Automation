@@ -29,8 +29,8 @@ http://localhost:8002/
 http://localhost:8001/  
 
 # Documentation/How To Download the OneAgent SDK
-[OneAgent SDK](https://docs.dynatrace.com/docs/shortlink/oneagent-sdk)
-[OneAgent SDK for Node.js](https://github.com/Dynatrace/OneAgent-SDK-for-NodeJs)
+[OneAgent SDK](https://docs.dynatrace.com/docs/shortlink/oneagent-sdk)  
+[OneAgent SDK for Node.js](https://github.com/Dynatrace/OneAgent-SDK-for-NodeJs)  
 
 The first documentation page covers all the technology we support for the OneAgent SDK.  
 The second is specific to Node.js.  
