@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Session Properties</title>
+        <link href="../global.css" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="../global.js"></script>
+        <script type="text/javascript">
+            function loadData() {
+                var xhr = new XMLHttpRequest();
+                var url = '../ajax.txt';
+                xhr.open('GET', url, false);
+                xhr.send(null);
+            }
+
+            // LONG PROPERTIES
+            function addLongProperties () {
+                if (typeof dtrum === "undefined") return;
+
+                var long = {long_one: 34234, long_two: 1234567};
+
+                dtrum.sendSessionProperties(long);
+                loadData();
+            }
+
+            // DATE PROPERTIES
+            function addDateProperties () {
+                if (typeof dtrum === "undefined") return;
+
+                var date = new Date();
+                var dateprop = {date: date};
+
+                dtrum.sendSessionProperties(null, dateprop);
+                loadData();
+            }
+
+            // STRING PROPERTIES
+            function addStringProperties () {
+                if (typeof dtrum === "undefined") return;
+
+                var str = {string_one: 'stringValOne', string_two: 'stringValTwo'};
+
+                dtrum.sendSessionProperties(null, null, str);
+                loadData();
+            }
+
+            // DOUBLE PROPERTIES
+            function addDoubleProperties () {
+                if (typeof dtrum === "undefined") return;
+
+                var dbl = {double: 0.234234243};
+
+                dtrum.sendSessionProperties(null, null, null, dbl);
+                loadData();
+            }
+        </script>
+    </head>
+    <body>
+        <div class="explanation">
+            <h2>Add session properties</h2>
+            <div class="field">
+                <div class="fieldHeader"> Agentconfig</div>
+                Needed agent module configuration: <div class="agentConf">no extra modules<div class="agentConfCheck"></div></div>
+            </div>
+            <p>The agent allows to add SessionProperties with  <a href='../../doc/interfaces/dtrum_types.dtrumapi.html#sendsessionproperties' class='api-reference' target='_blank'>sendSessionProperties</a></p>
+            <p>With the buttons in the example you can add different types of properties when clicked, which will get appended to an XHR-action.</p>
+            <p>NOTE: session properties need to have a lower case key!</p>
+        </div>
+        <div class="field">
+            <div class="fieldHeader"> Code snippet</div>
+            <code-block>var long = {long_one: 34234, long_two: 1234567};
+dtrum.sendSessionProperties(long);
+loadData(); //xhr (action where the property will get attached)</code-block>
+        </div>
+        <div class="field example">
+            <div class="fieldHeader"> Example</div>
+            <button onclick="addLongProperties()">Add long properties to session</button>
+            <br />
+            <br />
+            <button onclick="addDateProperties()">Add date properties to session</button>
+            <br />
+            <br />
+            <button onclick="addStringProperties()">Add string properties to session</button>
+            <br />
+            <br />
+            <button onclick="addDoubleProperties()">Add double properties to session</button>
+            <br />
+        </div>
+        <a class="backButton" href="../index.html"> &#x2B05; Back</a>
+    </body>
+</html>

@@ -1,0 +1,77 @@
+<html>
+	<head>
+		<title>Dynatrace JavaScript API</title>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+        <link href="../global.css" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="../global.js"></script>
+
+        <script type="text/javascript">
+        	var lookupCounter=0;
+
+            function lookup(counter) {
+                if (lookupCounter === counter) {//make sure lookup is only done for most current user input
+                    var inp = document.getElementById('inp');
+                    var value = inp.value;
+                    var uinp = dtrum.beginUserInput(inp, 'lookup "' + value + '"', null);
+
+                    var xhr = new XMLHttpRequest();
+                    var url = '../ajax.txt?time=' + (new Date().getTime()) + "&value=" + encodeURIComponent(value);
+
+                    xhr.open('GET', url, false);
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState === 4) {
+                            if (lookupCounter === counter) {//if result is up to date
+                                document.getElementById('resultDiv').innerHTML += '<br> ' + counter + ': ' +xhr.responseText;
+                                dtrum.endUserInput(uinp);
+                            }
+                        }
+                    };
+                    xhr.send(null);
+                }
+            }
+
+            function keyup() {
+                //start lookup 800 ms delayed
+                lookupCounter++;
+                var c = lookupCounter;
+                setTimeout(function() {
+                    lookup(c);
+                }, 800);
+            }
+        </script>
+	</head>
+    <body>
+        <div class="explanation">
+            <h2>Adding custom user input</h2>
+                <div class="field">
+                    <div class="fieldHeader"> Agentconfig</div>
+                    Needed agent module configuration: <div class="agentConf">Support for XmlHttpRequest<div class="agentConfCheck"></div></div>
+                </div>
+                <p>This example demonstrates how to add a custom user input that is used by automatic action detection.
+                    When an Ajax call is started or a page change is triggered, the automatic action detection checks whether a user input is currently active.
+                    If it finds a user input, it creates an action.</p>
+                <p>The example contains an HTML input text box that triggers an XHR.</p>
+                <p>The XHR is only performed after 800 milliseconds elapsed with no key pressed by the user. This delay is common for autosuggest implementations, to avoid sending XHRs when the user is still typing.</p>
+                <p>When the XHR is performed, no user input is active, so <a href='../../doc/interfaces/dtrum_types.dtrumapi.html#beginuserinput' class='api-reference' target='_blank'>beginUserInput</a> tells the JavaScript Agent that there is user input.</p>
+                <p>The call <a href='../../doc/interfaces/dtrum_types.dtrumapi.html#enduserinput' class='api-reference' target='_blank'>endUserInput</a> ends the user input.</p>
+        </div>
+        <div class="field">
+            <div class="fieldHeader"> Code snippet</div>
+            <code-block>var uinp = dtrum.beginUserInput(inp, 'lookup "' + value + '"', null);
+
+// something happening
+
+dtrum.endUserInput(uinp);</code-block>
+        </div>
+        <div class="field example">
+            <div class="fieldHeader"> Example</div>
+            <div>Enter text to start lookup: <input type="text" id="inp" onkeyup="keyup()"/></div>
+
+            <br/>
+
+            <div id="resultDiv">Result will be displayed here:</div>
+        </div>
+        <br/>
+        <a class="backButton" href="../index.html"> &#x2B05; Back</a>
+    </body>
+</html>

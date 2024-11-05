@@ -1,0 +1,60 @@
+<html>
+	<head>
+		<title>Dynatrace JavaScript API</title>
+        <link href="../global.css" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="../global.js"></script>
+        <script type="text/javascript">
+            function loadData() {
+                var xhr = new XMLHttpRequest();
+                var url = '../ajax.txt';
+
+                xhr.open('GET', url, false);
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        document.getElementById('resultDiv').innerHTML = xhr.responseText;
+                        dtrum.leaveXhrAction(action);
+                    }
+                };
+
+                var action = dtrum.enterXhrAction('xhr', 3, url);
+                xhr.send(null);
+            }
+        </script>
+	</head>
+    <body>
+        <div class="explanation">
+            <h2>Capturing Custom XHR calls </h2>
+            <div class="field">
+                <div class="fieldHeader"> Agentconfig</div>
+                Needed agent module configuration: <div class="agentConf">no extra modules<div class="agentConfCheck"></div></div>
+            </div>
+            <p>This example demonstrates how to instrument a simple <code>XMLHttpRequest</code> in a page.
+                Clicking the "Load Data" button performs an Ajax call to the URL <code>ajax.txt</code>. The result displays in the <code>div</code> with ID <code>resultDiv</code>..
+                The <code>loadData</code> function starts an XHR call through <code>XMLHttpRequest</code>.</p>
+            <p>The following code tells the JavaScript Agent that an XHR action starts:</p>
+            <a href='../../doc/interfaces/dtrum_types.dtrumapi.html#enterxhraction' class='api-reference' target='_blank'>enterXhrAction</a>
+            <p>This code tells the JavaScript Agent that the XHR action ends in the <code>onreadystatechange</code> callback:</p>
+            <a href='../../doc/interfaces/dtrum_types.dtrumapi.html#leavexhraction' class='api-reference' target='_blank'>leaveXhrAction</a>
+            <p>The JavaScript Agent automatically detects the user input that triggers the action. The generated User Action is shown in the following figure.</p>
+        </div>
+        <div class="field">
+            <div class="fieldHeader"> Code snippet</div>
+            <code-block>xhr.open('GET', url, false);
+xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4) {
+        document.getElementById('resultDiv').innerHTML = xhr.responseText;
+        dtrum.leaveXhrAction(action);
+    }
+};
+var action = dtrum.enterXhrAction('xhr', 3, url);
+xhr.send(null);</code-block>
+        </div>
+        <div class="field example">
+            <div class="fieldHeader"> Example</div>
+
+            <button onclick="loadData()">Load Data</button>
+            <div id="resultDiv">Result will be displayed here!</div>
+        </div>
+        <a class="backButton" href="../index.html"> &#x2B05; Back</a>
+    </body>
+</html>

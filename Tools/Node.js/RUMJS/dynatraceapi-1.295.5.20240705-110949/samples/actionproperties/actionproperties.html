@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Custom Action Properties</title>
+        <link href="../global.css" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="../global.js"></script>
+        <script type="text/javascript">
+            function loadData() {
+                var xhr = new XMLHttpRequest();
+                var url = '../ajax.txt';
+
+                xhr.open('GET', url, false);
+                xhr.send(null);
+            }
+
+            // LONG PROPERTIES
+            var long = {long_one: 34234, long_two: 1234567};
+            function addLongProperties (actionId) {
+                dtrum.addActionProperties(actionId, long);
+            }
+            function addLongPropertiesOnEnter () {
+                if (typeof dtrum === "undefined") return;
+
+                var long = {long_one: 34234, long_two: 1234567};
+
+                dtrum.addEnterActionListener(addLongProperties);
+                loadData();
+                dtrum.removeEnterActionListener(addLongProperties);
+            }
+
+            function addLongPropertiesOnLeave () {
+                if (typeof dtrum === "undefined") return;
+
+                dtrum.addLeaveActionListener(addLongProperties);
+                loadData();
+                dtrum.removeLeaveActionListener(addLongProperties);
+            }
+
+            // DATE PROPERTIES
+            var date = new Date();
+            var dateprop = {date: date};
+            function addDateProperties(actionId) {
+                dtrum.addActionProperties(actionId, null, dateprop);
+            }
+
+            function addDatePropertiesOnEnter () {
+                if (typeof dtrum === "undefined") return;
+
+                var date = new Date();
+                var dateprop = {date: date};
+
+                dtrum.addEnterActionListener(addDateProperties);
+                loadData();
+                dtrum.removeEnterActionListener(addDateProperties);
+            }
+
+            function addDatePropertiesOnLeave () {
+                if (typeof dtrum === "undefined") return;
+
+                var date = new Date();
+                var dateprop = {date: date};
+
+                dtrum.addLeaveActionListener(addDateProperties);
+                loadData();
+                dtrum.removeLeaveActionListener(addDateProperties);
+            }
+
+            // STRING PROPERTIES
+            var str = {string_one: 'stringValOne', string_two: 'stringValTwo'};
+            function addStringProperties(actionId) {
+                dtrum.addActionProperties(actionId, null, null, str);
+            }
+            function addStringPropertiesOnEnter () {
+                if (typeof dtrum === "undefined") return;
+
+                var str = {string_one: 'stringValOne', string_two: 'stringValTwo'};
+
+                dtrum.addEnterActionListener(addStringProperties);
+                loadData();
+                dtrum.removeEnterActionListener(addStringProperties);
+            }
+
+            function addStringPropertiesOnLeave () {
+                if (typeof dtrum === "undefined") return;
+
+                var str = {string_one: 'stringValOne', string_two: 'stringValTwo'};
+
+                dtrum.addLeaveActionListener(addStringProperties);
+                loadData();
+                dtrum.removeLeaveActionListener(addStringProperties);
+            }
+
+            // DOUBLE PROPERTIES
+            var dbl = {double: 0.234234243};
+            function addDoubleProperties(actionId) {
+                dtrum.addActionProperties(actionId, null, null, null, dbl);
+            }
+            function addDoublePropertiesOnEnter () {
+                if (typeof dtrum === "undefined") return;
+
+                dtrum.addEnterActionListener(addDoubleProperties);
+                loadData();
+                dtrum.removeEnterActionListener(addDoubleProperties);
+            }
+
+            function addDoublePropertiesOnLeave () {
+                if (typeof dtrum === "undefined") return;
+
+                dtrum.addLeaveActionListener(addDoubleProperties);
+                loadData();
+                dtrum.removeLeaveActionListener(addDoubleProperties);
+            }
+        </script>
+    </head>
+    <body>
+        <div class="explanation">
+            <h2>Attach action listeners to add action properties. Remove action listeners</h2>
+            <div class="field">
+                <div class="fieldHeader"> Agentconfig</div>
+                Needed agent module configuration: <div class="agentConf">no extra modules<div class="agentConfCheck"></div></div>
+            </div>
+            <p>The agent allows to add and remove listeners hat are called whenever a new action is started or stopped.
+                The listeners can be added and removed using these functions:</p>
+            <ul>
+                <li><a href='../../doc/interfaces/dtrum_types.dtrumapi.html#addenteractionlistener' class='api-reference' target='_blank'>addEnterActionListener</a></li>
+                <li><a href='../../doc/interfaces/dtrum_types.dtrumapi.html#removeenteractionlistener' class='api-reference' target='_blank'>removeEnterActionListener</a></li>
+                <li><a href='../../doc/interfaces/dtrum_types.dtrumapi.html#addleaveactionlistener' class='api-reference' target='_blank'>addLeaveActionListener</a></li>
+                <li><a href='../../doc/interfaces/dtrum_types.dtrumapi.html#removeleaveactionlistener' class='api-reference' target='_blank'>removeLeaveActionListener</a></li>
+            </ul>
+            <p>In this example, the listeners are used to attach action properties to specific actions.</p>
+            <p>NOTE: action properties need to have a lower case key!</p>
+        </div>
+        <div class="field">
+            <div class="fieldHeader"> Code snippet</div>
+            <code-block>var dbl = {double: 0.234234243};
+function addDoubleProperties(actionId) {
+    dtrum.addActionProperties(actionId, null, null, null, dbl);
+}
+
+function addDoublePropertiesOnEnter () {
+    dtrum.addEnterActionListener(addDoubleProperties);
+    loadData();     // <-- some XHR action happening so the ActionListener is called
+    dtrum.removeEnterActionListener(addDoubleProperties);
+}</code-block>
+        </div>
+        <div class="field example">
+            <div class="fieldHeader"> Example</div>
+            <button onclick="addLongPropertiesOnEnter()">Attach action listener to add long properties on enter action. Remove the respective listener</button><br />
+            <button onclick="addLongPropertiesOnLeave()">Attach action listener to add long properties on leave action. Remove the respective listener</button><br />
+            <br />
+            <button onclick="addDatePropertiesOnEnter()">Attach action listener to add date properties on enter action. Remove the respective listener</button><br />
+            <button onclick="addDatePropertiesOnLeave()">Attach action listener to add date properties on leave action. Remove the respective listener</button><br />
+            <br />
+            <button onclick="addStringPropertiesOnEnter()">Attach action listener to add string properties on enter action. Remove the respective listener</button><br />
+            <button onclick="addStringPropertiesOnLeave()">Attach action listener to add string properties on leave action. Remove the respective listener</button><br />
+            <br />
+            <button onclick="addDoublePropertiesOnEnter()">Attach action listener to add double properties on enter action. Remove the respective listener</button><br />
+            <button onclick="addDoublePropertiesOnLeave()">Attach action listener to add double properties on leave action. Remove the respective listener</button><br />
+        </div>
+        <a class="backButton" href="../index.html"> &#x2B05; Back</a>
+    </body>
+</html>

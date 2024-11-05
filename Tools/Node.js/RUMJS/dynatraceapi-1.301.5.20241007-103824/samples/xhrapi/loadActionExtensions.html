@@ -1,0 +1,72 @@
+<html>
+<head>
+    <title>Dynatrace JavaScript API</title>
+    <link href="../global.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="../global.js"></script>
+    <script type="text/javascript">
+        function loadData(url) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    document.getElementById('resultDiv').innerHTML = 'Load finished';
+                }
+            }
+            xhr.send(null);
+            dtrum.signalOnLoadEnd();
+        }
+
+        function init() {
+            dtrum.incrementOnLoadEndMarkers();
+            setTimeout(function () {
+                loadData('../ajax.txt?' + new Date().getTime()); // adding the timestamp to prevent caching
+            }, 1000);
+        }
+    </script>
+</head>
+<body onload="init()">
+<div class="explanation">
+    <h2>Custom onload to correlate XHR action with load actions</h2>
+    <div class="field">
+        <div class="fieldHeader"> Agentconfig</div>
+        Needed agent module configuration: <div class="agentConf">Support for XmlHttpRequest<div class="agentConfCheck"></div></div>
+    </div>
+    <p>
+        If an XHR that is intended to be grouped with the load action is called after the page finishes loading,
+        this code can extend the load action in order to include it.
+    </p>
+    <p><a href='../../doc/interfaces/dtrum_types.dtrumapi.html#incrementOnLoadEndMarkers' class='api-reference' target='_blank'>incrementOnLoadEndMarkers</a></p>
+    <p><a href='../../doc/interfaces/dtrum_types.dtrumapi.html#signalOnLoadEnd' class='api-reference' target='_blank'>signalOnLoadEnd</a></p>
+    <p>
+        This code tells the JavaScript Agent that no extra XHR action is created when an XHR is started within this callback.
+        Clicking the Load Data button in the example results in the User Action shown in the following figure. There is only one XHR action, but two requests for <code>../ajax.txt</code>.
+    </p>
+</div>
+<div class="field">
+    <div class="fieldHeader"> Code snippet</div>
+    <code-block>function loadData(url) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            document.getElementById('resultDiv').innerHTML = 'Load finished';
+        }
+    }
+    xhr.send(null);
+    dtrum.signalOnLoadEnd();
+}
+
+function init() {
+    dtrum.incrementOnLoadEndMarkers();
+    setTimeout(function () {
+        loadData('../ajax.txt?' + new Date().getTime()); // adding the timestamp to prevent caching
+    }, 1000);
+}</code-block>
+</div>
+<div class="field example">
+    <div class="fieldHeader"> Example</div>
+    <div id="resultDiv">Result will be displayed here when load is completed!</div>
+</div>
+<a class="backButton" href="../index.html"> &#x2B05; Back</a>
+</body>
+</html>

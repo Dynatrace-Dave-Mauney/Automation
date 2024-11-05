@@ -1,0 +1,48 @@
+<html>
+	<head>
+		<title>Dynatrace JavaScript API</title>
+        <link href="../global.css" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="../global.js"></script>
+        <script type="text/javascript">
+            function loadData() {
+                var xhr = new XMLHttpRequest();
+
+                xhr.open('GET', '../ajax.txt', false);
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        document.getElementById('resultDiv').innerHTML = xhr.responseText;
+                    }
+                };
+                xhr.send(null);
+                //This call will change the name of the xhr action that was created because of the XHR request above
+                dtrum.actionName('manually created actionName');
+            }
+        </script>
+	</head>
+
+    <body>
+        <div class="explanation">
+            <h2>Set actionName for an XHR action</h2>
+            <div class="field">
+                <div class="fieldHeader"> Agentconfig</div>
+                Needed agent module configuration: <div class="agentConf">Support for XmlHttpRequest<div class="agentConfCheck"></div></div>
+            </div>
+            <p>The function <a href='../../doc/interfaces/dtrum_types.dtrumapi.html#actionname' class='api-reference' target='_blank'>actionName</a> allows the change of an action name. Normally the name of the current action will get changed.<br>
+                If you wan't to change a specific (not yet sent) action you can also pass the action id as second parameter.</p>
+            <p>When you click the button in the example, a new XHR will be triggered.</p>
+            <p>While this request is active, <a href='../../doc/interfaces/dtrum_types.dtrumapi.html#actionname' class='api-reference' target='_blank'>actionName</a> is called, to rename the action to the string you specified.</p>
+        </div>
+        <div class="field">
+            <div class="fieldHeader"> Code snippet</div>
+            <code-block>//This call will change the name of the xhr action that was created because of the XHR that happened before
+dtrum.actionName('manually created actionName');</code-block>
+        </div>
+        <div class="field example">
+            <div class="fieldHeader"> Example</div>
+            <button onclick="loadData()">Perform action and name it "manually created actionName"</button><br/>
+            <br/>
+            <div id="resultDiv">Result will be displayed here!</div>
+        </div>
+        <a class="backButton" href="../index.html"> &#x2B05; Back</a>
+    </body>
+</html>

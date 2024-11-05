@@ -1,0 +1,44 @@
+<html>
+	<head>
+		<title>Dynatrace JavaScript API</title>
+        <link href="../global.css" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="../global.js"></script>
+        <script type="text/javascript">
+            dtrum.setLoadEndManually();
+
+            function init() {
+                //do initialisation code (eg deferred script, etc);
+                document.getElementById('initDiv').innerHTML = 'Initialized';
+                dtrum.signalLoadEnd();
+            }
+        </script>
+	</head>
+    <body onload="setTimeout(init,5000);">
+        <div class="explanation">
+            <h2>Custom load end</h2>
+            <div class="field">
+                <div class="fieldHeader"> Agentconfig</div>
+                Needed agent module configuration: <div class="agentConf">no extra modules<div class="agentConfCheck"></div></div>
+            </div>
+            <p>The agent allows to set the loadEnd manually.</p>
+            <p>To tell the agent to wait for the manual loadEnd <a href='../../doc/interfaces/dtrum_types.dtrumapi.html#setloadendmanually' class='api-reference' target='_blank'>setLoadEndManually</a> has to be called, which must be called immediately after the js agent script tag!</p>
+            <p>After loading is finished <a href='../../doc/interfaces/dtrum_types.dtrumapi.html#signalloadend' class='api-reference' target='_blank'>signalLoadEnd</a> must be called to end the loadAction manually.</p>
+            <p>In the example a long load gets simulated via timeout and the loadAction will get closed after 5 seconds.</p>
+        </div>
+        <div class="field">
+            <div class="fieldHeader"> Code snippet</div>
+            <code-block>dtrum.setLoadEndManually();
+
+function init() {   // called when loading is finshed
+    dtrum.signalLoadEnd();
+}</code-block>
+        </div>
+        <div class="field example">
+            <div class="fieldHeader"> Example</div>
+
+            <p>Custom load end delayed by 5000ms.</p>
+            <div id="initDiv"></div>
+        </div>
+        <a class="backButton" href="../index.html"> &#x2B05; Back</a>
+    </body>
+</html>

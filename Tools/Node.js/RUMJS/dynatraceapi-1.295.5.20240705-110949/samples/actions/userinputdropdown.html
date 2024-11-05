@@ -1,0 +1,49 @@
+<html>
+	<head>
+		<title>Dynatrace JavaScript API</title>
+        <link href="../global.css" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="../global.js"></script>
+        <script type="text/javascript">
+
+            function change() {
+                var mySelect = document.getElementById('mySelect');
+
+                var sel = mySelect.selectedIndex;
+                var value = mySelect.options[sel].value;
+                if (value) {
+                    dtrum.setAutomaticActionDetection(false);
+                    dtrum.enterAction('Select value ' + value, null, null, 'info');
+                }
+                document.location.href = 'userinputdropdown.html?value=' + encodeURIComponent(value);
+            }
+
+        </script>
+	</head>
+    <body>
+        <div class="explanation">
+            <h2>Override the Default Action Detection</h2>
+            <div class="field">
+                <div class="fieldHeader"> Agentconfig</div>
+                Needed agent module configuration: <div class="agentConf">no extra modules<div class="agentConfCheck"></div></div>
+            </div>
+            <p>Sometimes it is necessary to override the default action detection.
+                In this example, the <code>onchange</code> event of a dropdown list is modified so that the newly selected value is added to the action name.</p>
+            <p>The default action detection is disabled by <a href='../../doc/interfaces/dtrum_types.dtrumapi.html#setautomaticactiondetection' class='api-reference' target='_blank'>setAutomaticActionDetection</a>.</p>
+            <p>A custom action is started. The action name contains the selected dropdown value:  <a href='../../doc/interfaces/dtrum_types.dtrumapi.html#enteraction' class='api-reference' target='_blank'>enterAction</a>.</p>
+        </div>
+        <div class="field">
+            <div class="fieldHeader"> Code snippet</div>
+            <code-block>dtrum.setAutomaticActionDetection(false);
+dtrum.enterAction('Select value ' + value, null, null, 'info');</code-block>
+        </div>
+        <div class="field example">
+            <div class="fieldHeader"> Example</div>
+            <select id="mySelect" onchange="change()">
+               <option value="value1">Text 1</option>
+               <option value="value2">Text 2</option>
+               <option value="value3">Text 3</option>
+            </select>
+        </div>
+        <a class="backButton" href="../index.html"> &#x2B05; Back</a>
+    </body>
+</html>

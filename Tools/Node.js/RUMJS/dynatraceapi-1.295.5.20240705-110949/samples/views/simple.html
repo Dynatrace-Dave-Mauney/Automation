@@ -1,0 +1,68 @@
+<html>
+<head>
+    <title>Dynatrace JavaScript API</title>
+    <link href="../global.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="../global.js"></script>
+    <script src="tokenizer.js"></script>
+    <script src="./router.js"></script>
+    <script type="text/javascript">
+        dtrum.enableManualPageDetection();
+        const router = new Router(["user", "user/:id", "book/:uuid"]);
+        router.get("/user/:id", pageChangeCallback);
+        router.get("/book/:uuid", pageChangeCallback);
+        router.init();
+
+        function pageChangeCallback(req) {
+            showResults(req);
+            dtrum.setPage(req);
+        }
+
+        function showResults({ name, group }) {
+            const resultsDiv = document.getElementById("resultDiv");
+            if (resultsDiv) {
+                resultsDiv.innerHTML = `Page change successfuly reported! New page with path of <code>${name}</code> and group of <code>${group}</code>`;
+            }
+        }
+
+        function changePage(route) {
+            router.go(route);
+        }
+    </script>
+</head>
+<body>
+<div class="explanation">
+    <h2>Reporting views via API</h2>
+    <div class="field">
+        <div class="fieldHeader"> Agentconfig</div>
+        No config is needed for this feature.
+    </div>
+    <p>Make sure to call <code>dtrum.enableManualPageDetection();</code> right after the agent script tag in order to disable automatic view detection.</p>
+    <p>Within the route change callback, call <code>dtrum.setPage({ name: "/route-name", group: "/route/:group" });</code>. This will notify the agent about a route change.</p>
+
+    <p>This is an example of how we structured routing on this simple page.</p>
+</div>
+<div class="field">
+    <div class="fieldHeader"> Code snippet</div>
+    <code-block>
+    dtrum.enableManualPageDetection();
+    const router = new Router();
+    router.get('/user/:id', function({ name, group }) {
+        // In route callbacks when page transition is finished we can report pages with dtrum
+        dtrum.setPage({ name, group });
+    });
+    router.get('/book/:uuid', function({ name, group }) {
+        dtrum.setPage({ name, group });
+    });
+    router.init();
+    </code-block>
+</div>
+<div class="field example">
+    <div class="fieldHeader"> Example</div>
+    <p><button onclick="changePage('/user/123')">change page to user</button></p>
+    <p><button onclick="changePage('/book/456')">change page to book</button></p>
+
+    <div id="resultDiv">Results page change will be shown here!</div>
+</div>
+<a class="backButton" href="../index.html"> &#x2B05; Back</a>
+</body>
+</html>

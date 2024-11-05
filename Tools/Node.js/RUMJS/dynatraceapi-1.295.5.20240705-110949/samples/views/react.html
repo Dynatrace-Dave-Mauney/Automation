@@ -1,0 +1,63 @@
+<html>
+<head>
+    <title>Dynatrace JavaScript API</title>
+    <link href="../global.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="../global.js"></script>
+</head>
+<body>
+<div class="explanation">
+    <h2>Reporting views via API in React app</h2>
+    <div class="field">
+        <div class="fieldHeader"> Agentconfig</div>
+        No config is needed for this feature.
+    </div>
+    <p>If you have a react app, the agent will only report view names and not groups.<br>
+    Groups are calculated server side and therefore can be inaccurate.
+    For example, routes such as <code>/book/create</code> and <code>/book/old-man-and-the-sea</code> may result in groups like
+    <code>/book/create</code> and <code>/book/:name</code>.<br>
+    Each route that matches <code>/book/:name</code> will end up as a separate group
+    because the server is not aware of the react router configuration.</p>
+    <p>
+    In order to improve this situation, you can report route names and groups using <code>dtrum.setPage({ name: "..", group: ".."})</code>.<br>
+    This requires <code>dtrum.enableManualPageDetection();</code> to be called as soon as page loads, ideally right after the agent script tag.<br>
+    In your react app, the best place would be in <code>index.js</code>:
+    <p><code-block>
+    import React from "react";
+    import ReactDOM from "react-dom";
+    import { BrowserRouter } from "react-router-dom";
+    import "./index.css";
+    import App from "./App";
+
+    dtrum.enableManualPageDetection();
+
+    ReactDOM.render(
+        &lt;BrowserRouter&gt;
+            &lt;App /&gt;
+        &lt;/BrowserRouter&gt;,
+        document.getElementById("root")
+    );
+    </code-block></p>
+    This will force the agent to disable automatic detection and rely on manual view instrumentation via the API.
+
+    Next, notify the agent whenever a route is changed and a new component is rendered:
+
+    <p><code-block>
+    class Book extends Component {
+        constructor(props) {
+            super(props);
+            dtrum.setPage({
+                name: "/book/old-man-and-the-sea",
+                group: "/book/:name"
+            });
+        }
+        render() {
+            return ( ... some html );
+        }
+    }
+    </code-block></p>
+    <p> Each time this page component is rendered, a page change is reported via dtrum with the correct group and name.</p>
+</div>
+
+<a class="backButton" href="../index.html"> &#x2B05; Back</a>
+</body>
+</html>

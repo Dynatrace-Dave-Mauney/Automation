@@ -1,0 +1,74 @@
+<html>
+<head>
+    <title>Dynatrace JavaScript API</title>
+    <link href="../global.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="../global.js"></script>
+    <script type="text/javascript">
+        function appendImage(extend) {
+            var estimatedDuration;
+            var url = "https://deelay.me/2000/https://picsum.photos/200/300";
+            var startTime = new Date().getTime();
+            var id = dtrum.enterAction("custom action", null, startTime);
+            var elem = document.createElement('img');
+            elem.setAttribute('src', url);
+            document.body.appendChild(elem);
+            if (extend) {
+                estimatedDuration = 2000;
+                dtrum.leaveAction(id);
+            } else {
+                estimatedDuration = 100;
+                dtrum.leaveAction(id, startTime + 100);
+            }
+            document.getElementById('resultDiv').innerHTML = "Estimated Duration should be ~" + estimatedDuration + "ms";
+        }
+    </script>
+</head>
+<body>
+<div class="explanation">
+    <h2>Stop automatically extending custom actions</h2>
+    <div class="field">
+        <div class="fieldHeader"> Agentconfig</div>
+        Needed agent module configuration: <div class="agentConf">Visually Complete<div class="agentConfCheck"></div></div>
+    </div>
+    <p>When enabled, <code>Visually Complete</code> automatically extends actions when mutations are observed on the page in order to provide a duration that's more accurate.
+        However, when leaving a custom action using <code>leaveAction</code>, the <code>stopTime</code> parameter may be provided to circumvent the agent's automatic timestamps, in favor of the provided one.
+        Doing so will also prevent Visually Complete from extending actions and updating the <code>stopTime</code>.</p>
+    <p>In the example, clicking the <code>Auto-extend custom action</code> button, the <code>appendImage</code> function starts a custom action which then appends a slow loading (~2 seconds) image to the page in order to trigger Visually Complete, in turn extending the custom action.
+        When clicking the <code>Stop action with a custom stop time</code> button, the <code>appendImage</code> function will do the same thing, except also provide a custom stop time to the <code>leaveAction</code> call.
+        This prevents the Visually Complete module from extending the action and the agent will instead use the provided value to determine the stop time.
+        Instrumenting this call requires adding two calls to the JavaScript Agent:</p>
+    <p>In <code>appendImage</code>:</p>
+    <a href='../../doc/interfaces/dtrum_types.dtrumapi.html#enteraction' class='api-reference' target='_blank'>enterAction</a>
+    <a href='../../doc/interfaces/dtrum_types.dtrumapi.html#leaveaction' class='api-reference' target='_blank'>leaveAction</a>
+</div>
+<div class="field">
+    <div class="fieldHeader"> Code snippet</div>
+    <code-block>function appendImage(extend) {
+    var estimatedDuration;
+    var url = "https://deelay.me/2000/https://picsum.photos/200/300";
+    var startTime = new Date().getTime();
+    var id = dtrum.enterAction("custom action", null, startTime);
+    var elem = document.createElement('img');
+    elem.setAttribute('src', url);
+    document.body.appendChild(elem);
+    if (extend) {
+        estimatedDuration = 2000;
+        dtrum.leaveAction(id);
+    } else {
+        estimatedDuration = 100;
+        dtrum.leaveAction(id, startTime + 100);
+    }
+    document.getElementById('resultDiv').innerHTML = "Estimated Duration should be ~" + estimatedDuration + "ms";
+}</code-block>
+</div>
+<div class="field example">
+    <div class="fieldHeader"> Example</div>
+    <button onclick="appendImage(true)">Auto-extend custom action</button>
+    <button onclick="appendImage(false)">Stop action with a custom stop time</button>
+
+    <div id="resultDiv">Result will be displayed here!</div>
+</div>
+<br/>
+<a class="backButton" href="../index.html"> &#x2B05; Back</a>
+</body>
+</html>

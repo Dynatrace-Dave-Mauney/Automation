@@ -1,0 +1,63 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+        <title>Dynatrace JavaScript API</title>
+        <link href="../../global.css" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="../../global.js"></script>
+        <script type="text/javascript">
+        function loadiframe() {
+            var url = "../../ajax.txt";
+            var xhrAction = dtrum.enterXhrAction("frame load xhr", 3, url);
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url, false);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    var e = document.createElement("IFRAME");
+                    e.src = "framecontent.html";
+                    var example = document.getElementById('ex');
+                    example.appendChild(e);
+                    e.onload = function() {
+                        dtrum.leaveXhrAction(xhrAction);
+                    }
+                }
+            };
+            xhr.send(null);
+        }
+    </script>
+    </head>
+    <body>
+        <div class="explanation">
+            <h2>Extending action times when appending an iframe</h2>
+            <div class="field">
+                <div class="fieldHeader"> Agentconfig</div>
+                Needed agent module configuration: <div class="agentConf">Support for XmlHttpRequest<div class="agentConfCheck"></div></div>
+            </div>
+            <p>This example demonstrates how to extend an XHR action to include the loading of a frame action that occurs during an XHR callback function.
+                Without the Javascript API, the XHR action finishes and causes the monitor signal to be sent before the frame gets a chance to start loading.
+                As a result, two separate actions are created, when just one would be expected. The Javascript API provides the ability to keep these actions unified.</p>
+            <p>Make a call to <a href='../../../doc/interfaces/dtrum_types.dtrumapi.html#enterxhraction' class='api-reference' target='_blank'>enterXhrAction</a> before making the AJAX request, add listeners to the <code>onload</code> event of the frame's element,
+                and then call <a href='../../../doc/interfaces/dtrum_types.dtrumapi.html#leavexhraction' class='api-reference' target='_blank'>leaveXhrAction</a>  here, passing the return value of the corresponding <a href='../../doc/interfaces/dtrum_types.dtrumapi.html#enterxhraction' class='api-reference' target='_blank'>enterXhrAction</a>  call.</p>
+        </div>
+        <div class="field">
+            <div class="fieldHeader"> Code snippet</div>
+            <code-block>var xhrAction = dtrum.enterXhrAction("frame load xhr", 3, url);
+xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4) {
+        var e = document.createElement("IFRAME");
+        e.src = "framecontent.html";
+        var example = document.getElementById('ex');
+        example.appendChild(e);
+        e.onload = function() {
+            dtrum.leaveXhrAction(xhrAction);
+        }
+    }
+};</code-block>
+        </div>
+        <div id="ex" class="field example">
+            <div class="fieldHeader"> Example</div>
+            <input type="button" id="clickbutton" onclick="loadiframe(this);" value="Load a Frame"/>
+            <br>
+        </div>
+        <a class="backButton" href="../../index.html"> &#x2B05; Back</a>
+    </body>
+</html>

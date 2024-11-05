@@ -1,0 +1,51 @@
+<html>
+    <head>
+        <title>Dynatrace JavaScript API</title>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+        <link href="../global.css" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="../global.js"></script>
+        <style>
+            #result {
+                width: 400px;
+                border: 1px solid black;
+            }
+        </style>
+
+        <script type="text/javascript">
+            function performAjaxError(){
+                $.ajax(
+                    {
+                        url: "../ajax.jsp",
+                        complete: function(data) {
+                            $("#result").append("<li>" + data.status + " - " + data.responseText + "</li>");
+                            dtrum.reportError('Error: Hello World with AJAX!');
+                        }
+                    }
+                );
+            }
+        </script>
+    </head>
+    <body>
+        <div class="explanation">
+            <h2>Execute reportError functions</h2>
+            <div class="field">
+                <div class="fieldHeader"> Agentconfig</div>
+                Needed agent module configuration: <div class="agentConf">no extra modules<div class="agentConfCheck"></div></div>
+            </div>
+            <p>This example contains a button that reports a javascript error with  <a href='../../doc/interfaces/dtrum_types.dtrumapi.html#reporterror' class='api-reference' target='_blank'>reportError</a>.</p>
+        </div>
+        <div class="field">
+            <div class="fieldHeader"> Code snippet</div>
+            <code-block>//xhr callback function
+complete: function(data) {
+    dtrum.reportError('Error: Hello World with AJAX!');
+}</code-block>
+        </div>
+        <div class="field example">
+            <div class="fieldHeader"> Example</div>
+            <button onclick="performAjaxError(this)" id="performAJAXError">Report Error with AJAX</button><br/>
+            <ul id="result"></ul>
+        </div>
+        <a class="backButton" href="../index.html"> &#x2B05; Back</a>
+    </body>
+</html>

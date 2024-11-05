@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dynatrace JavaScript API</title>
+    <link href="../global.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="../global.js"></script>
+    <script type="text/javascript">
+        function generateConsoleError() {
+            var complexErrorObject = {
+                complexObject: {
+                    theError: new Error("I am an error!")
+                }
+            }
+            console.error(complexErrorObject);
+            dtrum.reportError(complexErrorObject.complexObject.theError);
+            document.getElementById('result').innerHTML = 'reported ' + complexErrorObject.complexObject.theError;
+        }
+    </script>
+</head>
+<body>
+<div class="explanation">
+    <h2>Report a complex console error</h2>
+    <div class="field">
+        <div class="fieldHeader"> Agentconfig</div>
+        Needed agent module configuration: <div class="agentConf">no extra modules<div class="agentConfCheck"></div></div>
+    </div>
+    <p>With <a href='../../doc/interfaces/dtrum_types.dtrumapi.html#reporterror' class='api-reference' target='_blank'>reportError</a>, messages or error objects can be manually reported.
+        There may be situations in which the automatic error capturing is not sufficient.
+        Enabling the custom configuration property <code>cce=1</code> makes the agent report the first Error object (or string) it can find in the arguments passed to <code>console.error</code>.
+        However, if the argument list is too complex, it will not be detected.
+        In the example below, clicking the <code>Generate a Console Error</code> button will log a complex error to the console using <code>console.error</code>.
+    </p>
+</div>
+<div class="field">
+    <div class="fieldHeader"> Code snippet</div>
+    <code-block>function generateConsoleError() {
+    var complexErrorObject = {
+        complexObject: {
+            theError: new Error("I am an error!")
+        }
+    }
+    console.error(complexErrorObject);
+    dtrum.reportError(complexErrorObject.complexObject.theError);
+    document.getElementById('result').innerHTML = 'reported ' + complexErrorObject.complexObject.theError;
+}</code-block>
+</div>
+<div class="field example">
+    <div class="fieldHeader"> Example</div>
+    <input type="button" value="Generate a Console Error" onclick="generateConsoleError()" />
+    <div id="result"></div>
+</div>
+<a class="backButton" href="../index.html"> &#x2B05; Back</a>
+</body>
+</html>

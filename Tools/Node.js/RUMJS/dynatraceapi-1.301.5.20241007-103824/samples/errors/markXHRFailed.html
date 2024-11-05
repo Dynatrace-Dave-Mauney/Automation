@@ -1,0 +1,56 @@
+<html>
+    <head>
+        <title>ruxit JavaScript API</title>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+        <link href="../global.css" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="../global.js"></script>
+        <script type="text/javascript">
+            function markAsFailed() {
+                $.ajax({
+                    url: "../ajax.jsp",
+                    complete: function(data, textStatus, jqXHR) {
+                        if (typeof dtrum !== "undefined") {
+                            var markedAsError = dtrum.markXHRFailed(600, "my custom error");
+                            if (markedAsError) {
+                                showMessage("Successfully marked this XHR action as failed");
+                            } else {
+                                showMessage("Failed to mark this XHR action as failed");
+                            }
+                        } else {
+                            showMessage("XHR action has not been marked as failed, because the dtrum api is not available");
+                        }
+                    }
+                });
+            }
+
+            function showMessage(text) {
+                $('#resultDiv').text(text);
+            }
+        </script>
+    </head>
+    <body>
+        <div class="explanation">
+            <h2>Mark an xhr action with an error</h2>
+            <div class="field">
+                <div class="fieldHeader"> Agentconfig</div>
+                Needed agent module configuration: <div class="agentConf">no extra modules<div class="agentConfCheck"></div></div>
+            </div>
+            <p> <a href='../../doc/interfaces/dtrum_types.dtrumapi.html#markxhrfailed' class='api-reference' target='_blank'>markXHRFailed</a> reports the response code and an additional message for the current xhr action.
+                Needs to be called before the xhr action is finished and all listeners have been invoked.</p>
+            <p>In the example below an XHR action will get created through a simple XHR(which succeeds), but will get marked as failed through the Javascript API (code: 600, message: my custom error)</p>
+        </div>
+        <div class="field">
+            <div class="fieldHeader"> Code snippet</div>
+            <code-block>// xhr callback function
+complete: function(data, textStatus, jqXHR) {
+    var markedAsError = dtrum.markXHRFailed(600, "my custom error");
+}</code-block>
+        </div>
+        <div class="field example">
+            <div class="fieldHeader"> Example</div>
+            <input type="button" value="Create failed XHR action" id="xhrButton" onclick="markAsFailed()">
+            <div id="resultDiv"></div>
+        </div>
+        <a class="backButton" href="../index.html"> &#x2B05; Back</a>
+    </body>
+</html>

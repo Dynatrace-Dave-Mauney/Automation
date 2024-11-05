@@ -1,0 +1,67 @@
+<html>
+	<head>
+		<title>Dynatrace JavaScript API</title>
+        <link href="../global.css" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="../global.js"></script>
+        <script type="text/javascript">
+
+            var actionId;
+
+            /**
+             * image event handler for IE
+             */
+            function imgReadyStateChange() {
+                if (window.event.srcElement.readyState === 'loaded' || window.event.srcElement.readyState === 'complete') {
+                    dtrum.leaveAction(actionId);
+                }
+            }
+
+            /**
+             * image load handler for other browsers
+             */
+            function imgLoadHandler() {
+                //load finished => leave action
+                dtrum.leaveAction(actionId);
+            }
+
+            function loadImage() {
+                actionId = dtrum.enterAction('add dynamic image', null, null, 'info');
+
+                var img = document.createElement("IMG");
+                img.src = "pp.jpg";
+                img.onreadystatechange = imgReadyStateChange;
+                img.onload = imgLoadHandler;
+
+                document.getElementById('imgDiv').appendChild(img);
+            }
+        </script>
+	</head>
+    <body>
+        <div class="explanation">
+            <h2>Start and Stop an Action, with Web Requests</h2>
+            <div class="field">
+                <div class="fieldHeader"> Agentconfig</div>
+                Needed agent module configuration: <div class="agentConf">no extra modules<div class="agentConfCheck"></div></div>
+            </div>
+            <h3>Starting custom actions</h3>
+            <p>The JavaScript API includes functions to start and stop custom user actions.</p>
+            <p>This example provides a button that loads an image dynamically.
+                It calls <a href='../../doc/interfaces/dtrum_types.dtrumapi.html#enteraction' class='api-reference' target='_blank'>enterAction</a> before loading and <a href='../../doc/interfaces/dtrum_types.dtrumapi.html#leaveaction' class='api-reference' target='_blank'>leaveAction</a> when loading is finished.</p>
+        </div>
+        <div class="field">
+            <div class="fieldHeader"> Code snippet</div>
+            <code-block>actionId = dtrum.enterAction('add dynamic image', null, null, 'info');
+
+//do something here
+
+dtrum.leaveAction(actionId);</code-block>
+        </div>
+        <div class="field example">
+            <div class="fieldHeader"> Example</div>
+            <button onclick="loadImage()">Load image action</button><br/>
+            <div id="imgDiv">
+            </div>
+        </div>
+        <a class="backButton" href="../index.html"> &#x2B05; Back</a>
+    </body>
+</html>

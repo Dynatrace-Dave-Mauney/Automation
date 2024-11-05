@@ -1,0 +1,105 @@
+<html>
+<head>
+    <title>Dynatrace JavaScript API</title>
+    <link href="../../global.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="../../global.js"></script>
+    <script type="text/javascript">
+        function loadData(url, callback) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    callback(xhr.responseText);
+                }
+            };
+            xhr.send(null);
+        }
+
+        function closeAction(actionId) {
+            loadData('../../ajax.txt?' + new Date().getTime(), function (data2) {
+                document.getElementById('resultDiv2').innerHTML = 'Second XHR result:' + data2;
+                dtrum.leaveXhrAction(actionId);
+            });
+        }
+
+        function init() {
+            var url = '../../ajax.txt?' + new Date().getTime();
+            loadData(url, function(data) { //adding the timestamp to prevent caching
+                document.getElementById('resultDiv').innerHTML = 'First XHR result:' + data;
+                var actionId = dtrum.enterXhrAction("arbitrary", 3, url);
+                var numIntervals = 2;
+                var intId = setInterval(function () {
+                    if (--numIntervals === 0) {
+                        clearInterval(intId);
+                        closeAction(actionId);
+                    }
+                }, 100);
+            });
+        }
+    </script>
+</head>
+<body>
+<div class="explanation">
+    <h2>Extending action times when using setInterval</h2>
+    <div class="field">
+        <div class="fieldHeader"> Agentconfig</div>
+        Needed agent module configuration: <div class="agentConf">Support for XmlHttpRequest<div class="agentConfCheck"></div></div>
+    </div>
+    <p>
+        There are many ways multiple XHRs could be intended to be grouped together, even if their implementation suggests otherwise.
+        The following code shows how the dtrum api can be leveraged to create a link between loosely related XHRs using setInterval.
+    </p>
+    <p><a href='../../../doc/interfaces/dtrum_types.dtrumapi.html#enterxhraction' class='api-reference' target='_blank'>enterXhrAction</a></p>
+    <p><a href='../../../doc/interfaces/dtrum_types.dtrumapi.html#leavexhraction' class='api-reference' target='_blank'>leaveXhrAction</a></p>
+    <p>
+        This code tells the JavaScript Agent to create an XHR action in case a user input or an action is currently active.
+        Clicking the Load Data button in the example results in the User Action shown in the following figure.
+        The resulting XHR action will contain both requests to <code>../../ajax.txt</code>, even though the second one
+        is fired later within a setInterval callback.
+    </p>
+</div>
+<div class="field">
+    <div class="fieldHeader"> Code snippet</div>
+    <code-block>function loadData(url, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            callback(xhr.responseText);
+        }
+    };
+    xhr.send(null);
+}
+
+function closeAction(actionId) {
+    loadData('../../ajax.txt?' + new Date().getTime(), function (data2) {
+        document.getElementById('resultDiv2').innerHTML = 'Second XHR result:' + data2;
+        dtrum.leaveXhrAction(actionId);
+    });
+}
+
+function init() {
+    var url = '../../ajax.txt?' + new Date().getTime();
+    loadData(url, function(data) { //adding the timestamp to prevent caching
+        document.getElementById('resultDiv').innerHTML = 'First XHR result:' + data;
+        var actionId = dtrum.enterXhrAction("arbitrary", 3, url);
+        var numIntervals = 2;
+        var intId = setInterval(function () {
+            if (--numIntervals === 0) {
+                clearInterval(intId);
+                closeAction(actionId);
+            }
+        }, 100);
+    });
+}</code-block>
+</div>
+<div class="field example">
+    <div class="fieldHeader"> Example</div>
+    <button onclick="init()">Load Data</button>
+
+    <div id="resultDiv">Result of first xhr will be displayed here!</div>
+    <div id="resultDiv2">Result of second xhr will be displayed here!</div>
+</div>
+<a class="backButton" href="../../index.html"> &#x2B05; Back</a>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Custom Action Properties</title>
+    <link href="../global.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="../global.js"></script>
+    <script type="text/javascript">
+        var cnt = 0;
+
+        function loadData() {
+            var xhr = new XMLHttpRequest();
+            var url = '../ajax.txt';
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    document.getElementById('ajaxResponse').innerHTML = xhr.responseText;
+                }
+            };
+            xhr.open('GET', url, false);
+            xhr.send(null);
+        }
+
+        function nameChangeListener(actionId, time, isRootAction, element) {
+            if(element.innerText === "Example click action"){
+                var aN = `The Button got clicked the ${cnt} time.`;
+                console.log(`actionName changed to: ${aN}, for actionId: ${actionId}`);
+                dtrum.actionName(aN, actionId);
+                cnt++;
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="explanation">
+    <h2>Attach action listeners to change action name</h2>
+    <div class="field">
+        <div class="fieldHeader"> Agentconfig</div>
+        Needed agent module configuration: <div class="agentConf">no extra modules<div class="agentConfCheck"></div></div>
+    </div>
+    <p>The agent allows to add and remove listeners hat are called whenever a new action is started or stopped.
+        The listeners can be added and removed using these functions:</p>
+    <ul>
+        <li><a href='../../doc/interfaces/dtrum_types.dtrumapi.html#addenteractionlistener' class='api-reference' target='_blank'>addEnterActionListener</a></li>
+        <li><a href='../../doc/interfaces/dtrum_types.dtrumapi.html#removeenteractionlistener' class='api-reference' target='_blank'>removeEnterActionListener</a></li>
+        <li><a href='../../doc/interfaces/dtrum_types.dtrumapi.html#addleaveactionlistener' class='api-reference' target='_blank'>addLeaveActionListener</a></li>
+        <li><a href='../../doc/interfaces/dtrum_types.dtrumapi.html#removeleaveactionlistener' class='api-reference' target='_blank'>removeLeaveActionListener</a></li>
+    </ul>
+    <p>In this example, the listeners are used to change the action name( <a href='../../doc/interfaces/dtrum_types.dtrumapi.html#actionName' class='api-reference' target='_blank'>actionName</a> ) of the click action.</p>
+</div>
+<div class="field">
+    <div class="fieldHeader"> Code snippet</div>
+    <code-block>function nameChangeListener(actionId, time, isRootAction, element) {
+    if(element.innerText === "Example click action"){
+        dtrum.actionName('Something', actionId);
+    }
+}
+
+//registering the listener somewhere
+dtrum.addEnterActionListener(nameChangeListener);
+
+//remove the listener somewhere
+dtrum.removeEnterActionListener(nameChangeListener)</code-block>
+</div>
+<div class="field example">
+    <div class="fieldHeader"> Example</div>
+    <p>By clicking this button an action listener will get attached which will change the name of the action.</p>
+    <button onclick="dtrum.addEnterActionListener(nameChangeListener)">Add Listener</button><br><br>
+    <button onclick="loadData()">Example click action</button><br><br>
+    <button onclick="dtrum.removeEnterActionListener(nameChangeListener)">Remove Listener</button><br><br>
+    <div id="ajaxResponse"></div>
+</div>
+<a class="backButton" href="../index.html"> &#x2B05; Back</a>
+</body>
+</html>

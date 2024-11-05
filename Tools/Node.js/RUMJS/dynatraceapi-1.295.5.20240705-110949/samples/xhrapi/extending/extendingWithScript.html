@@ -1,0 +1,68 @@
+<html>
+	<head>
+		<title>Dynatrace JavaScript API</title>
+        <link href="../../global.css" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="../../global.js"></script>
+        <script type="text/javascript">
+            var action = null;
+            /**
+             *  callback function called by loaded script
+             */
+            function showResult(data) {
+                document.getElementById('resultDiv').innerHTML = data;
+                dtrum.leaveXhrAction(action);
+            }
+
+            function loadData() {
+                var url = '../ajax.js?' + new Date().getTime(); //adding timestamp to prevent caching
+                action = dtrum.enterXhrAction('xhr', 3, url);
+                var head = document.getElementsByTagName('head')[0];
+                var elem = document.createElement('script');
+                elem.setAttribute('src', url);
+                head.appendChild(elem);
+            }
+        </script>
+	</head>
+    <body>
+        <div class="explanation">
+            <h2>Extending action times when appending a script</h2>
+            <div class="field">
+                <div class="fieldHeader"> Agentconfig</div>
+                Needed agent module configuration: <div class="agentConf">no extra modules<div class="agentConfCheck"></div></div>
+            </div>
+            <p>Sometimes Ajax calls are performed not through <code>XMLHttpRequest</code>, but by dynamically appending <code>script</code> tags to the page.
+                When <code>script</code> tags are used, the resulting script file usually tries to call a callback function to handle the result when the call is finished.</p>
+            <p>In the example, the <code>loadData</code> function adds a <code>script</code> tag to the <code>head</code> tag that loads the script file <code>ajax.js</code>, which in this case is dynamically generated on the server side.
+                The <code>ajax.js</code> file calls the globally defined function <code>showResult</code> when it is loaded. Instrumenting this call requires adding two calls to the JavaScript Agent:</p>
+            <p>In <code>loadData</code>:</p>
+            <a href='../../../doc/interfaces/dtrum_types.dtrumapi.html#enterxhraction' class='api-reference' target='_blank'>enterXhrAction</a>
+            <p>In the <code>showResult</code> callback function:</p>
+            <a href='../../../doc/interfaces/dtrum_types.dtrumapi.html#leavexhraction' class='api-reference' target='_blank'>leaveXhrAction</a>
+            <p>If the callback function can also start new Ajax calls, you should add the <code>enterXhrCallback</code> and <code>leaveXhrCallback</code> calls to the callback function.</p>
+        </div>
+        <div class="field">
+            <div class="fieldHeader"> Code snippet</div>
+            <code-block>// callback function called by loaded script
+function showResult(data) {
+    dtrum.leaveXhrAction(action);
+}
+
+function loadData() {
+    var url = '../ajax.js?' + new Date().getTime(); //adding timestamp to prevent caching
+    action = dtrum.enterXhrAction('xhr', 3, url);
+    var head = document.getElementsByTagName('head')[0];
+    var elem = document.createElement('script');
+    elem.setAttribute('src', url);
+    head.appendChild(elem);
+}</code-block>
+        </div>
+        <div class="field example">
+            <div class="fieldHeader"> Example</div>
+            <button onclick="loadData()">Load Data</button>
+
+            <div id="resultDiv">Result will be displayed here!</div>
+        </div>
+        <br/>
+        <a class="backButton" href="../../index.html"> &#x2B05; Back</a>
+    </body>
+</html>

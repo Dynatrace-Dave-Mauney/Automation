@@ -1,0 +1,76 @@
+<html>
+	<head>
+		<title>Dynatrace JavaScript API</title>
+        <link href="../global.css" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="../global.js"></script>
+        <script type="text/javascript">
+            function loadData(url, callback) {
+                var xhr = new XMLHttpRequest();
+                var action = dtrum.enterXhrAction('xhr', 3, url);
+
+                xhr.open('GET', url, false);
+                xhr.onreadystatechange = function() {
+
+                    if (xhr.readyState === 4) {
+                        dtrum.enterXhrCallback(action);
+                        callback(xhr.responseText);
+                        dtrum.leaveXhrCallback(action);
+                        dtrum.leaveXhrAction(action);
+                    }
+
+                };
+                xhr.send(null);
+            }
+
+            function init() {
+                //cascading xhr callback
+                loadData('../ajax.txt?' + new Date().getTime(), function(data) { //adding the timestamp to prevent caching
+                    document.getElementById('resultDiv').innerHTML = 'First XHR result:' + data;
+
+                    loadData('../ajax.txt?' + new Date().getTime(), function(data2) {
+                        document.getElementById('resultDiv2').innerHTML = 'Second XHR result:' + data2;
+                    });
+                });
+            }
+        </script>
+	</head>
+    <body>
+        <div class="explanation">
+            <h2>Capture Cascading Custom XHR Calls</h2>
+            <div class="field">
+                <div class="fieldHeader"> Agentconfig</div>
+                Needed agent module configuration: <div class="agentConf">Support for XmlHttpRequest<div class="agentConfCheck"></div></div>
+            </div>
+            <p>When an XHR call triggers a new XHR in the <code>onreadystatechange</code> callback, this XHR action should be added as a subaction to the first action as shown in the following code.</p>
+            <p><a href='../../doc/interfaces/dtrum_types.dtrumapi.html#enterxhrcallback' class='api-reference' target='_blank'>enterXhrCallback</a></p>
+            <p><a href='../../doc/interfaces/dtrum_types.dtrumapi.html#leavexhrcallback' class='api-reference' target='_blank'>leaveXhrCallback</a></p>
+            <p>This code tells the JavaScript Agent that no extra XHR action is created when an XHR request is started within this callback.
+                Clicking the Load Data button in the example results in the User Action shown in the following figure. There is only one Ajax action, but two requests for <code>../ajax.txt</code>.</p>
+        </div>
+        <div class="field">
+            <div class="fieldHeader"> Code snippet</div>
+            <code-block>function loadData(url, callback) {
+    var xhr = new XMLHttpRequest();
+    var action = dtrum.enterXhrAction('xhr', 3, url);
+    xhr.open('GET', url, false);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            dtrum.enterXhrCallback(action);
+            callback(xhr.responseText); // a second loadData() is executed in the callback
+            dtrum.leaveXhrCallback(action);
+            dtrum.leaveXhrAction(action);
+        }
+    };
+    xhr.send(null);
+}</code-block>
+        </div>
+        <div class="field example">
+            <div class="fieldHeader"> Example</div>
+            <button onclick="init()">Load Data</button>
+
+            <div id="resultDiv">Result of first xhr will be displayed here!</div>
+            <div id="resultDiv2">Result of second xhr will be displayed here!</div>
+        </div>
+        <a class="backButton" href="../index.html"> &#x2B05; Back</a>
+    </body>
+</html>

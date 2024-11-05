@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Dynatrace JavaScript API</title>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+        <link href="../global.css" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="../global.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('#jqxhr').click(function() {
+                    $.post("../ajax.jsp", {sleep: 500}, function(result) {
+                        $('#result').append($('<div></div>').text(result));
+
+                    });
+                    var time = Date.now();
+                    dtrum.sendBeacon(false, true, false); //(forceSync, sendPreview, killUnfinished)
+                    console.log("sync sending took " + (Date.now() - time) + "ms");
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <div class="explanation">
+            <h2>Manually send a signal</h2>
+            <div class="field">
+                <div class="fieldHeader"> Agentconfig</div>
+                Needed agent module configuration: <div class="agentConf">no extra modules<div class="agentConfCheck"></div></div>
+            </div>
+            <p>With the help of  <a href='../../doc/interfaces/dtrum_types.dtrumapi.html#sendBeacon' class='api-reference' target='_blank'>sendBeacon</a> you can force signal sending to make certain that actions aren't lost.</p>
+        </div>
+        <div class="field">
+            <div class="fieldHeader"> Code snippet</div>
+            <code-block>dtrum.sendBeacon(false, true, false); //(forceSync, sendPreview, killUnfinished)</code-block>
+        </div>
+        <div class="field example">
+            <div class="fieldHeader"> Example</div>
+
+            <button id = "jqxhr">Send signal after successful xhr</button>
+            <div id='result'></div>
+        </div>
+        <a class="backButton" href="../index.html"> &#x2B05; Back</a>
+    </body>
+</html>
