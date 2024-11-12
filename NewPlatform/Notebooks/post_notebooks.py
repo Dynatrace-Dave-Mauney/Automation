@@ -22,6 +22,8 @@ def run():
     #   'Sandbox/00000000-dddd-bbbb-aaaa-????????????.json' # Strict reference
     #   'Sandbox/*.json' # Lenient reference
 
+    post_notebooks('Personal', 'Assets/External/**/*.json')
+
     # post_notebooks('Personal', 'Assets/External/Demo/*.json')
     # post_notebooks('NonProd', 'Assets/External/Demo/*.json')
     # post_notebooks('Prod', 'Assets/External/Demo/*.json')
@@ -44,10 +46,12 @@ def run():
     # post_notebooks('Lower', 'Assets/*.json')
     # post_notebooks('Upper', 'Assets/*.json')
 
+    # post_notebooks('Upper', 'Assets/*.json')
 
 def post_notebooks(env_name, path):
     friendly_function_name = 'Dynatrace Automation'
     _, env, client_id, client_secret = environment.get_client_environment_for_function(env_name, friendly_function_name)
+    # print(client_id, client_secret)
     oauth_bearer_token = new_platform_api.get_oauth_bearer_token(client_id, client_secret, scope='document:documents:write')
     for filename in glob.glob(path):
         with codecs.open(filename, encoding='utf-8') as f:
