@@ -37,6 +37,7 @@ def get_oauth_bearer_token(client_id, client_secret, scope):
 
 
 def get(oauth_bearer_token, api_url, params):
+    # print(f'get({oauth_bearer_token}, {api_url}, {params}')
     headers = {'accept': 'application/json', 'Authorization': 'Bearer ' + str(oauth_bearer_token)}
     # r = requests.get(api_url, headers=headers, params=params)
     fn = partial(requests.get, api_url, headers=headers, params=params)
@@ -50,7 +51,6 @@ def get(oauth_bearer_token, api_url, params):
         print(f'Response Status Code: {r.status_code}')
         print(f'Response Reason:      {r.reason}')
         print(f'Response Text:        {r.text}')
-        print('Exiting Program')
         exit(1)
 
 
@@ -70,6 +70,26 @@ def post_multipart_form_data(api_url, files, params, headers):
         return r
     except ssl.SSLError:
         print('Error in "post_multipart_form_data(api_url, files, params, headers)" method')
+        raise
+
+
+def put_multipart_form_data(api_url, files, params, headers):
+    # print(f"put_multipart_form_data({api_url}, {files}, {params}, {headers})")
+    try:
+        # r = requests.put(api_url, files=files, params=params, headers=headers)
+        fn = partial(requests.put, api_url, files=files, headers=headers, params=params)
+        r = retry_with_backoff(fn)
+
+        if r.status_code not in [200, 201, 204]:
+            print('Status Code: %d' % r.status_code)
+            print('Reason: %s' % r.reason)
+            if len(r.text) > 0:
+                print(r.text)
+                print('Error in "post_multipart_form_data(api_url, files, params, headers)" method')
+            exit(1)
+        return r
+    except ssl.SSLError:
+        print('Error in "put_multipart_form_data(api_url, files, params, headers)" method')
         raise
 
 

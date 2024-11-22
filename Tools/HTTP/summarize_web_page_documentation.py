@@ -13,6 +13,7 @@ def process():
     root_page = "https://docs.dynatrace.com/docs/platform/semantic-dictionary/model/davis"
     root_page = "https://docs.dynatrace.com/docs/shortlink/semantic-dictionary-topology"
     root_page = "https://docs.dynatrace.com/docs/observe-and-explore/metrics/built-in-metrics-on-grail"
+    root_page = "https://docs.dynatrace.com/docs/platform/davis-ai/use-cases/davis-dql-examples"
 
     r = requests.get(root_page)
     soup = BeautifulSoup(r.text, 'html.parser')

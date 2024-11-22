@@ -28,8 +28,10 @@ def process(env, token):
             # Use Epoch timestamp in milliseconds format
             # if created and created > 1668574800000:
 
-            if 'kafka' in display_name.lower() or 'kafka' in metric_id:
-                rows.append((metric_id, display_name, report_writer.convert_epoch_in_milliseconds_to_local(created)))
+            # if 'kafka' in display_name.lower() or 'kafka' in metric_id:
+            #     rows.append((metric_id, display_name, report_writer.convert_epoch_in_milliseconds_to_local(created)))
+
+            rows.append((metric_id, display_name, report_writer.convert_epoch_in_milliseconds_to_local(created)))
 
     rows = sorted(rows)
     report_name = 'Metrics'
@@ -45,7 +47,7 @@ def main():
     friendly_function_name = 'Dynatrace Automation Reporting'
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
-    env_name_supplied = 'Prod'
+    # env_name_supplied = 'Prod'
     # env_name_supplied = 'NonProd'
     # env_name_supplied = 'Sandbox'
     # env_name_supplied = 'Dev'

@@ -1,4 +1,4 @@
-# Put all dashboards matching the file path pattern to the specified environment.
+# Post all dashboards matching the file path pattern to the specified environment.
 
 # import json
 import glob
@@ -12,7 +12,7 @@ from Reuse import environment
 def run():
     """ Used when running directly from an IDE (or from a command line without using command line arguments) """
 
-    # Put dashboard(s) to the environment name, path, prefix and owner specified.
+    # Post dashboard(s) to the environment name, path, prefix and owner specified.
     # Wildcards like "?" to signify any single character or "*" to signify any number of characters may be used.
     # When wildcards are used, multiple dashboards may be referenced.
     # Example Paths:
