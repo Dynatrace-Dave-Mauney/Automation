@@ -6,6 +6,9 @@ from Reuse import report_writer
 
 
 def process(env, client_id, client_secret):
+    configuration_file = 'configurations.yaml'
+    my_owner_ids = environment.get_configuration('my_owner_ids', configuration_file=configuration_file)
+
     scope = 'document:documents:read'
 
     oauth_bearer_token = new_platform_api.get_oauth_bearer_token(client_id, client_secret, scope)
@@ -13,14 +16,18 @@ def process(env, client_id, client_secret):
     results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents', params)
     documents_json = json.loads(results.text)
     document_list = documents_json.get('documents')
-    headers = [['Dashboard Name', 'Dashboard ID']]
+    headers = [['Dashboard Name', 'Dashboard ID', 'Owner ID']]
     rows = []
     for document in document_list:
+        # print(document)
         document_type = document.get('type')
         if document_type == 'dashboard':
             document_id = document.get('id')
             document_name = document.get('name')
-            rows.append([document_name, document_id])
+            document_owner = document.get('owner')
+
+            if document_owner in my_owner_ids:
+                rows.append([document_name, document_id, document_owner])
 
     report_writer.print_rows(headers, sorted(rows))
 
