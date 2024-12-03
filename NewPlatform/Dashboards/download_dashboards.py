@@ -7,6 +7,11 @@ from Reuse import new_platform_api
 
 
 def process(env, env_name, client_id, client_secret):
+    # The admin-access parameter results in a 403-Forbidden if the USER who created the client
+    # does not have the "document:documents:admin" scope set
+    # Tested it out only for the initial get documents call (so far) before deciding not to use it (yet)
+
+    # scope = 'document:documents:admin document:documents:read'
     scope = 'document:documents:read'
 
     output_directory = environment.get_output_directory_name(f"Downloads/{env_name}")
@@ -14,6 +19,7 @@ def process(env, env_name, client_id, client_secret):
         os.makedirs(output_directory)
 
     oauth_bearer_token = new_platform_api.get_oauth_bearer_token(client_id, client_secret, scope)
+    # params = {'page-size': 1000, 'admin-access': True}
     params = {'page-size': 1000}
     results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents', params=params)
     documents_json = json.loads(results.text)
@@ -51,7 +57,7 @@ def main():
     # For easy control from IDE
     # env_name_supplied = 'Prod'
     # env_name_supplied = 'NonProd'
-    # env_name_supplied = 'Sandbox'
+    # env_name_supplied = 'Sanbox'
     #
     # env_name_supplied = 'Upper'
     # env_name_supplied = 'Lower'

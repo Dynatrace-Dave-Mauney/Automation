@@ -59,14 +59,17 @@ def generate_dashboard(env, environment_shares, dashboards):
     shared_dashboard = shared_dashboard_template
     shared_markdown_string = ''
 
+    links = []
     dashboard_ids = dashboards.keys()
     for dashboard_id in dashboard_ids:
         environment_shares.get(dashboard_id)
         environment_share_id = environment_shares.get(dashboard_id)
         if environment_share_id:
             dashboard_name = dashboards.get(dashboard_id)
-            shared_markdown_string += f'[{dashboard_name}]({env}/ui/dashboard/v0/#share={environment_share_id})  \n'
-            # print('Sharing:', dashboard_name, environment_share_id, env, shared_markdown_string)
+            links.append(f'[{dashboard_name}]({env}/ui/dashboard/v0/#share={environment_share_id})  \n')
+
+    for link in sorted(links):
+        shared_markdown_string += link
 
     shared_dashboard["tiles"]["0"]["content"] = shared_markdown_string
 
@@ -78,14 +81,17 @@ def generate_notebook(env, environment_shares, notebooks):
     shared_notebook = shared_notebook_template
     shared_markdown_string = ''
 
+    links = []
     notebook_ids = notebooks.keys()
     for notebook_id in notebook_ids:
         environment_shares.get(notebook_id)
         environment_share_id = environment_shares.get(notebook_id)
         if environment_share_id:
             notebook_name = notebooks.get(notebook_id)
-            shared_markdown_string += f'[{notebook_name}]({env}/ui/notebook/v0/#share={environment_share_id})  \n'
-            # print('Sharing:', notebook_name, environment_share_id, env, shared_markdown_string)
+            links.append(f'[{notebook_name}]({env}/ui/notebook/v0/#share={environment_share_id})  \n')
+
+    for link in sorted(links):
+        shared_markdown_string += link
 
     shared_notebook["sections"][0]["markdown"] = shared_markdown_string
 
@@ -180,7 +186,7 @@ def main():
     # env_name_supplied = 'Lower'
     # env_name_supplied = 'PreProd'
     # env_name_supplied = 'Dev'
-    env_name_supplied = 'Personal'
+    # env_name_supplied = 'Personal'
     # env_name_supplied = 'Demo'
     env_name, env, client_id, client_secret = environment.get_client_environment_for_function(env_name_supplied, friendly_function_name)
 

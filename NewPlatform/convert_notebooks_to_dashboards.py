@@ -6,7 +6,8 @@ import codecs
 
 add_table_for_donut_charts = True
 
-notebook_input_path = 'customer_specific/NWM/NotebookToDashboardInput/Dashboard Conversion_  App Tracker.json'
+notebook_input_path = 'customer_specific/NWM/NotebookToDashboardInput/NMXP*.json'
+# notebook_input_path = 'customer_specific/NWM/NotebookToDashboardInput/Dashboard Conversion_  App Tracker.json'
 # notebook_input_path = 'customer_specific/NWM/NotebookToDashboardInput/Dashboard Conversion_ dMHQ.json'
 # notebook_input_path = 'customer_specific/NWM/NotebookToDashboardInput/CONVERT_MIX.json'
 # notebook_input_path = 'customer_specific/NWM/NotebookToDashboardInput/CONVERT_PIE.json'

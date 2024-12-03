@@ -6,11 +6,6 @@ from Reuse import report_writer
 
 
 def process(env, client_id, client_secret):
-    configuration_file = 'configurations.yaml'
-    my_owner_ids = environment.get_configuration('my_owner_ids', configuration_file=configuration_file)
-
-    print('Documents owned by:', my_owner_ids)
-
     scope = 'document:documents:read'
 
     oauth_bearer_token = new_platform_api.get_oauth_bearer_token(client_id, client_secret, scope)
@@ -18,17 +13,14 @@ def process(env, client_id, client_secret):
     results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents', params)
     documents_json = json.loads(results.text)
     document_list = documents_json.get('documents')
-    # headers = [['Document Type', 'Document Name', 'Document ID', 'Owner ID']]
-    headers = [['Document Type', 'Document Name', 'Document ID']]
+    headers = [['Launchpad Name', 'Launchpad ID']]
     rows = []
     for document in document_list:
-        document_owner = document.get('owner')
-        if document_owner in my_owner_ids:
+        document_type = document.get('type')
+        if document_type == 'launchpad':
             document_id = document.get('id')
             document_name = document.get('name')
-            document_type = document.get('type')
-            # rows.append([document_type, document_name, document_id, document_owner])
-            rows.append([document_type, document_name, document_id])
+            rows.append([document_name, document_id])
 
     report_writer.print_rows(headers, sorted(rows))
 
@@ -45,7 +37,7 @@ def main():
     # env_name_supplied = 'Lower'
     # env_name_supplied = 'PreProd'
     # env_name_supplied = 'Dev'
-    # env_name_supplied = 'Personal'
+    env_name_supplied = 'Personal'
     # env_name_supplied = 'Demo'
     env_name, env, client_id, client_secret = environment.get_client_environment_for_function(env_name_supplied, friendly_function_name)
 

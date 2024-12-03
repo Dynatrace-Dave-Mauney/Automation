@@ -1,3 +1,5 @@
+# Generate the "New Platform" dashboard to be included in the Dashboard Overview menu
+
 import json
 
 from Reuse import environment

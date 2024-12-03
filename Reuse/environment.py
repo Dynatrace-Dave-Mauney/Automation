@@ -76,12 +76,22 @@ def get_client_environment_for_function_print_control(env_name, friendly_functio
         tenant = os.environ.get(tenant_key)
         tenant_source = f'Environment Variable "{tenant_key}"'
 
+    # Use client name when it is provided by environment variable
+    client_name_key = f'DYNATRACE_{env_name.upper()}_CLIENT_NAME'
+    client_name = os.environ.get(client_name_key)
+    if client_name:
+        client_name_source = f'Environment Variable "{client_name_key}"'
+    else:
+        client_name_source = 'N/A'
+
     if args.client_id:
         client_id = args.client_id
         client_id_source = 'Command Line Argument "-ci" or "--client_id"'
     else:
-        # client_id_key = f'{friendly_function_name.upper().replace(" ", "_")}_{env_name.upper()}_CLIENT_ID'
-        client_id_key = f'{friendly_function_name.upper().replace(" ", "_")}_CLIENT_ID'
+        if client_name:
+            client_id_key = f'{friendly_function_name.upper().replace(" ", "_")}_CLIENT_ID_{client_name}'
+        else:
+            client_id_key = f'{friendly_function_name.upper().replace(" ", "_")}_CLIENT_ID'
         client_id = os.environ.get(client_id_key)
         client_id_source = f'Environment Variable "{client_id_key}"'
 
@@ -89,7 +99,10 @@ def get_client_environment_for_function_print_control(env_name, friendly_functio
         client_secret = args.client_secret
         client_secret_source = 'Command Line Argument "-cs" or "--client_secret"'
     else:
-        client_secret_key = f'{friendly_function_name.upper().replace(" ", "_")}_CLIENT_SECRET'
+        if client_name:
+            client_secret_key = f'{friendly_function_name.upper().replace(" ", "_")}_CLIENT_SECRET_{client_name}'
+        else:
+            client_secret_key = f'{friendly_function_name.upper().replace(" ", "_")}_CLIENT_SECRET'
         client_secret = os.environ.get(client_secret_key)
         client_secret_source = f'Environment Variable "{client_secret_key}"'
 
@@ -99,6 +112,7 @@ def get_client_environment_for_function_print_control(env_name, friendly_functio
         if print_mode:
             print(f'Environment Name:  {env_name}')
             print(f'Environment URL:   {env} (from {tenant_source})')
+            print(f'Client Name:       {client_name} (from {client_name_source})')
             print(f'Client ID:         {client_id} (from {client_id_source})')
             print(f'Client Secret:     {masked_client_secret} (from {client_secret_source})')
             print(f'Function:          {friendly_function_name}')
@@ -117,6 +131,8 @@ def get_client_environment_for_function_print_control(env_name, friendly_functio
             print(f'Function:         {friendly_function_name}')
             if tenant:
                 print(f'Tenant:              {tenant}')
+            if client_name:
+                print(f'Client Name:           {client_name}')
             if client_id:
                 print(f'Client ID:           {client_id[0:20]}')
             if client_secret:
