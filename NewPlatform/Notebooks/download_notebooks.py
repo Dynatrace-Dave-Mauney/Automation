@@ -25,12 +25,21 @@ def process(env, env_name, client_id, client_secret):
             document_name = document.get('name')
             notebook_results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents/{document_id}/content', None)
             notebook_json = json.loads(notebook_results.text)
+            notebook_metadata_results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents/{document_id}/metadata', None)
+            notebook_metadata_json = json.loads(notebook_metadata_results.text)
             clean_filename = re.sub(r"[/\\?%*:|\"<>\x7F\x00-\x1F]", "-", f'{document_name}.json')
             notebook_file_name = os.path.join(output_directory, clean_filename)
             formatted_notebook = json.dumps(notebook_json, indent=4, sort_keys=False)
             print(f'Writing file {notebook_file_name}')
             with open(notebook_file_name, 'w', encoding='utf8') as output_file:
                 output_file.write('%s' % formatted_notebook)
+
+            clean_filename = re.sub(r"[/\\?%*:|\"<>\x7F\x00-\x1F]", "-", f'{document_name}.metadata.json')
+            notebook_metadata_file_name = os.path.join(output_directory, clean_filename)
+            formatted_notebook_metadata = json.dumps(notebook_metadata_json, indent=4, sort_keys=False)
+            print(f'Writing file {notebook_metadata_file_name}')
+            with open(notebook_metadata_file_name, 'w', encoding='utf8') as output_file:
+                output_file.write('%s' % formatted_notebook_metadata)
 
 
 def main():
@@ -39,7 +48,7 @@ def main():
     # For easy control from IDE
     # env_name_supplied = 'Prod'
     # env_name_supplied = 'NonProd'
-    # env_name_supplied = 'Sandbox'
+    # env_name_supplied = 'Sanbox'
     #
     # env_name_supplied = 'Upper'
     # env_name_supplied = 'Lower'

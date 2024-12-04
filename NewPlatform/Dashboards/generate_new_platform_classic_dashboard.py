@@ -97,15 +97,6 @@ def generate_new_platform_classic_dashboard(env, dashboard_markdown_list, notebo
     generated_markdown += f'[API]({env}/platform/swagger-ui/index.html)'
     generated_markdown += EOL
 
-    """
-    ## Views\n\n
-    [Dashboards](https://pey66649.apps.dynatrace.com/ui/apps/dynatrace.dashboards/dashboards)\n\n
-    [Notebooks](https://pey66649.apps.dynatrace.com/ui/apps/dynatrace.notebooks/)\n\n
-    [Workflows](https://pey66649.apps.dynatrace.com/ui/apps/dynatrace.automations/)\n\n
-    [Hub](https://pey66649.apps.dynatrace.com/ui/apps/dynatrace.hub)\n\n
-    [API](https://pey66649.apps.dynatrace.com/platform/swagger-ui/index.html)\n"
-    """
-
     dashboard_tiles[0]['markdown'] = generated_markdown
     write_dashboard(dashboard_json)
 
