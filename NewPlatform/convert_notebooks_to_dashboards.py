@@ -6,7 +6,8 @@ import codecs
 
 add_table_for_donut_charts = True
 
-notebook_input_path = 'customer_specific/NWM/NotebookToDashboardInput/NMXP*.json'
+notebook_input_path = '../$Private/Customers/NWM/Assets/NewPlatform/Notebooks/*.json'
+# notebook_input_path = 'customer_specific/NWM/NotebookToDashboardInput/NMXP*.json'
 # notebook_input_path = 'customer_specific/NWM/NotebookToDashboardInput/Dashboard Conversion_  App Tracker.json'
 # notebook_input_path = 'customer_specific/NWM/NotebookToDashboardInput/Dashboard Conversion_ dMHQ.json'
 # notebook_input_path = 'customer_specific/NWM/NotebookToDashboardInput/CONVERT_MIX.json'
@@ -14,7 +15,8 @@ notebook_input_path = 'customer_specific/NWM/NotebookToDashboardInput/NMXP*.json
 # notebook_input_path = 'customer_specific/NWM/NotebookToDashboardInput/*.json'
 # notebook_input_path = 'customer_specific/NWM/DashboardTemplates/TEMPLATE_DONUT.json'
 
-dashboard_output_path = 'customer_specific/NWM/ConvertedDashboards'
+dashboard_output_path = '../$Private/Customers/NWM/Assets/NewPlatform/Dashboards'
+# dashboard_output_path = 'customer_specific/NWM/ConvertedDashboards'
 
 dashboard_template = {
     "version": 15,
@@ -119,13 +121,14 @@ def run():
 
 def convert_notebooks(path):
     for filename in glob.glob(path):
-        with codecs.open(filename, encoding='utf-8') as f:
-            notebook = f.read()
-            notebook_json = json.loads(notebook)
-            notebook_file_name = os.path.basename(filename)
-            notebook_name = os.path.splitext(notebook_file_name)[0]
-            # formatted_document = json.dumps(notebook_json, indent=4, sort_keys=False)
-            convert_notebook(notebook_name, notebook_file_name, notebook_json)
+        if filename.endswith('.json') and not filename.endswith('.metadata.json'):
+            with codecs.open(filename, encoding='utf-8') as f:
+                notebook = f.read()
+                notebook_json = json.loads(notebook)
+                notebook_file_name = os.path.basename(filename)
+                notebook_name = os.path.splitext(notebook_file_name)[0]
+                # formatted_document = json.dumps(notebook_json, indent=4, sort_keys=False)
+                convert_notebook(notebook_name, notebook_file_name, notebook_json)
 
 
 def convert_notebook(notebook_name, notebook_file_name, notebook_json):
@@ -204,7 +207,7 @@ def convert_notebook(notebook_name, notebook_file_name, notebook_json):
 
     dashboard_json = json.dumps(dashboard, indent=4, sort_keys=False)
 
-    output_file_name = f'{dashboard_output_path}/CONVERTED-{notebook_file_name}'
+    output_file_name = f'{dashboard_output_path}/{notebook_file_name}'
     print(f'Writing to {output_file_name}')
     with open(output_file_name, 'w', encoding='utf-8') as outfile:
         outfile.write(dashboard_json)

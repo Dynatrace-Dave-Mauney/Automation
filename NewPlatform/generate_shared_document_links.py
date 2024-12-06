@@ -6,44 +6,12 @@ from Reuse import new_platform_api
 # Use configurations.yaml to set this variable
 my_owner_ids = []
 
-shared_dashboard_template = {
-    "version": 1,
-    "variables": [],
-    "tiles": {
-        "0": {
-            "type": "markdown",
-            "title": "",
-            "content": ""
-        }
-    },
-    "layouts": {
-        "0": {
-            "x": 0,
-            "y": 0,
-            "w": 24,
-            "h": 13
-        }
-    },
-    "importedWithCode": False
-}
+# Use an empty string for filter to create links to all shared dashboards and notebooks
+# filter = ""
+# filter = "NMXP - Auth"
+filter = "Rollup"
 
-shared_notebook_template = {
-    "version": "1",
-    "defaultTimeframe": {
-        "from": "now()-2h",
-        "to": "now()"
-    },
-    "sections": [
-        {
-            "id": "aaaaaaaa-bbbb-cccc-dddd-000000000001",
-            "type": "markdown",
-            "markdown": ""
-        }
-    ]
-}
-
-
-def process(env, client_id, client_secret):
+def process(env_name, env, client_id, client_secret):
     configuration_file = 'configurations.yaml'
     global my_owner_ids
     my_owner_ids = environment.get_configuration('my_owner_ids', configuration_file=configuration_file)
@@ -51,14 +19,11 @@ def process(env, client_id, client_secret):
     environment_shares = get_environment_shares(env, client_id, client_secret)
     dashboards = get_dashboards(env, client_id, client_secret)
     notebooks = get_notebooks(env, client_id, client_secret)
-    generate_dashboard(env, environment_shares, dashboards)
-    generate_notebook(env, environment_shares, notebooks)
+    generate_dashboard(env_name, env, environment_shares, dashboards)
+    generate_notebook(env_name, env, environment_shares, notebooks)
 
 
-def generate_dashboard(env, environment_shares, dashboards):
-    shared_dashboard = shared_dashboard_template
-    shared_markdown_string = ''
-
+def generate_dashboard(env_name, env, environment_shares, dashboards):
     links = []
     dashboard_ids = dashboards.keys()
     for dashboard_id in dashboard_ids:
@@ -66,21 +31,14 @@ def generate_dashboard(env, environment_shares, dashboards):
         environment_share_id = environment_shares.get(dashboard_id)
         if environment_share_id:
             dashboard_name = dashboards.get(dashboard_id)
-            links.append(f'[{dashboard_name}]({env}/ui/document/v0/#share={environment_share_id})  \n')
+            if filter in dashboard_name:
+                links.append(f'{dashboard_name} Dashboard ({env_name}): {env}/ui/document/v0/#share={environment_share_id}')
 
     for link in sorted(links):
-        shared_markdown_string += link
-
-    shared_dashboard["tiles"]["0"]["content"] = shared_markdown_string
-
-    # print(shared_dashboard)
-    write_dashboard(shared_dashboard)
+        print(link)
 
 
-def generate_notebook(env, environment_shares, notebooks):
-    shared_notebook = shared_notebook_template
-    shared_markdown_string = ''
-
+def generate_notebook(env_name, env, environment_shares, notebooks):
     links = []
     notebook_ids = notebooks.keys()
     for notebook_id in notebook_ids:
@@ -88,15 +46,11 @@ def generate_notebook(env, environment_shares, notebooks):
         environment_share_id = environment_shares.get(notebook_id)
         if environment_share_id:
             notebook_name = notebooks.get(notebook_id)
-            links.append(f'[{notebook_name}]({env}/ui/document/v0/#share={environment_share_id})  \n')
+            if filter in notebook_name:
+                links.append(f'{notebook_name} Notebook ({env_name}): {env}/ui/document/v0/#share={environment_share_id}')
 
     for link in sorted(links):
-        shared_markdown_string += link
-
-    shared_notebook["sections"][0]["markdown"] = shared_markdown_string
-
-    # print(shared_notebook)
-    write_notebook(shared_notebook)
+        print(link)
 
 
 def get_environment_shares(env, client_id, client_secret):
@@ -176,21 +130,14 @@ def write_notebook(notebook_json):
 
 def main():
     friendly_function_name = 'Dynatrace Automation'
-    env_name_supplied = environment.get_env_name(friendly_function_name)
-    # For easy control from IDE
-    env_name_supplied = 'Prod'
-    # env_name_supplied = 'NonProd'
-    # env_name_supplied = 'Sandbox'
-    #
-    # env_name_supplied = 'Upper'
-    # env_name_supplied = 'Lower'
-    # env_name_supplied = 'PreProd'
-    # env_name_supplied = 'Dev'
-    # env_name_supplied = 'Personal'
-    # env_name_supplied = 'Demo'
-    env_name, env, client_id, client_secret = environment.get_client_environment_for_function(env_name_supplied, friendly_function_name)
 
-    process(env, client_id, client_secret)
+    env_name_supplied = 'Prod'
+    env_name, env, client_id, client_secret = environment.get_client_environment_for_function(env_name_supplied, friendly_function_name)
+    process(env_name, env, client_id, client_secret)
+
+    env_name_supplied = 'NonProd'
+    env_name, env, client_id, client_secret = environment.get_client_environment_for_function(env_name_supplied, friendly_function_name)
+    process(env_name, env, client_id, client_secret)
 
 
 if __name__ == '__main__':

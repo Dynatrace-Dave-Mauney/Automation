@@ -29,7 +29,14 @@ def run():
     #   'Sandbox/00000000-dddd-bbbb-aaaa-????????????.json' # Strict reference
     #   'Sandbox/*.json' # Lenient reference
 
-    put_documents('Personal', 'Notebooks/Downloads/Personal/$Testing.json')
+    # put_documents('Personal', 'Notebooks/Downloads/Personal/$Testing.json')
+    # put_documents('Prod', '../$Private/Customers/NWM/Assets/NewPlatform/Notebooks/NMXP - AuthN Session System.json')
+    # put_documents('Prod', '../$Private/Customers/NWM/Assets/NewPlatform/Dashboards/NMXP - AuthN Session System.json')
+    # put_documents('NonProd', '../$Private/Customers/NWM/Assets/NewPlatform/Dashboards/NonProd/NMXP - AuthN QA Session System.json')
+    # put_documents('NonProd', '../$Private/Customers/NWM/Assets/NewPlatform/Notebooks/NonProd/Shared Notebooks.json')
+    # put_documents('NonProd', '../$Private/Customers/NWM/Assets/NewPlatform/Dashboards/NonProd/Shared Dashboards.json')
+    # put_documents('Prod', '../$Private/Customers/NWM/Assets/NewPlatform/Notebooks/Prod/Shared Notebooks.json')
+    # put_documents('Prod', '../$Private/Customers/NWM/Assets/NewPlatform/Dashboards/Prod/Shared Dashboards.json')
 
 
 def put_documents(env_name, path):

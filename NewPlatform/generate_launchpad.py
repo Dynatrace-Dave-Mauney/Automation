@@ -6,40 +6,27 @@ from Reuse import new_platform_api
 # Use configurations.yaml to set this variable
 my_owner_ids = []
 
-shared_dashboard_template = {
-    "version": 1,
-    "variables": [],
-    "tiles": {
-        "0": {
-            "type": "markdown",
-            "title": "",
-            "content": ""
-        }
-    },
-    "layouts": {
-        "0": {
-            "x": 0,
-            "y": 0,
-            "w": 24,
-            "h": 13
-        }
-    },
-    "importedWithCode": False
-}
-
-shared_notebook_template = {
-    "version": "1",
-    "defaultTimeframe": {
-        "from": "now()-2h",
-        "to": "now()"
-    },
-    "sections": [
-        {
-            "id": "aaaaaaaa-bbbb-cccc-dddd-000000000001",
-            "type": "markdown",
-            "markdown": ""
-        }
-    ]
+launchpad_template = {
+    "schemaVersion": 2,
+    "icon": "default",
+    "background": "default",
+    "containerList": {
+        "containers": [
+            {
+                "blocks": [
+                    {
+                        "id": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+                        "type": "markdown",
+                        "properties": {
+                            "expanded": true
+                        },
+                        "content": "#  NWM Prod Tenant Links\n\n[Overview Dashboard](https://ckx93277.live.dynatrace.com/#dashboard;gtf=-2h;gf=all;id=00000000-dddd-bbbb-ffff-000000000001)\n\n[Shared Dashboards](https://ckx93277.apps.dynatrace.com/ui/document/v0/#share=1ed69a60-bded-4cef-8466-2b880ddd9062)  \n\n[Shared Notebooks](https://ckx93277.apps.dynatrace.com/ui/document/v0/#share=661db821-2dc2-4668-b0fc-6139de0d2ac6)  \n"
+                    }
+                ],
+                "horizontalLayoutWeight": 1
+            }
+        ]
+    }
 }
 
 

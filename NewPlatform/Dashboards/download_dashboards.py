@@ -57,7 +57,7 @@ def main():
     # For easy control from IDE
     # env_name_supplied = 'Prod'
     # env_name_supplied = 'NonProd'
-    # env_name_supplied = 'Sanbox'
+    # env_name_supplied = 'Sandbox'
     #
     # env_name_supplied = 'Upper'
     # env_name_supplied = 'Lower'

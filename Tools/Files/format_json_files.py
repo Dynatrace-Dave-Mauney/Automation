@@ -24,7 +24,9 @@ def main():
         # input_glob_pattern = "C:\\Users\\dave.mauney\\PycharmProjects\\Automation\\Tools\\NewRelic\\dynatrace_notebook_template.json"
         # input_glob_pattern = "C:\\Users\\dave.mauney\\Downloads\\CONV*.json"
         # input_glob_pattern = "C:\\Users\\dave.mauney\\Downloads\\Shared Notebooks (5).json"
-        input_glob_pattern = "C:\\Users\\dave.mauney\\Downloads\\Sharing*.json"
+        # input_glob_pattern = "C:\\Users\\dave.mauney\\Downloads\\Sharing*.json"
+        # input_glob_pattern = "../../$Private/Customers/NWM/Assets/NewPlatform/Notebooks/*"
+        input_glob_pattern = "C:\\Users\\dave.mauney\\Downloads\\NMXP*(2).json"
 
         output_directory_name = '/Temp/Formatted'
 
