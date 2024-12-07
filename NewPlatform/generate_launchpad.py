@@ -1,3 +1,4 @@
+import copy
 import json
 
 from Reuse import environment
@@ -13,20 +14,20 @@ launchpad_template = {
     "containerList": {
         "containers": [
             {
-                "blocks": [
-                    {
-                        "id": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
-                        "type": "markdown",
-                        "properties": {
-                            "expanded": true
-                        },
-                        "content": "#  NWM Prod Tenant Links\n\n[Overview Dashboard](https://ckx93277.live.dynatrace.com/#dashboard;gtf=-2h;gf=all;id=00000000-dddd-bbbb-ffff-000000000001)\n\n[Shared Dashboards](https://ckx93277.apps.dynatrace.com/ui/document/v0/#share=1ed69a60-bded-4cef-8466-2b880ddd9062)  \n\n[Shared Notebooks](https://ckx93277.apps.dynatrace.com/ui/document/v0/#share=661db821-2dc2-4668-b0fc-6139de0d2ac6)  \n"
-                    }
-                ],
+                "blocks": [],
                 "horizontalLayoutWeight": 1
             }
         ]
     }
+}
+
+launchpad_block_template = {
+    "id": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+    "type": "markdown",
+    "properties": {
+        "expanded": True
+    },
+    "content": ""
 }
 
 
@@ -38,13 +39,27 @@ def process(env, client_id, client_secret):
     environment_shares = get_environment_shares(env, client_id, client_secret)
     dashboards = get_dashboards(env, client_id, client_secret)
     notebooks = get_notebooks(env, client_id, client_secret)
-    generate_dashboard(env, environment_shares, dashboards)
-    generate_notebook(env, environment_shares, notebooks)
+
+    shared_launchpad = launchpad_template
+    shared_launchpad_dashboard_block = generate_dashboard_block(env, environment_shares, dashboards)
+    shared_launchpad_notebook_block = generate_notebook_block(env, environment_shares, notebooks)
+    shared_launchpad_classic_dashboard_block = generate_classic_dashboard_block(env)
+    shared_launchpad_launchpad_block = generate_launchpad_block(env)
+    shared_university_block = generate_university_block()
+
+    shared_launchpad_blocks = shared_launchpad['containerList']['containers'][0]['blocks']
+    shared_launchpad_blocks.append(shared_launchpad_dashboard_block)
+    shared_launchpad_blocks.append(shared_launchpad_notebook_block)
+    shared_launchpad_blocks.append(shared_launchpad_launchpad_block)
+    shared_launchpad_blocks.append(shared_launchpad_classic_dashboard_block)
+    shared_launchpad_blocks.append(shared_university_block)
+
+    write_launchpad(shared_launchpad)
 
 
-def generate_dashboard(env, environment_shares, dashboards):
-    shared_dashboard = shared_dashboard_template
-    shared_markdown_string = ''
+def generate_dashboard_block(env, environment_shares, dashboards):
+    launchpad_block = copy.deepcopy(launchpad_block_template)
+    shared_markdown_string = '#  Shared Dashboards  \n'
 
     links = []
     dashboard_ids = dashboards.keys()
@@ -58,15 +73,13 @@ def generate_dashboard(env, environment_shares, dashboards):
     for link in sorted(links):
         shared_markdown_string += link
 
-    shared_dashboard["tiles"]["0"]["content"] = shared_markdown_string
-
-    # print(shared_dashboard)
-    write_dashboard(shared_dashboard)
+    launchpad_block['content'] = shared_markdown_string
+    return launchpad_block
 
 
-def generate_notebook(env, environment_shares, notebooks):
-    shared_notebook = shared_notebook_template
-    shared_markdown_string = ''
+def generate_notebook_block(env, environment_shares, notebooks):
+    launchpad_block = copy.deepcopy(launchpad_block_template)
+    shared_markdown_string = '#  Shared Notebooks  \n'
 
     links = []
     notebook_ids = notebooks.keys()
@@ -80,10 +93,56 @@ def generate_notebook(env, environment_shares, notebooks):
     for link in sorted(links):
         shared_markdown_string += link
 
-    shared_notebook["sections"][0]["markdown"] = shared_markdown_string
+    launchpad_block['content'] = shared_markdown_string
+    return launchpad_block
 
-    # print(shared_notebook)
-    write_notebook(shared_notebook)
+
+def generate_classic_dashboard_block(env):
+    launchpad_block = copy.deepcopy(launchpad_block_template)
+    shared_markdown_string = '#  Classic Dashboards  \n'
+
+    classic_tenant = env.replace('.apps.', '.live.')
+    overview_dashboard_link = f'{classic_tenant}/#dashboard;id=00000000-dddd-bbbb-ffff-000000000001'
+    shared_markdown_string += f'[Overview Dashboard]({overview_dashboard_link})'
+
+    launchpad_block['content'] = shared_markdown_string
+    return launchpad_block
+
+
+def generate_launchpad_block(env):
+    launchpad_block = copy.deepcopy(launchpad_block_template)
+    shared_markdown_string = '#  Launchpads  \n'
+
+    getting_started_launchpad_link = f'{env}/ui/apps/dynatrace.launcher/getting-started'
+    shared_markdown_string += f'[Getting started with Dynatrace]({getting_started_launchpad_link})  \n'
+
+    links = [
+        '[What is Dynatrace and how to get started?](https://wkf10640.apps.dynatrace.com/ui/apps/dynatrace.launcher/launchpad/45d83fd1-675c-4f1c-82f4-58ab86a293f1)',
+        '[Welcome to the Dynatrace Playground](https://wkf10640.apps.dynatrace.com/ui/apps/dynatrace.launcher/launchpad/99583c94-6c7c-4a5d-9c23-1432e4e1746c),'
+    ]
+
+    for link in links:
+        shared_markdown_string += link + '  \n'
+
+    launchpad_block['content'] = shared_markdown_string
+    return launchpad_block
+
+
+def generate_university_block():
+    launchpad_block = copy.deepcopy(launchpad_block_template)
+    shared_markdown_string = '#  Dynatrace University  \n'
+
+    links = [
+        '[Beginner Level](https://university.dynatrace.com/ondemand?content=dynatrace&skillLevel=beginner)',
+        '[Intermediate Level](https://university.dynatrace.com/ondemand?content=dynatrace&skillLevel=intermediate)',
+        '[Advanced Level](https://university.dynatrace.com/ondemand?content=dynatrace&skillLevel=advanced)',
+    ]
+
+    for link in links:
+        shared_markdown_string += link + '  \n'
+
+    launchpad_block['content'] = shared_markdown_string
+    return launchpad_block
 
 
 def get_environment_shares(env, client_id, client_secret):
@@ -151,14 +210,9 @@ def get_notebooks(env, client_id, client_secret):
     return notebooks
 
 
-def write_dashboard(dashboard_json):
-    with open('Shared Dashboards.json', 'w', encoding='utf-8') as outfile:
-        outfile.write(json.dumps(dashboard_json, indent=4, sort_keys=False))
-
-
-def write_notebook(notebook_json):
-    with open('Shared Notebooks.json', 'w', encoding='utf-8') as outfile:
-        outfile.write(json.dumps(notebook_json, indent=4, sort_keys=False))
+def write_launchpad(launchpad_json):
+    with open('Shared Launchpad.json', 'w', encoding='utf-8') as outfile:
+        outfile.write(json.dumps(launchpad_json, indent=4, sort_keys=False))
 
 
 def main():
