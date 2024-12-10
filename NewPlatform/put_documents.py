@@ -37,6 +37,7 @@ def run():
     # put_documents('NonProd', '../$Private/Customers/NWM/Assets/NewPlatform/Dashboards/NonProd/Shared Dashboards.json')
     # put_documents('Prod', '../$Private/Customers/NWM/Assets/NewPlatform/Notebooks/Prod/Shared Notebooks.json')
     # put_documents('Prod', '../$Private/Customers/NWM/Assets/NewPlatform/Dashboards/Prod/Shared Dashboards.json')
+    put_documents('Prod', '../$Private/Customers/NWM/Assets/NewPlatform/Launchpads/Prod/Shared Launchpad.json')
 
 
 def put_documents(env_name, path):

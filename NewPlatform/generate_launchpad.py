@@ -46,6 +46,7 @@ def process(env, client_id, client_secret):
     shared_launchpad_classic_dashboard_block = generate_classic_dashboard_block(env)
     shared_launchpad_launchpad_block = generate_launchpad_block(env)
     shared_university_block = generate_university_block()
+    shared_documentation_block = generate_documentation_block()
 
     shared_launchpad_blocks = shared_launchpad['containerList']['containers'][0]['blocks']
     shared_launchpad_blocks.append(shared_launchpad_dashboard_block)
@@ -53,6 +54,7 @@ def process(env, client_id, client_secret):
     shared_launchpad_blocks.append(shared_launchpad_launchpad_block)
     shared_launchpad_blocks.append(shared_launchpad_classic_dashboard_block)
     shared_launchpad_blocks.append(shared_university_block)
+    shared_launchpad_blocks.append(shared_documentation_block)
 
     write_launchpad(shared_launchpad)
 
@@ -129,7 +131,7 @@ def generate_launchpad_block(env):
 
 
 def generate_university_block():
-    launchpad_block = copy.deepcopy(launchpad_block_template)
+    university_block = copy.deepcopy(launchpad_block_template)
     shared_markdown_string = '#  Dynatrace University  \n'
 
     links = [
@@ -141,8 +143,27 @@ def generate_university_block():
     for link in links:
         shared_markdown_string += link + '  \n'
 
-    launchpad_block['content'] = shared_markdown_string
-    return launchpad_block
+    university_block['content'] = shared_markdown_string
+    return university_block
+
+
+def generate_documentation_block():
+    documentation_block = copy.deepcopy(launchpad_block_template)
+    shared_markdown_string = '#  Dynatrace Documentation  \n'
+
+    links = [
+        '[Dashboards and Notebooks](https://docs.dynatrace.com/docs/shortlink/dashboards-and-notebooks)',
+        '[Distributed Tracing](https://docs.dynatrace.com/docs/shortlink/distributed-traces-grail)',
+        '[DQL](https://docs.dynatrace.com/docs/shortlink/dql-dynatrace-query-language-hub)',
+        '[Log Content Analysis](https://docs.dynatrace.com/docs/shortlink/lma-analysis)',
+        '[Metrics](https://docs.dynatrace.com/docs/shortlink/metrics-grail)',
+    ]
+
+    for link in links:
+        shared_markdown_string += link + '  \n'
+
+    documentation_block['content'] = shared_markdown_string
+    return documentation_block
 
 
 def get_environment_shares(env, client_id, client_secret):
