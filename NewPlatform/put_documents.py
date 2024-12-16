@@ -37,7 +37,10 @@ def run():
     # put_documents('NonProd', '../$Private/Customers/NWM/Assets/NewPlatform/Dashboards/NonProd/Shared Dashboards.json')
     # put_documents('Prod', '../$Private/Customers/NWM/Assets/NewPlatform/Notebooks/Prod/Shared Notebooks.json')
     # put_documents('Prod', '../$Private/Customers/NWM/Assets/NewPlatform/Dashboards/Prod/Shared Dashboards.json')
-    put_documents('Prod', '../$Private/Customers/NWM/Assets/NewPlatform/Launchpads/Prod/Shared Launchpad.json')
+    # put_documents('Prod', '../$Private/Customers/NWM/Assets/NewPlatform/Launchpads/Prod/Shared Launchpad.json')
+    # put_documents('NonProd', '../$Private/Customers/NWM/Assets/NewPlatform/Dashboards/NonProd/NMXP - AuthN QA Session System.json')
+    # put_documents('NonProd', 'Dashboards/Downloads/NonProd/PUT Testing.json')
+    put_documents('NonProd', '../$Private/Customers/NWM/Assets/NewPlatform/Launchpads/NonProd/Shared Launchpad.json')
 
 
 def put_documents(env_name, path):
@@ -75,6 +78,7 @@ def put_document(env, oauth_bearer_token, document_name, document_id, document_t
     params = f'optimistic-locking-version={optimistic_locking_version}'
     new_platform_api.put_multipart_form_data(f"{api_url}/{document_id}/content", files=files, headers=headers, params=params)
 
+    # print(payload)
 
 def get_optimistic_locking_version(env, oauth_bearer_token, document_id):
     document_results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents/{document_id}/metadata', None)
