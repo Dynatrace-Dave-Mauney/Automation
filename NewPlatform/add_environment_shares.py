@@ -3,8 +3,17 @@ import json
 from Reuse import environment
 from Reuse import new_platform_api
 
+# Populated from configuration file
+owner_id_list = None
 
 def process(env, client_id, client_secret):
+    configuration_file = 'configurations.yaml'
+    owner_ids = environment.get_configuration('my_owner_ids', configuration_file=configuration_file)
+
+    print('Sharing documents owned by:', owner_ids)
+    global owner_id_list
+    owner_id_list = owner_ids
+
     environment_share_dict = get_environment_share_dict(env, client_id, client_secret)
     document_id_list = get_document_id_list(env, client_id, client_secret)
     # print(environment_share_dict)
@@ -44,8 +53,17 @@ def get_document_id_list(env, client_id, client_secret):
     documents_json = json.loads(results.text)
     document_list = documents_json.get('documents')
     for document in document_list:
+        # print(document)
         document_id = document.get('id')
         document_name = document.get('name')
+        document_owner = document.get('owner')
+        print(document_owner)
+
+        if document_owner in owner_id_list:
+            # pass
+            print('Skipping document with owner not in the configured owner list')
+        else:
+            continue
 
         # Skip Events dashboards/notebooks since queries have a cost
         if 'Events' not in document_name:

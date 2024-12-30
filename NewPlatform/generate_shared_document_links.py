@@ -7,9 +7,9 @@ from Reuse import new_platform_api
 my_owner_ids = []
 
 # Use an empty string for filter to create links to all shared dashboards and notebooks
-# filter = ""
+filter = ""
 # filter = "NMXP - Auth"
-filter = "Rollup"
+# filter = "Rollup"
 
 def process(env_name, env, client_id, client_secret):
     configuration_file = 'configurations.yaml'

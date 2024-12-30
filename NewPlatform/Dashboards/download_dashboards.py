@@ -5,13 +5,17 @@ import re
 from Reuse import environment
 from Reuse import new_platform_api
 
+# Populated from configuration file
+owner_id_list = None
+
 
 def process(env, env_name, client_id, client_secret):
-    # The admin-access parameter results in a 403-Forbidden if the USER who created the client
-    # does not have the "document:documents:admin" scope set
-    # Tested it out only for the initial get documents call (so far) before deciding not to use it (yet)
+    configuration_file = 'configurations.yaml'
+    my_owner_ids = environment.get_configuration('my_owner_ids', configuration_file=configuration_file)
 
-    # scope = 'document:documents:admin document:documents:read'
+    if my_owner_ids:
+        print('Downloading documents owned by:', my_owner_ids)
+
     scope = 'document:documents:read'
 
     output_directory = environment.get_output_directory_name(f"Downloads/{env_name}")
@@ -27,6 +31,14 @@ def process(env, env_name, client_id, client_secret):
     for document in document_list:
         document_type = document.get('type')
         if document_type == 'dashboard':
+
+            # filter by owner id, if needed
+            document_owner = document.get('owner')
+            if my_owner_ids and document_owner in my_owner_ids:
+                pass
+            else:
+                continue
+
             document_id = document.get('id')
             document_name = document.get('name')
             # print(document_type, document_id, document_name)
