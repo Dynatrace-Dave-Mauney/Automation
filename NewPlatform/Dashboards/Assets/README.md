@@ -1,19 +1,19 @@
-# Sources
-
-Andi Grabner Assets:
-Getting started
-How to get Ownership Overview
-Kubernetes Cluster Overview
-Kubernetes Namespace Overview
-[What is Dynatrace and How to get started GitHub Repo](https://github.com/dynatrace-perfclinics/dynatrace-getting-started)  
+# Sources  
+  
+Andi Grabner Assets:  
+Getting started  
+How to get Ownership Overview  
+Kubernetes Cluster Overview  
+Kubernetes Namespace Overview  
+[What is Dynatrace and How to get started GitHub Repo](https://github.com/dynatrace-perfclinics/dynatrace-getting-started)    
   
 DQL Usage developed by Dynatrace Lead Consultant, Brad Danyo.  
 Dynatrace Slack Link: /archives/C74NG8NUC/p1708711313508939?thread_ts=1708708795.421529&cid=C74NG8NUC  
-
-Customer Success Assets:  
+  
+Customer Success Assets:    
 Dynatrace Tenant Review  
-[Customer Success Github Repo](https://github.com/dynatrace-oss/CustomerSuccess)  
-[Dashboard Version 1.7.0](https://github.com/dynatrace-oss/CustomerSuccess/blob/main/Dynatrace%20Tenant%20Review/Dynatrace%20Tenant%20Review%20(1.7.0)  )  
+[Customer Success Github Repo](https://github.com/dynatrace-oss/CustomerSuccess)    
+[Dashboard Version 1.7.0](https://github.com/dynatrace-oss/CustomerSuccess/blob/main/Dynatrace%20Tenant%20Review/Dynatrace%20Tenant%20Review%20(1.7.0))    
 
 [Playground Environment](https://wkf10640.apps.dynatrace.com):  
 Examples - Logs  
@@ -39,9 +39,9 @@ Dashboards found in Dynatrace Slack (Employees Only):
 Tech Shady Assets:  
 Host Overview  
 Service Overview  
-[TechShady's Dynatrace-Dashboards-Gen3 Github Repo](https://github.com/TechShady/Dynatrace-Dashboards-Gen3)
-
-Infrastructure and Health developed by Dynatrace Senior Consultant, Trevor Massengill.  
-The latest versions and more about the dashboards can be found on his [GitHub Repository](https://github.com/TrevorMassengill/DynatraceNextGenDashboards)).  
+[TechShady's Dynatrace-Dashboards-Gen3 Github Repo](https://github.com/TechShady/Dynatrace-Dashboards-Gen3)  
+  
+Infrastructure and Health developed by Dynatrace Senior Consultant, Trevor Massengill.    
+The latest versions and more about the dashboards can be found on his [GitHub Repository](https://github.com/TrevorMassengill/DynatraceNextGenDashboards)).    
   
 
