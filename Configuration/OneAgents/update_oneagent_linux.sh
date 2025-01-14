@@ -1,0 +1,1 @@
+/opt/dynatrace/oneagent/agent/tools/oneagentctl --set-host-tag=dt.cost.costcenter="" --set-host-tag=dt.cost.product="" –-set-host-group "" --set-network-zone "" --set-host-tag=customer.team.name "" --set-host-tag=customer.team.canonical.id "" --set-host-property=dt.security_context="" --restart-service
