@@ -1,0 +1,48 @@
+Silent Installation
+===================
+https://docs.dynatrace.com/docs/shortlink/windows-custom-installation#silent-installation
+
+Command Line Example:
+msiexec /i Dynatrace-OneAgent-Windows.msi ADDITIONAL_CONFIGURATION="--set-server=https://someserver.com --set-tenant=xxx --set-tenant-token=xxx --set-host-group=myGroup" /quiet /qn
+
+To get the values of the parameters:
+
+Use Deployment API
+https://xxxxxxxx.live.dynatrace.com/rest-api-doc/index.jsp?urls.primaryName=Environment%20API%20v1#/Deployment/getAgentInstallerConnectionInfo
+
+Authenticate using a download token (scope: InstallerDownload) from a "Download Dynatrace OneAgent for Windows" page or elsewhere.
+
+https://xxxxxxxx.live.dynatrace.com/#install/agentwindows;gf=all
+
+Example Response Body (with the communication list shortened):
+{
+  "tenantUUID": "xxxxxxxx",
+  "tenantToken": "yyyyyyyyyyyyyyyy",
+  "communicationEndpoints": [
+    "https://111.11.111.11:9999/communication",
+    "https://xxxxxxxx.live.dynatrace.com:443"
+  ],
+  "formattedCommunicationEndpoints": "https://111.11.111.11:9999/communication;https://xxxxxxxx.live.dynatrace.com:443"
+}
+
+Fill in the parameters from the contents of the response body as follows:
+
+--set-server={formattedCommunicationEndpoints value}
+
+--set-tenant={tenantToken value}
+
+--set-tenant-token={tenantUUID value}
+
+--set-host-group={Desired Host Group value}
+
+Shorten the "formattedCommunicationEndpoints" list, if possible, to avoid hitting a "512-byte parameter limit".
+
+Example:
+msiexec /i Dynatrace-OneAgent-Windows.msi ADDITIONAL_CONFIGURATION="--set-server=https://xxxxxxxx.live.dynatrace.com --set-tenant=xxxxxxxx --set-tenant-token=yyyyyyyyyyyyyyyy --set-host-group=SomeHostGroupName" /quiet /qn
+
+
+Uninstall
+=========
+
+Just change the "/i" to "/x": 
+msiexec /x Dynatrace-OneAgent-Windows.msi ADDITIONAL_CONFIGURATION="--set-server=https://xxxxxxxx.live.dynatrace.com --set-tenant=xxxxxxxx --set-tenant-token=yyyyyyyyyyyyyyyy --set-host-group=SomeHostGroupName" /quiet /qn
