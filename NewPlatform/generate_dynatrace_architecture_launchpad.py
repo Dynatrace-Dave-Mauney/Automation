@@ -84,13 +84,17 @@ def get_token_links():
 
 def get_api_links():
     links = [
+        ('Dynatrace API - Basics', 'https://docs.dynatrace.com/docs/shortlink/api-basics'),
         ('Dynatrace API', 'https://docs.dynatrace.com/docs/shortlink/section-api'),
         ('Environment API', 'https://docs.dynatrace.com/docs/shortlink/env-api'),
         ('Configuration API', 'https://docs.dynatrace.com/docs/shortlink/config-api'),
+        ('Settings API', 'https://docs.dynatrace.com/docs/shortlink/api-v2-settings'),
+        ('Settings 2.0', 'https://docs.dynatrace.com/docs/shortlink/settings20-landing'),
         ('Account Management API', 'https://docs.dynatrace.com/docs/shortlink/account-api'),
         ('API for Dashboards and Notebooks', 'https://docs.dynatrace.com/docs/shortlink/document-api'),
         ('OneAgent metric API', 'https://docs.dynatrace.com/docs/shortlink/local-api'),
         ('Remote configuration management API', 'https://docs.dynatrace.com/docs/shortlink/api-v2-remote-configuration'),
+        ('Ingest business events via API', 'https://docs.dynatrace.com/docs/shortlink/ba-api-ingest'),
     ]
 
     return links
@@ -121,7 +125,10 @@ def get_configuration_links():
         ('OpenTelemetry and Dynatrace', 'https://docs.dynatrace.com/docs/shortlink/opentelemetry'),
         ('Extensions', 'https://docs.dynatrace.com/docs/shortlink/extensions20'),
         ('Remote configuration management of OneAgents and ActiveGates', 'https://docs.dynatrace.com/docs/shortlink/remote-configuration'),
-        ('', ''),
+        ('OpenPipeline', 'https://docs.dynatrace.com/docs/shortlink/openpipeline'),
+        ('Hub', 'https://docs.dynatrace.com/docs/shortlink/hub'),
+        ('Monaco', 'https://docs.dynatrace.com/docs/shortlink/configuration-as-code-monaco'),
+        ('Request attributes', 'https://docs.dynatrace.com/docs/shortlink/request-attributes'),
     ]
 
     return links
