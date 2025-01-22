@@ -25,7 +25,10 @@ def run():
     # post_dashboards('Personal', 'Dashboards/Assets/Key*.json')
     # post_launchpads('Personal', 'Launchpads/Downloads/Personal/Dave*.json')
     # post_notebooks('Personal', 'Notebooks/Assets/Best Practices.json')
-    post_notebooks('Prod', '../Tools/NewRelic/DynatraceNotebooks/customer_specific/NWM/NMXP/*Roll*json')
+
+    # post_launchpads('tenant1', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/tenant1/*.json')
+    # post_notebooks('tenant1', '../$Private/Customers/$Current/Assets/NewPlatform/Notebooks/tenant1/*.json')
+    # post_dashboards('tenant1', '../$Private/Customers/$Current/Assets/NewPlatform/Dashboards/tenant1/*.json')
 
 
 def post_dashboards(env_name, path):

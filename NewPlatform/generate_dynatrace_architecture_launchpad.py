@@ -95,6 +95,7 @@ def get_api_links():
         ('OneAgent metric API', 'https://docs.dynatrace.com/docs/shortlink/local-api'),
         ('Remote configuration management API', 'https://docs.dynatrace.com/docs/shortlink/api-v2-remote-configuration'),
         ('Ingest business events via API', 'https://docs.dynatrace.com/docs/shortlink/ba-api-ingest'),
+        ('Deployment API', 'https://docs.dynatrace.com/docs/shortlink/api-deployment'),
     ]
 
     return links
@@ -129,6 +130,10 @@ def get_configuration_links():
         ('Hub', 'https://docs.dynatrace.com/docs/shortlink/hub'),
         ('Monaco', 'https://docs.dynatrace.com/docs/shortlink/configuration-as-code-monaco'),
         ('Request attributes', 'https://docs.dynatrace.com/docs/shortlink/request-attributes'),
+        ('AWS PrivateLink', 'https://docs.dynatrace.com/docs/shortlink/aws-privatelink'),
+        ('IAM Policy reference', 'https://docs.dynatrace.com/docs/shortlink/iam-policystatements'),
+        ('Permissions in Grail', 'https://docs.dynatrace.com/docs/shortlink/assign-bucket-table-permissions'),
+        ('Dynatrace Configuration as Code', 'https://docs.dynatrace.com/docs/shortlink/configuration-as-code'),
     ]
 
     return links

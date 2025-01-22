@@ -127,12 +127,12 @@ def get_client_environment_for_function_print_control(env_name, friendly_functio
         if print_mode:
             print('Error in environment.get_client_environment_for_function_print_control(env_name, friendly_function_name, print_mode)')
             print('Client ID and/or Client Secret variable not populated correctly')
-            print(f'Environment Name: {env_name}')
-            print(f'Function:         {friendly_function_name}')
+            print(f'Environment Name:    {env_name}')
+            print(f'Function:            {friendly_function_name}')
             if tenant:
                 print(f'Tenant:              {tenant}')
             if client_name:
-                print(f'Client Name:           {client_name}')
+                print(f'Client Name:         {client_name}')
             if client_id:
                 print(f'Client ID:           {client_id[0:20]}')
             if client_secret:

@@ -33,7 +33,7 @@ def process():
 
 	# Create some tokens!
 	# These are the most important ones for the "Automation" project...
-	post_reduced_power_dynatrace_automation_token()
+	# post_reduced_power_dynatrace_automation_token()
 	# post_dynatrace_automation_token()
 	# post_reporting_token()
 	# post_tools_token()
@@ -52,6 +52,10 @@ def process():
 	# list_tokens()
 
 	# See "test()" method for common examples, if you don't see it above...
+
+	# Current Customer
+	# post_monaco_token()
+
 
 
 def post_api_token():
@@ -171,7 +175,11 @@ def post_logs_ingest_token():
 
 
 def post_monaco_token():
-	return post_token('Monaco', ["entities.read", "settings.read", "settings.write", "slo.read", "credentialVault.read", "DataExport", "ReadConfig", "ReadSyntheticData", "WriteConfig", "CaptureRequestData"])
+	# Full Permissions
+	# return post_token('Monaco', ["entities.read", "settings.read", "settings.write", "slo.read", "credentialVault.read", "DataExport", "ReadConfig", "ReadSyntheticData", "WriteConfig", "CaptureRequestData"])
+
+	# Customer-specific Permissions
+	return post_token('Monaco', ["entities.read", "settings.read", "settings.write", "slo.read", "credentialVault.read", "DataExport", "ReadConfig", "ReadSyntheticData", "WriteConfig"])
 
 
 def post_fargate_paas_token():

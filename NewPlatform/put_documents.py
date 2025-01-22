@@ -29,18 +29,10 @@ def run():
     #   'Sandbox/00000000-dddd-bbbb-aaaa-????????????.json' # Strict reference
     #   'Sandbox/*.json' # Lenient reference
 
-    # put_documents('NonProd', 'Dashboards/Downloads/NonProd/PUT Testing.json')
-    # put_documents('Personal', 'Notebooks/Downloads/Personal/$Testing.json')
-
-    # put_documents('NonProd', '../$Private/Customers/NWM/Assets/NewPlatform/Notebooks/NonProd/Shared Notebooks.json')
-    # put_documents('NonProd', '../$Private/Customers/NWM/Assets/NewPlatform/Dashboards/NonProd/Shared Dashboards.json')
-    # put_documents('NonProd', '../$Private/Customers/NWM/Assets/NewPlatform/Launchpads/NonProd/Shared Launchpad.json')
-    # put_documents('NonProd', '../$Private/Customers/NWM/Assets/NewPlatform/Dashboards/NonProd/NMXP - AuthN QA Session System.json')
-
-    # put_documents('Prod', '../$Private/Customers/NWM/Assets/NewPlatform/Notebooks/Prod/Shared Notebooks.json')
-    # put_documents('Prod', '../$Private/Customers/NWM/Assets/NewPlatform/Dashboards/Prod/Shared Dashboards.json')
-    # put_documents('Prod', '../$Private/Customers/NWM/Assets/NewPlatform/Launchpads/Prod/Shared Launchpad.json')
-    # put_documents('Prod', '../$Private/Customers/NWM/Assets/NewPlatform/Dashboards/Prod/*NMC*.json')
+    # put_documents('tenant1', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/tenant1/Dynatrace Architecture Launchpad.json')
+    # put_documents('tenant1', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/tenant1/Dynatrace User Launchpad.json')
+    # put_documents('tenant1', '../$Private/Customers/$Current/Assets/NewPlatform/Notebooks/tenant1/*.json')
+    # put_documents('tenant1', '../$Private/Customers/$Current/Assets/NewPlatform/Dashboards/tenant1/*.json')
 
 
 def put_documents(env_name, path):
