@@ -1,4 +1,5 @@
-rem set DYNATRACE_ENV_URL=https://########.live.dynatrace.com
-rem set DYNATRACE_API_TOKEN=dt0c01.########.########
+call set_env.bat
 
 terraform-provider-dynatrace -export
+
+call unset_env.bat

@@ -29,12 +29,32 @@ New UI: Person Icon > Account Settings > Pick Account if needed
 AccountID appears as the query parameter in the address URL
 """
 
-# First, try to get the new/improved names
-account_id = os.getenv('DYNATRACE_AUTOMATION_ACCOUNT_ID')
-client_id = os.getenv('DYNATRACE_AUTOMATION_CLIENT_ID')
-client_secret = os.getenv('DYNATRACE_AUTOMATION_CLIENT_SECRET')
-skip_slow_api_calls = environment.get_boolean_environment_variable('SKIP_SLOW_API_CALLS', 'True')
-environment_variable_source = 'New Environment Variable Names'
+# First, try to get the newest names using the new technique...
+friendly_function_name = 'Dynatrace Automation'
+env_name_supplied = environment.get_env_name(friendly_function_name)
+# For easy control from IDE
+# env_name_supplied = 'Prod'
+# env_name_supplied = 'NonProd'
+# env_name_supplied = 'Sandbox'
+#
+# env_name_supplied = 'Upper'
+# env_name_supplied = 'Lower'
+# env_name_supplied = 'PreProd'
+# env_name_supplied = 'Dev'
+# env_name_supplied = 'Personal'
+# env_name_supplied = 'Demo'
+env_name, env, client_id, client_secret = environment.get_client_environment_for_function(env_name_supplied, friendly_function_name)
+account_id = os.getenv(f'DYNATRACE_AUTOMATION_ACCOUNT_ID_{env_name}')
+skip_slow_api_calls = environment.get_boolean_environment_variable('DYNATRACE_AUTOMATION_SKIP_SLOW_ACCOUNT_MANAGEMENT_API_CALLS_{env_name}', 'True')
+environment_variable_source = 'Newest Environment Variable Names'
+
+# Next, try to get the new/improved names
+if not account_id and not client_id and not client_secret:
+    account_id = os.getenv('DYNATRACE_AUTOMATION_ACCOUNT_ID')
+    client_id = os.getenv('DYNATRACE_AUTOMATION_CLIENT_ID')
+    client_secret = os.getenv('DYNATRACE_AUTOMATION_CLIENT_SECRET')
+    skip_slow_api_calls = environment.get_boolean_environment_variable('SKIP_SLOW_API_CALLS', 'True')
+    environment_variable_source = 'New Environment Variable Names'
 
 
 # If the new/improved names are not found, fall back to the older names
@@ -119,18 +139,21 @@ def get_account_management_api(api_type):
     url = f'https://api.dynatrace.com/iam/v1/accounts/{account_id}/{api_type}'
     if api_type in ['environments', 'subscriptions']:
         url = f'https://api.dynatrace.com/env/v1/accounts/{account_id}/{api_type}'
-    if api_type in ['time-zones', 'regions']:
+    # if api_type in ['time-zones', 'regions']:
+    if api_type in ['time-zones']:
         url = f'https://api.dynatrace.com/ref/v1/{api_type}'
     if api_type == 'permissions':
         url = 'https://api.dynatrace.com/ref/v1/account/permissions'
 
     headers = {'accept': 'application/json', 'Authorization': 'Bearer ' + str(oauth_bearer_token)}
+    print(url, headers)
     r = requests.get(url, headers=headers)
     if r.status_code == 200:
         # print(r.text)
         return r
     else:
         print(f'GET Request to Account Management API {api_type} Endpoint Failed:')
+        print(f'url:                  {url}')
         print(f'Response Status Code: {r.status_code}')
         print(f'Response Reason:      {r.reason}')
         print(f'Response Text:        {r.text}')
@@ -486,11 +509,11 @@ def process():
     headers, rows = report_environments()
     append_report('Environments', headers, rows, tuple_lists)
 
-    headers, rows = report_regions()
-    append_report('Regions', headers, rows, tuple_lists)
+    # headers, rows = report_regions()
+    # append_report('Regions', headers, rows, tuple_lists)
 
-    headers, rows = report_time_zones()
-    append_report('Time Zones', headers, rows, tuple_lists)
+    # headers, rows = report_time_zones()
+    # append_report('Time Zones', headers, rows, tuple_lists)
 
     # These calls currently do nothing useful
     # Always empty results
