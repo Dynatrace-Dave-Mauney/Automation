@@ -22,31 +22,31 @@ Note: This summarizes/extends the official Dynatrace Documentation page:
 5)  Run the "terraform init" command
 
 6) Create a Dynatrace Access Token with at least the following permissions:
-    Read configuration (ReadConfig)
-    Write configuration (WriteConfig)
-    Read settings (settings.read)
-    Write settings (settings.write)
+    Read configuration (ReadConfig)  
+    Write configuration (WriteConfig)  
+    Read settings (settings.read)  
+    Write settings (settings.write)  
 
 7)  To create a token that works for all configurations, also include the following permissions.
-    Create and read synthetic monitors, locations, and nodes (ExternalSyntheticIntegration)
-    Capture request data (CaptureRequestData)
-    Read credential vault entries (credentialVault.read)
-    Write credential vault entries (credentialVault.write)
-    Read network zones (networkZones.read)
-    Write network zones (networkZones.write)
+    Create and read synthetic monitors, locations, and nodes (ExternalSyntheticIntegration)  
+    Capture request data (CaptureRequestData)  
+    Read credential vault entries (credentialVault.read)  
+    Write credential vault entries (credentialVault.write)  
+    Read network zones (networkZones.read)  
+    Write network zones (networkZones.write)  
 
 8)  Copy the Dynatrace Provider executable into the Terraform Project Directory for easier access (or make a symlink or add the path to your Windows path).
 
     The directory will be named something like:  
     terraform_1.10.5_windows_386\.terraform\providers\registry.terraform.io\dynatrace-oss\dynatrace\1.72.6\windows_386
 
-    The exe will be named something like:
-    terraform-provider-dynatrace_v1.72.6.exe
+    The exe will be named something like:  
+    terraform-provider-dynatrace_v1.72.6.exe  
 
     Example:
-    copy terraform-provider-dynatrace_v1.72.6.exe ..\..\..\..\..\..\..
-    cd ..\..\..\..\..\..\..
-    rename terraform-provider-dynatrace_v1.72.6.exe terraform-provider-dynatrace.exe
+    copy terraform-provider-dynatrace_v1.72.6.exe ..\..\..\..\..\..\..  
+    cd ..\..\..\..\..\..\..  
+    rename terraform-provider-dynatrace_v1.72.6.exe terraform-provider-dynatrace.exe  
 
 9)  Copy the "export.bat" file to your Terraform Project Directory.
 
@@ -70,32 +70,32 @@ Note: This summarizes/extends the official Dynatrace Documentation page:
 5)  Create "main.tf" file
 6)  Copy dynatrace provider information into "main.cf" file
 	Visit https://registry.terraform.io/providers/dynatrace-oss/dynatrace/latest
-	Click "USE PROVIDER" button
-	Copy the configuration code
-	Paste into main.cf and save
-7)  Run terraform init
+	Click "USE PROVIDER" button  
+	Copy the configuration code  
+	Paste into main.cf and save  
+7)  Run terraform init  
 8)  Find the dynatrace export exe deep in .terraform directory created by init
 	.terraform\providers\registry.terraform.io\dynatrace-oss\dynatrace\1.12.1\windows_386\terraform-provider-dynatrace_v1.12.1.exe
 9)  Generate an access token with the necessary permissions
-	Token Permissions (for read-only/export):
-	Read configuration
-	Capture request data
-	Read SLO
-	Read settings
-	Read synthetic monitors, locations, and nodes
-
-	For read/write:
-	Write configuration
-	Write SLO
-	Write settings
-	Write synthetic monitors, locations, and nodes
+	Token Permissions (for read-only/export):  
+	Read configuration  
+	Capture request data  
+	Read SLO  
+	Read settings  
+	Read synthetic monitors, locations, and nodes  
+  
+	For read/write:  
+	Write configuration  
+	Write SLO  
+	Write settings  
+	Write synthetic monitors, locations, and nodes  
 10) Create an "export script" to run an export of all terraform-enabled configurations
-	Example:
-	set DYNATRACE_ENV_URL=https://********.live.dynatrace.com
-	set DYNATRACE_API_TOKEN=dt0c01.*.*
-	set DYNATRACE_TARGET_FOLDER=terraform_configuration
-	C:\Dynatrace\Terraform\.terraform\providers\registry.terraform.io\dynatrace-oss\dynatrace\1.12.1\windows_386\terraform-provider-dynatrace_v1.12.1.exe export
-11) Run the "export script"
+	Example:  
+	set DYNATRACE_ENV_URL=https://********.live.dynatrace.com  
+	set DYNATRACE_API_TOKEN=dt0c01.*.*  
+	set DYNATRACE_TARGET_FOLDER=terraform_configuration  
+	C:\Dynatrace\Terraform\.terraform\providers\registry.terraform.io\dynatrace-oss\dynatrace\1.12.1\windows_386\terraform-provider-dynatrace_v1.12.1.exe export  
+11) Run the "export script"  
 12) Verify the folder pointed to by DYNATRACE_TARGET_FOLDER is populated with configurations
 
 ## To make adds/changes/deletes:
