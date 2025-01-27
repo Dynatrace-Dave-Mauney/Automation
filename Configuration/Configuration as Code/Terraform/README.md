@@ -21,13 +21,13 @@ Note: This summarizes/extends the official Dynatrace Documentation page:
 
 5)  Run the "terraform init" command
 
-6) Create a Dynatrace Access Token with at least the following permissions:
+6) Create a Dynatrace Access Token with at least the following permissions:  
     Read configuration (ReadConfig)  
     Write configuration (WriteConfig)  
     Read settings (settings.read)  
     Write settings (settings.write)  
 
-7)  To create a token that works for all configurations, also include the following permissions.
+7)  To create a token that works for all configurations, also include the following permissions:  
     Create and read synthetic monitors, locations, and nodes (ExternalSyntheticIntegration)  
     Capture request data (CaptureRequestData)  
     Read credential vault entries (credentialVault.read)  
@@ -43,7 +43,7 @@ Note: This summarizes/extends the official Dynatrace Documentation page:
     The exe will be named something like:  
     terraform-provider-dynatrace_v1.72.6.exe  
 
-    Example:
+    Example:  
     copy terraform-provider-dynatrace_v1.72.6.exe ..\..\..\..\..\..\..  
     cd ..\..\..\..\..\..\..  
     rename terraform-provider-dynatrace_v1.72.6.exe terraform-provider-dynatrace.exe  
