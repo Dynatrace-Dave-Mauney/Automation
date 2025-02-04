@@ -3,11 +3,11 @@
         "configurationVersions": [
             3
         ],
-        "clusterVersion": "1.296.57.20240727-051437"
+        "clusterVersion": "1.306.65.20250123-155932"
     },
     "id": "aaaaaaaa-bbbb-cccc-dddd-000000000159",
     "dashboardMetadata": {
-        "name": "VMware 6",
+        "name": "RabbitMQ",
         "shared": false,
         "owner": "nobody@example.com",
         "sharingDetails": {
@@ -27,7 +27,7 @@
     },
     "tiles": [
         {
-            "name": "CPU Co-stop",
+            "name": "auto-delete queues without consumers",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -37,14 +37,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "CPU Co-stop",
+            "customName": "auto-delete queues without consumers",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.cpu.costop.summation",
+                    "metric": "builtin:tech.rabbitmq.ad_queues_no_consumers",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -96,7 +98,7 @@
             }
         },
         {
-            "name": "CPU Demand",
+            "name": "channels",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -106,14 +108,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "CPU Demand",
+            "customName": "channels",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.cpu.demand.average",
+                    "metric": "builtin:tech.rabbitmq.channels_count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -165,7 +169,7 @@
             }
         },
         {
-            "name": "CPU Idle",
+            "name": "cluster channels",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -175,14 +179,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "CPU Idle",
+            "customName": "cluster channels",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.cpu.idle.summation",
+                    "metric": "builtin:tech.rabbitmq.cluster_channels",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -234,7 +240,7 @@
             }
         },
         {
-            "name": "CPU Latency",
+            "name": "cluster connections",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -244,14 +250,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "CPU Latency",
+            "customName": "cluster connections",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.cpu.latency.average",
+                    "metric": "builtin:tech.rabbitmq.cluster_connections",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -303,7 +311,7 @@
             }
         },
         {
-            "name": "CPU Ready Percent",
+            "name": "cluster consumers",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -313,14 +321,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "CPU Ready Percent",
+            "customName": "cluster consumers",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.cpu.ready.percent",
+                    "metric": "builtin:tech.rabbitmq.cluster_consumers",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -372,7 +382,7 @@
             }
         },
         {
-            "name": "CPU Ready",
+            "name": "cluster exchanges",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -382,14 +392,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "CPU Ready",
+            "customName": "cluster exchanges",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.cpu.ready.summation",
+                    "metric": "builtin:tech.rabbitmq.cluster_exchanges",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -441,7 +453,7 @@
             }
         },
         {
-            "name": "CPU Swap Wait",
+            "name": "cluster ack messages",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -451,14 +463,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "CPU Swap Wait",
+            "customName": "cluster ack messages",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.cpu.swapwait.summation",
+                    "metric": "builtin:tech.rabbitmq.cluster_messages_ack",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -510,7 +524,7 @@
             }
         },
         {
-            "name": "CPU Usage",
+            "name": "cluster delivered and get messages",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -520,14 +534,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "CPU Usage",
+            "customName": "cluster delivered and get messages",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.cpu.usage.average",
+                    "metric": "builtin:tech.rabbitmq.cluster_messages_deliver_get",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -579,7 +595,7 @@
             }
         },
         {
-            "name": "CPU Usage",
+            "name": "cluster published messages",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -589,14 +605,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "CPU Usage",
+            "customName": "cluster published messages",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.cpu.usage.maximum",
+                    "metric": "builtin:tech.rabbitmq.cluster_messages_publish",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -648,7 +666,7 @@
             }
         },
         {
-            "name": "CPU Usage in MHz",
+            "name": "cluster ready messages",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -658,14 +676,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "CPU Usage in MHz",
+            "customName": "cluster ready messages",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.cpu.usagemhz.maximum",
+                    "metric": "builtin:tech.rabbitmq.cluster_messages_ready",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -717,7 +737,7 @@
             }
         },
         {
-            "name": "CPU Wait",
+            "name": "cluster redelivered messages",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -727,14 +747,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "CPU Wait",
+            "customName": "cluster redelivered messages",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.cpu.wait.summation",
+                    "metric": "builtin:tech.rabbitmq.cluster_messages_redeliver",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -786,7 +808,7 @@
             }
         },
         {
-            "name": "CPU Max Usage",
+            "name": "cluster unroutable messages",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -796,14 +818,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "CPU Max Usage",
+            "customName": "cluster unroutable messages",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.cpu.max_usage",
+                    "metric": "builtin:tech.rabbitmq.cluster_messages_return_unroutable",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -855,7 +879,7 @@
             }
         },
         {
-            "name": "VM CPU Cores",
+            "name": "cluster unacknowledged messages",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -865,14 +889,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "VM CPU Cores",
+            "customName": "cluster unacknowledged messages",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.cpu.num_cores",
+                    "metric": "builtin:tech.rabbitmq.cluster_messages_unacknowledged",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -924,7 +950,7 @@
             }
         },
         {
-            "name": "Datastore Max Total Latency",
+            "name": "cluster node failed",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -934,14 +960,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Datastore Max Total Latency",
+            "customName": "cluster node failed",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.datastore.maxTotalLatency.latest",
+                    "metric": "builtin:tech.rabbitmq.cluster_nodes_failed",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -993,7 +1021,7 @@
             }
         },
         {
-            "name": "Datastore Read Latency",
+            "name": "cluster node ok",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1003,14 +1031,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Datastore Read Latency",
+            "customName": "cluster node ok",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.datastore.totalReadLatency.average",
+                    "metric": "builtin:tech.rabbitmq.cluster_nodes_ok",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -1062,7 +1092,7 @@
             }
         },
         {
-            "name": "Datastore Write Latency",
+            "name": "cluster crashed queues",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1072,14 +1102,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Datastore Write Latency",
+            "customName": "cluster crashed queues",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.datastore.totalWriteLatency.average",
+                    "metric": "builtin:tech.rabbitmq.cluster_queues_crashed",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -1131,7 +1163,7 @@
             }
         },
         {
-            "name": "Disk Highest latency",
+            "name": "cluster queues down",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1141,14 +1173,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Disk Highest latency",
+            "customName": "cluster queues down",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.disk.maxTotalLatency.latest",
+                    "metric": "builtin:tech.rabbitmq.cluster_queues_down",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -1200,7 +1234,7 @@
             }
         },
         {
-            "name": "Read Requests",
+            "name": "cluster flow queues",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1210,14 +1244,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Read Requests",
+            "customName": "cluster flow queues",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.disk.numberReadAveraged.average",
+                    "metric": "builtin:tech.rabbitmq.cluster_queues_flow",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -1269,7 +1305,7 @@
             }
         },
         {
-            "name": "Write Requests",
+            "name": "cluster idle queues",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1279,14 +1315,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Write Requests",
+            "customName": "cluster idle queues",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.disk.numberWriteAveraged.average",
+                    "metric": "builtin:tech.rabbitmq.cluster_queues_idle",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -1338,7 +1376,7 @@
             }
         },
         {
-            "name": "Read rate",
+            "name": "cluster running queues",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1348,14 +1386,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Read rate",
+            "customName": "cluster running queues",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.disk.read.average",
+                    "metric": "builtin:tech.rabbitmq.cluster_queues_running",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -1407,7 +1447,7 @@
             }
         },
         {
-            "name": "Disk Usage",
+            "name": "connections blocked",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1417,14 +1457,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Disk Usage",
+            "customName": "connections blocked",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.disk.usage.average",
+                    "metric": "builtin:tech.rabbitmq.connections_blocked",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -1476,7 +1518,7 @@
             }
         },
         {
-            "name": "Write rate",
+            "name": "connections",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1486,14 +1528,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Write rate",
+            "customName": "connections",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.disk.write.average",
+                    "metric": "builtin:tech.rabbitmq.connections_count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -1545,7 +1589,7 @@
             }
         },
         {
-            "name": "Active Memory Used",
+            "name": "consumers",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1555,14 +1599,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Active Memory Used",
+            "customName": "consumers",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.mem.active.average",
+                    "metric": "builtin:tech.rabbitmq.consumers",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -1614,7 +1660,7 @@
             }
         },
         {
-            "name": "Memory Compression Rate",
+            "name": "available disk space",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1624,14 +1670,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Memory Compression Rate",
+            "customName": "available disk space",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.mem.compressionRate.average",
+                    "metric": "builtin:tech.rabbitmq.disk_free_left_to_limit",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -1683,7 +1731,7 @@
             }
         },
         {
-            "name": "Memory Consumed",
+            "name": "file descriptors usage",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1693,14 +1741,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Memory Consumed",
+            "customName": "file descriptors usage",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.mem.consumed.maximum",
+                    "metric": "builtin:tech.rabbitmq.fd_usage",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -1752,7 +1802,7 @@
             }
         },
         {
-            "name": "Memory Decompression Rate",
+            "name": "memory usage",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1762,14 +1812,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Memory Decompression Rate",
+            "customName": "memory usage",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.mem.decompressionRate.average",
+                    "metric": "builtin:tech.rabbitmq.mem_usage",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -1821,7 +1873,7 @@
             }
         },
         {
-            "name": "Memory Granted",
+            "name": "messages ack",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1831,14 +1883,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Memory Granted",
+            "customName": "messages ack",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.mem.granted.maximum",
+                    "metric": "builtin:tech.rabbitmq.messages_ack",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -1890,7 +1944,7 @@
             }
         },
         {
-            "name": "Memory Latency",
+            "name": "messages delivered and get",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1900,14 +1954,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Memory Latency",
+            "customName": "messages delivered and get",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.mem.latency.average",
+                    "metric": "builtin:tech.rabbitmq.messages_deliver_get",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -1959,7 +2015,7 @@
             }
         },
         {
-            "name": "Memory Swap In Rate",
+            "name": "messages published",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1969,14 +2025,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Memory Swap In Rate",
+            "customName": "messages published",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.mem.swapinRate.average",
+                    "metric": "builtin:tech.rabbitmq.messages_publish",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -2028,7 +2086,7 @@
             }
         },
         {
-            "name": "Memory Swap Out Rate",
+            "name": "message ready",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -2038,14 +2096,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Memory Swap Out Rate",
+            "customName": "message ready",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.mem.swapoutRate.average",
+                    "metric": "builtin:tech.rabbitmq.messages_ready",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -2097,7 +2157,7 @@
             }
         },
         {
-            "name": "Host Consumed Memory %",
+            "name": "messages redelivered",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -2107,14 +2167,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Host Consumed Memory %",
+            "customName": "messages redelivered",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.mem.usage.average",
+                    "metric": "builtin:tech.rabbitmq.messages_redeliver",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -2166,7 +2228,7 @@
             }
         },
         {
-            "name": "Memory Consumed %",
+            "name": "messages unroutable",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -2176,14 +2238,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Memory Consumed %",
+            "customName": "messages unroutable",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.mem.usage.maximum",
+                    "metric": "builtin:tech.rabbitmq.messages_return_unroutable",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -2235,7 +2299,7 @@
             }
         },
         {
-            "name": "Ballooned memory",
+            "name": "messages unacknowledged",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -2245,14 +2309,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Ballooned memory",
+            "customName": "messages unacknowledged",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.mem.vmmemctl.maximum",
+                    "metric": "builtin:tech.rabbitmq.messages_unacknowledged",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -2304,7 +2370,7 @@
             }
         },
         {
-            "name": "Ballooned Memory",
+            "name": "node status",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -2314,14 +2380,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Ballooned Memory",
+            "customName": "node status",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.mem.ballooned",
+                    "metric": "builtin:tech.rabbitmq.node_status",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -2373,7 +2441,7 @@
             }
         },
         {
-            "name": "Compressed Memory",
+            "name": "processes usage",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -2383,14 +2451,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Compressed Memory",
+            "customName": "processes usage",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.mem.compressed",
+                    "metric": "builtin:tech.rabbitmq.proc_usage",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -2442,7 +2512,7 @@
             }
         },
         {
-            "name": "Memory Max Usage",
+            "name": "queues",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -2452,14 +2522,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Memory Max Usage",
+            "customName": "queues",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.mem.max_usage",
+                    "metric": "builtin:tech.rabbitmq.queues_count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -2511,7 +2583,7 @@
             }
         },
         {
-            "name": "VM Memory Size",
+            "name": "sockets usage",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -2521,14 +2593,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "VM Memory Size",
+            "customName": "sockets usage",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.mem.size",
+                    "metric": "builtin:tech.rabbitmq.sockets_usage",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -2580,7 +2654,7 @@
             }
         },
         {
-            "name": "Swapped Memory",
+            "name": "status failed",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -2590,14 +2664,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Swapped Memory",
+            "customName": "status failed",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.mem.swapped",
+                    "metric": "builtin:tech.rabbitmq.status-failed",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -2649,7 +2725,7 @@
             }
         },
         {
-            "name": "Data received Rate",
+            "name": "status ok",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -2659,14 +2735,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Data received Rate",
+            "customName": "status ok",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.net.bytesRx.average",
+                    "metric": "builtin:tech.rabbitmq.status-ok",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group_instance"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -2718,7 +2796,7 @@
             }
         },
         {
-            "name": "Data Transmit Rate",
+            "name": "topn ack",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -2728,14 +2806,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Data Transmit Rate",
+            "customName": "topn ack",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.net.bytesTx.average",
+                    "metric": "builtin:tech.rabbitmq.topN_queue_ack",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -2787,7 +2867,7 @@
             }
         },
         {
-            "name": "Received Packets Dropped",
+            "name": "topn consumers",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -2797,14 +2877,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Received Packets Dropped",
+            "customName": "topn consumers",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.net.droppedRx.summation.count",
+                    "metric": "builtin:tech.rabbitmq.topN_queue_consumers",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -2856,7 +2938,7 @@
             }
         },
         {
-            "name": "Transmitted Packets Dropped",
+            "name": "topn deliver/get",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -2866,14 +2948,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Transmitted Packets Dropped",
+            "customName": "topn deliver/get",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.net.droppedTx.summation.count",
+                    "metric": "builtin:tech.rabbitmq.topN_queue_deliver_get",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -2925,7 +3009,7 @@
             }
         },
         {
-            "name": "Data receive rate",
+            "name": "topn ready messages",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -2935,14 +3019,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Data receive rate",
+            "customName": "topn ready messages",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.net.received.average",
+                    "metric": "builtin:tech.rabbitmq.topN_queue_messages_ready",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -2994,7 +3080,7 @@
             }
         },
         {
-            "name": "Data transmit rate",
+            "name": "topn unacknowledged messages",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -3004,14 +3090,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Data transmit rate",
+            "customName": "topn unacknowledged messages",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.net.transmitted.average",
+                    "metric": "builtin:tech.rabbitmq.topN_queue_messages_unacknowledged",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -3063,7 +3151,7 @@
             }
         },
         {
-            "name": "Network Utilization",
+            "name": "topn publish",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -3073,980 +3161,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Network Utilization",
+            "customName": "topn publish",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.vm.net.usage.maximum",
+                    "metric": "builtin:tech.rabbitmq.topN_queue_publish",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "CPU Active (1 min average)",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 2128,
-                "left": 912,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "CPU Active (1 min average)",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.vm.rescpu.actav1.latest",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Active (1 min peak)",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 2128,
-                "left": 1216,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Active (1 min peak)",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.vm.rescpu.actpk1.latest",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "CPU Running (1 min average)",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 2128,
-                "left": 1520,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "CPU Running (1 min average)",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.vm.rescpu.runav1.latest",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Running (1 min peak)",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 2432,
-                "left": 0,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Running (1 min peak)",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.vm.rescpu.runpk1.latest",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Storage Committed",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 2432,
-                "left": 304,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Storage Committed",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.vm.storage.committed",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Storage Uncommitted",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 2432,
-                "left": 608,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Storage Uncommitted",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.vm.storage.uncommitted",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Read Requests",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 2432,
-                "left": 912,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Read Requests",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.vm.virtualDisk.numberReadAveraged.average",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Write Requests",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 2432,
-                "left": 1216,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Write Requests",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.vm.virtualDisk.numberWriteAveraged.average",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Read Rate",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 2432,
-                "left": 1520,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Read Rate",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.vm.virtualDisk.read.average",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Read Latency",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 2736,
-                "left": 0,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Read Latency",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.vm.virtualDisk.totalReadLatency.average",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Write Latency",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 2736,
-                "left": 304,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Write Latency",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.vm.virtualDisk.totalWriteLatency.average",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Write Rate",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 2736,
-                "left": 608,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Write Rate",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.vm.virtualDisk.write.average",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Volume Capacity",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 2736,
-                "left": 912,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Volume Capacity",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.vm.volume.capacity",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Volume Free Space",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 2736,
-                "left": 1216,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Volume Free Space",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.vm.volume.free_space",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.process_group"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],

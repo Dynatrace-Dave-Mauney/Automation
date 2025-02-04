@@ -6,6 +6,7 @@ from Reuse import environment
 friendly_function_name = 'Dynatrace Automation Token Management'
 env_name_supplied = environment.get_env_name(friendly_function_name)
 # For easy control from IDE
+# env_name_supplied = 'Tenant1'
 # env_name_supplied = 'Prod'
 # env_name_supplied = 'NonProd'
 # env_name_supplied = 'Sandbox'
@@ -33,7 +34,7 @@ def process():
 
 	# Create some tokens!
 	# These are the most important ones for the "Automation" project...
-	# post_reduced_power_dynatrace_automation_token()
+	post_reduced_power_dynatrace_automation_token()
 	# post_dynatrace_automation_token()
 	# post_reporting_token()
 	# post_tools_token()
@@ -55,6 +56,7 @@ def process():
 
 	# Current Customer
 	# post_monaco_token()
+	# post_read_metrics_token()
 
 
 

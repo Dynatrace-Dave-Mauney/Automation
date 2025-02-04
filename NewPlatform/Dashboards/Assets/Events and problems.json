@@ -1,1 +1,825 @@
-{"version":15,"variables":[{"key":"Host","type":"query","input":"fetch dt.entity.host\n| fields entityName","multiple":true,"visible":true},{"key":"Event_category","type":"query","input":"fetch events\n| filterOut contains(event.category, \"/\")\n| filterOut event.category == \"\"\n| summarize count(), by:event.category\n| fields event.category\n","multiple":true,"visible":true},{"key":"Application","type":"query","input":"fetch dt.entity.application","multiple":true,"visible":true},{"key":"myteams","type":"csv","input":"team 1, team 2","multiple":false,"visible":true}],"tiles":{"0":{"type":"data","title":"Events over time","query":"fetch events\n| summarize count = count(), by:{`1m interval` = bin(timestamp, 1m)}","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","legend":{"hidden":true},"hiddenLegendFields":[],"fieldMapping":{"timestamp":"1m interval","leftAxisValues":["count"],"leftAxisDimensions":[]}},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","recordField":"1m interval","autoscale":true,"alignment":"center","colorThresholdTarget":"value"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"hexagon","legend":"auto","dataMappings":{"value":"1m interval"},"displayedFields":[null],"colorMode":"color-palette","colorPalette":"categorical"},"histogram":{"dataMappings":[{"valueAxis":"count","rangeAxis":""}]}},"visualization":"barChart","querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":100,"defaultSamplingRatio":10,"enableSampling":false},"davis":{}},"1":{"type":"data","title":"","query":"fetch events\n//`1m interval` = bin(timestamp, 1m)\n| summarize count = count(), by:{event.kind}\n| sort count desc","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","categoricalBarChartSettings":{"layout":"horizontal","categoryAxisTickLayout":"horizontal","scale":"relative","categoryAxis":"event.kind","categoryAxisLabel":"event.kind","valueAxis":"count","valueAxisLabel":"count"}},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","recordField":"event.kind","autoscale":true,"alignment":"center","colorThresholdTarget":"value"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"hexagon","legend":"auto","dataMappings":{"value":"event.kind"},"displayedFields":["event.kind"],"colorMode":"color-palette","colorPalette":"categorical"},"tableSettings":{"displayMode":"edit","lineWrapIds":[]},"histogram":{"dataMappings":[{"valueAxis":"count","rangeAxis":""}]}},"visualization":"recordView","querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":100,"defaultSamplingRatio":10,"enableSampling":false},"davis":{}},"3":{"type":"data","title":"Problems over time","query":"fetch events\n//`1m interval` = bin(timestamp, 1m)\n| filter in(event.category, array($Event_category))\n| summarize count = count(), by:{bin(timestamp, 1m), event.category}\n| sort count desc","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","colorPalette":["purple-rain"],"categoricalBarChartSettings":{"categoryAxis":"event.category","categoryAxisLabel":"event.category","valueAxis":"count","valueAxisLabel":"count"},"hiddenLegendFields":[],"fieldMapping":{"timestamp":"bin(timestamp, 1m)","leftAxisValues":["count"],"leftAxisDimensions":["event.category"]}},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","recordField":"bin(timestamp, 1m)","autoscale":true,"alignment":"center","colorThresholdTarget":"value"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"hexagon","legend":"auto","dataMappings":{"value":"bin(timestamp, 1m)"},"displayedFields":["event.category"],"colorMode":"color-palette","colorPalette":"categorical"},"tableSettings":{"displayMode":"edit","lineWrapIds":[]},"histogram":{"dataMappings":[{"valueAxis":"count","rangeAxis":""}]}},"visualization":"barChart","querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":100,"defaultSamplingRatio":10,"enableSampling":false},"davis":{}},"4":{"type":"data","title":"","query":"fetch events\n//`1m interval` = bin(timestamp, 1m\n| filter event.kind == \"DAVIS_EVENT\"\n| sort count desc\n| limit 100","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","categoricalBarChartSettings":{"categoryAxis":"dt.entity.process_group_instance.name","categoryAxisLabel":"dt.entity.process_group_instance.name","valueAxis":"dt.davis.timeout","valueAxisLabel":"dt.davis.timeout"},"hiddenLegendFields":[],"fieldMapping":{"timestamp":"timestamp","leftAxisValues":["dt.davis.timeout"],"leftAxisDimensions":["buildId"]}},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","recordField":"timestamp","autoscale":true,"alignment":"center","colorThresholdTarget":"value"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"hexagon","legend":"auto","dataMappings":{"value":"timestamp"},"displayedFields":["changed"],"colorMode":"color-palette","colorPalette":"categorical"},"tableSettings":{"displayMode":"edit","lineWrapIds":[["affected_entity_tags.HostName"],["debug_source"],["prc_file_deployment_artifact"]]},"histogram":{"dataMappings":[{"valueAxis":"dt.davis.timeout","rangeAxis":""}]}},"visualization":"table","querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":100,"defaultSamplingRatio":10,"enableSampling":false},"davis":{}},"5":{"type":"data","title":"Problems over time","query":"fetch events\n//`1m interval` = bin(timestamp, 1m)\n| summarize count = count(), by:{bin(timestamp, 1m), event.kind}\n| sort count desc","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","colorPalette":["fireplace"]},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","autoscale":true,"alignment":"center","colorThresholdTarget":"value"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"hexagon","legend":"auto"},"tableSettings":{"displayMode":"edit","lineWrapIds":[]}},"visualization":"barChart","querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":100,"defaultSamplingRatio":10,"enableSampling":false},"davis":{}},"6":{"type":"data","title":"Problems over time","query":"fetch events\n//`1m interval` = bin(timestamp, 1m)\n| filter in(event.category, array($Event_category))\n| summarize count = count(), by:{event.category}\n| sort count desc","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","colorPalette":["purple-rain"],"categoricalBarChartSettings":{"layout":"horizontal","categoryAxis":"event.category","categoryAxisLabel":"event.category","valueAxis":"count","valueAxisLabel":"count"}},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","autoscale":true,"alignment":"center","colorThresholdTarget":"value","recordField":"event.category"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"hexagon","legend":"auto","dataMappings":{"value":"event.category"},"displayedFields":["event.category"],"colorMode":"color-palette","colorPalette":"categorical"},"tableSettings":{"displayMode":"edit","lineWrapIds":[]},"histogram":{"dataMappings":[{"valueAxis":"count","rangeAxis":""}]}},"querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":100,"defaultSamplingRatio":10,"enableSampling":false},"visualization":"recordView","davis":{}},"7":{"type":"data","title":"Problems over time","query":"fetch events\n//`1m interval` = bin(timestamp, 1m)\n| filter in(event.category, array($Event_category))\n| summarize count = count(), by:{event.category}\n| sort count desc","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","colorPalette":["purple-rain"],"categoricalBarChartSettings":{"layout":"horizontal","categoryAxis":"event.category","categoryAxisLabel":"event.category","valueAxis":"count","valueAxisLabel":"count"},"circleChartSettings":{"hideLabels":false},"legend":{"hidden":true}},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","autoscale":true,"alignment":"center","colorThresholdTarget":"value","recordField":"event.category"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"hexagon","legend":"auto","dataMappings":{"value":"event.category"},"displayedFields":["event.category"],"colorMode":"color-palette","colorPalette":"categorical"},"tableSettings":{"displayMode":"edit","lineWrapIds":[]},"histogram":{"dataMappings":[{"valueAxis":"count","rangeAxis":""}]}},"querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":100,"defaultSamplingRatio":10,"enableSampling":false},"visualization":"recordView","davis":{}},"8":{"type":"data","title":"Problems over time","query":"fetch events\n//`1m interval` = bin(timestamp, 1m)\n| filter in(event.category, array($Event_category))\n| summarize count = count(), by:{event.category}\n| sort count desc","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","colorPalette":["purple-rain"],"categoricalBarChartSettings":{"layout":"horizontal","categoryAxis":"event.category","categoryAxisLabel":"event.category","valueAxis":"count","valueAxisLabel":"count"},"circleChartSettings":{"hideLabels":false},"legend":{"hidden":true}},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","autoscale":true,"alignment":"center","colorThresholdTarget":"value","recordField":"event.category"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"hexagon","legend":"auto","dataMappings":{"value":"event.category"},"displayedFields":["event.category"],"colorMode":"color-palette","colorPalette":"categorical"},"tableSettings":{"displayMode":"edit","lineWrapIds":[]},"histogram":{"dataMappings":[{"valueAxis":"count","rangeAxis":""}]}},"querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":100,"defaultSamplingRatio":10,"enableSampling":false},"visualization":"recordView","davis":{}},"9":{"type":"data","title":"Problems over time","query":"fetch events\n//`1m interval` = bin(timestamp, 1m)\n| summarize count = count(), by:{event.kind}\n| sort count desc","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","colorPalette":["fireplace"],"categoricalBarChartSettings":{"layout":"horizontal","categoryAxis":"event.kind","categoryAxisLabel":"event.kind","valueAxis":"count","valueAxisLabel":"count"}},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","autoscale":true,"alignment":"center","colorThresholdTarget":"value","recordField":"event.kind"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"hexagon","legend":"auto","dataMappings":{"category":"event.kind","value":"count"}},"tableSettings":{"displayMode":"edit","lineWrapIds":[]},"histogram":{"dataMappings":[{"valueAxis":"count","rangeAxis":""}]}},"querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":100,"defaultSamplingRatio":10,"enableSampling":false},"visualization":"recordView","davis":{}},"10":{"type":"data","title":"Problems over time","query":"fetch events\n//`1m interval` = bin(timestamp, 1m)\n| summarize count = count(), by:{event.kind}\n| sort count desc","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","colorPalette":["fireplace"],"categoricalBarChartSettings":{"layout":"horizontal","categoryAxis":"event.kind","categoryAxisLabel":"event.kind","valueAxis":"count","valueAxisLabel":"count"},"legend":{"hidden":false,"position":"right"}},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","autoscale":true,"alignment":"center","colorThresholdTarget":"value","recordField":"event.kind"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"hexagon","legend":"auto","dataMappings":{"category":"event.kind","value":"count"}},"tableSettings":{"displayMode":"edit","lineWrapIds":[]},"histogram":{"dataMappings":[{"valueAxis":"count","rangeAxis":""}]}},"querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":100,"defaultSamplingRatio":10,"enableSampling":false},"visualization":"recordView","davis":{}},"11":{"title":"","type":"markdown","content":"# Problems"},"12":{"title":"","type":"markdown","content":"# Events"}},"layouts":{"0":{"x":0,"y":1,"w":10,"h":7},"1":{"x":0,"y":8,"w":10,"h":6},"3":{"x":10,"y":1,"w":14,"h":7},"4":{"x":10,"y":8,"w":14,"h":6},"5":{"x":0,"y":27,"w":24,"h":9},"6":{"x":0,"y":14,"w":10,"h":5},"7":{"x":17,"y":14,"w":7,"h":5},"8":{"x":10,"y":14,"w":7,"h":5},"9":{"x":0,"y":19,"w":12,"h":8},"10":{"x":12,"y":19,"w":12,"h":8},"11":{"x":10,"y":0,"w":14,"h":1},"12":{"x":0,"y":0,"w":10,"h":1}},"importedWithCode":false}
+{
+    "version": 15,
+    "variables": [
+        {
+            "key": "Host",
+            "type": "query",
+            "input": "fetch dt.entity.host\n| fields entityName",
+            "multiple": true,
+            "visible": true
+        },
+        {
+            "key": "Event_category",
+            "type": "query",
+            "input": "fetch events\n| filterOut contains(event.category, \"/\")\n| filterOut event.category == \"\"\n| summarize count(), by:event.category\n| fields event.category\n",
+            "multiple": true,
+            "visible": true
+        },
+        {
+            "key": "Application",
+            "type": "query",
+            "input": "fetch dt.entity.application",
+            "multiple": true,
+            "visible": true
+        },
+        {
+            "key": "myteams",
+            "type": "csv",
+            "input": "team 1, team 2",
+            "multiple": false,
+            "visible": true
+        }
+    ],
+    "tiles": {
+        "0": {
+            "type": "data",
+            "title": "Events over time",
+            "query": "fetch events\n| summarize count = count(), by:{`1m interval` = bin(timestamp, 1m)}",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "legend": {
+                        "hidden": true
+                    },
+                    "hiddenLegendFields": [],
+                    "fieldMapping": {
+                        "timestamp": "1m interval",
+                        "leftAxisValues": [
+                            "count"
+                        ],
+                        "leftAxisDimensions": []
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "recordField": "1m interval",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": "auto",
+                    "dataMappings": {
+                        "value": "1m interval"
+                    },
+                    "displayedFields": [
+                        null
+                    ],
+                    "colorMode": "color-palette",
+                    "colorPalette": "categorical"
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "count",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            },
+            "visualization": "barChart",
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 100,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {}
+        },
+        "1": {
+            "type": "data",
+            "title": "",
+            "query": "fetch events\n//`1m interval` = bin(timestamp, 1m)\n| summarize count = count(), by:{event.kind}\n| sort count desc",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "categoricalBarChartSettings": {
+                        "layout": "horizontal",
+                        "categoryAxisTickLayout": "horizontal",
+                        "scale": "relative",
+                        "categoryAxis": "event.kind",
+                        "categoryAxisLabel": "event.kind",
+                        "valueAxis": "count",
+                        "valueAxisLabel": "count"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "recordField": "event.kind",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": "auto",
+                    "dataMappings": {
+                        "value": "event.kind"
+                    },
+                    "displayedFields": [
+                        "event.kind"
+                    ],
+                    "colorMode": "color-palette",
+                    "colorPalette": "categorical"
+                },
+                "tableSettings": {
+                    "displayMode": "edit",
+                    "lineWrapIds": []
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "count",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            },
+            "visualization": "recordView",
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 100,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {}
+        },
+        "3": {
+            "type": "data",
+            "title": "Problems over time",
+            "query": "fetch events\n//`1m interval` = bin(timestamp, 1m)\n| filter in(event.category, array($Event_category))\n| summarize count = count(), by:{bin(timestamp, 1m), event.category}\n| sort count desc",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "colorPalette": [
+                        "purple-rain"
+                    ],
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "event.category",
+                        "categoryAxisLabel": "event.category",
+                        "valueAxis": "count",
+                        "valueAxisLabel": "count"
+                    },
+                    "hiddenLegendFields": [],
+                    "fieldMapping": {
+                        "timestamp": "bin(timestamp, 1m)",
+                        "leftAxisValues": [
+                            "count"
+                        ],
+                        "leftAxisDimensions": [
+                            "event.category"
+                        ]
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "recordField": "bin(timestamp, 1m)",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": "auto",
+                    "dataMappings": {
+                        "value": "bin(timestamp, 1m)"
+                    },
+                    "displayedFields": [
+                        "event.category"
+                    ],
+                    "colorMode": "color-palette",
+                    "colorPalette": "categorical"
+                },
+                "tableSettings": {
+                    "displayMode": "edit",
+                    "lineWrapIds": []
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "count",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            },
+            "visualization": "barChart",
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 100,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {}
+        },
+        "4": {
+            "type": "data",
+            "title": "",
+            "query": "fetch events\n//`1m interval` = bin(timestamp, 1m\n| filter event.kind == \"DAVIS_EVENT\"\n| sort count desc\n| limit 100",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "dt.entity.process_group_instance.name",
+                        "categoryAxisLabel": "dt.entity.process_group_instance.name",
+                        "valueAxis": "dt.davis.timeout",
+                        "valueAxisLabel": "dt.davis.timeout"
+                    },
+                    "hiddenLegendFields": [],
+                    "fieldMapping": {
+                        "timestamp": "timestamp",
+                        "leftAxisValues": [
+                            "dt.davis.timeout"
+                        ],
+                        "leftAxisDimensions": [
+                            "buildId"
+                        ]
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "recordField": "timestamp",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": "auto",
+                    "dataMappings": {
+                        "value": "timestamp"
+                    },
+                    "displayedFields": [
+                        "changed"
+                    ],
+                    "colorMode": "color-palette",
+                    "colorPalette": "categorical"
+                },
+                "tableSettings": {
+                    "displayMode": "edit",
+                    "lineWrapIds": [
+                        [
+                            "affected_entity_tags.HostName"
+                        ],
+                        [
+                            "debug_source"
+                        ],
+                        [
+                            "prc_file_deployment_artifact"
+                        ]
+                    ]
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "dt.davis.timeout",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            },
+            "visualization": "table",
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 100,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {}
+        },
+        "5": {
+            "type": "data",
+            "title": "Problems over time",
+            "query": "fetch events\n//`1m interval` = bin(timestamp, 1m)\n| summarize count = count(), by:{bin(timestamp, 1m), event.kind}\n| sort count desc",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "colorPalette": [
+                        "fireplace"
+                    ]
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": "auto"
+                },
+                "tableSettings": {
+                    "displayMode": "edit",
+                    "lineWrapIds": []
+                }
+            },
+            "visualization": "barChart",
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 100,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {}
+        },
+        "6": {
+            "type": "data",
+            "title": "Problems over time",
+            "query": "fetch events\n//`1m interval` = bin(timestamp, 1m)\n| filter in(event.category, array($Event_category))\n| summarize count = count(), by:{event.category}\n| sort count desc",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "colorPalette": [
+                        "purple-rain"
+                    ],
+                    "categoricalBarChartSettings": {
+                        "layout": "horizontal",
+                        "categoryAxis": "event.category",
+                        "categoryAxisLabel": "event.category",
+                        "valueAxis": "count",
+                        "valueAxisLabel": "count"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value",
+                    "recordField": "event.category"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": "auto",
+                    "dataMappings": {
+                        "value": "event.category"
+                    },
+                    "displayedFields": [
+                        "event.category"
+                    ],
+                    "colorMode": "color-palette",
+                    "colorPalette": "categorical"
+                },
+                "tableSettings": {
+                    "displayMode": "edit",
+                    "lineWrapIds": []
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "count",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 100,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "visualization": "recordView",
+            "davis": {}
+        },
+        "7": {
+            "type": "data",
+            "title": "Problems over time",
+            "query": "fetch events\n//`1m interval` = bin(timestamp, 1m)\n| filter in(event.category, array($Event_category))\n| summarize count = count(), by:{event.category}\n| sort count desc",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "colorPalette": [
+                        "purple-rain"
+                    ],
+                    "categoricalBarChartSettings": {
+                        "layout": "horizontal",
+                        "categoryAxis": "event.category",
+                        "categoryAxisLabel": "event.category",
+                        "valueAxis": "count",
+                        "valueAxisLabel": "count"
+                    },
+                    "circleChartSettings": {
+                        "hideLabels": false
+                    },
+                    "legend": {
+                        "hidden": true
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value",
+                    "recordField": "event.category"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": "auto",
+                    "dataMappings": {
+                        "value": "event.category"
+                    },
+                    "displayedFields": [
+                        "event.category"
+                    ],
+                    "colorMode": "color-palette",
+                    "colorPalette": "categorical"
+                },
+                "tableSettings": {
+                    "displayMode": "edit",
+                    "lineWrapIds": []
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "count",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 100,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "visualization": "recordView",
+            "davis": {}
+        },
+        "8": {
+            "type": "data",
+            "title": "Problems over time",
+            "query": "fetch events\n//`1m interval` = bin(timestamp, 1m)\n| filter in(event.category, array($Event_category))\n| summarize count = count(), by:{event.category}\n| sort count desc",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "colorPalette": [
+                        "purple-rain"
+                    ],
+                    "categoricalBarChartSettings": {
+                        "layout": "horizontal",
+                        "categoryAxis": "event.category",
+                        "categoryAxisLabel": "event.category",
+                        "valueAxis": "count",
+                        "valueAxisLabel": "count"
+                    },
+                    "circleChartSettings": {
+                        "hideLabels": false
+                    },
+                    "legend": {
+                        "hidden": true
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value",
+                    "recordField": "event.category"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": "auto",
+                    "dataMappings": {
+                        "value": "event.category"
+                    },
+                    "displayedFields": [
+                        "event.category"
+                    ],
+                    "colorMode": "color-palette",
+                    "colorPalette": "categorical"
+                },
+                "tableSettings": {
+                    "displayMode": "edit",
+                    "lineWrapIds": []
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "count",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 100,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "visualization": "recordView",
+            "davis": {}
+        },
+        "9": {
+            "type": "data",
+            "title": "Problems over time",
+            "query": "fetch events\n//`1m interval` = bin(timestamp, 1m)\n| summarize count = count(), by:{event.kind}\n| sort count desc",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "colorPalette": [
+                        "fireplace"
+                    ],
+                    "categoricalBarChartSettings": {
+                        "layout": "horizontal",
+                        "categoryAxis": "event.kind",
+                        "categoryAxisLabel": "event.kind",
+                        "valueAxis": "count",
+                        "valueAxisLabel": "count"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value",
+                    "recordField": "event.kind"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": "auto",
+                    "dataMappings": {
+                        "category": "event.kind",
+                        "value": "count"
+                    }
+                },
+                "tableSettings": {
+                    "displayMode": "edit",
+                    "lineWrapIds": []
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "count",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 100,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "visualization": "recordView",
+            "davis": {}
+        },
+        "10": {
+            "type": "data",
+            "title": "Problems over time",
+            "query": "fetch events\n//`1m interval` = bin(timestamp, 1m)\n| summarize count = count(), by:{event.kind}\n| sort count desc",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "colorPalette": [
+                        "fireplace"
+                    ],
+                    "categoricalBarChartSettings": {
+                        "layout": "horizontal",
+                        "categoryAxis": "event.kind",
+                        "categoryAxisLabel": "event.kind",
+                        "valueAxis": "count",
+                        "valueAxisLabel": "count"
+                    },
+                    "legend": {
+                        "hidden": false,
+                        "position": "right"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value",
+                    "recordField": "event.kind"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": "auto",
+                    "dataMappings": {
+                        "category": "event.kind",
+                        "value": "count"
+                    }
+                },
+                "tableSettings": {
+                    "displayMode": "edit",
+                    "lineWrapIds": []
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "count",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 100,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "visualization": "recordView",
+            "davis": {}
+        },
+        "11": {
+            "title": "",
+            "type": "markdown",
+            "content": "# Problems"
+        },
+        "12": {
+            "title": "",
+            "type": "markdown",
+            "content": "# Events"
+        }
+    },
+    "layouts": {
+        "0": {
+            "x": 0,
+            "y": 1,
+            "w": 10,
+            "h": 7
+        },
+        "1": {
+            "x": 0,
+            "y": 8,
+            "w": 10,
+            "h": 6
+        },
+        "3": {
+            "x": 10,
+            "y": 1,
+            "w": 14,
+            "h": 7
+        },
+        "4": {
+            "x": 10,
+            "y": 8,
+            "w": 14,
+            "h": 6
+        },
+        "5": {
+            "x": 0,
+            "y": 27,
+            "w": 24,
+            "h": 9
+        },
+        "6": {
+            "x": 0,
+            "y": 14,
+            "w": 10,
+            "h": 5
+        },
+        "7": {
+            "x": 17,
+            "y": 14,
+            "w": 7,
+            "h": 5
+        },
+        "8": {
+            "x": 10,
+            "y": 14,
+            "w": 7,
+            "h": 5
+        },
+        "9": {
+            "x": 0,
+            "y": 19,
+            "w": 12,
+            "h": 8
+        },
+        "10": {
+            "x": 12,
+            "y": 19,
+            "w": 12,
+            "h": 8
+        },
+        "11": {
+            "x": 10,
+            "y": 0,
+            "w": 14,
+            "h": 1
+        },
+        "12": {
+            "x": 0,
+            "y": 0,
+            "w": 10,
+            "h": 1
+        }
+    },
+    "importedWithCode": false
+}

@@ -1,1 +1,336 @@
-{"version":14,"variables":[{"key":"ManagementZone","type":"code","input":"import { settingsObjectsClient } from \"@dynatrace-sdk/client-classic-environment-v2\";\nexport default async function () {\n  let mzs = [];\n  let data = await settingsObjectsClient.getSettingsObjects({\n    schemaIds: \"builtin:management-zones\",\n    pageSize: 500\n  });\n  mzs = data.items;\n  if(data.hasOwnProperty(\"nextPageKey\") && data.nextPageKey != null){\n    const q = await next(data.nextPageKey);\n  }\n  let arr = [];\n  (mzs).map(result => {\n    arr.push(result.value.name);\n  });\n  console.log(mzs.length);\n  return [\"Select a Management Zone\"].concat(arr.sort());\n  async function next(npk){\n    const more = await settingsObjectsClient.getSettingsObjects({nextPageKey: npk});\n    console.log(more);\n    mzs = mzs.concat(more.items);\n    if(more.hasOwnProperty(\"nextPageKey\") && more.nextPageKey != null) return await next(more.nextPageKey);\n    else return 1;\n  }\n}","multiple":false}],"tiles":{"0":{"type":"data","title":"Service Failure Count Sum by Service Name","query":"timeseries service_failure_count_sum = sum(dt.service.request.failure_count), by:{ service.entity.name, dt.entity.service }, \nfilter:dt.entity.service in [fetch dt.entity.service | filter in(managementZones, $ManagementZone) | fields id]\n| fieldsAdd service.entity.name=entityName(dt.entity.service)\n| fieldsRemove(dt.entity.service)\n| sort service_failure_count_sum desc\n| limit 25\n","davis":{"enabled":false,"davisVisualization":{"isAvailable":true}},"visualization":"lineChart","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","circleChartSettings":{"groupingThresholdType":"relative","groupingThresholdValue":0,"valueType":"relative"},"categoryOverrides":{},"categoricalBarChartSettings":{"categoryAxis":"service.entity.name","categoryAxisLabel":"service.entity.name","valueAxis":"interval","valueAxisLabel":"interval"},"hiddenLegendFields":["service.entity"],"fieldMapping":{"timestamp":"timeframe","leftAxisValues":["service_failure_count_sum"],"leftAxisDimensions":["service.entity.name"]}},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","recordField":"service.entity.name","autoscale":true,"alignment":"center","colorThresholdTarget":"value"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"hexagon","legend":"auto","dataMappings":{"category":"service.entity.name","value":"service.entity.name"}},"histogram":{"dataMappings":[{"valueAxis":"interval","rangeAxis":""}]}}},"1":{"type":"data","title":"Host CPU Average by Host Name","query":"timeseries host_cpu_avg = avg(dt.host.cpu.usage), by:{ host.entity.name, dt.entity.host }, \nfilter:dt.entity.host in [fetch dt.entity.host | filter in(managementZones, $ManagementZone) | fields id]\n| fieldsAdd host.entity.name=entityName(dt.entity.host)\n| fieldsRemove(dt.entity.host)\n| sort host_cpu_avg desc\n| limit 25\n","davis":{"enabled":false,"davisVisualization":{"isAvailable":true}},"visualization":"lineChart","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","circleChartSettings":{"groupingThresholdType":"relative","groupingThresholdValue":0,"valueType":"relative"},"categoryOverrides":{},"categoricalBarChartSettings":{"categoryAxis":"host.entity.name","categoryAxisLabel":"host.entity.name","valueAxis":"interval","valueAxisLabel":"interval"},"hiddenLegendFields":["service.entity"],"fieldMapping":{"timestamp":"timeframe","leftAxisValues":["host_cpu_avg"],"leftAxisDimensions":["host.entity.name"]}},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","recordField":"service.entity.name","autoscale":true,"alignment":"center","colorThresholdTarget":"value"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"hexagon","legend":"auto","dataMappings":{"category":"host.entity.name","value":"host.entity.name"}},"histogram":{"dataMappings":[{"valueAxis":"interval","rangeAxis":""}]}}},"2":{"type":"data","title":"Service Response Time Average by Service Name","query":"timeseries service_response_time_avg = avg(dt.service.request.response_time), by:{ service.entity.name, dt.entity.service }, \nfilter:dt.entity.service in [fetch dt.entity.service | filter in(managementZones, $ManagementZone) | fields id]\n| fieldsAdd service.entity.name=entityName(dt.entity.service)\n| fieldsRemove(dt.entity.service)\n| sort service_response_time_avg desc\n| limit 25\n","davis":{"enabled":false,"davisVisualization":{"isAvailable":true}},"visualization":"lineChart","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","circleChartSettings":{"groupingThresholdType":"relative","groupingThresholdValue":0,"valueType":"relative"},"categoryOverrides":{},"categoricalBarChartSettings":{"categoryAxis":"service.entity.name","categoryAxisLabel":"service.entity.name","valueAxis":"interval","valueAxisLabel":"interval"},"hiddenLegendFields":["service.entity"],"fieldMapping":{"timestamp":"timeframe","leftAxisValues":["service_response_time_avg"],"leftAxisDimensions":["service.entity.name"]}},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","recordField":"service.entity.name","autoscale":true,"alignment":"center","colorThresholdTarget":"value"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"hexagon","legend":"auto","dataMappings":{"category":"service.entity.name","value":"service.entity.name"}},"histogram":{"dataMappings":[{"valueAxis":"interval","rangeAxis":""}]}}},"3":{"type":"data","title":"Service Request Count Average by Service Name","query":"timeseries service_request_count_sum = sum(dt.service.request.count), by:{ service.entity.name, dt.entity.service }, \nfilter:dt.entity.service in [fetch dt.entity.service | filter in(managementZones, $ManagementZone) | fields id]\n| fieldsAdd service.entity.name=entityName(dt.entity.service)\n| fieldsRemove(dt.entity.service)\n| sort service_request_count_sum desc\n| limit 25\n","davis":{"enabled":false,"davisVisualization":{"isAvailable":true}},"visualization":"lineChart","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","circleChartSettings":{"groupingThresholdType":"relative","groupingThresholdValue":0,"valueType":"relative"},"categoryOverrides":{},"categoricalBarChartSettings":{"categoryAxis":"service.entity.name","categoryAxisLabel":"service.entity.name","valueAxis":"interval","valueAxisLabel":"interval"},"hiddenLegendFields":["service.entity"],"fieldMapping":{"timestamp":"timeframe","leftAxisValues":["service_request_count_sum"],"leftAxisDimensions":["service.entity.name"]}},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","recordField":"service.entity.name","autoscale":true,"alignment":"center","colorThresholdTarget":"value"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"hexagon","legend":"auto","dataMappings":{"category":"service.entity.name","value":"service.entity.name"}},"histogram":{"dataMappings":[{"valueAxis":"interval","rangeAxis":""}]}}}},"layouts":{"0":{"x":0,"y":0,"w":24,"h":11},"1":{"x":0,"y":33,"w":24,"h":13},"2":{"x":0,"y":11,"w":24,"h":11},"3":{"x":0,"y":22,"w":24,"h":11}},"importedWithCode":false}
+{
+    "version": 14,
+    "variables": [
+        {
+            "key": "ManagementZone",
+            "type": "code",
+            "input": "import { settingsObjectsClient } from \"@dynatrace-sdk/client-classic-environment-v2\";\nexport default async function () {\n  let mzs = [];\n  let data = await settingsObjectsClient.getSettingsObjects({\n    schemaIds: \"builtin:management-zones\",\n    pageSize: 500\n  });\n  mzs = data.items;\n  if(data.hasOwnProperty(\"nextPageKey\") && data.nextPageKey != null){\n    const q = await next(data.nextPageKey);\n  }\n  let arr = [];\n  (mzs).map(result => {\n    arr.push(result.value.name);\n  });\n  console.log(mzs.length);\n  return [\"Select a Management Zone\"].concat(arr.sort());\n  async function next(npk){\n    const more = await settingsObjectsClient.getSettingsObjects({nextPageKey: npk});\n    console.log(more);\n    mzs = mzs.concat(more.items);\n    if(more.hasOwnProperty(\"nextPageKey\") && more.nextPageKey != null) return await next(more.nextPageKey);\n    else return 1;\n  }\n}",
+            "multiple": false
+        }
+    ],
+    "tiles": {
+        "0": {
+            "type": "data",
+            "title": "Service Failure Count Sum by Service Name",
+            "query": "timeseries service_failure_count_sum = sum(dt.service.request.failure_count), by:{ service.entity.name, dt.entity.service }, \nfilter:dt.entity.service in [fetch dt.entity.service | filter in(managementZones, $ManagementZone) | fields id]\n| fieldsAdd service.entity.name=entityName(dt.entity.service)\n| fieldsRemove(dt.entity.service)\n| sort service_failure_count_sum desc\n| limit 25\n",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "service.entity.name",
+                        "categoryAxisLabel": "service.entity.name",
+                        "valueAxis": "interval",
+                        "valueAxisLabel": "interval"
+                    },
+                    "hiddenLegendFields": [
+                        "service.entity"
+                    ],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "service_failure_count_sum"
+                        ],
+                        "leftAxisDimensions": [
+                            "service.entity.name"
+                        ]
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "recordField": "service.entity.name",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": "auto",
+                    "dataMappings": {
+                        "category": "service.entity.name",
+                        "value": "service.entity.name"
+                    }
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            }
+        },
+        "1": {
+            "type": "data",
+            "title": "Host CPU Average by Host Name",
+            "query": "timeseries host_cpu_avg = avg(dt.host.cpu.usage), by:{ host.entity.name, dt.entity.host }, \nfilter:dt.entity.host in [fetch dt.entity.host | filter in(managementZones, $ManagementZone) | fields id]\n| fieldsAdd host.entity.name=entityName(dt.entity.host)\n| fieldsRemove(dt.entity.host)\n| sort host_cpu_avg desc\n| limit 25\n",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "host.entity.name",
+                        "categoryAxisLabel": "host.entity.name",
+                        "valueAxis": "interval",
+                        "valueAxisLabel": "interval"
+                    },
+                    "hiddenLegendFields": [
+                        "service.entity"
+                    ],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "host_cpu_avg"
+                        ],
+                        "leftAxisDimensions": [
+                            "host.entity.name"
+                        ]
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "recordField": "service.entity.name",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": "auto",
+                    "dataMappings": {
+                        "category": "host.entity.name",
+                        "value": "host.entity.name"
+                    }
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            }
+        },
+        "2": {
+            "type": "data",
+            "title": "Service Response Time Average by Service Name",
+            "query": "timeseries service_response_time_avg = avg(dt.service.request.response_time), by:{ service.entity.name, dt.entity.service }, \nfilter:dt.entity.service in [fetch dt.entity.service | filter in(managementZones, $ManagementZone) | fields id]\n| fieldsAdd service.entity.name=entityName(dt.entity.service)\n| fieldsRemove(dt.entity.service)\n| sort service_response_time_avg desc\n| limit 25\n",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "service.entity.name",
+                        "categoryAxisLabel": "service.entity.name",
+                        "valueAxis": "interval",
+                        "valueAxisLabel": "interval"
+                    },
+                    "hiddenLegendFields": [
+                        "service.entity"
+                    ],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "service_response_time_avg"
+                        ],
+                        "leftAxisDimensions": [
+                            "service.entity.name"
+                        ]
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "recordField": "service.entity.name",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": "auto",
+                    "dataMappings": {
+                        "category": "service.entity.name",
+                        "value": "service.entity.name"
+                    }
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            }
+        },
+        "3": {
+            "type": "data",
+            "title": "Service Request Count Average by Service Name",
+            "query": "timeseries service_request_count_sum = sum(dt.service.request.count), by:{ service.entity.name, dt.entity.service }, \nfilter:dt.entity.service in [fetch dt.entity.service | filter in(managementZones, $ManagementZone) | fields id]\n| fieldsAdd service.entity.name=entityName(dt.entity.service)\n| fieldsRemove(dt.entity.service)\n| sort service_request_count_sum desc\n| limit 25\n",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "service.entity.name",
+                        "categoryAxisLabel": "service.entity.name",
+                        "valueAxis": "interval",
+                        "valueAxisLabel": "interval"
+                    },
+                    "hiddenLegendFields": [
+                        "service.entity"
+                    ],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "service_request_count_sum"
+                        ],
+                        "leftAxisDimensions": [
+                            "service.entity.name"
+                        ]
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "recordField": "service.entity.name",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": "auto",
+                    "dataMappings": {
+                        "category": "service.entity.name",
+                        "value": "service.entity.name"
+                    }
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "layouts": {
+        "0": {
+            "x": 0,
+            "y": 0,
+            "w": 24,
+            "h": 11
+        },
+        "1": {
+            "x": 0,
+            "y": 33,
+            "w": 24,
+            "h": 13
+        },
+        "2": {
+            "x": 0,
+            "y": 11,
+            "w": 24,
+            "h": 11
+        },
+        "3": {
+            "x": 0,
+            "y": 22,
+            "w": 24,
+            "h": 11
+        }
+    },
+    "importedWithCode": false
+}

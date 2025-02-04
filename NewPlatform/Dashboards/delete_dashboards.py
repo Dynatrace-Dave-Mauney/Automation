@@ -24,6 +24,10 @@ def process(env, client_id, client_secret):
 			document_name = document.get('name')
 			document_version = document.get('version')
 			params = {'optimistic-locking-version': document_version}
+
+			if not document_name.startswith('Tenant'):
+				continue
+
 			delete_list.append(f'{document_name}:{document_id}:{document_version}')
 
 	delete_list = sorted(delete_list)
@@ -33,7 +37,7 @@ def process(env, client_id, client_secret):
 		for line in delete_list:
 			print(line)
 
-		msg = 'PROCEED WITH DELETE OF LISTED DASHBOARDS?'
+		msg = f'PROCEED WITH DELETE OF {len(delete_list)} LISTED DASHBOARDS?'
 		proceed = input("%s (Y/n) " % msg).upper() == 'Y'
 
 		if proceed:

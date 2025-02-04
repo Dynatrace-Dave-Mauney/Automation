@@ -46,6 +46,7 @@ def get_active_gate_links():
         ('Custom SSL certificate for ActiveGate', 'https://docs.dynatrace.com/docs/shortlink/activegate-configuration-ssl'),
         ('Proxy for ActiveGate', 'https://docs.dynatrace.com/docs/shortlink/sgw-proxy-authentication'),
         ('Reverse proxy or load balancer for ActiveGate', 'https://docs.dynatrace.com/docs/shortlink/activegate-reverse-proxy'),
+        ('Uninstall ActiveGate', 'https://docs.dynatrace.com/docs/shortlink/sgw-uninstall'),
     ]
 
     return links

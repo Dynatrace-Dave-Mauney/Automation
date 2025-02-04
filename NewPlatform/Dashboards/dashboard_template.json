@@ -1,0 +1,177 @@
+{
+    "version": 17,
+    "variables": [],
+    "tiles": {
+        "0": {
+            "type": "data",
+            "title": "TEMPLATE",
+            "query": "timeseries avg(dt.host.cpu.usage), by: { host.name }\n| fieldsAdd value.A = arrayAvg(`avg(dt.host.cpu.usage)`)\n| sort value.A desc\n| limit 100",
+            "queryConfig": {
+                "version": "12.2.2",
+                "subQueries": [
+                    {
+                        "id": "A",
+                        "isEnabled": true,
+                        "datatype": "metrics",
+                        "metric": {
+                            "key": "dt.host.cpu.usage",
+                            "aggregation": "avg"
+                        },
+                        "by": [
+                            "host.name"
+                        ]
+                    }
+                ],
+                "globalCommands": {
+                    "limit": 100,
+                    "sort": {
+                        "field": "value.A",
+                        "direction": "desc"
+                    }
+                }
+            },
+            "subType": "dql-builder-metrics",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "xAxisScaling": "analyzedTimeframe",
+                    "gapPolicy": "gap",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "curve": "linear",
+                    "pointsDisplay": "auto",
+                    "categoricalBarChartSettings": {
+                        "layout": "horizontal",
+                        "categoryAxisTickLayout": "horizontal",
+                        "scale": "absolute",
+                        "groupMode": "stacked",
+                        "colorPaletteMode": "multi-color",
+                        "categoryAxis": [
+                            "host.name"
+                        ],
+                        "categoryAxisLabel": "host.name",
+                        "valueAxis": [
+                            "value.A"
+                        ],
+                        "valueAxisLabel": "value.A",
+                        "tooltipVariant": "single"
+                    },
+                    "colorPalette": "categorical",
+                    "valueRepresentation": "absolute",
+                    "truncationMode": "middle",
+                    "xAxisLabel": "timeframe",
+                    "xAxisIsLabelVisible": false,
+                    "hiddenLegendFields": [
+                        "interval",
+                        "value.A"
+                    ],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "avg(dt.host.cpu.usage)"
+                        ]
+                    },
+                    "leftYAxisSettings": {
+                        "isLabelVisible": true,
+                        "label": "CPU usage %"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "value.A",
+                    "prefixIcon": "",
+                    "recordField": "value.A",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "trend": {
+                        "trendType": "auto",
+                        "isVisible": true
+                    },
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "linewrapEnabled": false,
+                    "lineWrapIds": [],
+                    "monospacedFontEnabled": false,
+                    "monospacedFontColumns": [],
+                    "columnWidths": {},
+                    "columnTypeOverrides": [
+                        {
+                            "fields": [
+                                "avg(dt.host.cpu.usage)"
+                            ],
+                            "value": "sparkline",
+                            "id": 1738160024426
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": {
+                        "hidden": false,
+                        "position": "auto"
+                    },
+                    "displayedFields": [
+                        "host.name"
+                    ],
+                    "dataMappings": {
+                        "value": "value.A"
+                    },
+                    "truncationMode": "middle",
+                    "colorMode": "color-palette",
+                    "colorPalette": "blue"
+                },
+                "histogram": {
+                    "legend": "auto",
+                    "yAxis": {
+                        "label": "Frequency",
+                        "scale": "linear"
+                    },
+                    "colorPalette": "categorical",
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "value.A",
+                            "rangeAxis": ""
+                        }
+                    ],
+                    "variant": "single",
+                    "truncationMode": "middle",
+                    "displayedFields": [
+                        "host.name"
+                    ]
+                },
+                "autoSelectVisualization": true
+            },
+            "davis": {},
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        }
+    },
+    "layouts": {
+        "0": {
+            "x": 0,
+            "y": 0,
+            "w": 8,
+            "h": 6
+        }
+    },
+    "importedWithCode": false,
+    "settings": {}
+}

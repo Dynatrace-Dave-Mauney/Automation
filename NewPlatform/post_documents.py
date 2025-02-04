@@ -29,7 +29,7 @@ def run():
     # post_launchpads('tenant1', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/tenant1/*.json')
     # post_notebooks('tenant1', '../$Private/Customers/$Current/Assets/NewPlatform/Notebooks/tenant1/*.json')
     # post_dashboards('tenant1', '../$Private/Customers/$Current/Assets/NewPlatform/Dashboards/tenant1/*.json')
-
+    post_dashboards('tenant1', '../$Private/$Output/Dashboards/ClassicConversion/*.json')
 
 def post_dashboards(env_name, path):
     post_documents(env_name, path, 'dashboard')

@@ -3,11 +3,11 @@
         "configurationVersions": [
             3
         ],
-        "clusterVersion": "1.296.57.20240727-051437"
+        "clusterVersion": "1.306.65.20250123-155932"
     },
     "id": "aaaaaaaa-bbbb-cccc-dddd-000000000002",
     "dashboardMetadata": {
-        "name": "AWS API Gateway",
+        "name": "AWS ALB",
         "shared": false,
         "owner": "nobody@example.com",
         "sharingDetails": {
@@ -27,7 +27,7 @@
     },
     "tiles": [
         {
-            "name": "4XXError Sum",
+            "name": "ALB number of active connections",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -37,15 +37,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "4XXError Sum",
+            "customName": "ALB number of active connections",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.apiGateway.\"4xxErrorSum\"",
+                    "metric": "builtin:cloud.aws.alb.connections.active",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.alb"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -98,7 +98,7 @@
             }
         },
         {
-            "name": "5XXError Sum",
+            "name": "ALB number of new connections",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -108,15 +108,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "5XXError Sum",
+            "customName": "ALB number of new connections",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.apiGateway.\"5xxErrorSum\"",
+                    "metric": "builtin:cloud.aws.alb.connections.new",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.alb"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -169,7 +169,7 @@
             }
         },
         {
-            "name": "CacheHitCount Sum",
+            "name": "ALB number of 4XX errors",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -179,15 +179,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "CacheHitCount Sum",
+            "customName": "ALB number of 4XX errors",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.apiGateway.cacheHitCountSum",
+                    "metric": "builtin:cloud.aws.alb.errors.alb.http4xx",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.alb"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -240,7 +240,7 @@
             }
         },
         {
-            "name": "CacheHitCount Sum (by Stage)",
+            "name": "ALB number of 5XX errors",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -250,15 +250,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "CacheHitCount Sum (by Stage)",
+            "customName": "ALB number of 5XX errors",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.apiGateway.cacheHitCountSumByStage",
+                    "metric": "builtin:cloud.aws.alb.errors.alb.http5xx",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.alb"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -311,7 +311,7 @@
             }
         },
         {
-            "name": "CacheHitCount Sum (by Stage and Resource and Method)",
+            "name": "ALB number of 4XX target errors",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -321,15 +321,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "CacheHitCount Sum (by Stage and Resource and Method)",
+            "customName": "ALB number of 4XX target errors",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.apiGateway.cacheHitCountSumByStageResourceMethod",
+                    "metric": "builtin:cloud.aws.alb.errors.target.http4xx",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.alb"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -382,7 +382,7 @@
             }
         },
         {
-            "name": "CacheMissCount Sum (by Stage and Resource and Method)",
+            "name": "ALB number of 5XX target errors",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -392,15 +392,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "CacheMissCount Sum (by Stage and Resource and Method)",
+            "customName": "ALB number of 5XX target errors",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.apiGateway.cacheMissCountSumByStageResourceMethod",
+                    "metric": "builtin:cloud.aws.alb.errors.target.http5xx",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.alb"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -453,7 +453,7 @@
             }
         },
         {
-            "name": "Count Sum",
+            "name": "ALB number of rejected connections",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -463,15 +463,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Count Sum",
+            "customName": "ALB number of rejected connections",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.apiGateway.countSum",
+                    "metric": "builtin:cloud.aws.alb.errors.rejCon",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.alb"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -524,7 +524,7 @@
             }
         },
         {
-            "name": "Count Sum (by Region)",
+            "name": "ALB number of target connection errors",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -534,15 +534,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Count Sum (by Region)",
+            "customName": "ALB number of target connection errors",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.apiGateway.countSumByRegion",
+                    "metric": "builtin:cloud.aws.alb.errors.targConn",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device_group"
+                        "dt.entity.alb"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -595,7 +595,7 @@
             }
         },
         {
-            "name": "IntegrationLatency",
+            "name": "ALB number of client TLS negotiation errors",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -605,15 +605,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "IntegrationLatency",
+            "customName": "ALB number of client TLS negotiation errors",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.apiGateway.integrationLatency",
+                    "metric": "builtin:cloud.aws.alb.errors.tlsNeg",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.alb"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -666,7 +666,7 @@
             }
         },
         {
-            "name": "Latency",
+            "name": "ALB number of processed bytes",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -676,15 +676,228 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Latency",
+            "customName": "ALB number of processed bytes",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.apiGateway.latency",
+                    "metric": "builtin:cloud.aws.alb.bytes",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.custom_device"
+                        "dt.entity.alb"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "ALB number of consumed LCUs",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "ALB number of consumed LCUs",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:cloud.aws.alb.lcus",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.alb"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "ALB number of requests",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "ALB number of requests",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:cloud.aws.alb.requests",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.alb"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "ALB target response time",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 608,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "ALB target response time",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:cloud.aws.alb.respTime",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.alb"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",

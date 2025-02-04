@@ -1,1 +1,2101 @@
-{"version":14,"variables":[],"tiles":{"1":{"type":"markdown","title":"","content":"### Host Monitoring\n---"},"4":{"type":"markdown","title":"","content":"### Introduction\n\nThis DEMO dashboard provides some of the available usage details for the [Dynatrace Platform Subscription](https://docs.dynatrace.com/docs/shortlink/dynatrace-platform-subscription) (DPS). The dashboard will be regularly updated to provide usage details for further DPS capabilities. \n\nIt can serve as a template to create a customized overview of DPS consumption. Select 'Make a copy' or 'Download' in the menu to create an editable copy. Please note, that you need to have sufficient permissions to access `dt.system.events` to view all data.\n\nSome of these DPS usage details are also available, even if Dynatrace runs on [classic licensing](https://docs.dynatrace.com/docs/shortlink/monitoring-consumption-classic). In this case, these details convey information to which DPS usage the utilization of Dynatrace would have led in the DPS license model.\n\nFurther DPS consumption insights, also on account level, can be found in the [Account Management](https://docs.dynatrace.com/docs/shortlink/account-management) portal."},"5":{"type":"data","title":"","query":"fetch dt.system.events, scanLimitGBytes: -1\n| filter event.type == \"AppEngine Functions - Small\"\n| filter event.kind == \"BILLING_USAGE_EVENT\"\n| filter billing_type == \"BILLABLE\"\n| fieldsAdd data = if(matchesPhrase(function.type, \"AD_HOC\"),\n                     \"Ad-hoc\",\n                     else: if(matchesPhrase(function.type, \"ACTION\"),\n                             \"Actions\",\n                             else: if(matchesPhrase(function.type, \"STANDARD\"),\n                                     \"App functions\")))\n| summarize {\n    billed_invocations = takeAny(billed_invocations)\n  }, by: {\n    timestamp = bin(timestamp, 1h),\n    event.id,\n    data\n  }\n| summarize {\n    invocations = sum( if(billed_invocations, billed_invocations, else:1) )\n  }, by: {\n    data,\n    timestamp\n  }\n| sort timestamp desc, invocations desc","davis":{"enabled":false,"davisVisualization":{"isAvailable":true}},"visualization":"barChart","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","circleChartSettings":{"groupingThresholdType":"relative","groupingThresholdValue":0,"valueType":"relative"},"categoryOverrides":{},"categoricalBarChartSettings":{"categoryAxis":"data","categoryAxisLabel":"data","valueAxis":"invocations","valueAxisLabel":"invocations"},"fieldMapping":{"timestamp":"timestamp","leftAxisValues":["invocations"],"leftAxisDimensions":["data"]},"xAxisScaling":"analyzedTimeframe","leftYAxisSettings":{"scale":"linear"},"legend":{"hidden":true},"hiddenLegendFields":[],"colorPalette":"blue-steel"},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","autoscale":true,"alignment":"center","colorThresholdTarget":"value","recordField":"data"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"square","dataMappings":{"category":"data","value":"timestamp"},"legend":"auto"},"histogram":{"dataMappings":[{"valueAxis":"invocations","rangeAxis":""}]}},"querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":1,"defaultSamplingRatio":10,"enableSampling":false}},"13":{"type":"markdown","title":"","content":"### Automation"},"14":{"type":"markdown","title":"","content":"### AppEngine Functions"},"16":{"type":"markdown","title":"","content":"### Events powered by Grail\n---"},"21":{"type":"markdown","title":"","content":"### Metrics powered by Grail"},"27":{"type":"markdown","title":"","content":"### Application Security"},"29":{"type":"data","title":"","query":"fetch dt.system.events, scanLimitGBytes: -1\n| filter event.kind == \"BILLING_USAGE_EVENT\"\n| filter event.type == \"Automation Workflow\"\n| filter billing_type == \"BILLABLE\"\n| summarize {\n    takeAny(event.id)\n  }, by: {\n    timestamp = bin(timestamp, 1h),\n    event.id\n  }\n| summarize {\n    workflow_hours = count()\n  }, by: {\n    timestamp\n  }\n| sort timestamp ASC","davis":{"enabled":false,"davisVisualization":{"isAvailable":true}},"visualization":"barChart","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","circleChartSettings":{"groupingThresholdType":"relative","groupingThresholdValue":0,"valueType":"relative"},"categoryOverrides":{},"fieldMapping":{"timestamp":"timestamp","leftAxisValues":["workflow_hours"],"leftAxisDimensions":[]},"leftYAxisSettings":{"label":"Workflow-hours"},"categoricalBarChartSettings":{},"legend":{"hidden":true},"hiddenLegendFields":[]},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","recordField":"timestamp","autoscale":true,"alignment":"center","colorThresholdTarget":"value"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"square","dataMappings":{}},"histogram":{"dataMappings":[{"valueAxis":"workflow_hours","rangeAxis":""}]}},"querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":1,"defaultSamplingRatio":10,"enableSampling":false}},"31":{"type":"data","title":"by function type","query":"fetch dt.system.events, scanLimitGBytes: -1\n| filter event.type == \"AppEngine Functions - Small\"\n| filter event.kind == \"BILLING_USAGE_EVENT\"\n| filter billing_type == \"BILLABLE\"\n| fieldsAdd data = if(matchesPhrase(function.type, \"AD_HOC\"),\n                     \"Ad-hoc\",\n                     else: if(matchesPhrase(function.type, \"ACTION\"),\n                             \"Actions\",\n                             else: if(matchesPhrase(function.type, \"STANDARD\"),\n                                     \"App functions\")))\n| summarize {\n    billed_invocations = takeAny(billed_invocations)\n  }, by: {\n    timestamp = bin(timestamp, dh),\n    event.id,\n    data\n  }\n| summarize {\n    invocations = sum( if(billed_invocations, billed_invocations, else:1) )\n  }, by: {\n    data,\n    timestamp\n  }\n| sort timestamp desc, invocations desc","davis":{"enabled":false,"davisVisualization":{"isAvailable":true}},"visualization":"pieChart","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","circleChartSettings":{"groupingThresholdType":"absolute","groupingThresholdValue":null,"valueType":"relative"},"categoryOverrides":{},"categoricalBarChartSettings":{"categoryAxis":"data","categoryAxisLabel":"data","valueAxis":"invocations","valueAxisLabel":"invocations"},"fieldMapping":{"timestamp":"timestamp","leftAxisValues":["invocations"],"leftAxisDimensions":["data"]},"leftYAxisSettings":{"label":"Invocations"},"legend":{"hidden":true},"hiddenLegendFields":[],"colorPalette":"blue-steel"},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","recordField":"data","autoscale":true,"alignment":"center","colorThresholdTarget":"value"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"square","dataMappings":{"category":"data","value":"timestamp"},"legend":"auto"},"histogram":{"dataMappings":[{"valueAxis":"invocations","rangeAxis":""}]}},"querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":1,"defaultSamplingRatio":10,"enableSampling":false}},"36":{"type":"data","title":"","query":"fetch dt.system.events\n| filter event.kind == \"BILLING_USAGE_EVENT\" and event.type == \"Events - Retain\"\n| summarize {usage.event_bucket = takeLast(usage.event_bucket), billed_bytes = takeLast(billed_bytes)}, by:{billing_period = bin(timestamp, 1h), event.id}\n| fields billing_period, billed_bytes, usage.event_bucket\n| makeTimeseries max(billed_bytes), by:{usage.event_bucket}, time: billing_period, interval:1h","davis":{"enabled":false,"davisVisualization":{"isAvailable":true}},"visualization":"areaChart","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","circleChartSettings":{"groupingThresholdType":"relative","groupingThresholdValue":0,"valueType":"relative"},"categoryOverrides":{},"fieldMapping":{"timestamp":"timeframe","leftAxisValues":["max(billed_bytes)"],"leftAxisDimensions":["usage.event_bucket"]},"legend":{"hidden":true},"categoricalBarChartSettings":{"categoryAxis":"usage.event_bucket","valueAxis":"interval","categoryAxisLabel":"usage.event_bucket","valueAxisLabel":"interval"},"hiddenLegendFields":[],"colorPalette":"blue-steel"},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","recordField":"billing_period","autoscale":true,"alignment":"center","colorThresholdTarget":"value"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"square","dataMappings":{"category":"usage.event_bucket","value":"usage.event_bucket"},"legend":"auto"},"histogram":{"dataMappings":[{"valueAxis":"interval","rangeAxis":""}]}},"querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":1,"defaultSamplingRatio":10,"enableSampling":false}},"39":{"type":"data","title":"","query":"fetch dt.system.events\n| filter event.kind == \"BILLING_USAGE_EVENT\"\n| filter event.type == \"Events - Query\" or event.type == \"Events - Query - SaaS\"\n| dedup event.id\n| summarize {\n    data_read_GiB = sum(billed_bytes / 1024 / 1024 / 1024.0)\n  }, by: {\n    startHour = bin(query_start, 1h)\n  }","davis":{"enabled":false,"davisVisualization":{"isAvailable":true}},"visualization":"barChart","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","circleChartSettings":{"groupingThresholdType":"relative","groupingThresholdValue":0,"valueType":"relative"},"categoryOverrides":{},"fieldMapping":{"timestamp":"startHour","leftAxisValues":["data_read_GiB"],"leftAxisDimensions":[]},"leftYAxisSettings":{"label":"GiB"},"legend":{"hidden":true},"categoricalBarChartSettings":{},"hiddenLegendFields":[]},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","recordField":"startHour","autoscale":true,"alignment":"center","colorThresholdTarget":"value"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"square","dataMappings":{}},"histogram":{"dataMappings":[{"valueAxis":"data_read_GiB","rangeAxis":""}]}},"querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":1,"defaultSamplingRatio":10,"enableSampling":false}},"40":{"type":"data","title":"Top 10 apps","query":"fetch dt.system.events\n| filter event.kind == \"BILLING_USAGE_EVENT\"\n| filter event.type == \"Events - Query\" or event.type == \"Events - Query - SaaS\"\n| fieldsAdd query_id = if(event.version == \"1.0\", event.id, else: query_id)\n| dedup event.id\n| summarize {\n   data_read_GiB = sum(billed_bytes / 1024 / 1024 / 1024.0),\n   Query_count = countDistinctExact(query_id)\n  }, by: {\n    App_context = client.application_context, application_detail = client.source, User = user.email\n  }\n\n| fieldsAdd split_by_user = record(data_read_GiB, App_context, application_detail, User, Query_count)\n| summarize {\n    split_by_user = arraySort(collectArray(split_by_user), direction: \"descending\"),\n    data_read_GiB = sum(data_read_GiB),\n    Query_count = sum(Query_count)\n}, by:{\n    App_context, application_detail\n}\n| fieldsAdd split_by_user = record(App_context = split_by_user[][App_context], application_detail = split_by_user[][application_detail], User = split_by_user[][User], data_read_GiB = split_by_user[][data_read_GiB], data_read_pct = (split_by_user[][data_read_GiB] / data_read_GiB * 100), Query_count = split_by_user[][Query_count])\n| fieldsAdd split_by_user = if(arraySize(split_by_user) == 1, arrayFirst(split_by_user)[User], else: split_by_user)\n\n| fieldsAdd application_details = record(data_read_GiB, App_context, application_detail, split_by_user, Query_count)\n| summarize {\n   application_details = arraySort(collectArray(application_details), direction: \"descending\"),\n   data_read_GiB = sum(data_read_GiB),\n   Query_count = toLong(sum(Query_count))\n}, by:{\n   App_context\n}\n| fieldsAdd application_details = record(App_context = application_details[][App_context], application_detail = application_details[][application_detail], split_by_user = application_details[][split_by_user], data_read_GiB = application_details[][data_read_GiB], data_read_pct = application_details[][data_read_GiB] / data_read_GiB * 100, Query_count = application_details[][Query_count])\n\n| fieldsAdd rec = record(App_context, application_details, data_read_GiB, Query_count)\n| summarize collection = collectArray(rec), Total = sum(data_read_GiB)\n| expand collection\n| filterOut isNull(collection[Query_count]) or collection[Query_count] == 0\n| fields App_context = collection[App_context], application_details = collection[application_details], data_read_GiB = collection[data_read_GiB], data_read_pct = collection[data_read_GiB] / Total * 100, Query_count = collection[Query_count]\n| sort data_read_GiB desc","davis":{"enabled":false,"davisVisualization":{"isAvailable":true}},"visualization":"pieChart","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","circleChartSettings":{"groupingThresholdType":"number-of-slices","groupingThresholdValue":10,"valueType":"relative","hideLabels":false},"categoryOverrides":{},"categoricalBarChartSettings":{"categoryAxis":"App_context","categoryAxisLabel":"App_context","valueAxis":"data_read_GiB","valueAxisLabel":"data_read_GiB"},"legend":{"hidden":true},"colorPalette":"blue-steel"},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","recordField":"App_context","autoscale":true,"alignment":"center","colorThresholdTarget":"value"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"square","dataMappings":{"category":"App_context","value":"application_details"}},"histogram":{"dataMappings":[{"valueAxis":"data_read_GiB","rangeAxis":""},{"valueAxis":"data_read_pct","rangeAxis":""},{"valueAxis":"Query_count","rangeAxis":""}]}},"querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":1,"defaultSamplingRatio":10,"enableSampling":false}},"43":{"type":"markdown","title":"","content":"### Logs powered by Grail"},"44":{"type":"data","title":"","query":"fetch dt.system.events\n| filter event.kind == \"BILLING_USAGE_EVENT\" and event.type == \"Log Management & Analytics - Retain\"\n| summarize {usage.event_bucket = takeLast(usage.event_bucket), billed_bytes = takeLast(billed_bytes)}, by:{billing_period = bin(timestamp, 1h), event.id}\n| fields billing_period, billed_bytes, usage.event_bucket\n| makeTimeseries max(billed_bytes), by:{usage.event_bucket}, time: billing_period, interval:1h","davis":{"enabled":false,"davisVisualization":{"isAvailable":true}},"visualization":"areaChart","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","circleChartSettings":{"groupingThresholdType":"relative","groupingThresholdValue":0,"valueType":"relative"},"categoryOverrides":{},"fieldMapping":{"timestamp":"timeframe","leftAxisValues":["max(billed_bytes)"],"leftAxisDimensions":["usage.event_bucket"]},"categoricalBarChartSettings":{"categoryAxis":"usage.event_bucket","valueAxis":"interval","categoryAxisLabel":"usage.event_bucket","valueAxisLabel":"interval"},"legend":{"hidden":true},"hiddenLegendFields":[],"colorPalette":"blue-steel"},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","recordField":"billing_period","autoscale":true,"alignment":"center","colorThresholdTarget":"value"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"square","dataMappings":{"category":"usage.event_bucket","value":"usage.event_bucket"},"legend":"auto"},"histogram":{"dataMappings":[{"valueAxis":"interval","rangeAxis":""}]}},"querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":1,"defaultSamplingRatio":10,"enableSampling":false}},"47":{"type":"markdown","title":"","content":"### Traces powered by Grail\n---"},"48":{"type":"data","title":"","query":"fetch dt.system.events\n| filter event.kind == \"BILLING_USAGE_EVENT\"\n| filter event.type == \"Log Management & Analytics - Query\"\n| dedup event.id\n| summarize {\n    data_read_GiB = sum(billed_bytes / 1024 / 1024 / 1024.0)\n  }, by: {\n    startHour = bin(query_start, 1h)\n  }","davis":{"enabled":false,"davisVisualization":{"isAvailable":true}},"visualization":"barChart","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","circleChartSettings":{"groupingThresholdType":"relative","groupingThresholdValue":0,"valueType":"relative"},"categoryOverrides":{},"fieldMapping":{"timestamp":"startHour","leftAxisValues":["data_read_GiB"],"leftAxisDimensions":[]},"leftYAxisSettings":{"label":"GiB"},"legend":{"hidden":true},"categoricalBarChartSettings":{},"hiddenLegendFields":[],"colorPalette":"categorical"},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","recordField":"startHour","autoscale":true,"alignment":"center","colorThresholdTarget":"value"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"square","dataMappings":{}},"histogram":{"dataMappings":[{"valueAxis":"data_read_GiB","rangeAxis":""}]}},"querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":1,"defaultSamplingRatio":10,"enableSampling":false}},"49":{"type":"data","title":"Overview - Daily query usage per data type - traces","query":"fetch dt.system.events\n| filter event.kind == \"BILLING_USAGE_EVENT\"\n| filter event.type == \"Traces - Query\"\n| dedup event.id\n| summarize {\n    data_read_GiB = sum(billed_bytes / 1024 / 1024 / 1024.0)\n  }, by: {\n    startHour = bin(query_start, 1h)\n  }","davis":{"enabled":false,"davisVisualization":{"isAvailable":true}},"visualization":"barChart","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","circleChartSettings":{"groupingThresholdType":"relative","groupingThresholdValue":0,"valueType":"relative"},"categoryOverrides":{},"fieldMapping":{"timestamp":"startHour","leftAxisValues":["data_read_GiB"],"leftAxisDimensions":[]},"leftYAxisSettings":{"label":"GiB"},"legend":{"hidden":true},"categoricalBarChartSettings":{},"hiddenLegendFields":[]},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","recordField":"startHour","autoscale":true,"alignment":"center","colorThresholdTarget":"value"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"square","dataMappings":{}},"histogram":{"dataMappings":[{"valueAxis":"data_read_GiB","rangeAxis":""}]}},"querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":1,"defaultSamplingRatio":10,"enableSampling":false}},"50":{"type":"data","title":"Top 10 apps","query":"fetch dt.system.events\n| filter event.kind == \"BILLING_USAGE_EVENT\"\n| filter event.type == \"Log Management & Analytics - Query\"\n| dedup event.id\n| summarize {\n   data_read_GiB = sum(billed_bytes / 1024 / 1024 / 1024.0),\n   Query_count = count()\n  }, by: {\n    App_context = client.application_context, application_detail = client.source, User = user.email\n  }\n\n| fieldsAdd split_by_user = record(data_read_GiB, App_context, application_detail, User, Query_count)\n| summarize {\n    split_by_user = arraySort(collectArray(split_by_user), direction: \"descending\"),\n    data_read_GiB = sum(data_read_GiB),\n    Query_count = sum(Query_count)\n}, by:{\n    App_context, application_detail\n}\n| fieldsAdd split_by_user = record(App_context = split_by_user[][App_context], application_detail = split_by_user[][application_detail], User = split_by_user[][User], data_read_GiB = split_by_user[][data_read_GiB], data_read_pct = (split_by_user[][data_read_GiB] / data_read_GiB * 100), Query_count = split_by_user[][Query_count])\n| fieldsAdd split_by_user = if(arraySize(split_by_user) == 1, arrayFirst(split_by_user)[User], else: split_by_user)\n\n| fieldsAdd application_details = record(data_read_GiB, App_context, application_detail, split_by_user, Query_count)\n| summarize {\n   application_details = arraySort(collectArray(application_details), direction: \"descending\"),\n   data_read_GiB = sum(data_read_GiB),\n   Query_count = toLong(sum(Query_count))\n}, by:{\n   App_context\n}\n| fieldsAdd application_details = record(App_context = application_details[][App_context], application_detail = application_details[][application_detail], split_by_user = application_details[][split_by_user], data_read_GiB = application_details[][data_read_GiB], data_read_pct = application_details[][data_read_GiB] / data_read_GiB * 100, Query_count = application_details[][Query_count])\n\n| fieldsAdd rec = record(App_context, application_details, data_read_GiB, Query_count)\n| summarize collection = collectArray(rec), Total = sum(data_read_GiB)\n| expand collection\n| filterOut isNull(collection[Query_count]) or collection[Query_count] == 0\n| fields App_context = collection[App_context], application_details = collection[application_details], data_read_GiB = collection[data_read_GiB], data_read_pct = collection[data_read_GiB] / Total * 100, Query_count = collection[Query_count]\n| sort data_read_GiB desc","davis":{"enabled":false,"davisVisualization":{"isAvailable":true}},"visualization":"pieChart","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","circleChartSettings":{"groupingThresholdType":"number-of-slices","groupingThresholdValue":10,"valueType":"relative"},"categoryOverrides":{},"categoricalBarChartSettings":{"categoryAxis":"App_context","categoryAxisLabel":"App_context","valueAxis":"data_read_GiB","valueAxisLabel":"data_read_GiB"},"legend":{"hidden":true},"colorPalette":"blue-steel"},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","recordField":"App_context","autoscale":true,"alignment":"center","colorThresholdTarget":"value"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"square","dataMappings":{"category":"App_context","value":"application_details"}},"histogram":{"dataMappings":[{"valueAxis":"data_read_GiB","rangeAxis":""},{"valueAxis":"data_read_pct","rangeAxis":""},{"valueAxis":"Query_count","rangeAxis":""}]}},"querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":1,"defaultSamplingRatio":10,"enableSampling":false}},"51":{"type":"data","title":"Top 10 apps","query":"fetch dt.system.events\n| filter event.kind == \"BILLING_USAGE_EVENT\"\n| filter event.type == \"Traces - Query\"\n| dedup event.id\n| summarize {\n   data_read_GiB = sum(billed_bytes / 1024 / 1024 / 1024.0),\n   Query_count = count()\n  }, by: {\n    App_context = client.application_context, application_detail = client.source, User = user.email\n  }\n\n| fieldsAdd split_by_user = record(data_read_GiB, App_context, application_detail, User, Query_count)\n| summarize {\n    split_by_user = arraySort(collectArray(split_by_user), direction: \"descending\"),\n    data_read_GiB = sum(data_read_GiB),\n    Query_count = sum(Query_count)\n}, by:{\n    App_context, application_detail\n}\n| fieldsAdd split_by_user = record(App_context = split_by_user[][App_context], application_detail = split_by_user[][application_detail], User = split_by_user[][User], data_read_GiB = split_by_user[][data_read_GiB], data_read_pct = (split_by_user[][data_read_GiB] / data_read_GiB * 100), Query_count = split_by_user[][Query_count])\n| fieldsAdd split_by_user = if(arraySize(split_by_user) == 1, arrayFirst(split_by_user)[User], else: split_by_user)\n\n| fieldsAdd application_details = record(data_read_GiB, App_context, application_detail, split_by_user, Query_count)\n| summarize {\n   application_details = arraySort(collectArray(application_details), direction: \"descending\"),\n   data_read_GiB = sum(data_read_GiB),\n   Query_count = toLong(sum(Query_count))\n}, by:{\n   App_context\n}\n| fieldsAdd application_details = record(App_context = application_details[][App_context], application_detail = application_details[][application_detail], split_by_user = application_details[][split_by_user], data_read_GiB = application_details[][data_read_GiB], data_read_pct = application_details[][data_read_GiB] / data_read_GiB * 100, Query_count = application_details[][Query_count])\n\n| fieldsAdd rec = record(App_context, application_details, data_read_GiB, Query_count)\n| summarize collection = collectArray(rec), Total = sum(data_read_GiB)\n| expand collection\n| filterOut isNull(collection[Query_count]) or collection[Query_count] == 0\n| fields App_context = collection[App_context], application_details = collection[application_details], data_read_GiB = collection[data_read_GiB], data_read_pct = collection[data_read_GiB] / Total * 100, Query_count = collection[Query_count]\n| sort data_read_GiB desc","davis":{"enabled":false,"davisVisualization":{"isAvailable":true}},"visualization":"pieChart","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","circleChartSettings":{"groupingThresholdType":"number-of-slices","groupingThresholdValue":10,"valueType":"relative"},"categoryOverrides":{},"categoricalBarChartSettings":{"categoryAxis":"App_context","categoryAxisLabel":"App_context","valueAxis":"data_read_GiB","valueAxisLabel":"data_read_GiB"},"legend":{"hidden":true},"colorPalette":"blue-steel"},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","recordField":"App_context","autoscale":true,"alignment":"center","colorThresholdTarget":"value"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"square","dataMappings":{"category":"App_context","value":"application_details"}},"histogram":{"dataMappings":[{"valueAxis":"data_read_GiB","rangeAxis":""},{"valueAxis":"data_read_pct","rangeAxis":""},{"valueAxis":"Query_count","rangeAxis":""}]}},"querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":1,"defaultSamplingRatio":10,"enableSampling":false}},"58":{"type":"data","title":"by monitoring source","query":"FETCH dt.system.events\n| filter event.kind == \"BILLING_USAGE_EVENT\" and event.type == \"Metrics - Ingest & Process\"\n| dedup event.id\n| fieldsAdd monitoring_source = if(monitoring_source == \"fullstack\" or monitoring_source == \"infrastructure\", monitoring_source, else: \"other\")\n| summarize total_data_points = toLong(sum(data_points)), by:{usage.start, monitoring_source}\n| makeTimeseries {total_usage = sum(total_data_points, default: 0)}, interval: 15m, time: usage.start, by:{monitoring_source}\n| join [\n  timeseries {included_usage=sum(dt.billing.full_stack_monitoring.usage, default: 0)}, interval:15m, nonempty:true\n  | fields monitoring_source = \"fullstack\", included_usage = 4 * 900 * included_usage[]\n  | append[\n    timeseries {included_usage=sum(dt.billing.infrastructure_monitoring.usage, default: 0)}, interval:15m, nonempty:true\n    | fields monitoring_source = \"infrastructure\", included_usage = 4 * 1500 * included_usage[]\n  ]\n], on:{monitoring_source}, fields:{included_usage}, kind:leftOuter\n| fieldsAdd billed_usage = if(isNotNull(included_usage) and total_usage[] > included_usage[],total_usage[] - included_usage[], else:0)\n| fieldsAdd billed_usage = if(isNull(included_usage), total_usage, else:billed_usage)\n| fieldsAdd billed_usage = arraySum(billed_usage)\n| fieldsKeep monitoring_source, billed_usage","davis":{"enabled":false,"davisVisualization":{"isAvailable":true}},"visualization":"table","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","circleChartSettings":{"groupingThresholdType":"relative","groupingThresholdValue":0,"valueType":"relative"},"categoryOverrides":{},"categoricalBarChartSettings":{"categoryAxis":"monitoring_source","categoryAxisLabel":"monitoring_source","valueAxis":"billed_usage","valueAxisLabel":"billed_usage"}},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","recordField":"error","autoscale":true,"alignment":"center","colorThresholdTarget":"value"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"square","dataMappings":{"category":"monitoring_source","value":"billed_usage"}},"histogram":{"dataMappings":[{"valueAxis":"billed_usage","rangeAxis":""}]}},"querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":1,"defaultSamplingRatio":10,"enableSampling":false}},"59":{"type":"data","title":"","query":"FETCH dt.system.events\n| filter event.kind == \"BILLING_USAGE_EVENT\" and event.type == \"Metrics - Ingest & Process\"\n| dedup event.id\n| fieldsAdd monitoring_source = if(monitoring_source == \"fullstack\" or monitoring_source == \"infrastructure\", monitoring_source, else: \"other\")\n| summarize total_data_points = toLong(sum(data_points)), by:{usage.start, monitoring_source}\n| makeTimeseries {total_usage = sum(total_data_points, default: 0)}, interval: 15m, time: usage.start, by:{monitoring_source}\n| join [\n  timeseries {included_usage=sum(dt.billing.full_stack_monitoring.usage, default: 0)}, interval:15m, nonempty:true\n  | fields monitoring_source = \"fullstack\", included_usage = 4 * 900 * included_usage[]\n  | append[\n    timeseries {included_usage=sum(dt.billing.infrastructure_monitoring.usage, default: 0)}, interval:15m, nonempty:true\n    | fields monitoring_source = \"infrastructure\", included_usage = 4 * 1500 * included_usage[]\n  ]\n], on:{monitoring_source}, fields:{included_usage}, kind:leftOuter\n| fieldsAdd billed_usage = if(isNotNull(included_usage) and total_usage[] > included_usage[],total_usage[] - included_usage[], else:0)\n| fieldsAdd billed_usage = if(isNull(included_usage), total_usage, else:billed_usage)\n| summarize billed_usage= sum(billed_usage[]), by:{timeframe, interval}","davis":{"enabled":false,"davisVisualization":{"isAvailable":true}},"visualization":"barChart","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","circleChartSettings":{"groupingThresholdType":"relative","groupingThresholdValue":0,"valueType":"relative"},"categoryOverrides":{},"categoricalBarChartSettings":{},"fieldMapping":{"timestamp":"timeframe","leftAxisValues":["billed_usage"],"leftAxisDimensions":[]},"hiddenLegendFields":[],"legend":{"hidden":true}},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","recordField":"error","autoscale":true,"alignment":"center","colorThresholdTarget":"value"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"square"},"histogram":{"dataMappings":[{"valueAxis":"interval","rangeAxis":""}]}},"querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":1,"defaultSamplingRatio":10,"enableSampling":false}},"60":{"type":"data","title":"Billed usage - Other","query":"FETCH dt.system.events\n| filter event.kind == \"BILLING_USAGE_EVENT\" and event.type == \"Metrics - Ingest & Process\"\n| dedup event.id\n| filterOut in(monitoring_source, {\"fullstack\",\"infrastructure\"})\n| summarize total_data_points = toLong(sum(data_points)), by:{usage.start}\n| makeTimeseries {total_usage = sum(total_data_points, default: 0)}, interval: 15m, time: usage.start","davis":{"enabled":false,"davisVisualization":{"isAvailable":true}},"visualization":"barChart","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","circleChartSettings":{"groupingThresholdType":"relative","groupingThresholdValue":0,"valueType":"relative"},"categoryOverrides":{},"categoricalBarChartSettings":{},"fieldMapping":{"timestamp":"timeframe","leftAxisValues":["total_usage"],"leftAxisDimensions":[]},"hiddenLegendFields":[],"legend":{"hidden":true},"colorPalette":"categorical"},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","recordField":"error","autoscale":true,"alignment":"center","colorThresholdTarget":"value"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"square"},"histogram":{"dataMappings":[{"valueAxis":"interval","rangeAxis":""}]}},"querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":1,"defaultSamplingRatio":10,"enableSampling":false}},"61":{"type":"data","title":"Billed usage - Infrastructure","query":"fetch dt.system.events\n| filter event.kind == \"BILLING_USAGE_EVENT\" and event.type == \"Metrics - Ingest & Process\"\n| dedup event.id \n| filter monitoring_source == \"infrastructure\"\n| summarize total_data_points = toLong(sum(data_points)), by:{usage.start}\n| makeTimeseries {total_usage = sum(total_data_points, default: 0)}, interval: 15m, time: usage.start\n| lookup [\n    timeseries {included_usage=sum(dt.billing.infrastructure_monitoring.usage, default: 0)}, interval:15m, nonempty:true\n    | fieldsAdd included_usage = 4 * 1500 * included_usage[]\n], fields:{included_usage}, lookupField:timeframe\n| fieldsAdd billed_usage = if(total_usage[] > included_usage[],total_usage[] - included_usage[], else:0)","davis":{"enabled":false,"davisVisualization":{"isAvailable":true}},"visualization":"barChart","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","circleChartSettings":{"groupingThresholdType":"relative","groupingThresholdValue":0,"valueType":"relative"},"categoryOverrides":{},"categoricalBarChartSettings":{},"hiddenLegendFields":[],"fieldMapping":{"timestamp":"timeframe","leftAxisValues":["total_usage","included_usage","billed_usage"],"leftAxisDimensions":[]},"legend":{"hidden":true},"colorPalette":"blue-steel"},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","recordField":"error","autoscale":true,"alignment":"center","colorThresholdTarget":"value"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"square"},"histogram":{"dataMappings":[]}},"querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":1,"defaultSamplingRatio":10,"enableSampling":false}},"62":{"type":"data","title":"Billed usage - Full-Stack","query":"fetch dt.system.events\n| filter event.kind == \"BILLING_USAGE_EVENT\" and event.type == \"Metrics - Ingest & Process\"\n| dedup event.id \n| filter monitoring_source == \"fullstack\"\n| summarize total_data_points = toLong(sum(data_points)), by:{usage.start}\n| makeTimeseries {total_usage = sum(total_data_points, default: 0)}, interval: 15m, time: usage.start\n| lookup [\n    timeseries {included_usage=sum(dt.billing.full_stack_monitoring.usage, default: 0)}, interval:15m, nonempty:true\n    | fieldsAdd included = 4 * 900 * included_usage[]\n], fields:{included}, lookupField:timeframe\n| fieldsAdd billed_usage = if(total_usage[] > included[],total_usage[] - included[], else:0)","davis":{"enabled":false,"davisVisualization":{"isAvailable":true}},"visualization":"lineChart","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","circleChartSettings":{"groupingThresholdType":"relative","groupingThresholdValue":0,"valueType":"relative"},"categoryOverrides":{},"categoricalBarChartSettings":{},"fieldMapping":{"timestamp":"timeframe","leftAxisValues":["total_usage","included","billed_usage"],"leftAxisDimensions":[]},"hiddenLegendFields":[],"legend":{"hidden":true},"colorPalette":"blue-steel"},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","recordField":"error","autoscale":true,"alignment":"center","colorThresholdTarget":"value"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"square","dataMappings":{}},"histogram":{"dataMappings":[{"valueAxis":"interval","rangeAxis":""}]}},"querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":1,"defaultSamplingRatio":10,"enableSampling":false}},"64":{"type":"data","title":"","query":"timeseries hourlyUsage=sum(dt.billing.full_stack_monitoring.usage, rate:1h), interval:15m","davis":{"enabled":false,"davisVisualization":{"isAvailable":true}},"visualization":"lineChart","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","circleChartSettings":{"groupingThresholdType":"relative","groupingThresholdValue":0,"valueType":"relative"},"categoryOverrides":{},"hiddenLegendFields":[],"fieldMapping":{"timestamp":"timeframe","leftAxisValues":["hourlyUsage"],"leftAxisDimensions":[]},"legend":{"hidden":true},"leftYAxisSettings":{"label":"GiB-hours"},"categoricalBarChartSettings":{}},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","autoscale":true,"alignment":"center","colorThresholdTarget":"value"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"hexagon","legend":"auto","dataMappings":{}},"histogram":{"dataMappings":[{"valueAxis":"interval","rangeAxis":""}]}},"querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":1,"defaultSamplingRatio":10,"enableSampling":false}},"66":{"type":"data","title":"","query":"fetch dt.system.events\n| filter event.kind == \"BILLING_USAGE_EVENT\" and (event.type == \"Events - Ingest & Process\" )\n| join [fetch dt.system.buckets], kind:leftOuter, on: { left[usage.event_bucket] == right[name] }\n| dedup event.id\n| summarize {billed_bytes = sum(billed_bytes)}, by:{timestamp, event.id, right.display_name, event.type}\n| makeTimeseries `Total GiB`=sum(billed_bytes), by:{right.display_name, event.type}, time: timestamp\n\n/*\nfetch dt.system.events\n| filter event.kind == \"BILLING_USAGE_EVENT\" and event.type == \"Events - Ingest & Process\"\n| summarize {billed_bytes = takeLast(billed_bytes)}, by:{billing_period = bin(timestamp, 1h), event.id, usage.event_bucket}\n| summarize {`bucket billed_bytes`=sum(billed_bytes)}, by:{billing_period, usage.event_bucket}\n| summarize {`Total GiB`=sum(`bucket billed_bytes`), `Total billed buckets`=collectDistinct(record(`Bucket` = usage.event_bucket, `Bucket GiB` = `bucket billed_bytes`))}, by:{`Billing period`=billing_period}\n*/","davis":{"enabled":false,"davisVisualization":{"isAvailable":true}},"visualization":"areaChart","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","circleChartSettings":{"groupingThresholdType":"relative","groupingThresholdValue":0,"valueType":"relative"},"categoryOverrides":{},"hiddenLegendFields":[],"fieldMapping":{"timestamp":"timeframe","leftAxisValues":["Total GiB"],"leftAxisDimensions":["right.display_name","event.type"]},"legend":{"hidden":true},"categoricalBarChartSettings":{"categoryAxis":"right.display_name","valueAxis":"interval","categoryAxisLabel":"right.display_name","valueAxisLabel":"interval"},"colorPalette":"blue-steel"},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","recordField":"Billing period","autoscale":true,"alignment":"center","colorThresholdTarget":"value"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"hexagon","legend":"auto","dataMappings":{"category":"right.display_name","value":"event.type"}},"histogram":{"dataMappings":[{"valueAxis":"interval","rangeAxis":""}]}},"querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":1,"defaultSamplingRatio":10,"enableSampling":false}},"68":{"type":"markdown","title":"","content":"**Full-Stack Monitoring**\n\n[documentation](https://docs.dynatrace.com/docs/shortlink/dps-hosts#full-stack-monitoring-dps)"},"69":{"type":"markdown","title":"","content":"**Infrastructure Monitoring**\n[documentation](https://docs.dynatrace.com/docs/shortlink/dps-hosts#infra-dps)"},"70":{"type":"markdown","title":"","content":"**Foundation & Discovery**\n[documentation](https://docs.dynatrace.com/docs/shortlink/dps-hosts#discovery-dps)"},"71":{"type":"data","title":"","query":"timeseries hourlyUsage=sum(dt.billing.infrastructure_monitoring.usage, rate:1h), interval:15m","davis":{"enabled":false,"davisVisualization":{"isAvailable":true}},"visualization":"lineChart","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","circleChartSettings":{"groupingThresholdType":"relative","groupingThresholdValue":0,"valueType":"relative"},"categoryOverrides":{},"hiddenLegendFields":[],"fieldMapping":{"timestamp":"timeframe","leftAxisValues":["hourlyUsage"],"leftAxisDimensions":[]},"legend":{"hidden":true},"leftYAxisSettings":{"label":"host-hours"},"categoricalBarChartSettings":{}},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","autoscale":true,"alignment":"center","colorThresholdTarget":"value"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"hexagon","legend":"auto","dataMappings":{}},"histogram":{"dataMappings":[{"valueAxis":"interval","rangeAxis":""}]}},"querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":1,"defaultSamplingRatio":10,"enableSampling":false}},"72":{"type":"data","title":"","query":"timeseries hourlyUsage=sum(dt.billing.foundation_and_discovery.usage, rate:1h), interval:15m","davis":{"enabled":false,"davisVisualization":{"isAvailable":true}},"visualization":"lineChart","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","circleChartSettings":{"groupingThresholdType":"relative","groupingThresholdValue":0,"valueType":"relative"},"categoryOverrides":{},"hiddenLegendFields":[],"fieldMapping":{"timestamp":"timeframe","leftAxisValues":["hourlyUsage"],"leftAxisDimensions":[]},"legend":{"hidden":true},"leftYAxisSettings":{"label":"host-hours"},"categoricalBarChartSettings":{}},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","autoscale":true,"alignment":"center","colorThresholdTarget":"value","recordField":"error"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"hexagon","legend":"auto","dataMappings":{}},"histogram":{"dataMappings":[{"valueAxis":"interval","rangeAxis":""}]}},"querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":1,"defaultSamplingRatio":10,"enableSampling":false}},"73":{"type":"markdown","title":"","content":"**Runtime Vulnerability Analytics**\n[documentation](https://docs.dynatrace.com/docs/shortlink/dps-appsec#rva)"},"74":{"type":"markdown","title":"","content":"**Runtime Application Protection**\n[documentation](https://docs.dynatrace.com/docs/shortlink/dps-appsec#rap)"},"75":{"type":"data","title":"","query":"timeseries hourlyUsage=sum(dt.billing.runtime_vulnerability_analytics.usage, rate:1h), interval:15m","davis":{"enabled":false,"davisVisualization":{"isAvailable":true}},"visualization":"lineChart","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","circleChartSettings":{"groupingThresholdType":"relative","groupingThresholdValue":0,"valueType":"relative"},"categoryOverrides":{},"hiddenLegendFields":[],"fieldMapping":{"timestamp":"timeframe","leftAxisValues":["hourlyUsage"],"leftAxisDimensions":[]},"legend":{"hidden":true},"leftYAxisSettings":{"label":"GiB-hours"},"categoricalBarChartSettings":{}},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","autoscale":true,"alignment":"center","colorThresholdTarget":"value","recordField":"error"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"hexagon","legend":"auto","dataMappings":{}},"histogram":{"dataMappings":[{"valueAxis":"interval","rangeAxis":""}]}},"querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":1,"defaultSamplingRatio":10,"enableSampling":false}},"76":{"type":"data","title":"","query":"timeseries hourlyUsage=sum(dt.billing.runtime_application_protection.usage, rate:1h), interval:15m","davis":{"enabled":false,"davisVisualization":{"isAvailable":true}},"visualization":"lineChart","visualizationSettings":{"thresholds":[],"chartSettings":{"gapPolicy":"connect","circleChartSettings":{"groupingThresholdType":"relative","groupingThresholdValue":0,"valueType":"relative"},"categoryOverrides":{},"hiddenLegendFields":[],"fieldMapping":{"timestamp":"timeframe","leftAxisValues":["hourlyUsage"],"leftAxisDimensions":[]},"legend":{"hidden":true},"leftYAxisSettings":{"label":"GiB-hours"},"categoricalBarChartSettings":{}},"singleValue":{"showLabel":true,"label":"","prefixIcon":"","autoscale":true,"alignment":"center","colorThresholdTarget":"value","recordField":"error"},"table":{"rowDensity":"condensed","enableSparklines":false,"hiddenColumns":[],"lineWrapIds":[],"columnWidths":{}},"honeycomb":{"shape":"hexagon","legend":"auto","dataMappings":{}},"histogram":{"dataMappings":[{"valueAxis":"interval","rangeAxis":""}]}},"querySettings":{"maxResultRecords":1000,"defaultScanLimitGbytes":500,"maxResultMegaBytes":1,"defaultSamplingRatio":10,"enableSampling":false}},"77":{"type":"markdown","title":"","content":"**Ingest & Process**\n[documentation](https://docs.dynatrace.com/docs/shortlink/dps-log-management#ingest-and-process)"},"78":{"type":"markdown","title":"","content":"**Retain**\n[documentation](https://docs.dynatrace.com/docs/shortlink/dps-log-management#retain)"},"79":{"type":"markdown","title":"","content":"**Query**\n[documentation](https://docs.dynatrace.com/docs/shortlink/dps-log-management#query)"},"80":{"type":"markdown","title":"","content":"*Coming soon*"},"81":{"type":"markdown","title":"","content":"**Ingest & Process**\n[documentation](https://docs.dynatrace.com/docs/shortlink/dps-events#ingest-and-process)"},"82":{"type":"markdown","title":"","content":"**Retain**\n[documentation](https://docs.dynatrace.com/docs/shortlink/dps-events#retain)"},"83":{"type":"markdown","title":"","content":"**Query**\n[documentation](https://docs.dynatrace.com/docs/shortlink/dps-events#query)"},"84":{"type":"markdown","title":"","content":"**Ingest & Process**\n[documentation](https://docs.dynatrace.com/docs/shortlink/dps-metrics#ingest-and-process)\n\n\nThe usage is not shown for the last 4 hours, because `usage.start` is approx. 4 hours in the past to `timestamp`. This means that the query timeframe interval should be at least 4 hours."},"85":{"type":"markdown","title":"","content":"**Query**\n"},"86":{"type":"markdown","title":"","content":"**Automation Workflow**\n[documentation](https://docs.dynatrace.com/docs/shortlink/dps-automation)"},"87":{"type":"markdown","title":"","content":"**AppEngine Functions - Small**\n[documentation](https://docs.dynatrace.com/docs/shortlink/dps-appfunctions)"}},"layouts":{"1":{"x":0,"y":5,"w":22,"h":1},"4":{"x":0,"y":0,"w":22,"h":5},"5":{"x":3,"y":88,"w":13,"h":5},"13":{"x":0,"y":81,"w":22,"h":1},"14":{"x":0,"y":87,"w":22,"h":1},"16":{"x":0,"y":48,"w":22,"h":1},"21":{"x":0,"y":64,"w":22,"h":1},"27":{"x":0,"y":21,"w":17,"h":1},"29":{"x":3,"y":82,"w":19,"h":5},"31":{"x":16,"y":88,"w":6,"h":5},"36":{"x":3,"y":54,"w":19,"h":5},"39":{"x":3,"y":59,"w":13,"h":5},"40":{"x":16,"y":59,"w":6,"h":5},"43":{"x":0,"y":32,"w":17,"h":1},"44":{"x":3,"y":38,"w":19,"h":5},"47":{"x":0,"y":75,"w":22,"h":1},"48":{"x":3,"y":43,"w":13,"h":5},"49":{"x":3,"y":76,"w":13,"h":5},"50":{"x":16,"y":43,"w":6,"h":5},"51":{"x":16,"y":76,"w":6,"h":5},"58":{"x":16,"y":65,"w":6,"h":5},"59":{"x":3,"y":65,"w":13,"h":5},"60":{"x":16,"y":70,"w":6,"h":5},"61":{"x":9,"y":70,"w":7,"h":5},"62":{"x":3,"y":70,"w":6,"h":5},"64":{"x":3,"y":6,"w":19,"h":5},"66":{"x":3,"y":49,"w":19,"h":5},"68":{"x":0,"y":6,"w":3,"h":5},"69":{"x":0,"y":11,"w":3,"h":5},"70":{"x":0,"y":16,"w":3,"h":5},"71":{"x":3,"y":11,"w":19,"h":5},"72":{"x":3,"y":16,"w":19,"h":5},"73":{"x":0,"y":22,"w":3,"h":5},"74":{"x":0,"y":27,"w":3,"h":5},"75":{"x":3,"y":22,"w":19,"h":5},"76":{"x":3,"y":27,"w":19,"h":5},"77":{"x":0,"y":33,"w":3,"h":5},"78":{"x":0,"y":38,"w":3,"h":5},"79":{"x":0,"y":43,"w":3,"h":5},"80":{"x":3,"y":33,"w":19,"h":5},"81":{"x":0,"y":49,"w":3,"h":5},"82":{"x":0,"y":54,"w":3,"h":5},"83":{"x":0,"y":59,"w":3,"h":5},"84":{"x":0,"y":65,"w":3,"h":10},"85":{"x":0,"y":76,"w":3,"h":5},"86":{"x":0,"y":82,"w":3,"h":5},"87":{"x":0,"y":88,"w":3,"h":5}},"importedWithCode":false}
+{
+    "version": 14,
+    "variables": [],
+    "tiles": {
+        "1": {
+            "type": "markdown",
+            "title": "",
+            "content": "### Host Monitoring\n---"
+        },
+        "4": {
+            "type": "markdown",
+            "title": "",
+            "content": "### Introduction\n\nThis DEMO dashboard provides some of the available usage details for the [Dynatrace Platform Subscription](https://docs.dynatrace.com/docs/shortlink/dynatrace-platform-subscription) (DPS). The dashboard will be regularly updated to provide usage details for further DPS capabilities. \n\nIt can serve as a template to create a customized overview of DPS consumption. Select 'Make a copy' or 'Download' in the menu to create an editable copy. Please note, that you need to have sufficient permissions to access `dt.system.events` to view all data.\n\nSome of these DPS usage details are also available, even if Dynatrace runs on [classic licensing](https://docs.dynatrace.com/docs/shortlink/monitoring-consumption-classic). In this case, these details convey information to which DPS usage the utilization of Dynatrace would have led in the DPS license model.\n\nFurther DPS consumption insights, also on account level, can be found in the [Account Management](https://docs.dynatrace.com/docs/shortlink/account-management) portal."
+        },
+        "5": {
+            "type": "data",
+            "title": "",
+            "query": "fetch dt.system.events, scanLimitGBytes: -1\n| filter event.type == \"AppEngine Functions - Small\"\n| filter event.kind == \"BILLING_USAGE_EVENT\"\n| filter billing_type == \"BILLABLE\"\n| fieldsAdd data = if(matchesPhrase(function.type, \"AD_HOC\"),\n                     \"Ad-hoc\",\n                     else: if(matchesPhrase(function.type, \"ACTION\"),\n                             \"Actions\",\n                             else: if(matchesPhrase(function.type, \"STANDARD\"),\n                                     \"App functions\")))\n| summarize {\n    billed_invocations = takeAny(billed_invocations)\n  }, by: {\n    timestamp = bin(timestamp, 1h),\n    event.id,\n    data\n  }\n| summarize {\n    invocations = sum( if(billed_invocations, billed_invocations, else:1) )\n  }, by: {\n    data,\n    timestamp\n  }\n| sort timestamp desc, invocations desc",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualization": "barChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "data",
+                        "categoryAxisLabel": "data",
+                        "valueAxis": "invocations",
+                        "valueAxisLabel": "invocations"
+                    },
+                    "fieldMapping": {
+                        "timestamp": "timestamp",
+                        "leftAxisValues": [
+                            "invocations"
+                        ],
+                        "leftAxisDimensions": [
+                            "data"
+                        ]
+                    },
+                    "xAxisScaling": "analyzedTimeframe",
+                    "leftYAxisSettings": {
+                        "scale": "linear"
+                    },
+                    "legend": {
+                        "hidden": true
+                    },
+                    "hiddenLegendFields": [],
+                    "colorPalette": "blue-steel"
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value",
+                    "recordField": "data"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "data",
+                        "value": "timestamp"
+                    },
+                    "legend": "auto"
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "invocations",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "13": {
+            "type": "markdown",
+            "title": "",
+            "content": "### Automation"
+        },
+        "14": {
+            "type": "markdown",
+            "title": "",
+            "content": "### AppEngine Functions"
+        },
+        "16": {
+            "type": "markdown",
+            "title": "",
+            "content": "### Events powered by Grail\n---"
+        },
+        "21": {
+            "type": "markdown",
+            "title": "",
+            "content": "### Metrics powered by Grail"
+        },
+        "27": {
+            "type": "markdown",
+            "title": "",
+            "content": "### Application Security"
+        },
+        "29": {
+            "type": "data",
+            "title": "",
+            "query": "fetch dt.system.events, scanLimitGBytes: -1\n| filter event.kind == \"BILLING_USAGE_EVENT\"\n| filter event.type == \"Automation Workflow\"\n| filter billing_type == \"BILLABLE\"\n| summarize {\n    takeAny(event.id)\n  }, by: {\n    timestamp = bin(timestamp, 1h),\n    event.id\n  }\n| summarize {\n    workflow_hours = count()\n  }, by: {\n    timestamp\n  }\n| sort timestamp ASC",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualization": "barChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "fieldMapping": {
+                        "timestamp": "timestamp",
+                        "leftAxisValues": [
+                            "workflow_hours"
+                        ],
+                        "leftAxisDimensions": []
+                    },
+                    "leftYAxisSettings": {
+                        "label": "Workflow-hours"
+                    },
+                    "categoricalBarChartSettings": {},
+                    "legend": {
+                        "hidden": true
+                    },
+                    "hiddenLegendFields": []
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "recordField": "timestamp",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "workflow_hours",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "31": {
+            "type": "data",
+            "title": "by function type",
+            "query": "fetch dt.system.events, scanLimitGBytes: -1\n| filter event.type == \"AppEngine Functions - Small\"\n| filter event.kind == \"BILLING_USAGE_EVENT\"\n| filter billing_type == \"BILLABLE\"\n| fieldsAdd data = if(matchesPhrase(function.type, \"AD_HOC\"),\n                     \"Ad-hoc\",\n                     else: if(matchesPhrase(function.type, \"ACTION\"),\n                             \"Actions\",\n                             else: if(matchesPhrase(function.type, \"STANDARD\"),\n                                     \"App functions\")))\n| summarize {\n    billed_invocations = takeAny(billed_invocations)\n  }, by: {\n    timestamp = bin(timestamp, dh),\n    event.id,\n    data\n  }\n| summarize {\n    invocations = sum( if(billed_invocations, billed_invocations, else:1) )\n  }, by: {\n    data,\n    timestamp\n  }\n| sort timestamp desc, invocations desc",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualization": "pieChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute",
+                        "groupingThresholdValue": null,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "data",
+                        "categoryAxisLabel": "data",
+                        "valueAxis": "invocations",
+                        "valueAxisLabel": "invocations"
+                    },
+                    "fieldMapping": {
+                        "timestamp": "timestamp",
+                        "leftAxisValues": [
+                            "invocations"
+                        ],
+                        "leftAxisDimensions": [
+                            "data"
+                        ]
+                    },
+                    "leftYAxisSettings": {
+                        "label": "Invocations"
+                    },
+                    "legend": {
+                        "hidden": true
+                    },
+                    "hiddenLegendFields": [],
+                    "colorPalette": "blue-steel"
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "recordField": "data",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "data",
+                        "value": "timestamp"
+                    },
+                    "legend": "auto"
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "invocations",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "36": {
+            "type": "data",
+            "title": "",
+            "query": "fetch dt.system.events\n| filter event.kind == \"BILLING_USAGE_EVENT\" and event.type == \"Events - Retain\"\n| summarize {usage.event_bucket = takeLast(usage.event_bucket), billed_bytes = takeLast(billed_bytes)}, by:{billing_period = bin(timestamp, 1h), event.id}\n| fields billing_period, billed_bytes, usage.event_bucket\n| makeTimeseries max(billed_bytes), by:{usage.event_bucket}, time: billing_period, interval:1h",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualization": "areaChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "max(billed_bytes)"
+                        ],
+                        "leftAxisDimensions": [
+                            "usage.event_bucket"
+                        ]
+                    },
+                    "legend": {
+                        "hidden": true
+                    },
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "usage.event_bucket",
+                        "valueAxis": "interval",
+                        "categoryAxisLabel": "usage.event_bucket",
+                        "valueAxisLabel": "interval"
+                    },
+                    "hiddenLegendFields": [],
+                    "colorPalette": "blue-steel"
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "recordField": "billing_period",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "usage.event_bucket",
+                        "value": "usage.event_bucket"
+                    },
+                    "legend": "auto"
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "39": {
+            "type": "data",
+            "title": "",
+            "query": "fetch dt.system.events\n| filter event.kind == \"BILLING_USAGE_EVENT\"\n| filter event.type == \"Events - Query\" or event.type == \"Events - Query - SaaS\"\n| dedup event.id\n| summarize {\n    data_read_GiB = sum(billed_bytes / 1024 / 1024 / 1024.0)\n  }, by: {\n    startHour = bin(query_start, 1h)\n  }",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualization": "barChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "fieldMapping": {
+                        "timestamp": "startHour",
+                        "leftAxisValues": [
+                            "data_read_GiB"
+                        ],
+                        "leftAxisDimensions": []
+                    },
+                    "leftYAxisSettings": {
+                        "label": "GiB"
+                    },
+                    "legend": {
+                        "hidden": true
+                    },
+                    "categoricalBarChartSettings": {},
+                    "hiddenLegendFields": []
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "recordField": "startHour",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "data_read_GiB",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "40": {
+            "type": "data",
+            "title": "Top 10 apps",
+            "query": "fetch dt.system.events\n| filter event.kind == \"BILLING_USAGE_EVENT\"\n| filter event.type == \"Events - Query\" or event.type == \"Events - Query - SaaS\"\n| fieldsAdd query_id = if(event.version == \"1.0\", event.id, else: query_id)\n| dedup event.id\n| summarize {\n   data_read_GiB = sum(billed_bytes / 1024 / 1024 / 1024.0),\n   Query_count = countDistinctExact(query_id)\n  }, by: {\n    App_context = client.application_context, application_detail = client.source, User = user.email\n  }\n\n| fieldsAdd split_by_user = record(data_read_GiB, App_context, application_detail, User, Query_count)\n| summarize {\n    split_by_user = arraySort(collectArray(split_by_user), direction: \"descending\"),\n    data_read_GiB = sum(data_read_GiB),\n    Query_count = sum(Query_count)\n}, by:{\n    App_context, application_detail\n}\n| fieldsAdd split_by_user = record(App_context = split_by_user[][App_context], application_detail = split_by_user[][application_detail], User = split_by_user[][User], data_read_GiB = split_by_user[][data_read_GiB], data_read_pct = (split_by_user[][data_read_GiB] / data_read_GiB * 100), Query_count = split_by_user[][Query_count])\n| fieldsAdd split_by_user = if(arraySize(split_by_user) == 1, arrayFirst(split_by_user)[User], else: split_by_user)\n\n| fieldsAdd application_details = record(data_read_GiB, App_context, application_detail, split_by_user, Query_count)\n| summarize {\n   application_details = arraySort(collectArray(application_details), direction: \"descending\"),\n   data_read_GiB = sum(data_read_GiB),\n   Query_count = toLong(sum(Query_count))\n}, by:{\n   App_context\n}\n| fieldsAdd application_details = record(App_context = application_details[][App_context], application_detail = application_details[][application_detail], split_by_user = application_details[][split_by_user], data_read_GiB = application_details[][data_read_GiB], data_read_pct = application_details[][data_read_GiB] / data_read_GiB * 100, Query_count = application_details[][Query_count])\n\n| fieldsAdd rec = record(App_context, application_details, data_read_GiB, Query_count)\n| summarize collection = collectArray(rec), Total = sum(data_read_GiB)\n| expand collection\n| filterOut isNull(collection[Query_count]) or collection[Query_count] == 0\n| fields App_context = collection[App_context], application_details = collection[application_details], data_read_GiB = collection[data_read_GiB], data_read_pct = collection[data_read_GiB] / Total * 100, Query_count = collection[Query_count]\n| sort data_read_GiB desc",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualization": "pieChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "number-of-slices",
+                        "groupingThresholdValue": 10,
+                        "valueType": "relative",
+                        "hideLabels": false
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "App_context",
+                        "categoryAxisLabel": "App_context",
+                        "valueAxis": "data_read_GiB",
+                        "valueAxisLabel": "data_read_GiB"
+                    },
+                    "legend": {
+                        "hidden": true
+                    },
+                    "colorPalette": "blue-steel"
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "recordField": "App_context",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "App_context",
+                        "value": "application_details"
+                    }
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "data_read_GiB",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "data_read_pct",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "Query_count",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "43": {
+            "type": "markdown",
+            "title": "",
+            "content": "### Logs powered by Grail"
+        },
+        "44": {
+            "type": "data",
+            "title": "",
+            "query": "fetch dt.system.events\n| filter event.kind == \"BILLING_USAGE_EVENT\" and event.type == \"Log Management & Analytics - Retain\"\n| summarize {usage.event_bucket = takeLast(usage.event_bucket), billed_bytes = takeLast(billed_bytes)}, by:{billing_period = bin(timestamp, 1h), event.id}\n| fields billing_period, billed_bytes, usage.event_bucket\n| makeTimeseries max(billed_bytes), by:{usage.event_bucket}, time: billing_period, interval:1h",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualization": "areaChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "max(billed_bytes)"
+                        ],
+                        "leftAxisDimensions": [
+                            "usage.event_bucket"
+                        ]
+                    },
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "usage.event_bucket",
+                        "valueAxis": "interval",
+                        "categoryAxisLabel": "usage.event_bucket",
+                        "valueAxisLabel": "interval"
+                    },
+                    "legend": {
+                        "hidden": true
+                    },
+                    "hiddenLegendFields": [],
+                    "colorPalette": "blue-steel"
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "recordField": "billing_period",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "usage.event_bucket",
+                        "value": "usage.event_bucket"
+                    },
+                    "legend": "auto"
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "47": {
+            "type": "markdown",
+            "title": "",
+            "content": "### Traces powered by Grail\n---"
+        },
+        "48": {
+            "type": "data",
+            "title": "",
+            "query": "fetch dt.system.events\n| filter event.kind == \"BILLING_USAGE_EVENT\"\n| filter event.type == \"Log Management & Analytics - Query\"\n| dedup event.id\n| summarize {\n    data_read_GiB = sum(billed_bytes / 1024 / 1024 / 1024.0)\n  }, by: {\n    startHour = bin(query_start, 1h)\n  }",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualization": "barChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "fieldMapping": {
+                        "timestamp": "startHour",
+                        "leftAxisValues": [
+                            "data_read_GiB"
+                        ],
+                        "leftAxisDimensions": []
+                    },
+                    "leftYAxisSettings": {
+                        "label": "GiB"
+                    },
+                    "legend": {
+                        "hidden": true
+                    },
+                    "categoricalBarChartSettings": {},
+                    "hiddenLegendFields": [],
+                    "colorPalette": "categorical"
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "recordField": "startHour",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "data_read_GiB",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "49": {
+            "type": "data",
+            "title": "Overview - Daily query usage per data type - traces",
+            "query": "fetch dt.system.events\n| filter event.kind == \"BILLING_USAGE_EVENT\"\n| filter event.type == \"Traces - Query\"\n| dedup event.id\n| summarize {\n    data_read_GiB = sum(billed_bytes / 1024 / 1024 / 1024.0)\n  }, by: {\n    startHour = bin(query_start, 1h)\n  }",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualization": "barChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "fieldMapping": {
+                        "timestamp": "startHour",
+                        "leftAxisValues": [
+                            "data_read_GiB"
+                        ],
+                        "leftAxisDimensions": []
+                    },
+                    "leftYAxisSettings": {
+                        "label": "GiB"
+                    },
+                    "legend": {
+                        "hidden": true
+                    },
+                    "categoricalBarChartSettings": {},
+                    "hiddenLegendFields": []
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "recordField": "startHour",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "data_read_GiB",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "50": {
+            "type": "data",
+            "title": "Top 10 apps",
+            "query": "fetch dt.system.events\n| filter event.kind == \"BILLING_USAGE_EVENT\"\n| filter event.type == \"Log Management & Analytics - Query\"\n| dedup event.id\n| summarize {\n   data_read_GiB = sum(billed_bytes / 1024 / 1024 / 1024.0),\n   Query_count = count()\n  }, by: {\n    App_context = client.application_context, application_detail = client.source, User = user.email\n  }\n\n| fieldsAdd split_by_user = record(data_read_GiB, App_context, application_detail, User, Query_count)\n| summarize {\n    split_by_user = arraySort(collectArray(split_by_user), direction: \"descending\"),\n    data_read_GiB = sum(data_read_GiB),\n    Query_count = sum(Query_count)\n}, by:{\n    App_context, application_detail\n}\n| fieldsAdd split_by_user = record(App_context = split_by_user[][App_context], application_detail = split_by_user[][application_detail], User = split_by_user[][User], data_read_GiB = split_by_user[][data_read_GiB], data_read_pct = (split_by_user[][data_read_GiB] / data_read_GiB * 100), Query_count = split_by_user[][Query_count])\n| fieldsAdd split_by_user = if(arraySize(split_by_user) == 1, arrayFirst(split_by_user)[User], else: split_by_user)\n\n| fieldsAdd application_details = record(data_read_GiB, App_context, application_detail, split_by_user, Query_count)\n| summarize {\n   application_details = arraySort(collectArray(application_details), direction: \"descending\"),\n   data_read_GiB = sum(data_read_GiB),\n   Query_count = toLong(sum(Query_count))\n}, by:{\n   App_context\n}\n| fieldsAdd application_details = record(App_context = application_details[][App_context], application_detail = application_details[][application_detail], split_by_user = application_details[][split_by_user], data_read_GiB = application_details[][data_read_GiB], data_read_pct = application_details[][data_read_GiB] / data_read_GiB * 100, Query_count = application_details[][Query_count])\n\n| fieldsAdd rec = record(App_context, application_details, data_read_GiB, Query_count)\n| summarize collection = collectArray(rec), Total = sum(data_read_GiB)\n| expand collection\n| filterOut isNull(collection[Query_count]) or collection[Query_count] == 0\n| fields App_context = collection[App_context], application_details = collection[application_details], data_read_GiB = collection[data_read_GiB], data_read_pct = collection[data_read_GiB] / Total * 100, Query_count = collection[Query_count]\n| sort data_read_GiB desc",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualization": "pieChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "number-of-slices",
+                        "groupingThresholdValue": 10,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "App_context",
+                        "categoryAxisLabel": "App_context",
+                        "valueAxis": "data_read_GiB",
+                        "valueAxisLabel": "data_read_GiB"
+                    },
+                    "legend": {
+                        "hidden": true
+                    },
+                    "colorPalette": "blue-steel"
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "recordField": "App_context",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "App_context",
+                        "value": "application_details"
+                    }
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "data_read_GiB",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "data_read_pct",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "Query_count",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "51": {
+            "type": "data",
+            "title": "Top 10 apps",
+            "query": "fetch dt.system.events\n| filter event.kind == \"BILLING_USAGE_EVENT\"\n| filter event.type == \"Traces - Query\"\n| dedup event.id\n| summarize {\n   data_read_GiB = sum(billed_bytes / 1024 / 1024 / 1024.0),\n   Query_count = count()\n  }, by: {\n    App_context = client.application_context, application_detail = client.source, User = user.email\n  }\n\n| fieldsAdd split_by_user = record(data_read_GiB, App_context, application_detail, User, Query_count)\n| summarize {\n    split_by_user = arraySort(collectArray(split_by_user), direction: \"descending\"),\n    data_read_GiB = sum(data_read_GiB),\n    Query_count = sum(Query_count)\n}, by:{\n    App_context, application_detail\n}\n| fieldsAdd split_by_user = record(App_context = split_by_user[][App_context], application_detail = split_by_user[][application_detail], User = split_by_user[][User], data_read_GiB = split_by_user[][data_read_GiB], data_read_pct = (split_by_user[][data_read_GiB] / data_read_GiB * 100), Query_count = split_by_user[][Query_count])\n| fieldsAdd split_by_user = if(arraySize(split_by_user) == 1, arrayFirst(split_by_user)[User], else: split_by_user)\n\n| fieldsAdd application_details = record(data_read_GiB, App_context, application_detail, split_by_user, Query_count)\n| summarize {\n   application_details = arraySort(collectArray(application_details), direction: \"descending\"),\n   data_read_GiB = sum(data_read_GiB),\n   Query_count = toLong(sum(Query_count))\n}, by:{\n   App_context\n}\n| fieldsAdd application_details = record(App_context = application_details[][App_context], application_detail = application_details[][application_detail], split_by_user = application_details[][split_by_user], data_read_GiB = application_details[][data_read_GiB], data_read_pct = application_details[][data_read_GiB] / data_read_GiB * 100, Query_count = application_details[][Query_count])\n\n| fieldsAdd rec = record(App_context, application_details, data_read_GiB, Query_count)\n| summarize collection = collectArray(rec), Total = sum(data_read_GiB)\n| expand collection\n| filterOut isNull(collection[Query_count]) or collection[Query_count] == 0\n| fields App_context = collection[App_context], application_details = collection[application_details], data_read_GiB = collection[data_read_GiB], data_read_pct = collection[data_read_GiB] / Total * 100, Query_count = collection[Query_count]\n| sort data_read_GiB desc",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualization": "pieChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "number-of-slices",
+                        "groupingThresholdValue": 10,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "App_context",
+                        "categoryAxisLabel": "App_context",
+                        "valueAxis": "data_read_GiB",
+                        "valueAxisLabel": "data_read_GiB"
+                    },
+                    "legend": {
+                        "hidden": true
+                    },
+                    "colorPalette": "blue-steel"
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "recordField": "App_context",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "App_context",
+                        "value": "application_details"
+                    }
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "data_read_GiB",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "data_read_pct",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "Query_count",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "58": {
+            "type": "data",
+            "title": "by monitoring source",
+            "query": "FETCH dt.system.events\n| filter event.kind == \"BILLING_USAGE_EVENT\" and event.type == \"Metrics - Ingest & Process\"\n| dedup event.id\n| fieldsAdd monitoring_source = if(monitoring_source == \"fullstack\" or monitoring_source == \"infrastructure\", monitoring_source, else: \"other\")\n| summarize total_data_points = toLong(sum(data_points)), by:{usage.start, monitoring_source}\n| makeTimeseries {total_usage = sum(total_data_points, default: 0)}, interval: 15m, time: usage.start, by:{monitoring_source}\n| join [\n  timeseries {included_usage=sum(dt.billing.full_stack_monitoring.usage, default: 0)}, interval:15m, nonempty:true\n  | fields monitoring_source = \"fullstack\", included_usage = 4 * 900 * included_usage[]\n  | append[\n    timeseries {included_usage=sum(dt.billing.infrastructure_monitoring.usage, default: 0)}, interval:15m, nonempty:true\n    | fields monitoring_source = \"infrastructure\", included_usage = 4 * 1500 * included_usage[]\n  ]\n], on:{monitoring_source}, fields:{included_usage}, kind:leftOuter\n| fieldsAdd billed_usage = if(isNotNull(included_usage) and total_usage[] > included_usage[],total_usage[] - included_usage[], else:0)\n| fieldsAdd billed_usage = if(isNull(included_usage), total_usage, else:billed_usage)\n| fieldsAdd billed_usage = arraySum(billed_usage)\n| fieldsKeep monitoring_source, billed_usage",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualization": "table",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "monitoring_source",
+                        "categoryAxisLabel": "monitoring_source",
+                        "valueAxis": "billed_usage",
+                        "valueAxisLabel": "billed_usage"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "recordField": "error",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {
+                        "category": "monitoring_source",
+                        "value": "billed_usage"
+                    }
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "billed_usage",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "59": {
+            "type": "data",
+            "title": "",
+            "query": "FETCH dt.system.events\n| filter event.kind == \"BILLING_USAGE_EVENT\" and event.type == \"Metrics - Ingest & Process\"\n| dedup event.id\n| fieldsAdd monitoring_source = if(monitoring_source == \"fullstack\" or monitoring_source == \"infrastructure\", monitoring_source, else: \"other\")\n| summarize total_data_points = toLong(sum(data_points)), by:{usage.start, monitoring_source}\n| makeTimeseries {total_usage = sum(total_data_points, default: 0)}, interval: 15m, time: usage.start, by:{monitoring_source}\n| join [\n  timeseries {included_usage=sum(dt.billing.full_stack_monitoring.usage, default: 0)}, interval:15m, nonempty:true\n  | fields monitoring_source = \"fullstack\", included_usage = 4 * 900 * included_usage[]\n  | append[\n    timeseries {included_usage=sum(dt.billing.infrastructure_monitoring.usage, default: 0)}, interval:15m, nonempty:true\n    | fields monitoring_source = \"infrastructure\", included_usage = 4 * 1500 * included_usage[]\n  ]\n], on:{monitoring_source}, fields:{included_usage}, kind:leftOuter\n| fieldsAdd billed_usage = if(isNotNull(included_usage) and total_usage[] > included_usage[],total_usage[] - included_usage[], else:0)\n| fieldsAdd billed_usage = if(isNull(included_usage), total_usage, else:billed_usage)\n| summarize billed_usage= sum(billed_usage[]), by:{timeframe, interval}",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualization": "barChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {},
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "billed_usage"
+                        ],
+                        "leftAxisDimensions": []
+                    },
+                    "hiddenLegendFields": [],
+                    "legend": {
+                        "hidden": true
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "recordField": "error",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square"
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "60": {
+            "type": "data",
+            "title": "Billed usage - Other",
+            "query": "FETCH dt.system.events\n| filter event.kind == \"BILLING_USAGE_EVENT\" and event.type == \"Metrics - Ingest & Process\"\n| dedup event.id\n| filterOut in(monitoring_source, {\"fullstack\",\"infrastructure\"})\n| summarize total_data_points = toLong(sum(data_points)), by:{usage.start}\n| makeTimeseries {total_usage = sum(total_data_points, default: 0)}, interval: 15m, time: usage.start",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualization": "barChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {},
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "total_usage"
+                        ],
+                        "leftAxisDimensions": []
+                    },
+                    "hiddenLegendFields": [],
+                    "legend": {
+                        "hidden": true
+                    },
+                    "colorPalette": "categorical"
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "recordField": "error",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square"
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "61": {
+            "type": "data",
+            "title": "Billed usage - Infrastructure",
+            "query": "fetch dt.system.events\n| filter event.kind == \"BILLING_USAGE_EVENT\" and event.type == \"Metrics - Ingest & Process\"\n| dedup event.id \n| filter monitoring_source == \"infrastructure\"\n| summarize total_data_points = toLong(sum(data_points)), by:{usage.start}\n| makeTimeseries {total_usage = sum(total_data_points, default: 0)}, interval: 15m, time: usage.start\n| lookup [\n    timeseries {included_usage=sum(dt.billing.infrastructure_monitoring.usage, default: 0)}, interval:15m, nonempty:true\n    | fieldsAdd included_usage = 4 * 1500 * included_usage[]\n], fields:{included_usage}, lookupField:timeframe\n| fieldsAdd billed_usage = if(total_usage[] > included_usage[],total_usage[] - included_usage[], else:0)",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualization": "barChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {},
+                    "hiddenLegendFields": [],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "total_usage",
+                            "included_usage",
+                            "billed_usage"
+                        ],
+                        "leftAxisDimensions": []
+                    },
+                    "legend": {
+                        "hidden": true
+                    },
+                    "colorPalette": "blue-steel"
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "recordField": "error",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square"
+                },
+                "histogram": {
+                    "dataMappings": []
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "62": {
+            "type": "data",
+            "title": "Billed usage - Full-Stack",
+            "query": "fetch dt.system.events\n| filter event.kind == \"BILLING_USAGE_EVENT\" and event.type == \"Metrics - Ingest & Process\"\n| dedup event.id \n| filter monitoring_source == \"fullstack\"\n| summarize total_data_points = toLong(sum(data_points)), by:{usage.start}\n| makeTimeseries {total_usage = sum(total_data_points, default: 0)}, interval: 15m, time: usage.start\n| lookup [\n    timeseries {included_usage=sum(dt.billing.full_stack_monitoring.usage, default: 0)}, interval:15m, nonempty:true\n    | fieldsAdd included = 4 * 900 * included_usage[]\n], fields:{included}, lookupField:timeframe\n| fieldsAdd billed_usage = if(total_usage[] > included[],total_usage[] - included[], else:0)",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "categoricalBarChartSettings": {},
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "total_usage",
+                            "included",
+                            "billed_usage"
+                        ],
+                        "leftAxisDimensions": []
+                    },
+                    "hiddenLegendFields": [],
+                    "legend": {
+                        "hidden": true
+                    },
+                    "colorPalette": "blue-steel"
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "recordField": "error",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "square",
+                    "dataMappings": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "64": {
+            "type": "data",
+            "title": "",
+            "query": "timeseries hourlyUsage=sum(dt.billing.full_stack_monitoring.usage, rate:1h), interval:15m",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "hiddenLegendFields": [],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "hourlyUsage"
+                        ],
+                        "leftAxisDimensions": []
+                    },
+                    "legend": {
+                        "hidden": true
+                    },
+                    "leftYAxisSettings": {
+                        "label": "GiB-hours"
+                    },
+                    "categoricalBarChartSettings": {}
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": "auto",
+                    "dataMappings": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "66": {
+            "type": "data",
+            "title": "",
+            "query": "fetch dt.system.events\n| filter event.kind == \"BILLING_USAGE_EVENT\" and (event.type == \"Events - Ingest & Process\" )\n| join [fetch dt.system.buckets], kind:leftOuter, on: { left[usage.event_bucket] == right[name] }\n| dedup event.id\n| summarize {billed_bytes = sum(billed_bytes)}, by:{timestamp, event.id, right.display_name, event.type}\n| makeTimeseries `Total GiB`=sum(billed_bytes), by:{right.display_name, event.type}, time: timestamp\n\n/*\nfetch dt.system.events\n| filter event.kind == \"BILLING_USAGE_EVENT\" and event.type == \"Events - Ingest & Process\"\n| summarize {billed_bytes = takeLast(billed_bytes)}, by:{billing_period = bin(timestamp, 1h), event.id, usage.event_bucket}\n| summarize {`bucket billed_bytes`=sum(billed_bytes)}, by:{billing_period, usage.event_bucket}\n| summarize {`Total GiB`=sum(`bucket billed_bytes`), `Total billed buckets`=collectDistinct(record(`Bucket` = usage.event_bucket, `Bucket GiB` = `bucket billed_bytes`))}, by:{`Billing period`=billing_period}\n*/",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualization": "areaChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "hiddenLegendFields": [],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "Total GiB"
+                        ],
+                        "leftAxisDimensions": [
+                            "right.display_name",
+                            "event.type"
+                        ]
+                    },
+                    "legend": {
+                        "hidden": true
+                    },
+                    "categoricalBarChartSettings": {
+                        "categoryAxis": "right.display_name",
+                        "valueAxis": "interval",
+                        "categoryAxisLabel": "right.display_name",
+                        "valueAxisLabel": "interval"
+                    },
+                    "colorPalette": "blue-steel"
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "recordField": "Billing period",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": "auto",
+                    "dataMappings": {
+                        "category": "right.display_name",
+                        "value": "event.type"
+                    }
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "68": {
+            "type": "markdown",
+            "title": "",
+            "content": "**Full-Stack Monitoring**\n\n[documentation](https://docs.dynatrace.com/docs/shortlink/dps-hosts#full-stack-monitoring-dps)"
+        },
+        "69": {
+            "type": "markdown",
+            "title": "",
+            "content": "**Infrastructure Monitoring**\n[documentation](https://docs.dynatrace.com/docs/shortlink/dps-hosts#infra-dps)"
+        },
+        "70": {
+            "type": "markdown",
+            "title": "",
+            "content": "**Foundation & Discovery**\n[documentation](https://docs.dynatrace.com/docs/shortlink/dps-hosts#discovery-dps)"
+        },
+        "71": {
+            "type": "data",
+            "title": "",
+            "query": "timeseries hourlyUsage=sum(dt.billing.infrastructure_monitoring.usage, rate:1h), interval:15m",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "hiddenLegendFields": [],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "hourlyUsage"
+                        ],
+                        "leftAxisDimensions": []
+                    },
+                    "legend": {
+                        "hidden": true
+                    },
+                    "leftYAxisSettings": {
+                        "label": "host-hours"
+                    },
+                    "categoricalBarChartSettings": {}
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": "auto",
+                    "dataMappings": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "72": {
+            "type": "data",
+            "title": "",
+            "query": "timeseries hourlyUsage=sum(dt.billing.foundation_and_discovery.usage, rate:1h), interval:15m",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "hiddenLegendFields": [],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "hourlyUsage"
+                        ],
+                        "leftAxisDimensions": []
+                    },
+                    "legend": {
+                        "hidden": true
+                    },
+                    "leftYAxisSettings": {
+                        "label": "host-hours"
+                    },
+                    "categoricalBarChartSettings": {}
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value",
+                    "recordField": "error"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": "auto",
+                    "dataMappings": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "73": {
+            "type": "markdown",
+            "title": "",
+            "content": "**Runtime Vulnerability Analytics**\n[documentation](https://docs.dynatrace.com/docs/shortlink/dps-appsec#rva)"
+        },
+        "74": {
+            "type": "markdown",
+            "title": "",
+            "content": "**Runtime Application Protection**\n[documentation](https://docs.dynatrace.com/docs/shortlink/dps-appsec#rap)"
+        },
+        "75": {
+            "type": "data",
+            "title": "",
+            "query": "timeseries hourlyUsage=sum(dt.billing.runtime_vulnerability_analytics.usage, rate:1h), interval:15m",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "hiddenLegendFields": [],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "hourlyUsage"
+                        ],
+                        "leftAxisDimensions": []
+                    },
+                    "legend": {
+                        "hidden": true
+                    },
+                    "leftYAxisSettings": {
+                        "label": "GiB-hours"
+                    },
+                    "categoricalBarChartSettings": {}
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value",
+                    "recordField": "error"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": "auto",
+                    "dataMappings": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "76": {
+            "type": "data",
+            "title": "",
+            "query": "timeseries hourlyUsage=sum(dt.billing.runtime_application_protection.usage, rate:1h), interval:15m",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "hiddenLegendFields": [],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "hourlyUsage"
+                        ],
+                        "leftAxisDimensions": []
+                    },
+                    "legend": {
+                        "hidden": true
+                    },
+                    "leftYAxisSettings": {
+                        "label": "GiB-hours"
+                    },
+                    "categoricalBarChartSettings": {}
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "prefixIcon": "",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "colorThresholdTarget": "value",
+                    "recordField": "error"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [],
+                    "columnWidths": {}
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": "auto",
+                    "dataMappings": {}
+                },
+                "histogram": {
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "77": {
+            "type": "markdown",
+            "title": "",
+            "content": "**Ingest & Process**\n[documentation](https://docs.dynatrace.com/docs/shortlink/dps-log-management#ingest-and-process)"
+        },
+        "78": {
+            "type": "markdown",
+            "title": "",
+            "content": "**Retain**\n[documentation](https://docs.dynatrace.com/docs/shortlink/dps-log-management#retain)"
+        },
+        "79": {
+            "type": "markdown",
+            "title": "",
+            "content": "**Query**\n[documentation](https://docs.dynatrace.com/docs/shortlink/dps-log-management#query)"
+        },
+        "80": {
+            "type": "markdown",
+            "title": "",
+            "content": "*Coming soon*"
+        },
+        "81": {
+            "type": "markdown",
+            "title": "",
+            "content": "**Ingest & Process**\n[documentation](https://docs.dynatrace.com/docs/shortlink/dps-events#ingest-and-process)"
+        },
+        "82": {
+            "type": "markdown",
+            "title": "",
+            "content": "**Retain**\n[documentation](https://docs.dynatrace.com/docs/shortlink/dps-events#retain)"
+        },
+        "83": {
+            "type": "markdown",
+            "title": "",
+            "content": "**Query**\n[documentation](https://docs.dynatrace.com/docs/shortlink/dps-events#query)"
+        },
+        "84": {
+            "type": "markdown",
+            "title": "",
+            "content": "**Ingest & Process**\n[documentation](https://docs.dynatrace.com/docs/shortlink/dps-metrics#ingest-and-process)\n\n\nThe usage is not shown for the last 4 hours, because `usage.start` is approx. 4 hours in the past to `timestamp`. This means that the query timeframe interval should be at least 4 hours."
+        },
+        "85": {
+            "type": "markdown",
+            "title": "",
+            "content": "**Query**\n"
+        },
+        "86": {
+            "type": "markdown",
+            "title": "",
+            "content": "**Automation Workflow**\n[documentation](https://docs.dynatrace.com/docs/shortlink/dps-automation)"
+        },
+        "87": {
+            "type": "markdown",
+            "title": "",
+            "content": "**AppEngine Functions - Small**\n[documentation](https://docs.dynatrace.com/docs/shortlink/dps-appfunctions)"
+        }
+    },
+    "layouts": {
+        "1": {
+            "x": 0,
+            "y": 5,
+            "w": 22,
+            "h": 1
+        },
+        "4": {
+            "x": 0,
+            "y": 0,
+            "w": 22,
+            "h": 5
+        },
+        "5": {
+            "x": 3,
+            "y": 88,
+            "w": 13,
+            "h": 5
+        },
+        "13": {
+            "x": 0,
+            "y": 81,
+            "w": 22,
+            "h": 1
+        },
+        "14": {
+            "x": 0,
+            "y": 87,
+            "w": 22,
+            "h": 1
+        },
+        "16": {
+            "x": 0,
+            "y": 48,
+            "w": 22,
+            "h": 1
+        },
+        "21": {
+            "x": 0,
+            "y": 64,
+            "w": 22,
+            "h": 1
+        },
+        "27": {
+            "x": 0,
+            "y": 21,
+            "w": 17,
+            "h": 1
+        },
+        "29": {
+            "x": 3,
+            "y": 82,
+            "w": 19,
+            "h": 5
+        },
+        "31": {
+            "x": 16,
+            "y": 88,
+            "w": 6,
+            "h": 5
+        },
+        "36": {
+            "x": 3,
+            "y": 54,
+            "w": 19,
+            "h": 5
+        },
+        "39": {
+            "x": 3,
+            "y": 59,
+            "w": 13,
+            "h": 5
+        },
+        "40": {
+            "x": 16,
+            "y": 59,
+            "w": 6,
+            "h": 5
+        },
+        "43": {
+            "x": 0,
+            "y": 32,
+            "w": 17,
+            "h": 1
+        },
+        "44": {
+            "x": 3,
+            "y": 38,
+            "w": 19,
+            "h": 5
+        },
+        "47": {
+            "x": 0,
+            "y": 75,
+            "w": 22,
+            "h": 1
+        },
+        "48": {
+            "x": 3,
+            "y": 43,
+            "w": 13,
+            "h": 5
+        },
+        "49": {
+            "x": 3,
+            "y": 76,
+            "w": 13,
+            "h": 5
+        },
+        "50": {
+            "x": 16,
+            "y": 43,
+            "w": 6,
+            "h": 5
+        },
+        "51": {
+            "x": 16,
+            "y": 76,
+            "w": 6,
+            "h": 5
+        },
+        "58": {
+            "x": 16,
+            "y": 65,
+            "w": 6,
+            "h": 5
+        },
+        "59": {
+            "x": 3,
+            "y": 65,
+            "w": 13,
+            "h": 5
+        },
+        "60": {
+            "x": 16,
+            "y": 70,
+            "w": 6,
+            "h": 5
+        },
+        "61": {
+            "x": 9,
+            "y": 70,
+            "w": 7,
+            "h": 5
+        },
+        "62": {
+            "x": 3,
+            "y": 70,
+            "w": 6,
+            "h": 5
+        },
+        "64": {
+            "x": 3,
+            "y": 6,
+            "w": 19,
+            "h": 5
+        },
+        "66": {
+            "x": 3,
+            "y": 49,
+            "w": 19,
+            "h": 5
+        },
+        "68": {
+            "x": 0,
+            "y": 6,
+            "w": 3,
+            "h": 5
+        },
+        "69": {
+            "x": 0,
+            "y": 11,
+            "w": 3,
+            "h": 5
+        },
+        "70": {
+            "x": 0,
+            "y": 16,
+            "w": 3,
+            "h": 5
+        },
+        "71": {
+            "x": 3,
+            "y": 11,
+            "w": 19,
+            "h": 5
+        },
+        "72": {
+            "x": 3,
+            "y": 16,
+            "w": 19,
+            "h": 5
+        },
+        "73": {
+            "x": 0,
+            "y": 22,
+            "w": 3,
+            "h": 5
+        },
+        "74": {
+            "x": 0,
+            "y": 27,
+            "w": 3,
+            "h": 5
+        },
+        "75": {
+            "x": 3,
+            "y": 22,
+            "w": 19,
+            "h": 5
+        },
+        "76": {
+            "x": 3,
+            "y": 27,
+            "w": 19,
+            "h": 5
+        },
+        "77": {
+            "x": 0,
+            "y": 33,
+            "w": 3,
+            "h": 5
+        },
+        "78": {
+            "x": 0,
+            "y": 38,
+            "w": 3,
+            "h": 5
+        },
+        "79": {
+            "x": 0,
+            "y": 43,
+            "w": 3,
+            "h": 5
+        },
+        "80": {
+            "x": 3,
+            "y": 33,
+            "w": 19,
+            "h": 5
+        },
+        "81": {
+            "x": 0,
+            "y": 49,
+            "w": 3,
+            "h": 5
+        },
+        "82": {
+            "x": 0,
+            "y": 54,
+            "w": 3,
+            "h": 5
+        },
+        "83": {
+            "x": 0,
+            "y": 59,
+            "w": 3,
+            "h": 5
+        },
+        "84": {
+            "x": 0,
+            "y": 65,
+            "w": 3,
+            "h": 10
+        },
+        "85": {
+            "x": 0,
+            "y": 76,
+            "w": 3,
+            "h": 5
+        },
+        "86": {
+            "x": 0,
+            "y": 82,
+            "w": 3,
+            "h": 5
+        },
+        "87": {
+            "x": 0,
+            "y": 88,
+            "w": 3,
+            "h": 5
+        }
+    },
+    "importedWithCode": false
+}

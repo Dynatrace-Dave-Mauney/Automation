@@ -1,1 +1,933 @@
-{"version":10,"variables":[{"key":"ddu","type":"csv","input":"1.7","multiple":false},{"key":"cost","type":"csv","input":"0.001825","multiple":false},{"key":"version","type":"csv","input":"1.0","multiple":false}],"tiles":{"0":{"type":"data","title":"DDU Usage by Day","query":"fetch dt.system.query_executions\n| filter status == \"SUCCEEDED\"\n| fields status, timestamp, scanned_bytes\n| fieldsAdd gb = toDouble(scanned_bytes) / 1073741824\n| fieldsAdd ddu = gb * $ddu\n| fieldsRemove scanned_bytes\n| sort timestamp desc\n| summarize ddu = sum(ddu), by:{bin(timestamp, 1d)}","visualizationSettings":{"chartSettings":{"gapPolicy":"connect","legend":{"hidden":true}},"singleValue":{"showLabel":true,"label":"","autoscale":true},"table":{"enableLineWrap":true,"hiddenColumns":[],"lineWrapIds":[]},"tableSettings":{"displayMode":"edit","lineWrapIds":[["query_string"]],"hiddenColumns":[["dataPond"],["rollupType"],["tenant"],["recordType"],["VERSION"],["delivered_records"],["environment"],["execution_duration_ms"],["query_id"],["query_start"],["query_string"],["sampling_ratio"]]}},"visualization":"barChart"},"1":{"type":"data","title":"# of Queries Per User","query":"fetch dt.system.query_executions\n| fields user\n| parse user, \"LD:firstName'.'LD:lastName '@' LD\"\n| fieldsRemove user\n| fieldsAdd user = concat(firstName, \" \", lastName)\n| summarize count = count(), by: user\n| sort count desc","visualizationSettings":{"chartSettings":{"gapPolicy":"connect","legend":{"hidden":false,"position":"auto"},"circleChartSettings":{"groupingThresholdType":"absolute","hideLabels":false,"groupingName":"other"}},"singleValue":{"showLabel":true,"label":"","autoscale":true},"table":{"enableLineWrap":true,"hiddenColumns":[],"lineWrapIds":[]},"tableSettings":{"displayMode":"edit","lineWrapIds":[]}},"visualization":"table"},"2":{"type":"data","title":"Total DDUs Consumed Per User","query":"fetch dt.system.query_executions\n| filter status == \"SUCCEEDED\"\n| fields status, timestamp, scanned_bytes, user\n| fieldsAdd gb = toDouble(scanned_bytes) / 1073741824\n| fieldsAdd ddu = gb * $ddu\n| fieldsRemove scanned_bytes\n| sort timestamp desc\n| summarize DDUs = round(sum(ddu), decimals:2), Gigabyte = concat(round(sum(gb), decimals:2), \" \", \"GB\"), by:user\n| sort DDUs desc","visualizationSettings":{"chartSettings":{"gapPolicy":"connect","legend":{"hidden":false,"position":"right"},"circleChartSettings":{"hideLabels":false,"thresholdType":"absolute"}},"singleValue":{"showLabel":true,"label":"","autoscale":true},"table":{"enableLineWrap":true,"hiddenColumns":[],"lineWrapIds":[]},"tableSettings":{"displayMode":"edit","lineWrapIds":[["query_string"]],"hiddenColumns":[["dataPond"],["rollupType"],["tenant"],["recordType"],["VERSION"],["delivered_records"],["environment"],["execution_duration_ms"],["query_id"],["query_start"],["query_string"],["sampling_ratio"]]}},"visualization":"pieChart"},"3":{"type":"data","title":"Most Expensive Queries","query":"fetch dt.system.query_executions\n| filter status == \"SUCCEEDED\"\n| fields status, timestamp, scanned_bytes, query_string\n| fieldsAdd gb = toDouble(scanned_bytes) / 1073741824\n| fieldsAdd ddu = gb * $ddu\n| fieldsAdd cost = gb * $cost\n| fieldsRemove scanned_bytes\n| sort timestamp desc\n| summarize DDUs = round(sum(ddu), decimals:2),Cost = concat(\"£\",round((sum(cost)), decimals:2)), Gigabyte = concat(round(sum(gb), decimals:2), \" \", \"GB\"),executions = count(), by: {query = query_string}\n| sort DDUs desc\n| limit 10\n| sort Gigabyte\n| sort DDUs\n| sort Cost\n| sort Cost desc","visualizationSettings":{"chartSettings":{"gapPolicy":"connect","legend":{"hidden":true}},"singleValue":{"showLabel":true,"label":"","autoscale":true},"table":{"enableLineWrap":true,"hiddenColumns":[],"lineWrapIds":[["query"]]},"tableSettings":{"displayMode":"edit","lineWrapIds":[["query_string"],["query"]],"hiddenColumns":[["dataPond"],["rollupType"],["tenant"],["recordType"],["VERSION"],["delivered_records"],["environment"],["execution_duration_ms"],["query_id"],["query_start"],["query_string"],["sampling_ratio"]]}},"visualization":"table"},"4":{"type":"data","title":"Query Cost Per Day","query":"fetch dt.system.query_executions\n| filter status == \"SUCCEEDED\"\n| fields status, timestamp, scanned_bytes\n| fieldsAdd gb = toDouble(scanned_bytes) / 1073741824\n| fieldsAdd cost = gb * $cost\n| fieldsRemove scanned_bytes\n| sort timestamp desc\n| summarize cost = sum(cost), by:{bin(timestamp, 1d)}\n//| summarize cost = concat(\"$\",round((sum(cost)), decimals:2)), by:{bin(timestamp, 1d)}","visualizationSettings":{"chartSettings":{"gapPolicy":"connect","legend":{"hidden":true}},"singleValue":{"showLabel":true,"label":"","autoscale":true},"table":{"enableLineWrap":true,"hiddenColumns":[],"lineWrapIds":[]},"tableSettings":{"displayMode":"edit","lineWrapIds":[["query_string"]],"hiddenColumns":[["dataPond"],["rollupType"],["tenant"],["recordType"],["VERSION"],["delivered_records"],["environment"],["execution_duration_ms"],["query_id"],["query_start"],["query_string"],["sampling_ratio"]]}},"visualization":"barChart"},"6":{"type":"data","title":"Un-optimized DQL","query":"fetch dt.system.query_executions\n| filter status == \"SUCCEEDED\"\n| filterOut contains(query_string, \"filter\") OR contains(query_string,\"scanLimitGBytes\") OR contains(query_string,\"from:\")\n| fields status, timestamp, scanned_bytes, query_string\n| fieldsAdd gb = toDouble(scanned_bytes) / 1073741824\n| fieldsAdd ddu = gb * $ddu\n| fieldsAdd cost = gb * $cost\n| fieldsRemove scanned_bytes\n| sort timestamp desc\n| summarize  DDUs = round(sum(ddu), decimals:2), Cost = concat(\"£\",round((sum(cost)), decimals:2)),Gigabyte = concat(round(sum(gb), decimals:2), \" \", \"GB\"),executions = count(), by: {query = query_string}\n| sort DDUs desc\n| limit 10\n| sort DDUs desc\n| sort Cost\n| sort Cost desc","visualizationSettings":{"chartSettings":{"gapPolicy":"connect","legend":{"hidden":true}},"singleValue":{"showLabel":true,"label":"","autoscale":true},"table":{"enableLineWrap":true,"hiddenColumns":[],"lineWrapIds":[["query"]]},"tableSettings":{"displayMode":"edit","lineWrapIds":[["query_string"],["query"]],"hiddenColumns":[["dataPond"],["rollupType"],["tenant"],["recordType"],["VERSION"],["delivered_records"],["environment"],["execution_duration_ms"],["query_id"],["query_start"],["query_string"],["sampling_ratio"]]}},"visualization":"table"},"7":{"type":"annotation","title":"","content":"#### £ per GB = £$cost"},"8":{"type":"annotation","title":"","content":"#### DDU per GB = $ddu DDU"},"9":{"type":"annotation","title":"","content":"## DQL Cost Analysis"},"10":{"type":"annotation","title":"","content":"## DQL by User Analysis"},"11":{"type":"annotation","title":"","content":"## DQL Optimization Opportunity"},"13":{"type":"data","title":"DDU Usage by App","query":"fetch dt.system.query_executions\n| filter status == \"SUCCEEDED\" AND isNotNull(client.application_context)\n| fields status, scanned_bytes, client.application_context\n| fieldsAdd gb = toDouble(scanned_bytes) / 1073741824\n| fieldsAdd ddu = gb * $ddu\n| fieldsRemove scanned_bytes\n| summarize ddu = sum(ddu), by:{client.application_context}\n| sort ddu desc","visualizationSettings":{"chartSettings":{"gapPolicy":"connect","legend":{"hidden":false,"position":"bottom"},"leftYAxisSettings":{"scale":"linear","label":"DDU"},"circleChartSettings":{"hideLabels":false,"thresholdType":"relative"}},"singleValue":{"showLabel":true,"label":"","autoscale":true},"table":{"enableLineWrap":true,"hiddenColumns":[],"lineWrapIds":[]},"tableSettings":{"displayMode":"edit","lineWrapIds":[["query_string"]],"hiddenColumns":[["dataPond"],["rollupType"],["tenant"],["recordType"],["VERSION"],["delivered_records"],["environment"],["execution_duration_ms"],["query_id"],["query_start"],["query_string"],["sampling_ratio"]]}},"visualization":"pieChart"},"15":{"type":"data","title":"DDU by DataType","query":"fetch dt.system.query_executions\n| filter status == \"SUCCEEDED\" AND scanned_bytes > 0\n| fields query_string = toString(query_string), status, timestamp, scanned_bytes\n| fieldsAdd dataType = if(contains(query_string, \"timeseries\"), \"timeseries\", \nelse: \n     trim(\n       arrayLast(splitString(\n           arrayFirst(splitString(\n               arrayFirst(splitString(query_string\n               , \"|\"))\n           ,\",\"))\n       , \"fetch\"))\n     )\n)\n| fieldsAdd gb = toDouble(scanned_bytes) / 1073741824\n| fieldsAdd ddu = gb * $ddu\n| fieldsRemove scanned_bytes\n| sort timestamp desc\n| summarize  DDUs = round(sum(ddu), decimals:5), by: {dataType}\n| sort DDUs desc","visualizationSettings":{"chartSettings":{"gapPolicy":"connect","legend":{"hidden":true}},"singleValue":{"showLabel":true,"label":"","autoscale":true},"table":{"enableLineWrap":true,"hiddenColumns":[],"lineWrapIds":[["query"]]},"tableSettings":{"displayMode":"edit","lineWrapIds":[["query_string"],["query"]],"hiddenColumns":[["dataPond"],["rollupType"],["tenant"],["recordType"],["VERSION"],["delivered_records"],["environment"],["execution_duration_ms"],["query_id"],["query_start"],["query_string"],["sampling_ratio"]]}},"visualization":"categoricalBarChart"},"16":{"type":"data","title":"DQL £ Cost","query":"fetch dt.system.query_executions\n| filter status == \"SUCCEEDED\"\n| fields status, scanned_bytes\n| fieldsAdd gb = toDouble(scanned_bytes) / 1073741824\n| fieldsAdd cost = gb * $cost\n| fieldsRemove scanned_bytes\n| summarize cost = concat(\"£\",round((sum(cost)), decimals:2))","visualizationSettings":{"chartSettings":{"gapPolicy":"connect","legend":{"hidden":true}},"singleValue":{"showLabel":true,"label":"","autoscale":true},"table":{"enableLineWrap":true,"hiddenColumns":[],"lineWrapIds":[]},"tableSettings":{"displayMode":"edit","lineWrapIds":[["query_string"]],"hiddenColumns":[["dataPond"],["rollupType"],["tenant"],["recordType"],["VERSION"],["delivered_records"],["environment"],["execution_duration_ms"],["query_id"],["query_start"],["query_string"],["sampling_ratio"]]}},"visualization":"singleValue"},"17":{"type":"data","title":"DQL DDU Cost","query":"fetch dt.system.query_executions\n| filter status == \"SUCCEEDED\"\n| fields status, scanned_bytes\n| fieldsAdd gb = toDouble(scanned_bytes) / 1073741824\n| fieldsAdd ddu = gb * $ddu\n| fieldsRemove scanned_bytes\n| summarize ddu = concat(round((sum(ddu)), decimals:2), \" DDU\")","visualizationSettings":{"chartSettings":{"gapPolicy":"connect","legend":{"hidden":true}},"singleValue":{"showLabel":true,"label":"","autoscale":true},"table":{"enableLineWrap":true,"hiddenColumns":[],"lineWrapIds":[]},"tableSettings":{"displayMode":"edit","lineWrapIds":[["query_string"]],"hiddenColumns":[["dataPond"],["rollupType"],["tenant"],["recordType"],["VERSION"],["delivered_records"],["environment"],["execution_duration_ms"],["query_id"],["query_start"],["query_string"],["sampling_ratio"]]}},"visualization":"singleValue"},"18":{"type":"data","title":"Total Cost per User","query":"fetch dt.system.query_executions\n| filter status == \"SUCCEEDED\"\n| filterout contains(user, \"dynatrace.com\")\n| fields status, timestamp, scanned_bytes, user, event.kind\n| fieldsAdd gb = toDouble(scanned_bytes) / 1073741824\n| fieldsAdd cost = gb * $cost\n| fieldsRemove scanned_bytes\n//| sort timestamp desc\n| summarize Cost = concat(\"£\",round((sum(cost)), decimals:2)), Gigabyte = concat(round(sum(gb), decimals:2), \" \", \"GB\"),executions = count(), by:user\n| sort Cost desc\n| sort executions desc\n| sort Cost","visualizationSettings":{"chartSettings":{"gapPolicy":"connect","legend":{"hidden":false,"position":"right"},"circleChartSettings":{"hideLabels":false,"thresholdType":"absolute"}},"singleValue":{"showLabel":true,"label":"","autoscale":true},"table":{"enableLineWrap":true,"hiddenColumns":[],"lineWrapIds":[]},"tableSettings":{"displayMode":"edit","lineWrapIds":[["query_string"]],"hiddenColumns":[["dataPond"],["rollupType"],["tenant"],["recordType"],["VERSION"],["delivered_records"],["environment"],["execution_duration_ms"],["query_id"],["query_start"],["query_string"],["sampling_ratio"]]}},"visualization":"table"},"19":{"type":"annotation","title":"","content":"## DQL Usage"}},"layouts":{"0":{"x":0,"y":6,"w":12,"h":6},"1":{"x":0,"y":13,"w":12,"h":8},"2":{"x":12,"y":13,"w":12,"h":8},"3":{"x":0,"y":27,"w":17,"h":7},"4":{"x":12,"y":6,"w":12,"h":6},"6":{"x":0,"y":34,"w":17,"h":8},"7":{"x":7,"y":0,"w":10,"h":1},"8":{"x":0,"y":0,"w":7,"h":1},"9":{"x":0,"y":1,"w":24,"h":1},"10":{"x":0,"y":12,"w":24,"h":1},"11":{"x":0,"y":26,"w":24,"h":1},"13":{"x":12,"y":43,"w":12,"h":8},"15":{"x":0,"y":43,"w":12,"h":8},"16":{"x":12,"y":2,"w":12,"h":4},"17":{"x":0,"y":2,"w":12,"h":4},"18":{"x":0,"y":21,"w":24,"h":5},"19":{"x":0,"y":42,"w":24,"h":1}}}
+{
+    "version": 10,
+    "variables": [
+        {
+            "key": "ddu",
+            "type": "csv",
+            "input": "1.7",
+            "multiple": false
+        },
+        {
+            "key": "cost",
+            "type": "csv",
+            "input": "0.001825",
+            "multiple": false
+        },
+        {
+            "key": "version",
+            "type": "csv",
+            "input": "1.0",
+            "multiple": false
+        }
+    ],
+    "tiles": {
+        "0": {
+            "type": "data",
+            "title": "DDU Usage by Day",
+            "query": "fetch dt.system.query_executions\n| filter status == \"SUCCEEDED\"\n| fields status, timestamp, scanned_bytes\n| fieldsAdd gb = toDouble(scanned_bytes) / 1073741824\n| fieldsAdd ddu = gb * $ddu\n| fieldsRemove scanned_bytes\n| sort timestamp desc\n| summarize ddu = sum(ddu), by:{bin(timestamp, 1d)}",
+            "visualizationSettings": {
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "legend": {
+                        "hidden": true
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "autoscale": true
+                },
+                "table": {
+                    "enableLineWrap": true,
+                    "hiddenColumns": [],
+                    "lineWrapIds": []
+                },
+                "tableSettings": {
+                    "displayMode": "edit",
+                    "lineWrapIds": [
+                        [
+                            "query_string"
+                        ]
+                    ],
+                    "hiddenColumns": [
+                        [
+                            "dataPond"
+                        ],
+                        [
+                            "rollupType"
+                        ],
+                        [
+                            "tenant"
+                        ],
+                        [
+                            "recordType"
+                        ],
+                        [
+                            "VERSION"
+                        ],
+                        [
+                            "delivered_records"
+                        ],
+                        [
+                            "environment"
+                        ],
+                        [
+                            "execution_duration_ms"
+                        ],
+                        [
+                            "query_id"
+                        ],
+                        [
+                            "query_start"
+                        ],
+                        [
+                            "query_string"
+                        ],
+                        [
+                            "sampling_ratio"
+                        ]
+                    ]
+                }
+            },
+            "visualization": "barChart"
+        },
+        "1": {
+            "type": "data",
+            "title": "# of Queries Per User",
+            "query": "fetch dt.system.query_executions\n| fields user\n| parse user, \"LD:firstName'.'LD:lastName '@' LD\"\n| fieldsRemove user\n| fieldsAdd user = concat(firstName, \" \", lastName)\n| summarize count = count(), by: user\n| sort count desc",
+            "visualizationSettings": {
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "legend": {
+                        "hidden": false,
+                        "position": "auto"
+                    },
+                    "circleChartSettings": {
+                        "groupingThresholdType": "absolute",
+                        "hideLabels": false,
+                        "groupingName": "other"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "autoscale": true
+                },
+                "table": {
+                    "enableLineWrap": true,
+                    "hiddenColumns": [],
+                    "lineWrapIds": []
+                },
+                "tableSettings": {
+                    "displayMode": "edit",
+                    "lineWrapIds": []
+                }
+            },
+            "visualization": "table"
+        },
+        "2": {
+            "type": "data",
+            "title": "Total DDUs Consumed Per User",
+            "query": "fetch dt.system.query_executions\n| filter status == \"SUCCEEDED\"\n| fields status, timestamp, scanned_bytes, user\n| fieldsAdd gb = toDouble(scanned_bytes) / 1073741824\n| fieldsAdd ddu = gb * $ddu\n| fieldsRemove scanned_bytes\n| sort timestamp desc\n| summarize DDUs = round(sum(ddu), decimals:2), Gigabyte = concat(round(sum(gb), decimals:2), \" \", \"GB\"), by:user\n| sort DDUs desc",
+            "visualizationSettings": {
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "legend": {
+                        "hidden": false,
+                        "position": "right"
+                    },
+                    "circleChartSettings": {
+                        "hideLabels": false,
+                        "thresholdType": "absolute"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "autoscale": true
+                },
+                "table": {
+                    "enableLineWrap": true,
+                    "hiddenColumns": [],
+                    "lineWrapIds": []
+                },
+                "tableSettings": {
+                    "displayMode": "edit",
+                    "lineWrapIds": [
+                        [
+                            "query_string"
+                        ]
+                    ],
+                    "hiddenColumns": [
+                        [
+                            "dataPond"
+                        ],
+                        [
+                            "rollupType"
+                        ],
+                        [
+                            "tenant"
+                        ],
+                        [
+                            "recordType"
+                        ],
+                        [
+                            "VERSION"
+                        ],
+                        [
+                            "delivered_records"
+                        ],
+                        [
+                            "environment"
+                        ],
+                        [
+                            "execution_duration_ms"
+                        ],
+                        [
+                            "query_id"
+                        ],
+                        [
+                            "query_start"
+                        ],
+                        [
+                            "query_string"
+                        ],
+                        [
+                            "sampling_ratio"
+                        ]
+                    ]
+                }
+            },
+            "visualization": "pieChart"
+        },
+        "3": {
+            "type": "data",
+            "title": "Most Expensive Queries",
+            "query": "fetch dt.system.query_executions\n| filter status == \"SUCCEEDED\"\n| fields status, timestamp, scanned_bytes, query_string\n| fieldsAdd gb = toDouble(scanned_bytes) / 1073741824\n| fieldsAdd ddu = gb * $ddu\n| fieldsAdd cost = gb * $cost\n| fieldsRemove scanned_bytes\n| sort timestamp desc\n| summarize DDUs = round(sum(ddu), decimals:2),Cost = concat(\"\u00a3\",round((sum(cost)), decimals:2)), Gigabyte = concat(round(sum(gb), decimals:2), \" \", \"GB\"),executions = count(), by: {query = query_string}\n| sort DDUs desc\n| limit 10\n| sort Gigabyte\n| sort DDUs\n| sort Cost\n| sort Cost desc",
+            "visualizationSettings": {
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "legend": {
+                        "hidden": true
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "autoscale": true
+                },
+                "table": {
+                    "enableLineWrap": true,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [
+                        [
+                            "query"
+                        ]
+                    ]
+                },
+                "tableSettings": {
+                    "displayMode": "edit",
+                    "lineWrapIds": [
+                        [
+                            "query_string"
+                        ],
+                        [
+                            "query"
+                        ]
+                    ],
+                    "hiddenColumns": [
+                        [
+                            "dataPond"
+                        ],
+                        [
+                            "rollupType"
+                        ],
+                        [
+                            "tenant"
+                        ],
+                        [
+                            "recordType"
+                        ],
+                        [
+                            "VERSION"
+                        ],
+                        [
+                            "delivered_records"
+                        ],
+                        [
+                            "environment"
+                        ],
+                        [
+                            "execution_duration_ms"
+                        ],
+                        [
+                            "query_id"
+                        ],
+                        [
+                            "query_start"
+                        ],
+                        [
+                            "query_string"
+                        ],
+                        [
+                            "sampling_ratio"
+                        ]
+                    ]
+                }
+            },
+            "visualization": "table"
+        },
+        "4": {
+            "type": "data",
+            "title": "Query Cost Per Day",
+            "query": "fetch dt.system.query_executions\n| filter status == \"SUCCEEDED\"\n| fields status, timestamp, scanned_bytes\n| fieldsAdd gb = toDouble(scanned_bytes) / 1073741824\n| fieldsAdd cost = gb * $cost\n| fieldsRemove scanned_bytes\n| sort timestamp desc\n| summarize cost = sum(cost), by:{bin(timestamp, 1d)}\n//| summarize cost = concat(\"$\",round((sum(cost)), decimals:2)), by:{bin(timestamp, 1d)}",
+            "visualizationSettings": {
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "legend": {
+                        "hidden": true
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "autoscale": true
+                },
+                "table": {
+                    "enableLineWrap": true,
+                    "hiddenColumns": [],
+                    "lineWrapIds": []
+                },
+                "tableSettings": {
+                    "displayMode": "edit",
+                    "lineWrapIds": [
+                        [
+                            "query_string"
+                        ]
+                    ],
+                    "hiddenColumns": [
+                        [
+                            "dataPond"
+                        ],
+                        [
+                            "rollupType"
+                        ],
+                        [
+                            "tenant"
+                        ],
+                        [
+                            "recordType"
+                        ],
+                        [
+                            "VERSION"
+                        ],
+                        [
+                            "delivered_records"
+                        ],
+                        [
+                            "environment"
+                        ],
+                        [
+                            "execution_duration_ms"
+                        ],
+                        [
+                            "query_id"
+                        ],
+                        [
+                            "query_start"
+                        ],
+                        [
+                            "query_string"
+                        ],
+                        [
+                            "sampling_ratio"
+                        ]
+                    ]
+                }
+            },
+            "visualization": "barChart"
+        },
+        "6": {
+            "type": "data",
+            "title": "Un-optimized DQL",
+            "query": "fetch dt.system.query_executions\n| filter status == \"SUCCEEDED\"\n| filterOut contains(query_string, \"filter\") OR contains(query_string,\"scanLimitGBytes\") OR contains(query_string,\"from:\")\n| fields status, timestamp, scanned_bytes, query_string\n| fieldsAdd gb = toDouble(scanned_bytes) / 1073741824\n| fieldsAdd ddu = gb * $ddu\n| fieldsAdd cost = gb * $cost\n| fieldsRemove scanned_bytes\n| sort timestamp desc\n| summarize  DDUs = round(sum(ddu), decimals:2), Cost = concat(\"\u00a3\",round((sum(cost)), decimals:2)),Gigabyte = concat(round(sum(gb), decimals:2), \" \", \"GB\"),executions = count(), by: {query = query_string}\n| sort DDUs desc\n| limit 10\n| sort DDUs desc\n| sort Cost\n| sort Cost desc",
+            "visualizationSettings": {
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "legend": {
+                        "hidden": true
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "autoscale": true
+                },
+                "table": {
+                    "enableLineWrap": true,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [
+                        [
+                            "query"
+                        ]
+                    ]
+                },
+                "tableSettings": {
+                    "displayMode": "edit",
+                    "lineWrapIds": [
+                        [
+                            "query_string"
+                        ],
+                        [
+                            "query"
+                        ]
+                    ],
+                    "hiddenColumns": [
+                        [
+                            "dataPond"
+                        ],
+                        [
+                            "rollupType"
+                        ],
+                        [
+                            "tenant"
+                        ],
+                        [
+                            "recordType"
+                        ],
+                        [
+                            "VERSION"
+                        ],
+                        [
+                            "delivered_records"
+                        ],
+                        [
+                            "environment"
+                        ],
+                        [
+                            "execution_duration_ms"
+                        ],
+                        [
+                            "query_id"
+                        ],
+                        [
+                            "query_start"
+                        ],
+                        [
+                            "query_string"
+                        ],
+                        [
+                            "sampling_ratio"
+                        ]
+                    ]
+                }
+            },
+            "visualization": "table"
+        },
+        "7": {
+            "type": "annotation",
+            "title": "",
+            "content": "#### \u00a3 per GB = \u00a3$cost"
+        },
+        "8": {
+            "type": "annotation",
+            "title": "",
+            "content": "#### DDU per GB = $ddu DDU"
+        },
+        "9": {
+            "type": "annotation",
+            "title": "",
+            "content": "## DQL Cost Analysis"
+        },
+        "10": {
+            "type": "annotation",
+            "title": "",
+            "content": "## DQL by User Analysis"
+        },
+        "11": {
+            "type": "annotation",
+            "title": "",
+            "content": "## DQL Optimization Opportunity"
+        },
+        "13": {
+            "type": "data",
+            "title": "DDU Usage by App",
+            "query": "fetch dt.system.query_executions\n| filter status == \"SUCCEEDED\" AND isNotNull(client.application_context)\n| fields status, scanned_bytes, client.application_context\n| fieldsAdd gb = toDouble(scanned_bytes) / 1073741824\n| fieldsAdd ddu = gb * $ddu\n| fieldsRemove scanned_bytes\n| summarize ddu = sum(ddu), by:{client.application_context}\n| sort ddu desc",
+            "visualizationSettings": {
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "legend": {
+                        "hidden": false,
+                        "position": "bottom"
+                    },
+                    "leftYAxisSettings": {
+                        "scale": "linear",
+                        "label": "DDU"
+                    },
+                    "circleChartSettings": {
+                        "hideLabels": false,
+                        "thresholdType": "relative"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "autoscale": true
+                },
+                "table": {
+                    "enableLineWrap": true,
+                    "hiddenColumns": [],
+                    "lineWrapIds": []
+                },
+                "tableSettings": {
+                    "displayMode": "edit",
+                    "lineWrapIds": [
+                        [
+                            "query_string"
+                        ]
+                    ],
+                    "hiddenColumns": [
+                        [
+                            "dataPond"
+                        ],
+                        [
+                            "rollupType"
+                        ],
+                        [
+                            "tenant"
+                        ],
+                        [
+                            "recordType"
+                        ],
+                        [
+                            "VERSION"
+                        ],
+                        [
+                            "delivered_records"
+                        ],
+                        [
+                            "environment"
+                        ],
+                        [
+                            "execution_duration_ms"
+                        ],
+                        [
+                            "query_id"
+                        ],
+                        [
+                            "query_start"
+                        ],
+                        [
+                            "query_string"
+                        ],
+                        [
+                            "sampling_ratio"
+                        ]
+                    ]
+                }
+            },
+            "visualization": "pieChart"
+        },
+        "15": {
+            "type": "data",
+            "title": "DDU by DataType",
+            "query": "fetch dt.system.query_executions\n| filter status == \"SUCCEEDED\" AND scanned_bytes > 0\n| fields query_string = toString(query_string), status, timestamp, scanned_bytes\n| fieldsAdd dataType = if(contains(query_string, \"timeseries\"), \"timeseries\", \nelse: \n     trim(\n       arrayLast(splitString(\n           arrayFirst(splitString(\n               arrayFirst(splitString(query_string\n               , \"|\"))\n           ,\",\"))\n       , \"fetch\"))\n     )\n)\n| fieldsAdd gb = toDouble(scanned_bytes) / 1073741824\n| fieldsAdd ddu = gb * $ddu\n| fieldsRemove scanned_bytes\n| sort timestamp desc\n| summarize  DDUs = round(sum(ddu), decimals:5), by: {dataType}\n| sort DDUs desc",
+            "visualizationSettings": {
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "legend": {
+                        "hidden": true
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "autoscale": true
+                },
+                "table": {
+                    "enableLineWrap": true,
+                    "hiddenColumns": [],
+                    "lineWrapIds": [
+                        [
+                            "query"
+                        ]
+                    ]
+                },
+                "tableSettings": {
+                    "displayMode": "edit",
+                    "lineWrapIds": [
+                        [
+                            "query_string"
+                        ],
+                        [
+                            "query"
+                        ]
+                    ],
+                    "hiddenColumns": [
+                        [
+                            "dataPond"
+                        ],
+                        [
+                            "rollupType"
+                        ],
+                        [
+                            "tenant"
+                        ],
+                        [
+                            "recordType"
+                        ],
+                        [
+                            "VERSION"
+                        ],
+                        [
+                            "delivered_records"
+                        ],
+                        [
+                            "environment"
+                        ],
+                        [
+                            "execution_duration_ms"
+                        ],
+                        [
+                            "query_id"
+                        ],
+                        [
+                            "query_start"
+                        ],
+                        [
+                            "query_string"
+                        ],
+                        [
+                            "sampling_ratio"
+                        ]
+                    ]
+                }
+            },
+            "visualization": "categoricalBarChart"
+        },
+        "16": {
+            "type": "data",
+            "title": "DQL \u00a3 Cost",
+            "query": "fetch dt.system.query_executions\n| filter status == \"SUCCEEDED\"\n| fields status, scanned_bytes\n| fieldsAdd gb = toDouble(scanned_bytes) / 1073741824\n| fieldsAdd cost = gb * $cost\n| fieldsRemove scanned_bytes\n| summarize cost = concat(\"\u00a3\",round((sum(cost)), decimals:2))",
+            "visualizationSettings": {
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "legend": {
+                        "hidden": true
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "autoscale": true
+                },
+                "table": {
+                    "enableLineWrap": true,
+                    "hiddenColumns": [],
+                    "lineWrapIds": []
+                },
+                "tableSettings": {
+                    "displayMode": "edit",
+                    "lineWrapIds": [
+                        [
+                            "query_string"
+                        ]
+                    ],
+                    "hiddenColumns": [
+                        [
+                            "dataPond"
+                        ],
+                        [
+                            "rollupType"
+                        ],
+                        [
+                            "tenant"
+                        ],
+                        [
+                            "recordType"
+                        ],
+                        [
+                            "VERSION"
+                        ],
+                        [
+                            "delivered_records"
+                        ],
+                        [
+                            "environment"
+                        ],
+                        [
+                            "execution_duration_ms"
+                        ],
+                        [
+                            "query_id"
+                        ],
+                        [
+                            "query_start"
+                        ],
+                        [
+                            "query_string"
+                        ],
+                        [
+                            "sampling_ratio"
+                        ]
+                    ]
+                }
+            },
+            "visualization": "singleValue"
+        },
+        "17": {
+            "type": "data",
+            "title": "DQL DDU Cost",
+            "query": "fetch dt.system.query_executions\n| filter status == \"SUCCEEDED\"\n| fields status, scanned_bytes\n| fieldsAdd gb = toDouble(scanned_bytes) / 1073741824\n| fieldsAdd ddu = gb * $ddu\n| fieldsRemove scanned_bytes\n| summarize ddu = concat(round((sum(ddu)), decimals:2), \" DDU\")",
+            "visualizationSettings": {
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "legend": {
+                        "hidden": true
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "autoscale": true
+                },
+                "table": {
+                    "enableLineWrap": true,
+                    "hiddenColumns": [],
+                    "lineWrapIds": []
+                },
+                "tableSettings": {
+                    "displayMode": "edit",
+                    "lineWrapIds": [
+                        [
+                            "query_string"
+                        ]
+                    ],
+                    "hiddenColumns": [
+                        [
+                            "dataPond"
+                        ],
+                        [
+                            "rollupType"
+                        ],
+                        [
+                            "tenant"
+                        ],
+                        [
+                            "recordType"
+                        ],
+                        [
+                            "VERSION"
+                        ],
+                        [
+                            "delivered_records"
+                        ],
+                        [
+                            "environment"
+                        ],
+                        [
+                            "execution_duration_ms"
+                        ],
+                        [
+                            "query_id"
+                        ],
+                        [
+                            "query_start"
+                        ],
+                        [
+                            "query_string"
+                        ],
+                        [
+                            "sampling_ratio"
+                        ]
+                    ]
+                }
+            },
+            "visualization": "singleValue"
+        },
+        "18": {
+            "type": "data",
+            "title": "Total Cost per User",
+            "query": "fetch dt.system.query_executions\n| filter status == \"SUCCEEDED\"\n| filterout contains(user, \"dynatrace.com\")\n| fields status, timestamp, scanned_bytes, user, event.kind\n| fieldsAdd gb = toDouble(scanned_bytes) / 1073741824\n| fieldsAdd cost = gb * $cost\n| fieldsRemove scanned_bytes\n//| sort timestamp desc\n| summarize Cost = concat(\"\u00a3\",round((sum(cost)), decimals:2)), Gigabyte = concat(round(sum(gb), decimals:2), \" \", \"GB\"),executions = count(), by:user\n| sort Cost desc\n| sort executions desc\n| sort Cost",
+            "visualizationSettings": {
+                "chartSettings": {
+                    "gapPolicy": "connect",
+                    "legend": {
+                        "hidden": false,
+                        "position": "right"
+                    },
+                    "circleChartSettings": {
+                        "hideLabels": false,
+                        "thresholdType": "absolute"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "",
+                    "autoscale": true
+                },
+                "table": {
+                    "enableLineWrap": true,
+                    "hiddenColumns": [],
+                    "lineWrapIds": []
+                },
+                "tableSettings": {
+                    "displayMode": "edit",
+                    "lineWrapIds": [
+                        [
+                            "query_string"
+                        ]
+                    ],
+                    "hiddenColumns": [
+                        [
+                            "dataPond"
+                        ],
+                        [
+                            "rollupType"
+                        ],
+                        [
+                            "tenant"
+                        ],
+                        [
+                            "recordType"
+                        ],
+                        [
+                            "VERSION"
+                        ],
+                        [
+                            "delivered_records"
+                        ],
+                        [
+                            "environment"
+                        ],
+                        [
+                            "execution_duration_ms"
+                        ],
+                        [
+                            "query_id"
+                        ],
+                        [
+                            "query_start"
+                        ],
+                        [
+                            "query_string"
+                        ],
+                        [
+                            "sampling_ratio"
+                        ]
+                    ]
+                }
+            },
+            "visualization": "table"
+        },
+        "19": {
+            "type": "annotation",
+            "title": "",
+            "content": "## DQL Usage"
+        }
+    },
+    "layouts": {
+        "0": {
+            "x": 0,
+            "y": 6,
+            "w": 12,
+            "h": 6
+        },
+        "1": {
+            "x": 0,
+            "y": 13,
+            "w": 12,
+            "h": 8
+        },
+        "2": {
+            "x": 12,
+            "y": 13,
+            "w": 12,
+            "h": 8
+        },
+        "3": {
+            "x": 0,
+            "y": 27,
+            "w": 17,
+            "h": 7
+        },
+        "4": {
+            "x": 12,
+            "y": 6,
+            "w": 12,
+            "h": 6
+        },
+        "6": {
+            "x": 0,
+            "y": 34,
+            "w": 17,
+            "h": 8
+        },
+        "7": {
+            "x": 7,
+            "y": 0,
+            "w": 10,
+            "h": 1
+        },
+        "8": {
+            "x": 0,
+            "y": 0,
+            "w": 7,
+            "h": 1
+        },
+        "9": {
+            "x": 0,
+            "y": 1,
+            "w": 24,
+            "h": 1
+        },
+        "10": {
+            "x": 0,
+            "y": 12,
+            "w": 24,
+            "h": 1
+        },
+        "11": {
+            "x": 0,
+            "y": 26,
+            "w": 24,
+            "h": 1
+        },
+        "13": {
+            "x": 12,
+            "y": 43,
+            "w": 12,
+            "h": 8
+        },
+        "15": {
+            "x": 0,
+            "y": 43,
+            "w": 12,
+            "h": 8
+        },
+        "16": {
+            "x": 12,
+            "y": 2,
+            "w": 12,
+            "h": 4
+        },
+        "17": {
+            "x": 0,
+            "y": 2,
+            "w": 12,
+            "h": 4
+        },
+        "18": {
+            "x": 0,
+            "y": 21,
+            "w": 24,
+            "h": 5
+        },
+        "19": {
+            "x": 0,
+            "y": 42,
+            "w": 24,
+            "h": 1
+        }
+    }
+}
