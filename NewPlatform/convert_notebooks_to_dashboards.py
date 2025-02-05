@@ -6,18 +6,18 @@ import codecs
 
 add_table_for_donut_charts = True
 
-# notebook_input_path = '../$Private/Customers/NWM/Assets/NewPlatform/Notebooks/*.json'
-# notebook_input_path = 'customer_specific/NWM/NotebookToDashboardInput/NMXP*.json'
-# notebook_input_path = 'customer_specific/NWM/NotebookToDashboardInput/*NMC*.json'
-# notebook_input_path = 'customer_specific/NWM/NotebookToDashboardInput/Dashboard Conversion_  App Tracker.json'
-# notebook_input_path = 'customer_specific/NWM/NotebookToDashboardInput/Dashboard Conversion_ dMHQ.json'
-# notebook_input_path = 'customer_specific/NWM/NotebookToDashboardInput/CONVERT_MIX.json'
-# notebook_input_path = 'customer_specific/NWM/NotebookToDashboardInput/CONVERT_PIE.json'
-# notebook_input_path = 'customer_specific/NWM/NotebookToDashboardInput/*.json'
-# notebook_input_path = 'customer_specific/NWM/DashboardTemplates/TEMPLATE_DONUT.json'
+# notebook_input_path = '../$Private/Customers/PRIOR_CUSTOMER/Assets/NewPlatform/Notebooks/*.json'
+# notebook_input_path = 'customer_specific/PRIOR_CUSTOMER/NotebookToDashboardInput/NMXP*.json'
+# notebook_input_path = 'customer_specific/PRIOR_CUSTOMER/NotebookToDashboardInput/*NMC*.json'
+# notebook_input_path = 'customer_specific/PRIOR_CUSTOMER/NotebookToDashboardInput/Dashboard Conversion_  App Tracker.json'
+# notebook_input_path = 'customer_specific/PRIOR_CUSTOMER/NotebookToDashboardInput/Dashboard Conversion_ dMHQ.json'
+# notebook_input_path = 'customer_specific/PRIOR_CUSTOMER/NotebookToDashboardInput/CONVERT_MIX.json'
+# notebook_input_path = 'customer_specific/PRIOR_CUSTOMER/NotebookToDashboardInput/CONVERT_PIE.json'
+# notebook_input_path = 'customer_specific/PRIOR_CUSTOMER/NotebookToDashboardInput/*.json'
+notebook_input_path = 'customer_specific/PRIOR_CUSTOMER/DashboardTemplates/TEMPLATE_DONUT.json'
 
-dashboard_output_path = '../$Private/Customers/NWM/Assets/NewPlatform/Dashboards'
-# dashboard_output_path = 'customer_specific/NWM/ConvertedDashboards'
+dashboard_output_path = '../$Private/Customers/PRIOR_CUSTOMER/Assets/NewPlatform/Dashboards'
+# dashboard_output_path = 'customer_specific/PRIOR_CUSTOMER/ConvertedDashboards'
 
 dashboard_template = {
     "version": 15,

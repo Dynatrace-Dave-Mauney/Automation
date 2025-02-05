@@ -25,7 +25,8 @@ def process(env, client_id, client_secret):
 			document_version = document.get('version')
 			params = {'optimistic-locking-version': document_version}
 
-			if not document_name.startswith('Tenant'):
+			# if not document_name.startswith('Tenant'):
+			if not document_name.startswith('Delete'):
 				continue
 
 			delete_list.append(f'{document_name}:{document_id}:{document_version}')
