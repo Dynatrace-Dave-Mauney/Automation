@@ -27,7 +27,11 @@ def main():
         # input_glob_pattern = "C:\\Users\\dave.mauney\\Downloads\\Sharing*.json"
         # input_glob_pattern = "../../$Private/Customers/NWM/Assets/NewPlatform/Notebooks/*"
         # input_glob_pattern = "C:\\Users\\dave.mauney\\Downloads\\NMXP*(2).json"
-        input_glob_pattern = "../../NewPlatform/Dashboards/Assets/*.json"
+        # input_glob_pattern = "/Temp/$Dashboards/*.json"
+        # input_glob_pattern = "/Temp/$Launchpads/*.json"
+        # input_glob_pattern = "../../NewPlatform/Dashboards/Assets/*.json"
+        # input_glob_pattern = "../../NewPlatform/Launchpads/Assets/LinksTemplate.json"
+        input_glob_pattern = "C:\\Users\\dave.mauney\\Downloads\\Dynatrace User Launchpad.json"
 
         output_directory_name = '/Temp/Formatted'
 

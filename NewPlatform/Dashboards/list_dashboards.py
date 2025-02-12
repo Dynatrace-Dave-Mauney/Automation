@@ -4,6 +4,10 @@ from Reuse import environment
 from Reuse import new_platform_api
 from Reuse import report_writer
 
+selected_owners = [
+    # '78cfc22b-0015-409e-bb07-0364eecc6ac3', # Me
+    'ed29e85d-9e5f-4157-a2b8-563dc624708f', # Dynatrace
+]
 
 def process(env, client_id, client_secret):
     scope = 'document:documents:read'
@@ -16,14 +20,21 @@ def process(env, client_id, client_secret):
     headers = [['Dashboard Name', 'Dashboard ID']]
     rows = []
     for document in document_list:
+        print(document)
         document_type = document.get('type')
         if document_type == 'dashboard':
             document_id = document.get('id')
             document_name = document.get('name')
-            rows.append([document_name, document_id])
+            document_owner = document.get('owner')
+
+            if document_owner in selected_owners:
+                # rows.append([document_name, document_id])
+                rows.append([document_name, document_id])
 
     report_writer.print_rows(headers, sorted(rows))
 
+    for row in sorted(rows):
+        print(f"\t\t'{row[0]}',")
 
 def main():
     friendly_function_name = 'Dynatrace Automation'
