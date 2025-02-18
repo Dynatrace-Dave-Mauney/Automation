@@ -17,9 +17,15 @@ Note: This summarizes/extends the official Dynatrace Documentation page:
 
 3)  Add the "terraform path" to your system or user path on Windows.
 
-4)  Copy the "providers.tf" file to your Terraform Project Directory.
+4)  Copy the following files to your Terraform Project Directory:
 
-5)  Run the "terraform init" command
+	providers.tf
+	export.bat
+	export_list_exclusions.bat
+	set_env.bat
+	unset_env.bat
+
+5)  Run "terraform init" from a command line while in the Terraform Project Directory.  
 
 6) Create a Dynatrace Access Token with at least the following permissions:  
     Read configuration (ReadConfig)  
@@ -35,7 +41,7 @@ Note: This summarizes/extends the official Dynatrace Documentation page:
     Read network zones (networkZones.read)  
     Write network zones (networkZones.write)  
 
-8)  Copy the Dynatrace Provider executable into the Terraform Project Directory for easier access (or make a symlink or add the path to your Windows path).
+8)  Copy the Dynatrace Provider executable (created with the "terraform init" command ealier) into the Terraform Project Directory for easier access (or make a symlink or add the path to your Windows path).
 
     The directory will be named something like:  
     terraform_1.10.5_windows_386\.terraform\providers\registry.terraform.io\dynatrace-oss\dynatrace\1.72.6\windows_386
@@ -43,18 +49,29 @@ Note: This summarizes/extends the official Dynatrace Documentation page:
     The exe will be named something like:  
     terraform-provider-dynatrace_v1.72.6.exe  
 
+	Remove the version information when you copy/rename the file:
+
     Example:  
     copy terraform-provider-dynatrace_v1.72.6.exe ..\..\..\..\..\..\..  
     cd ..\..\..\..\..\..\..  
     rename terraform-provider-dynatrace_v1.72.6.exe terraform-provider-dynatrace.exe  
 
-9)  Copy the "export.bat" file to your Terraform Project Directory.
+9)  Modify the environment variables in "set.bat".
 
-10)  Modify the environment variables in "export.bat".
+10)  Run the "export.bat" command to download all configurations supported by the Dynatrace Terraform Provider.
 
-11)  Run the "export.bat" command to download all configurations supported by the Dynatrace Terraform Provider.
+11)  Review the "configuration\modules" directory.  This is where you can now start changing configurations.
 
-12)  Review the "configuration\modules" directory.  This is where you can now start changing configurations.
+12)  Optionally, run the "export_list_exclusions.bat" to see modules not included by default
+
+13) Optionally, run commands to download any additional modules of interest.
+
+
+
+
+
+
+
 
 ## OLD Installation Notes (For Reference Only!)
 1)  Download zip
