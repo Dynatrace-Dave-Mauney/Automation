@@ -26,10 +26,15 @@ def run():
     # post_launchpads('Personal', 'Launchpads/Downloads/Personal/Dave*.json')
     # post_notebooks('Personal', 'Notebooks/Assets/Best Practices.json')
 
-    # post_launchpads('tenant1', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/tenant1/*.json')
-    # post_notebooks('tenant1', '../$Private/Customers/$Current/Assets/NewPlatform/Notebooks/tenant1/*.json')
-    # post_dashboards('tenant1', '../$Private/Customers/$Current/Assets/NewPlatform/Dashboards/tenant1/*.json')
-    post_dashboards('tenant1', '../$Private/$Output/Dashboards/ClassicConversion/*.json')
+    # post_dashboards(env, f'../$Private/Customers/$Current/Assets/NewPlatform/Dashboards/{env}/*.json')
+    # post_dashboards(env, f'../$Private/$Output/Dashboards/ClassicConversion/*.json')
+    # post_notebooks(env, f'../$Private/Customers/$Current/Assets/NewPlatform/Notebooks/{env}/*.json')
+
+    # env='Prod'
+    env='NonProd'
+    # post_dashboards(env, f'Dashboards/Assets/Templates/*.json')
+    # post_launchpads(env, 'Launchpads/Assets/Dynatrace*.json')
+    post_launchpads(env, 'Dynatrace User Launchpad.json')
 
 def post_dashboards(env_name, path):
     post_documents(env_name, path, 'dashboard')
@@ -54,10 +59,12 @@ def post_documents(env_name, path, document_type):
                 document_file_name = os.path.basename(filename)
                 document_name = os.path.splitext(document_file_name)[0]
                 formatted_document = document
-                post_document(env, oauth_bearer_token, document_name, document_type, document_file_name, formatted_document)
+                post_document(env_name, env, oauth_bearer_token, document_name, document_type, document_file_name, formatted_document)
 
 
-def post_document(env, oauth_bearer_token, document_name, document_type, document_file_name, payload):
+def post_document(env_name, env, oauth_bearer_token, document_name, document_type, document_file_name, payload):
+    if document_name.startswith('TEMPLATE'):
+        document_name = document_name.replace('TEMPLATE', env_name.capitalize())
     print(f'Posting {document_type} "{document_name}" ({document_file_name}) to {env}')
     api_url = f'{env}/platform/document/v1/documents'
     headers = {'name': document_name, 'type': 'document', 'accept': 'application/json', 'Authorization': f'Bearer {str(oauth_bearer_token)}'}

@@ -8,7 +8,6 @@ from inspect import currentframe
 
 from Reuse import dynatrace_api
 
-# env_name = 'Tenant1'
 # env_name = 'Prod'
 # env_name = 'NonProd'
 # env_name = 'Sandbox'

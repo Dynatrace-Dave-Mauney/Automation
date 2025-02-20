@@ -19,11 +19,11 @@ def process(env_name, env, client_id, client_secret):
     environment_shares = get_environment_shares(env, client_id, client_secret)
     dashboards = get_dashboards(env, client_id, client_secret)
     notebooks = get_notebooks(env, client_id, client_secret)
-    generate_dashboard(env_name, env, environment_shares, dashboards)
-    generate_notebook(env_name, env, environment_shares, notebooks)
+    generate_dashboard_links(env_name, env, environment_shares, dashboards)
+    generate_notebook_links(env_name, env, environment_shares, notebooks)
 
 
-def generate_dashboard(env_name, env, environment_shares, dashboards):
+def generate_dashboard_links(env_name, env, environment_shares, dashboards):
     links = []
     dashboard_ids = dashboards.keys()
     for dashboard_id in dashboard_ids:
@@ -31,14 +31,21 @@ def generate_dashboard(env_name, env, environment_shares, dashboards):
         environment_share_id = environment_shares.get(dashboard_id)
         if environment_share_id:
             dashboard_name = dashboards.get(dashboard_id)
-            if filter in dashboard_name:
-                links.append(f'{dashboard_name} Dashboard ({env_name}): {env}/ui/document/v0/#share={environment_share_id}')
 
+            dashbooard_name_prefix = dashboard_name.split(' ')[0]
+            dashboard_name = dashboard_name.replace(dashbooard_name_prefix, '{tenant_name}')
+
+            if filter in dashboard_name:
+                # links.append(f'{dashboard_name} Dashboard ({env_name}): {env}/ui/document/v0/#share={environment_share_id}')
+                links.append(f"\t\t(f'{dashboard_name}', f'https://{{tenant}}.apps.dynatrace.com/ui/document/v0/#share={environment_share_id}'),")
+
+    print(f'\t{env_name.lower()}_links = [')
     for link in sorted(links):
         print(link)
+    print(f'\t]')
 
 
-def generate_notebook(env_name, env, environment_shares, notebooks):
+def generate_notebook_links(env_name, env, environment_shares, notebooks):
     links = []
     notebook_ids = notebooks.keys()
     for notebook_id in notebook_ids:
@@ -116,16 +123,6 @@ def get_notebooks(env, client_id, client_secret):
                 notebooks[notebook_id] = notebook_name
 
     return notebooks
-
-
-def write_dashboard(dashboard_json):
-    with open('Shared Dashboards.json', 'w', encoding='utf-8') as outfile:
-        outfile.write(json.dumps(dashboard_json, indent=4, sort_keys=False))
-
-
-def write_notebook(notebook_json):
-    with open('Shared Notebooks.json', 'w', encoding='utf-8') as outfile:
-        outfile.write(json.dumps(notebook_json, indent=4, sort_keys=False))
 
 
 def main():

@@ -71,7 +71,10 @@ def process(env_name, env, client_id, client_secret):
 
 
 def get_dashboard_links(tenant_name, tenant):
-    links = [
+
+    # Use generate_shared_document_links.py to generate these lists
+
+    sandbox_links = [
         (f'{tenant_name} Overview',
          f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=cf48719e-9e5f-42b1-902e-d118cabbe6df'),
         (f'{tenant_name} Services',
@@ -108,7 +111,91 @@ def get_dashboard_links(tenant_name, tenant):
          f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=0845de3e-ef7e-46f0-b65a-32e4504b1f24'),
     ]
 
-    return links
+    prod_links = [
+        (f'{tenant_name} Backend Overview',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=00206100-59f6-4e6f-9fd6-90d0d238b2ba'),
+        (f'{tenant_name} Containers',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=13f0f6c0-2d67-4ca0-8b3b-50b430e82c84'),
+        (f'{tenant_name} Full Stack Overview',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=0959f255-1cac-425b-a4a5-fe0d5e8e0c81'),
+        (f'{tenant_name} Go',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=9642e785-f478-4edd-8382-32385db1e4d1'),
+        (f'{tenant_name} Hosts (Detailed)',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=a7a3ba73-e488-499f-bb10-640aab1f4070'),
+        (f'{tenant_name} Hosts',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=37b19613-355e-4fe7-bdcb-09079963187e'),
+        (f'{tenant_name} Java Memory',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=6ec9377e-8724-4b92-bfef-926a433612f6'),
+        (f'{tenant_name} Network (Host-Level Details)',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=63c1cd51-54a6-4ea5-9ae9-cc174241aae9'),
+        (f'{tenant_name} Network (Process-Level Details)',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=58ffdc1f-f924-4817-9293-326f02d7552b'),
+        (f'{tenant_name} Node.js',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=683a9aed-b5c1-42b4-8afa-b0378e4453ca'),
+        (f'{tenant_name} Overview',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=6ea10cc4-6357-4395-9639-af657aaf9005'),
+        (f'{tenant_name} Service Errors',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=9db8895d-29d0-477d-9276-577594abb835'),
+        (f'{tenant_name} Service HTTP Errors',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=0b62c3ba-544c-4a4f-bf76-8c011181f94b'),
+        (f'{tenant_name} Services',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=df3a8e8f-ef4f-4786-8527-cc8c73e3728a'),
+        (f'{tenant_name} Synthetics HTTP Monitors',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=9306db61-9262-4142-b82a-9e07143e2df7'),
+        (f'{tenant_name} VMware',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=2d23eb94-d65a-4c15-be24-5afb715371ad'),
+        (f'{tenant_name} Web Servers',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=a0813f89-f1af-40c3-afdc-78ee7598b0f5'),
+    ]
+
+    nonprod_links = [
+        (f'{tenant_name} Backend Overview',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=5eae3a22-ba64-4cdd-9e78-501f6ae2db63'),
+        (f'{tenant_name} Containers',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=40a56662-cffa-4e17-a14e-ae226de1502e'),
+        (f'{tenant_name} Full Stack Overview',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=c3e42dfe-461d-4cd4-bd01-e8c0c1300c48'),
+        (f'{tenant_name} Go',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=78ce89dd-20dd-4884-a065-123af95a188e'),
+        (f'{tenant_name} Hosts (Detailed)',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=1a45e197-bfad-4080-bef4-d8d3b1a47ba0'),
+        (f'{tenant_name} Hosts',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=c44f8fb9-1610-41c7-8eba-490ebcf38222'),
+        (f'{tenant_name} Java Memory',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=9ed5fb56-50c4-4b1c-a397-cc6fa3f79774'),
+        (f'{tenant_name} Network (Host-Level Details)',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=2a5023be-7c4f-4490-8a8b-63767ccdf910'),
+        (f'{tenant_name} Network (Process-Level Details)',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=6bcce121-4948-44a1-b11b-3fbfe9c30b00'),
+        (f'{tenant_name} Node.js',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=2702b036-93c9-439f-b1f7-6889088b5b6e'),
+        (f'{tenant_name} Overview',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=19026ded-eba1-4f9c-9b4a-43f44ba67aa8'),
+        (f'{tenant_name} Service Errors',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=b1dfc7c0-ea2d-4056-a519-f29259e04c07'),
+        (f'{tenant_name} Service HTTP Errors',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=eec1899e-7709-4d8f-b82c-f6d87d3be90e'),
+        (f'{tenant_name} Services',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=034f8f8b-bac7-4424-b936-40e75573f461'),
+        (f'{tenant_name} Synthetics HTTP Monitors',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=58597239-cec7-4a0a-a3d8-65c95c3fcfcd'),
+        (f'{tenant_name} VMware',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=d5c70dfe-51c4-444a-8586-e9bdc720c76e'),
+        (f'{tenant_name} Web Servers',
+         f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=102a0efa-df17-4564-b52e-07a7271a5cb3'),
+    ]
+
+    if tenant_name.lower() == 'sandbox':
+        return sandbox_links
+    else:
+        if tenant_name.lower() == 'nonprod':
+            return nonprod_links
+        else:
+            if tenant_name.lower() == 'prod':
+                return prod_links
+            else:
+                print(f'Unsupported tenant name: {tenant_name}')
+                exit(1)
 
 
 def get_documentation_links():
@@ -324,7 +411,7 @@ def main():
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
     # env_name_supplied = 'Prod'
-    # env_name_supplied = 'NonProd'
+    env_name_supplied = 'NonProd'
     # env_name_supplied = 'Sandbox'
     #
     # env_name_supplied = 'PreProd'
