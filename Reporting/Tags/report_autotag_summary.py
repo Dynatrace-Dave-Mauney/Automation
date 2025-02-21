@@ -72,7 +72,7 @@ def all_equal(iterable):
 
 
 def main():
-    env_name_list = ['Prod', 'NonProd']
+    env_name_list = ['Prod', 'NonProd', 'Sandbox']
 
     all_env_name_data = {}
 

@@ -93,6 +93,16 @@ def put_multipart_form_data(api_url, files, params, headers):
         raise
 
 
+def put(api_url, payload, params, headers):
+    try:
+        fn = partial(requests.put, api_url, payload, headers=headers, params=params)
+        r = retry_with_backoff(fn)
+        return r
+    except ssl.SSLError:
+        print('Error in "new_platform_api.put(oauth_bearer_token, api_url, object_id)" method')
+        print('SSL Error')
+
+
 def delete(oauth_bearer_token, api_url, params):
     headers = {'accept': 'application/json', 'Authorization': 'Bearer ' + str(oauth_bearer_token)}
     try:
