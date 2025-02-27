@@ -26,8 +26,9 @@ def process(env, client_id, client_secret):
 
 		# if 'DeleteMe' in segment_name:
 		# if segment_name == 'Template2':
-		if 'emplate' not in segment_name:
-			delete_list.append(f'{segment_name}:{segment_uid}:{segment_owner}')
+		# if 'emplate' not in segment_name:
+		if 'HG:' in segment_name:
+			delete_list.append(f'{segment_uid}:{segment_name}:{segment_owner}')
 
 	delete_list = sorted(delete_list)
 
@@ -42,8 +43,10 @@ def process(env, client_id, client_secret):
 		if proceed:
 			for line in delete_list:
 				line_split = line.split(':')
-				segment_id = line_split[1]
-				response = new_platform_api.delete(oauth_bearer_token, f'{env}/platform/storage/filter-segments/v1/filter-segments/{segment_id}', None)
+				segment_id = line_split[0]
+				url = f'{env}/platform/storage/filter-segments/v1/filter-segments/{segment_id}'
+				# print(url)
+				response = new_platform_api.delete(oauth_bearer_token, url, None)
 				if 200 < response.status_code < 300:
 					print(f'DELETED: {line}', response.text, response.status_code, response.reason)
 					count += 1

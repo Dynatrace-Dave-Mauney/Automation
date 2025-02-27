@@ -34,6 +34,9 @@ def run():
     # put_documents('tenant1', '../$Private/Customers/$Current/Assets/NewPlatform/Notebooks/tenant1/*.json')
     # put_documents('tenant1', '../$Private/Customers/$Current/Assets/NewPlatform/Dashboards/tenant1/*.json')
 
+    put_documents('Prod', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/Prod/Dynatrace Architecture Launchpad.json')
+    put_documents('Prod', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/Prod/Dynatrace User Launchpad.json')
+
 
 def put_documents(env_name, path):
     # print(f"put_documents({env_name}, {path})")
