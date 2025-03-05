@@ -17,9 +17,11 @@ def process(env, client_id, client_secret, openpipeline_type):
     pipelines = openpipelines_json.get('pipelines')
     routes = openpipelines_json.get('routing').get('entries')
 
+    print(f'Open Pipeline: {openpipeline_type}')
     for pipeline in pipelines:
         # print(pipeline)
         print(pipeline.get('displayName'), pipeline.get('id'), pipeline.get('enabled'))
+    print('')
 
     for route in routes:
     #     print(route)
@@ -33,16 +35,18 @@ def main():
     # env_name_supplied = 'Prod'
     # env_name_supplied = 'NonProd'
     # env_name_supplied = 'Sandbox'
-    #
-    # env_name_supplied = 'Upper'
-    # env_name_supplied = 'Lower'
-    # env_name_supplied = 'PreProd'
     # env_name_supplied = 'Dev'
-    # env_name_supplied = 'Personal'
+    env_name_supplied = 'Personal'
     # env_name_supplied = 'Demo'
     env_name, env, client_id, client_secret = environment.get_client_environment_for_function(env_name_supplied, friendly_function_name)
 
     process(env, client_id, client_secret, 'logs')
+    process(env, client_id, client_secret, 'events')
+    process(env, client_id, client_secret, 'events.security')
+    process(env, client_id, client_secret, 'bizevents')
+    process(env, client_id, client_secret, 'spans')
+    process(env, client_id, client_secret, 'events.sdlc')
+    process(env, client_id, client_secret, 'system.events')
 
     # Not very useful, and needs customization if used later
     # process(env, client_id, client_secret, 'categories')
