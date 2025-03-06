@@ -117,12 +117,13 @@ def delete(oauth_bearer_token, api_url, params):
 
 def post(oauth_bearer_token, api_url, payload):
     headers = {'Content-type': 'application/json', 'Authorization': 'Bearer ' + str(oauth_bearer_token)}
+    # headers = {'accept': 'application/json', 'Content-type': 'application/json;charset=UTF-8', 'Authorization': 'Bearer ' + str(oauth_bearer_token)}
     try:
         # r = requests.post(api_url, payload, headers=headers)
         fn = partial(requests.post, api_url, payload, headers=headers)
         r = retry_with_backoff(fn)
 
-        if r.status_code not in [200, 201, 204]:
+        if r.status_code not in [200, 201, 202, 204]:
             print('Status Code: %d' % r.status_code)
             print('Reason: %s' % r.reason)
             if len(r.text) > 0:
