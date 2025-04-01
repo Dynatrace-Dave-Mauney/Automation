@@ -36,7 +36,8 @@ def process(env, env_name, client_id, client_secret):
         # segment_is_public = segment.get('isPublic')
         # segment_version = segment.get('version')
 
-        if my_owner_ids and segment_owner in my_owner_ids:
+        # if my_owner_ids and segment_owner in my_owner_ids:
+        if not my_owner_ids or (my_owner_ids and segment_owner in my_owner_ids):
             pass
         else:
             continue

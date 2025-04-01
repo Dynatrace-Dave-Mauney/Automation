@@ -33,7 +33,8 @@ def process(env, env_name, client_id, client_secret):
 
             # filter by owner id, if needed
             document_owner = document.get('owner')
-            if my_owner_ids and document_owner in my_owner_ids:
+            if not my_owner_ids or (my_owner_ids and document_owner in my_owner_ids):
+            # if my_owner_ids and document_owner in my_owner_ids:
                 pass
             else:
                 continue
