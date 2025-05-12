@@ -30,11 +30,12 @@ def run():
     # post_dashboards(env, f'../$Private/$Output/Dashboards/ClassicConversion/*.json')
     # post_notebooks(env, f'../$Private/Customers/$Current/Assets/NewPlatform/Notebooks/{env}/*.json')
 
+    # env='Sandbox'
+    # env='PreProd'
     # env='Prod'
-    env='NonProd'
-    # post_dashboards(env, f'Dashboards/Assets/Templates/*.json')
-    # post_launchpads(env, 'Launchpads/Assets/Dynatrace*.json')
-    post_launchpads(env, 'Dynatrace User Launchpad.json')
+
+    post_dashboards(env, f'Dashboards/Assets/Templates/*.json')
+    post_launchpads(env, 'Launchpads/Assets/*.json')
 
 def post_dashboards(env_name, path):
     post_documents(env_name, path, 'dashboard')

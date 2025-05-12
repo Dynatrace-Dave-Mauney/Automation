@@ -46,6 +46,28 @@ def run():
     ]
 
     # prior_customer_skip_list = [
+    #     ': AWS',
+    #     ': CICS',
+    #     ': Cloud Foundry',
+    #     ': Control M',
+    #     ': Custom PMI',
+    #     ': DB2',
+    #     ': Executor',
+    #     ': F5',
+    #     ': Hikari',
+    #     ': IBM MQ',
+    #     ': IBM Websphere',
+    #     ': Kafka',
+    #     ': Microsoft Exchange',
+    #     ': Microsoft SQL Server',
+    #     ': R2DBC',
+    #     ': Resilence',
+    #     ': Snowflake',
+    #     ': Spark',
+    #     ': Spring',
+    # ]
+
+    # prior_customer_skip_list = [
     #     ': Azure',
     #     # ': Microsoft SQL Server',
     #     ': Palo Alto',
@@ -215,10 +237,10 @@ def run():
     # put_dashboards(env_name, f'../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-*.json', owner=owner, skip_list=current_customer_skip_list)
 
     env_name = 'UNSET'
+    # env_name = 'Sandbox'
+    # env_name = 'PreProd'
     # env_name = 'Prod'
-    # env_name = 'NonProd'
-    # env_name = 'Tenant1'
-    # put_dashboards(env_name, f'Custom/Overview-Prod/00000000-dddd-bbbb-ffff-000000000001-v4_Prod.json', owner=owner, skip_list=current_customer_skip_list)
+    # env_name = 'Personal'
     put_dashboards(env_name, f'Custom/Overview-{env_name}/*.json', owner=owner, skip_list=current_customer_skip_list)
     put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000001-v4_{env_name}.json', owner=owner, skip_list=current_customer_skip_list)
     put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000800-v3.json', owner=owner, skip_list=current_customer_skip_list)

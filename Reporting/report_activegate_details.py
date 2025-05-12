@@ -141,6 +141,7 @@ def get_cluster_version(env, token):
 
 
 def get_active_gate_auto_update_setting(env, token):
+    active_gate_auto_update_setting = None
     endpoint = '/api/v2/settings/objects'
     schema_ids = 'builtin:deployment.activegate.updates'
     schema_ids_param = f'schemaIds={schema_ids}'
@@ -148,7 +149,9 @@ def get_active_gate_auto_update_setting(env, token):
     params = urllib.parse.quote(raw_params, safe='/,&=')
     r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token, params=params)
     # active_gate_auto_update_setting = r.json()
-    active_gate_auto_update_setting = r.json().get('items')[0].get('value').get('autoUpdate')
+    items = r.json().get('items')
+    if items:
+        active_gate_auto_update_setting = items[0].get('value').get('autoUpdate')
     return active_gate_auto_update_setting
 
 
