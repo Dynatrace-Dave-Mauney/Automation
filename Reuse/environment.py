@@ -214,6 +214,21 @@ def get_environment_for_function_print_control(env_name, friendly_function_name,
                 print(f'Token Key:        {token_key}')
         exit(1)
 
+# Platform Token is for new platform!
+def get_platform_token_for_function(env_name, friendly_function_name):
+    args = args_parser()
+    # Use client name when it is provided by environment variable
+    client_name_key = f'DYNATRACE_{env_name.upper()}_CLIENT_NAME'
+    client_name = os.environ.get(client_name_key)
+
+    if client_name:
+        platform_token_key = f'{friendly_function_name.upper().replace(" ", "_")}_PLATFORM_TOKEN_{client_name}'
+    else:
+        platform_token_key = f'{friendly_function_name.upper().replace(" ", "_")}_PLATFORM_TOKEN'
+
+    platform_token = os.environ.get(platform_token_key)
+    return platform_token
+
 
 def get_output_directory_name(default_output_directory):
     args = args_parser()
