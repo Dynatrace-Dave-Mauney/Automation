@@ -1,0 +1,1665 @@
+{
+    "version": 17,
+    "variables": [
+        {
+            "key": "ManagementZone",
+            "type": "code",
+            "input": "import { settingsObjectsClient } from \"@dynatrace-sdk/client-classic-environment-v2\";\nexport default async function () {\n  let mzs = [];\n  let data = await settingsObjectsClient.getSettingsObjects({\n    schemaIds: \"builtin:management-zones\",\n    pageSize: 500\n  });\n  mzs = data.items;\n  if(data.hasOwnProperty(\"nextPageKey\") && data.nextPageKey != null){\n    const q = await next(data.nextPageKey);\n  }\n  let arr = [];\n  (mzs).map(result => {\n    arr.push(result.value.name);\n  });\n  console.log(mzs.length);\n  return [\"Select a Management Zone\"].concat(arr.sort());\n  async function next(npk){\n    const more = await settingsObjectsClient.getSettingsObjects({nextPageKey: npk});\n    console.log(more);\n    mzs = mzs.concat(more.items);\n    if(more.hasOwnProperty(\"nextPageKey\") && more.nextPageKey != null) return await next(more.nextPageKey);\n    else return 1;\n  }\n}",
+            "multiple": false
+        }
+    ],
+    "tiles": {
+        "0": {
+            "type": "data",
+            "title": "Network interface packets received on host",
+            "query": "timeseries avg(dt.host.net.nic.packets.rx), by: { dt.entity.host }, \nfilter:dt.entity.host in [fetch dt.entity.host | filter in(managementZones, $ManagementZone) | fields id]\n| fieldsAdd host.net.nic.packets.rx = ArrayAvg(`avg(dt.host.net.nic.packets.rx)`)\n| fieldsAdd name=entityAttr(dt.entity.host, \"entity.name\")\n| sort host.net.nic.packets.rx desc\n| limit 20",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "xAxisScaling": "analyzedTimeframe",
+                    "gapPolicy": "gap",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "curve": "linear",
+                    "pointsDisplay": "auto",
+                    "categoricalBarChartSettings": {
+                        "layout": "horizontal",
+                        "categoryAxisTickLayout": "horizontal",
+                        "scale": "absolute",
+                        "groupMode": "stacked",
+                        "colorPaletteMode": "multi-color",
+                        "categoryAxis": [
+                            "dt.entity.host",
+                            "name"
+                        ],
+                        "categoryAxisLabel": "dt.entity.host,name",
+                        "valueAxis": [
+                            "host.net.nic.packets.rx"
+                        ],
+                        "valueAxisLabel": "host.net.nic.packets.rx",
+                        "tooltipVariant": "single"
+                    },
+                    "colorPalette": "categorical",
+                    "valueRepresentation": "absolute",
+                    "truncationMode": "middle",
+                    "xAxisLabel": "timeframe",
+                    "xAxisIsLabelVisible": false,
+                    "hiddenLegendFields": [
+                        "dt.entity.host",
+                        "interval",
+                        "host.net.nic.packets.rx"
+                    ],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "avg(dt.host.net.nic.packets.rx)"
+                        ]
+                    },
+                    "leftYAxisSettings": {
+                        "isLabelVisible": false,
+                        "label": "host.net.nic.packets.rx"
+                    },
+                    "legend": {
+                        "position": "right",
+                        "hidden": false
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "host.net.nic.packets.rx",
+                    "prefixIcon": "",
+                    "recordField": "host.net.nic.packets.rx",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "trend": {
+                        "trendType": "auto",
+                        "isVisible": true
+                    },
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "linewrapEnabled": false,
+                    "lineWrapIds": [],
+                    "monospacedFontEnabled": false,
+                    "monospacedFontColumns": [],
+                    "columnWidths": {},
+                    "columnTypeOverrides": [
+                        {
+                            "fields": [
+                                "avg(dt.host.net.nic.packets.rx)"
+                            ],
+                            "value": "sparkline",
+                            "id": 1738162703501
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": {
+                        "hidden": false,
+                        "position": "auto"
+                    },
+                    "displayedFields": [
+                        "dt.entity.host",
+                        "name"
+                    ],
+                    "dataMappings": {
+                        "value": "host.net.nic.packets.rx"
+                    },
+                    "truncationMode": "middle",
+                    "colorMode": "color-palette",
+                    "colorPalette": "blue"
+                },
+                "histogram": {
+                    "legend": "auto",
+                    "yAxis": {
+                        "label": "Frequency",
+                        "scale": "linear"
+                    },
+                    "colorPalette": "categorical",
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "host.net.nic.packets.rx",
+                            "rangeAxis": ""
+                        }
+                    ],
+                    "variant": "single",
+                    "truncationMode": "middle",
+                    "displayedFields": [
+                        "dt.entity.host"
+                    ]
+                },
+                "label": {
+                    "showLabel": false
+                },
+                "icon": {
+                    "showIcon": false,
+                    "icon": ""
+                },
+                "valueBoundaries": {
+                    "min": "auto",
+                    "max": "auto"
+                },
+                "autoSelectVisualization": false
+            },
+            "visualization": "lineChart",
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "1": {
+            "type": "data",
+            "title": "Network interface packets sent on host",
+            "query": "timeseries avg(dt.host.net.nic.packets.tx), by: { dt.entity.host }, \nfilter:dt.entity.host in [fetch dt.entity.host | filter in(managementZones, $ManagementZone) | fields id]\n| fieldsAdd host.net.nic.packets.tx = ArrayAvg(`avg(dt.host.net.nic.packets.tx)`)\n| fieldsAdd name=entityAttr(dt.entity.host, \"entity.name\")\n| sort host.net.nic.packets.tx desc\n| limit 20",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "xAxisScaling": "analyzedTimeframe",
+                    "gapPolicy": "gap",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "curve": "linear",
+                    "pointsDisplay": "auto",
+                    "categoricalBarChartSettings": {
+                        "layout": "horizontal",
+                        "categoryAxisTickLayout": "horizontal",
+                        "scale": "absolute",
+                        "groupMode": "stacked",
+                        "colorPaletteMode": "multi-color",
+                        "categoryAxis": [
+                            "dt.entity.host",
+                            "name"
+                        ],
+                        "categoryAxisLabel": "dt.entity.host,name",
+                        "valueAxis": [
+                            "host.net.nic.packets.tx"
+                        ],
+                        "valueAxisLabel": "host.net.nic.packets.tx",
+                        "tooltipVariant": "single"
+                    },
+                    "colorPalette": "categorical",
+                    "valueRepresentation": "absolute",
+                    "truncationMode": "middle",
+                    "xAxisLabel": "timeframe",
+                    "xAxisIsLabelVisible": false,
+                    "hiddenLegendFields": [
+                        "dt.entity.host",
+                        "interval",
+                        "host.net.nic.packets.tx"
+                    ],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "avg(dt.host.net.nic.packets.tx)"
+                        ]
+                    },
+                    "leftYAxisSettings": {
+                        "isLabelVisible": false,
+                        "label": "host.net.nic.packets.tx"
+                    },
+                    "legend": {
+                        "position": "right",
+                        "hidden": false
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "host.net.nic.packets.tx",
+                    "prefixIcon": "",
+                    "recordField": "host.net.nic.packets.tx",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "trend": {
+                        "trendType": "auto",
+                        "isVisible": true
+                    },
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "linewrapEnabled": false,
+                    "lineWrapIds": [],
+                    "monospacedFontEnabled": false,
+                    "monospacedFontColumns": [],
+                    "columnWidths": {},
+                    "columnTypeOverrides": [
+                        {
+                            "fields": [
+                                "avg(dt.host.net.nic.packets.tx)"
+                            ],
+                            "value": "sparkline",
+                            "id": 1738162703501
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": {
+                        "hidden": false,
+                        "position": "auto"
+                    },
+                    "displayedFields": [
+                        "dt.entity.host",
+                        "name"
+                    ],
+                    "dataMappings": {
+                        "value": "host.net.nic.packets.tx"
+                    },
+                    "truncationMode": "middle",
+                    "colorMode": "color-palette",
+                    "colorPalette": "blue"
+                },
+                "histogram": {
+                    "legend": "auto",
+                    "yAxis": {
+                        "label": "Frequency",
+                        "scale": "linear"
+                    },
+                    "colorPalette": "categorical",
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "host.net.nic.packets.tx",
+                            "rangeAxis": ""
+                        }
+                    ],
+                    "variant": "single",
+                    "truncationMode": "middle",
+                    "displayedFields": [
+                        "dt.entity.host"
+                    ]
+                },
+                "label": {
+                    "showLabel": false
+                },
+                "icon": {
+                    "showIcon": false,
+                    "icon": ""
+                },
+                "valueBoundaries": {
+                    "min": "auto",
+                    "max": "auto"
+                },
+                "autoSelectVisualization": false
+            },
+            "visualization": "lineChart",
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "2": {
+            "type": "data",
+            "title": "Network interface bytes received on host",
+            "query": "timeseries avg(dt.host.net.nic.bytes_rx), by: { dt.entity.host }, \nfilter:dt.entity.host in [fetch dt.entity.host | filter in(managementZones, $ManagementZone) | fields id]\n| fieldsAdd host.net.nic.bytes_rx = ArrayAvg(`avg(dt.host.net.nic.bytes_rx)`)\n| fieldsAdd name=entityAttr(dt.entity.host, \"entity.name\")\n| sort host.net.nic.bytes_rx desc\n| limit 20",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "xAxisScaling": "analyzedTimeframe",
+                    "gapPolicy": "gap",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "curve": "linear",
+                    "pointsDisplay": "auto",
+                    "categoricalBarChartSettings": {
+                        "layout": "horizontal",
+                        "categoryAxisTickLayout": "horizontal",
+                        "scale": "absolute",
+                        "groupMode": "stacked",
+                        "colorPaletteMode": "multi-color",
+                        "categoryAxis": [
+                            "dt.entity.host",
+                            "name"
+                        ],
+                        "categoryAxisLabel": "dt.entity.host,name",
+                        "valueAxis": [
+                            "host.net.nic.bytes_rx"
+                        ],
+                        "valueAxisLabel": "host.net.nic.bytes_rx",
+                        "tooltipVariant": "single"
+                    },
+                    "colorPalette": "categorical",
+                    "valueRepresentation": "absolute",
+                    "truncationMode": "middle",
+                    "xAxisLabel": "timeframe",
+                    "xAxisIsLabelVisible": false,
+                    "hiddenLegendFields": [
+                        "dt.entity.host",
+                        "interval",
+                        "host.net.nic.bytes_rx"
+                    ],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "avg(dt.host.net.nic.bytes_rx)"
+                        ]
+                    },
+                    "leftYAxisSettings": {
+                        "isLabelVisible": false,
+                        "label": "host.net.nic.bytes_rx"
+                    },
+                    "legend": {
+                        "position": "right",
+                        "hidden": false
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "host.net.nic.bytes_rx",
+                    "prefixIcon": "",
+                    "recordField": "host.net.nic.bytes_rx",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "trend": {
+                        "trendType": "auto",
+                        "isVisible": true
+                    },
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "linewrapEnabled": false,
+                    "lineWrapIds": [],
+                    "monospacedFontEnabled": false,
+                    "monospacedFontColumns": [],
+                    "columnWidths": {},
+                    "columnTypeOverrides": [
+                        {
+                            "fields": [
+                                "avg(dt.host.net.nic.bytes_rx)"
+                            ],
+                            "value": "sparkline",
+                            "id": 1738162703501
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": {
+                        "hidden": false,
+                        "position": "auto"
+                    },
+                    "displayedFields": [
+                        "dt.entity.host",
+                        "name"
+                    ],
+                    "dataMappings": {
+                        "value": "host.net.nic.bytes_rx"
+                    },
+                    "truncationMode": "middle",
+                    "colorMode": "color-palette",
+                    "colorPalette": "blue"
+                },
+                "histogram": {
+                    "legend": "auto",
+                    "yAxis": {
+                        "label": "Frequency",
+                        "scale": "linear"
+                    },
+                    "colorPalette": "categorical",
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "host.net.nic.bytes_rx",
+                            "rangeAxis": ""
+                        }
+                    ],
+                    "variant": "single",
+                    "truncationMode": "middle",
+                    "displayedFields": [
+                        "dt.entity.host"
+                    ]
+                },
+                "label": {
+                    "showLabel": false
+                },
+                "icon": {
+                    "showIcon": false,
+                    "icon": ""
+                },
+                "valueBoundaries": {
+                    "min": "auto",
+                    "max": "auto"
+                },
+                "autoSelectVisualization": false
+            },
+            "visualization": "lineChart",
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "3": {
+            "type": "data",
+            "title": "Network interface bytes sent on host",
+            "query": "timeseries avg(dt.host.net.nic.bytes_tx), by: { dt.entity.host }, \nfilter:dt.entity.host in [fetch dt.entity.host | filter in(managementZones, $ManagementZone) | fields id]\n| fieldsAdd host.net.nic.bytes_tx = ArrayAvg(`avg(dt.host.net.nic.bytes_tx)`)\n| fieldsAdd name=entityAttr(dt.entity.host, \"entity.name\")\n| sort host.net.nic.bytes_tx desc\n| limit 20",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "xAxisScaling": "analyzedTimeframe",
+                    "gapPolicy": "gap",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "curve": "linear",
+                    "pointsDisplay": "auto",
+                    "categoricalBarChartSettings": {
+                        "layout": "horizontal",
+                        "categoryAxisTickLayout": "horizontal",
+                        "scale": "absolute",
+                        "groupMode": "stacked",
+                        "colorPaletteMode": "multi-color",
+                        "categoryAxis": [
+                            "dt.entity.host",
+                            "name"
+                        ],
+                        "categoryAxisLabel": "dt.entity.host,name",
+                        "valueAxis": [
+                            "host.net.nic.bytes_tx"
+                        ],
+                        "valueAxisLabel": "host.net.nic.bytes_tx",
+                        "tooltipVariant": "single"
+                    },
+                    "colorPalette": "categorical",
+                    "valueRepresentation": "absolute",
+                    "truncationMode": "middle",
+                    "xAxisLabel": "timeframe",
+                    "xAxisIsLabelVisible": false,
+                    "hiddenLegendFields": [
+                        "host",
+                        "interval",
+                        "host.net.nic.bytes_tx"
+                    ],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "avg(dt.host.net.nic.bytes_tx)"
+                        ]
+                    },
+                    "leftYAxisSettings": {
+                        "isLabelVisible": false,
+                        "label": "host.net.nic.bytes_tx"
+                    },
+                    "legend": {
+                        "position": "right",
+                        "hidden": false
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "host.net.nic.bytes_tx",
+                    "prefixIcon": "",
+                    "recordField": "host.net.nic.bytes_tx",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "trend": {
+                        "trendType": "auto",
+                        "isVisible": true
+                    },
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "linewrapEnabled": false,
+                    "lineWrapIds": [],
+                    "monospacedFontEnabled": false,
+                    "monospacedFontColumns": [],
+                    "columnWidths": {},
+                    "columnTypeOverrides": [
+                        {
+                            "fields": [
+                                "avg(dt.host.net.nic.bytes_tx)"
+                            ],
+                            "value": "sparkline",
+                            "id": 1738162703501
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": {
+                        "hidden": false,
+                        "position": "auto"
+                    },
+                    "displayedFields": [
+                        "dt.entity.host",
+                        "name"
+                    ],
+                    "dataMappings": {
+                        "value": "host.net.nic.bytes_tx"
+                    },
+                    "truncationMode": "middle",
+                    "colorMode": "color-palette",
+                    "colorPalette": "blue"
+                },
+                "histogram": {
+                    "legend": "auto",
+                    "yAxis": {
+                        "label": "Frequency",
+                        "scale": "linear"
+                    },
+                    "colorPalette": "categorical",
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "host.net.nic.bytes_tx",
+                            "rangeAxis": ""
+                        }
+                    ],
+                    "variant": "single",
+                    "truncationMode": "middle",
+                    "displayedFields": [
+                        "dt.entity.host"
+                    ]
+                },
+                "label": {
+                    "showLabel": false
+                },
+                "icon": {
+                    "showIcon": false,
+                    "icon": ""
+                },
+                "valueBoundaries": {
+                    "min": "auto",
+                    "max": "auto"
+                },
+                "autoSelectVisualization": false
+            },
+            "visualization": "lineChart",
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "4": {
+            "type": "data",
+            "title": "Network interface received packets dropped on host",
+            "query": "timeseries avg(dt.host.net.nic.packets.dropped_rx), by: { dt.entity.host }, \nfilter:dt.entity.host in [fetch dt.entity.host | filter in(managementZones, $ManagementZone) | fields id]\n| fieldsAdd host.net.nic.packets.dropped_rx = ArrayAvg(`avg(dt.host.net.nic.packets.dropped_rx)`)\n| fieldsAdd name=entityAttr(dt.entity.host, \"entity.name\")\n| sort host.net.nic.packets.dropped_rx desc\n| limit 20",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "xAxisScaling": "analyzedTimeframe",
+                    "gapPolicy": "gap",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "curve": "linear",
+                    "pointsDisplay": "auto",
+                    "categoricalBarChartSettings": {
+                        "layout": "horizontal",
+                        "categoryAxisTickLayout": "horizontal",
+                        "scale": "absolute",
+                        "groupMode": "stacked",
+                        "colorPaletteMode": "multi-color",
+                        "categoryAxis": [
+                            "dt.entity.host",
+                            "name"
+                        ],
+                        "categoryAxisLabel": "dt.entity.host,name",
+                        "valueAxis": [
+                            "host.net.nic.packets.dropped_rx"
+                        ],
+                        "valueAxisLabel": "host.net.nic.packets.dropped_rx",
+                        "tooltipVariant": "single"
+                    },
+                    "colorPalette": "categorical",
+                    "valueRepresentation": "absolute",
+                    "truncationMode": "middle",
+                    "xAxisLabel": "timeframe",
+                    "xAxisIsLabelVisible": false,
+                    "hiddenLegendFields": [
+                        "host",
+                        "interval",
+                        "host.net.nic.packets.dropped_rx"
+                    ],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "avg(dt.host.net.nic.packets.dropped_rx)"
+                        ]
+                    },
+                    "leftYAxisSettings": {
+                        "isLabelVisible": false,
+                        "label": "host.net.nic.packets.dropped_rx"
+                    },
+                    "legend": {
+                        "position": "right",
+                        "hidden": false
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "host.net.nic.packets.dropped_rx",
+                    "prefixIcon": "",
+                    "recordField": "host.net.nic.packets.dropped_rx",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "trend": {
+                        "trendType": "auto",
+                        "isVisible": true
+                    },
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "linewrapEnabled": false,
+                    "lineWrapIds": [],
+                    "monospacedFontEnabled": false,
+                    "monospacedFontColumns": [],
+                    "columnWidths": {},
+                    "columnTypeOverrides": [
+                        {
+                            "fields": [
+                                "avg(dt.host.net.nic.packets.dropped_rx)"
+                            ],
+                            "value": "sparkline",
+                            "id": 1738162703501
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": {
+                        "hidden": false,
+                        "position": "auto"
+                    },
+                    "displayedFields": [
+                        "dt.entity.host",
+                        "name"
+                    ],
+                    "dataMappings": {
+                        "value": "host.net.nic.packets.dropped_rx"
+                    },
+                    "truncationMode": "middle",
+                    "colorMode": "color-palette",
+                    "colorPalette": "blue"
+                },
+                "histogram": {
+                    "legend": "auto",
+                    "yAxis": {
+                        "label": "Frequency",
+                        "scale": "linear"
+                    },
+                    "colorPalette": "categorical",
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "host.net.nic.packets.dropped_rx",
+                            "rangeAxis": ""
+                        }
+                    ],
+                    "variant": "single",
+                    "truncationMode": "middle",
+                    "displayedFields": [
+                        "dt.entity.host"
+                    ]
+                },
+                "label": {
+                    "showLabel": false
+                },
+                "icon": {
+                    "showIcon": false,
+                    "icon": ""
+                },
+                "valueBoundaries": {
+                    "min": "auto",
+                    "max": "auto"
+                },
+                "autoSelectVisualization": false
+            },
+            "visualization": "lineChart",
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "5": {
+            "type": "data",
+            "title": "Network interface sent packets dropped on host",
+            "query": "timeseries avg(dt.host.net.nic.packets.dropped_tx), by: { dt.entity.host }, \nfilter:dt.entity.host in [fetch dt.entity.host | filter in(managementZones, $ManagementZone) | fields id]\n| fieldsAdd host.net.nic.packets.dropped_tx = ArrayAvg(`avg(dt.host.net.nic.packets.dropped_tx)`)\n| fieldsAdd name=entityAttr(dt.entity.host, \"entity.name\")\n| sort host.net.nic.packets.dropped_tx desc\n| limit 20",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "xAxisScaling": "analyzedTimeframe",
+                    "gapPolicy": "gap",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "curve": "linear",
+                    "pointsDisplay": "auto",
+                    "categoricalBarChartSettings": {
+                        "layout": "horizontal",
+                        "categoryAxisTickLayout": "horizontal",
+                        "scale": "absolute",
+                        "groupMode": "stacked",
+                        "colorPaletteMode": "multi-color",
+                        "categoryAxis": [
+                            "dt.entity.host",
+                            "name"
+                        ],
+                        "categoryAxisLabel": "dt.entity.host,name",
+                        "valueAxis": [
+                            "host.net.nic.packets.dropped_tx"
+                        ],
+                        "valueAxisLabel": "host.net.nic.packets.dropped_tx",
+                        "tooltipVariant": "single"
+                    },
+                    "colorPalette": "categorical",
+                    "valueRepresentation": "absolute",
+                    "truncationMode": "middle",
+                    "xAxisLabel": "timeframe",
+                    "xAxisIsLabelVisible": false,
+                    "hiddenLegendFields": [
+                        "dt.entity.host",
+                        "interval",
+                        "host.net.nic.packets.dropped_tx"
+                    ],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "avg(dt.host.net.nic.packets.dropped_tx)"
+                        ]
+                    },
+                    "leftYAxisSettings": {
+                        "isLabelVisible": false,
+                        "label": "host.net.nic.packets.dropped_tx"
+                    },
+                    "legend": {
+                        "position": "right",
+                        "hidden": false
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "host.net.nic.packets.dropped_tx",
+                    "prefixIcon": "",
+                    "recordField": "host.net.nic.packets.dropped_tx",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "trend": {
+                        "trendType": "auto",
+                        "isVisible": true
+                    },
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "linewrapEnabled": false,
+                    "lineWrapIds": [],
+                    "monospacedFontEnabled": false,
+                    "monospacedFontColumns": [],
+                    "columnWidths": {},
+                    "columnTypeOverrides": [
+                        {
+                            "fields": [
+                                "avg(dt.host.net.nic.packets.dropped_tx)"
+                            ],
+                            "value": "sparkline",
+                            "id": 1738162703501
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": {
+                        "hidden": false,
+                        "position": "auto"
+                    },
+                    "displayedFields": [
+                        "dt.entity.host",
+                        "name"
+                    ],
+                    "dataMappings": {
+                        "value": "host.net.nic.packets.dropped_tx"
+                    },
+                    "truncationMode": "middle",
+                    "colorMode": "color-palette",
+                    "colorPalette": "blue"
+                },
+                "histogram": {
+                    "legend": "auto",
+                    "yAxis": {
+                        "label": "Frequency",
+                        "scale": "linear"
+                    },
+                    "colorPalette": "categorical",
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "host.net.nic.packets.dropped_tx",
+                            "rangeAxis": ""
+                        }
+                    ],
+                    "variant": "single",
+                    "truncationMode": "middle",
+                    "displayedFields": [
+                        "dt.entity.host"
+                    ]
+                },
+                "label": {
+                    "showLabel": false
+                },
+                "icon": {
+                    "showIcon": false,
+                    "icon": ""
+                },
+                "valueBoundaries": {
+                    "min": "auto",
+                    "max": "auto"
+                },
+                "autoSelectVisualization": false
+            },
+            "visualization": "lineChart",
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "6": {
+            "type": "data",
+            "title": "Network interface received packet errors on host",
+            "query": "timeseries avg(dt.host.net.nic.packets.errors_rx), by: { dt.entity.host }, \nfilter:dt.entity.host in [fetch dt.entity.host | filter in(managementZones, $ManagementZone) | fields id]\n| fieldsAdd host.net.nic.packets.errors_rx = ArrayAvg(`avg(dt.host.net.nic.packets.errors_rx)`)\n| fieldsAdd name=entityAttr(dt.entity.host, \"entity.name\")\n| sort host.net.nic.packets.errors_rx desc\n| limit 20",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "xAxisScaling": "analyzedTimeframe",
+                    "gapPolicy": "gap",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "curve": "linear",
+                    "pointsDisplay": "auto",
+                    "categoricalBarChartSettings": {
+                        "layout": "horizontal",
+                        "categoryAxisTickLayout": "horizontal",
+                        "scale": "absolute",
+                        "groupMode": "stacked",
+                        "colorPaletteMode": "multi-color",
+                        "categoryAxis": [
+                            "dt.entity.host",
+                            "name"
+                        ],
+                        "categoryAxisLabel": "dt.entity.host,name",
+                        "valueAxis": [
+                            "host.net.nic.packets.errors_rx"
+                        ],
+                        "valueAxisLabel": "host.net.nic.packets.errors_rx",
+                        "tooltipVariant": "single"
+                    },
+                    "colorPalette": "categorical",
+                    "valueRepresentation": "absolute",
+                    "truncationMode": "middle",
+                    "xAxisLabel": "timeframe",
+                    "xAxisIsLabelVisible": false,
+                    "hiddenLegendFields": [
+                        "dt.entity.host",
+                        "interval",
+                        "host.net.nic.packets.errors_rx"
+                    ],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "avg(dt.host.net.nic.packets.errors_rx)"
+                        ]
+                    },
+                    "leftYAxisSettings": {
+                        "isLabelVisible": false,
+                        "label": "host.net.nic.packets.errors_rx"
+                    },
+                    "legend": {
+                        "position": "right",
+                        "hidden": false
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "host.net.nic.packets.errors_rx",
+                    "prefixIcon": "",
+                    "recordField": "host.net.nic.packets.errors_rx",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "trend": {
+                        "trendType": "auto",
+                        "isVisible": true
+                    },
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "linewrapEnabled": false,
+                    "lineWrapIds": [],
+                    "monospacedFontEnabled": false,
+                    "monospacedFontColumns": [],
+                    "columnWidths": {},
+                    "columnTypeOverrides": [
+                        {
+                            "fields": [
+                                "avg(dt.host.net.nic.packets.errors_rx)"
+                            ],
+                            "value": "sparkline",
+                            "id": 1738162703501
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": {
+                        "hidden": false,
+                        "position": "auto"
+                    },
+                    "displayedFields": [
+                        "dt.entity.host",
+                        "name"
+                    ],
+                    "dataMappings": {
+                        "value": "host.net.nic.packets.errors_rx"
+                    },
+                    "truncationMode": "middle",
+                    "colorMode": "color-palette",
+                    "colorPalette": "blue"
+                },
+                "histogram": {
+                    "legend": "auto",
+                    "yAxis": {
+                        "label": "Frequency",
+                        "scale": "linear"
+                    },
+                    "colorPalette": "categorical",
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "host.net.nic.packets.errors_rx",
+                            "rangeAxis": ""
+                        }
+                    ],
+                    "variant": "single",
+                    "truncationMode": "middle",
+                    "displayedFields": [
+                        "dt.entity.host"
+                    ]
+                },
+                "label": {
+                    "showLabel": false
+                },
+                "icon": {
+                    "showIcon": false,
+                    "icon": ""
+                },
+                "valueBoundaries": {
+                    "min": "auto",
+                    "max": "auto"
+                },
+                "autoSelectVisualization": false
+            },
+            "visualization": "lineChart",
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "7": {
+            "type": "data",
+            "title": "Network interface sent packet errors on host",
+            "query": "timeseries avg(dt.host.net.nic.packets.errors_tx), by: { dt.entity.host }, \nfilter:dt.entity.host in [fetch dt.entity.host | filter in(managementZones, $ManagementZone) | fields id]\n| fieldsAdd host.net.nic.packets.errors_tx = ArrayAvg(`avg(dt.host.net.nic.packets.errors_tx)`)\n| fieldsAdd name=entityAttr(dt.entity.host, \"entity.name\")\n| sort host.net.nic.packets.errors_tx desc\n| limit 20",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "xAxisScaling": "analyzedTimeframe",
+                    "gapPolicy": "gap",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "curve": "linear",
+                    "pointsDisplay": "auto",
+                    "categoricalBarChartSettings": {
+                        "layout": "horizontal",
+                        "categoryAxisTickLayout": "horizontal",
+                        "scale": "absolute",
+                        "groupMode": "stacked",
+                        "colorPaletteMode": "multi-color",
+                        "categoryAxis": [
+                            "dt.entity.host",
+                            "name"
+                        ],
+                        "categoryAxisLabel": "dt.entity.host,name",
+                        "valueAxis": [
+                            "host.net.nic.packets.errors_tx"
+                        ],
+                        "valueAxisLabel": "host.net.nic.packets.errors_tx",
+                        "tooltipVariant": "single"
+                    },
+                    "colorPalette": "categorical",
+                    "valueRepresentation": "absolute",
+                    "truncationMode": "middle",
+                    "xAxisLabel": "timeframe",
+                    "xAxisIsLabelVisible": false,
+                    "hiddenLegendFields": [
+                        "dt.entity.host",
+                        "interval",
+                        "host.net.nic.packets.errors_tx"
+                    ],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "avg(dt.host.net.nic.packets.errors_tx)"
+                        ]
+                    },
+                    "leftYAxisSettings": {
+                        "isLabelVisible": false,
+                        "label": "host.net.nic.packets.errors_tx"
+                    },
+                    "legend": {
+                        "position": "right",
+                        "hidden": false
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "host.net.nic.packets.errors_tx",
+                    "prefixIcon": "",
+                    "recordField": "host.net.nic.packets.errors_tx",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "trend": {
+                        "trendType": "auto",
+                        "isVisible": true
+                    },
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "linewrapEnabled": false,
+                    "lineWrapIds": [],
+                    "monospacedFontEnabled": false,
+                    "monospacedFontColumns": [],
+                    "columnWidths": {},
+                    "columnTypeOverrides": [
+                        {
+                            "fields": [
+                                "avg(dt.host.net.nic.packets.errors_tx)"
+                            ],
+                            "value": "sparkline",
+                            "id": 1738162703501
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": {
+                        "hidden": false,
+                        "position": "auto"
+                    },
+                    "displayedFields": [
+                        "dt.entity.host",
+                        "name"
+                    ],
+                    "dataMappings": {
+                        "value": "host.net.nic.packets.errors_tx"
+                    },
+                    "truncationMode": "middle",
+                    "colorMode": "color-palette",
+                    "colorPalette": "blue"
+                },
+                "histogram": {
+                    "legend": "auto",
+                    "yAxis": {
+                        "label": "Frequency",
+                        "scale": "linear"
+                    },
+                    "colorPalette": "categorical",
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "host.net.nic.packets.errors_tx",
+                            "rangeAxis": ""
+                        }
+                    ],
+                    "variant": "single",
+                    "truncationMode": "middle",
+                    "displayedFields": [
+                        "dt.entity.host"
+                    ]
+                },
+                "label": {
+                    "showLabel": false
+                },
+                "icon": {
+                    "showIcon": false,
+                    "icon": ""
+                },
+                "valueBoundaries": {
+                    "min": "auto",
+                    "max": "auto"
+                },
+                "autoSelectVisualization": false
+            },
+            "visualization": "lineChart",
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "8": {
+            "type": "data",
+            "title": "Network interface receive link utilization on host",
+            "query": "timeseries avg(dt.host.net.nic.link_util_rx), by: { dt.entity.host }, \nfilter:dt.entity.host in [fetch dt.entity.host | filter in(managementZones, $ManagementZone) | fields id]\n| fieldsAdd host.net.nic.link_util_rx = ArrayAvg(`avg(dt.host.net.nic.link_util_rx)`)\n| fieldsAdd name=entityAttr(dt.entity.host, \"entity.name\")\n| sort host.net.nic.link_util_rx desc\n| limit 20",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "xAxisScaling": "analyzedTimeframe",
+                    "gapPolicy": "gap",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "curve": "linear",
+                    "pointsDisplay": "auto",
+                    "categoricalBarChartSettings": {
+                        "layout": "horizontal",
+                        "categoryAxisTickLayout": "horizontal",
+                        "scale": "absolute",
+                        "groupMode": "stacked",
+                        "colorPaletteMode": "multi-color",
+                        "categoryAxis": [
+                            "dt.entity.host",
+                            "name"
+                        ],
+                        "categoryAxisLabel": "dt.entity.host,name",
+                        "valueAxis": [
+                            "host.net.nic.link_util_rx"
+                        ],
+                        "valueAxisLabel": "host.net.nic.link_util_rx",
+                        "tooltipVariant": "single"
+                    },
+                    "colorPalette": "categorical",
+                    "valueRepresentation": "absolute",
+                    "truncationMode": "middle",
+                    "xAxisLabel": "timeframe",
+                    "xAxisIsLabelVisible": false,
+                    "hiddenLegendFields": [
+                        "dt.entity.host",
+                        "interval",
+                        "host.net.nic.link_util_rx"
+                    ],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "avg(dt.host.net.nic.link_util_rx)"
+                        ]
+                    },
+                    "leftYAxisSettings": {
+                        "isLabelVisible": false,
+                        "label": "host.net.nic.link_util_rx"
+                    },
+                    "legend": {
+                        "position": "right",
+                        "hidden": false
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "host.net.nic.link_util_rx",
+                    "prefixIcon": "",
+                    "recordField": "host.net.nic.link_util_rx",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "trend": {
+                        "trendType": "auto",
+                        "isVisible": true
+                    },
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "linewrapEnabled": false,
+                    "lineWrapIds": [],
+                    "monospacedFontEnabled": false,
+                    "monospacedFontColumns": [],
+                    "columnWidths": {},
+                    "columnTypeOverrides": [
+                        {
+                            "fields": [
+                                "avg(dt.host.net.nic.link_util_rx)"
+                            ],
+                            "value": "sparkline",
+                            "id": 1738162703501
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": {
+                        "hidden": false,
+                        "position": "auto"
+                    },
+                    "displayedFields": [
+                        "dt.entity.host",
+                        "name"
+                    ],
+                    "dataMappings": {
+                        "value": "host.net.nic.link_util_rx"
+                    },
+                    "truncationMode": "middle",
+                    "colorMode": "color-palette",
+                    "colorPalette": "blue"
+                },
+                "histogram": {
+                    "legend": "auto",
+                    "yAxis": {
+                        "label": "Frequency",
+                        "scale": "linear"
+                    },
+                    "colorPalette": "categorical",
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "host.net.nic.link_util_rx",
+                            "rangeAxis": ""
+                        }
+                    ],
+                    "variant": "single",
+                    "truncationMode": "middle",
+                    "displayedFields": [
+                        "dt.entity.host"
+                    ]
+                },
+                "label": {
+                    "showLabel": false
+                },
+                "icon": {
+                    "showIcon": false,
+                    "icon": ""
+                },
+                "valueBoundaries": {
+                    "min": "auto",
+                    "max": "auto"
+                },
+                "autoSelectVisualization": false
+            },
+            "visualization": "lineChart",
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "9": {
+            "type": "data",
+            "title": "Network interface transmit link utilization on host",
+            "query": "timeseries avg(dt.host.net.nic.link_util_tx), by: { dt.entity.host }, \nfilter:dt.entity.host in [fetch dt.entity.host | filter in(managementZones, $ManagementZone) | fields id]\n| fieldsAdd host.net.nic.link_util_tx = ArrayAvg(`avg(dt.host.net.nic.link_util_tx)`)\n| fieldsAdd name=entityAttr(dt.entity.host, \"entity.name\")\n| sort host.net.nic.link_util_tx desc\n| limit 20",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "xAxisScaling": "analyzedTimeframe",
+                    "gapPolicy": "gap",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "curve": "linear",
+                    "pointsDisplay": "auto",
+                    "categoricalBarChartSettings": {
+                        "layout": "horizontal",
+                        "categoryAxisTickLayout": "horizontal",
+                        "scale": "absolute",
+                        "groupMode": "stacked",
+                        "colorPaletteMode": "multi-color",
+                        "categoryAxis": [
+                            "dt.entity.host"
+                        ],
+                        "categoryAxisLabel": "dt.entity.host",
+                        "valueAxis": [
+                            "host.net.nic.link_util_tx"
+                        ],
+                        "valueAxisLabel": "host.net.nic.link_util_tx",
+                        "tooltipVariant": "single"
+                    },
+                    "colorPalette": "categorical",
+                    "valueRepresentation": "absolute",
+                    "truncationMode": "middle",
+                    "xAxisLabel": "timeframe",
+                    "xAxisIsLabelVisible": false,
+                    "hiddenLegendFields": [
+                        "host",
+                        "interval",
+                        "host.net.nic.link_util_tx"
+                    ],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "avg(dt.host.net.nic.link_util_tx)"
+                        ]
+                    },
+                    "leftYAxisSettings": {
+                        "isLabelVisible": false,
+                        "label": "host.net.nic.link_util_tx"
+                    },
+                    "legend": {
+                        "position": "right",
+                        "hidden": false
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "host.net.nic.link_util_tx",
+                    "prefixIcon": "",
+                    "recordField": "host.net.nic.link_util_tx",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "trend": {
+                        "trendType": "auto",
+                        "isVisible": true
+                    },
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "linewrapEnabled": false,
+                    "lineWrapIds": [],
+                    "monospacedFontEnabled": false,
+                    "monospacedFontColumns": [],
+                    "columnWidths": {},
+                    "columnTypeOverrides": [
+                        {
+                            "fields": [
+                                "avg(dt.host.net.nic.link_util_tx)"
+                            ],
+                            "value": "sparkline",
+                            "id": 1738162703501
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": {
+                        "hidden": false,
+                        "position": "auto"
+                    },
+                    "displayedFields": [
+                        "dt.entity.host"
+                    ],
+                    "dataMappings": {
+                        "value": "host.net.nic.link_util_tx"
+                    },
+                    "truncationMode": "middle",
+                    "colorMode": "color-palette",
+                    "colorPalette": "blue"
+                },
+                "histogram": {
+                    "legend": "auto",
+                    "yAxis": {
+                        "label": "Frequency",
+                        "scale": "linear"
+                    },
+                    "colorPalette": "categorical",
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "host.net.nic.link_util_tx",
+                            "rangeAxis": ""
+                        }
+                    ],
+                    "variant": "single",
+                    "truncationMode": "middle",
+                    "displayedFields": [
+                        "dt.entity.host"
+                    ]
+                },
+                "label": {
+                    "showLabel": false
+                },
+                "icon": {
+                    "showIcon": false,
+                    "icon": ""
+                },
+                "valueBoundaries": {
+                    "min": "auto",
+                    "max": "auto"
+                },
+                "autoSelectVisualization": false
+            },
+            "visualization": "lineChart",
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        }
+    },
+    "layouts": {
+        "0": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 6
+        },
+        "1": {
+            "x": 12,
+            "y": 0,
+            "w": 12,
+            "h": 6
+        },
+        "2": {
+            "x": 0,
+            "y": 6,
+            "w": 12,
+            "h": 6
+        },
+        "3": {
+            "x": 12,
+            "y": 6,
+            "w": 12,
+            "h": 6
+        },
+        "4": {
+            "x": 0,
+            "y": 12,
+            "w": 12,
+            "h": 6
+        },
+        "5": {
+            "x": 12,
+            "y": 12,
+            "w": 12,
+            "h": 6
+        },
+        "6": {
+            "x": 0,
+            "y": 18,
+            "w": 12,
+            "h": 6
+        },
+        "7": {
+            "x": 12,
+            "y": 18,
+            "w": 12,
+            "h": 6
+        },
+        "8": {
+            "x": 0,
+            "y": 24,
+            "w": 12,
+            "h": 6
+        },
+        "9": {
+            "x": 12,
+            "y": 24,
+            "w": 12,
+            "h": 6
+        }
+    },
+    "importedWithCode": false,
+    "settings": {}
+}

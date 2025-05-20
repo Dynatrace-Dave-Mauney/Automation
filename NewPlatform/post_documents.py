@@ -31,11 +31,28 @@ def run():
     # post_notebooks(env, f'../$Private/Customers/$Current/Assets/NewPlatform/Notebooks/{env}/*.json')
 
     # env='Sandbox'
-    # env='PreProd'
+    env='PreProd'
     # env='Prod'
 
-    post_dashboards(env, f'Dashboards/Assets/Templates/*.json')
-    post_launchpads(env, 'Launchpads/Assets/*.json')
+    # post_dashboards(env, f'Dashboards/Assets/Templates/*.json')
+    # post_dashboards(env, f'Dashboards/Assets/Entities by ManagementZone.json')
+    # post_dashboards(env, f'Dashboards/Assets/Key Metrics by ManagementZone.json')
+    # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE Hosts By Management Zone.json')
+    # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE Hosts (Detailed) By Management Zone.json')
+    # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE Java Memory By Management Zone.json')
+    # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE Overview By Management Zone.json')
+    # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE Services By Management Zone.json')
+    # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE Service Errors By Management Zone.json')
+    # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE Service HTTP Errors By Management Zone.json')
+    # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE Web Servers By Management Zone.json')
+    # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE Backend Overview By Management Zone.json')
+    # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE Network (Host-Level Details) By Management Zone.json')
+    # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE Network (Process-Level Details) By Management Zone.json')
+    # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE Containers By Management Zone.json')
+    # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE Go By Management Zone.json')
+    # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE Node.js By Management Zone.json')
+    post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE Full Stack Overview By Management Zone.json')
+    # post_launchpads(env, 'Launchpads/Assets/*.json')
 
 def post_dashboards(env_name, path):
     post_documents(env_name, path, 'dashboard')
