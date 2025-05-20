@@ -33,18 +33,13 @@ AccountID appears as the query parameter in the address URL
 friendly_function_name = 'Dynatrace Automation'
 env_name_supplied = environment.get_env_name(friendly_function_name)
 # For easy control from IDE
-# env_name_supplied = 'Prod'
-# env_name_supplied = 'NonProd'
 # env_name_supplied = 'Sandbox'
-#
-# env_name_supplied = 'Upper'
-# env_name_supplied = 'Lower'
 # env_name_supplied = 'PreProd'
-# env_name_supplied = 'Dev'
-# env_name_supplied = 'Personal'
-# env_name_supplied = 'Demo'
+# env_name_supplied = 'Prod'
 env_name, env, client_id, client_secret = environment.get_client_environment_for_function(env_name_supplied, friendly_function_name)
-account_id = os.getenv(f'DYNATRACE_AUTOMATION_ACCOUNT_ID_{env_name}')
+client_name = os.getenv(f'DYNATRACE_{env_name.upper()}_CLIENT_NAME')
+# print('client_name:', client_name)
+account_id = os.getenv(f'DYNATRACE_AUTOMATION_ACCOUNT_ID_{client_name}')
 skip_slow_api_calls = environment.get_boolean_environment_variable('DYNATRACE_AUTOMATION_SKIP_SLOW_ACCOUNT_MANAGEMENT_API_CALLS_{env_name}', 'True')
 environment_variable_source = 'Newest Environment Variable Names'
 
