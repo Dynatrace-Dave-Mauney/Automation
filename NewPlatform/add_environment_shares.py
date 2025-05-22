@@ -57,17 +57,20 @@ def get_document_id_list(env, client_id, client_secret):
         document_id = document.get('id')
         document_name = document.get('name')
         document_owner = document.get('owner')
-        print(document_owner)
 
-        if document_owner in owner_id_list:
-            # pass
-            print('Skipping document with owner not in the configured owner list')
-        else:
+        if document_owner not in owner_id_list:
+            # print(f'Skipping document with owner not in the configured owner list: {document_owner}')
             continue
 
-        # Skip Events dashboards/notebooks since queries have a cost
-        if 'Events' not in document_name:
+        # Only share "official" dashboards with environment prefixes
+        if document_name.startswith('Sandbox ') or document_name.startswith('Preprod ') or document_name.startswith('Prod '):
+            # print(f'{document_name} will be shared')
             document_id_list.append(document_id)
+
+        # Superceded by the "official" check above...
+        # Skip Events dashboards/notebooks since queries have a cost
+        # if 'Events' not in document_name:
+        #     document_id_list.append(document_id)
 
     return document_id_list
 
@@ -84,14 +87,9 @@ def main():
     friendly_function_name = 'Dynatrace Automation'
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
-    # env_name_supplied = 'Prod'
-    # env_name_supplied = 'NonProd'
-    # env_name_supplied = 'Sandbox'
-    #
-    # env_name_supplied = 'Upper'
-    # env_name_supplied = 'Lower'
+    env_name_supplied = 'Sandbox'
     # env_name_supplied = 'PreProd'
-    # env_name_supplied = 'Dev'
+    # env_name_supplied = 'Prod'
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'Demo'
     env_name, env, client_id, client_secret = environment.get_client_environment_for_function(env_name_supplied, friendly_function_name)

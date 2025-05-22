@@ -7,6 +7,7 @@ from Reuse import report_writer
 selected_owners = [
     # '78cfc22b-0015-409e-bb07-0364eecc6ac3', # Me
     'ed29e85d-9e5f-4157-a2b8-563dc624708f', # Dynatrace
+    '50436aec-8901-4282-ae81-690bd6509b18', # Dynatrace
 ]
 
 def process(env, client_id, client_secret):
@@ -20,7 +21,7 @@ def process(env, client_id, client_secret):
     headers = [['Dashboard Name', 'Dashboard ID']]
     rows = []
     for document in document_list:
-        print(document)
+        # print(document)
         document_type = document.get('type')
         if document_type == 'dashboard':
             document_id = document.get('id')
@@ -40,16 +41,9 @@ def main():
     friendly_function_name = 'Dynatrace Automation'
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
-    # env_name_supplied = 'Prod'
-    # env_name_supplied = 'NonProd'
     # env_name_supplied = 'Sandbox'
-    #
-    # env_name_supplied = 'Upper'
-    # env_name_supplied = 'Lower'
-    # env_name_supplied = 'PreProd'
-    # env_name_supplied = 'Dev'
-    # env_name_supplied = 'Personal'
-    # env_name_supplied = 'Demo'
+    env_name_supplied = 'PreProd'
+    # env_name_supplied = 'Prod'
     env_name, env, client_id, client_secret = environment.get_client_environment_for_function(env_name_supplied, friendly_function_name)
 
     process(env, client_id, client_secret)
