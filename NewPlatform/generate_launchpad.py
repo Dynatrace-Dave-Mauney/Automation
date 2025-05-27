@@ -1,3 +1,5 @@
+# This module is likely obsolete
+
 import copy
 import json
 
