@@ -11,7 +11,7 @@ def process():
     # env_name_supplied = 'Sandbox'
     # env_name_supplied = 'PreProd'
     # env_name_supplied = 'Prod'
-    env_name_supplied = 'Personal'
+    # env_name_supplied = 'Personal'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 
     endpoint = '/api/v2/logs/ingest'
@@ -31,8 +31,8 @@ def generate_log_payload():
     log_playload_dict1 = {}
     log_playload_dict2 = {}
 
-    log_playload_dict1['content'] = 'Test Payload 500 Format 1'
-    log_playload_dict2['content'] = 'Test Payload 500 Format 2'
+    log_playload_dict1['content'] = 'Test Payload - 500 Attributes Format 1'
+    log_playload_dict2['content'] = 'Test Payload - 500 Attributes Format 2'
 
     log_playload_dict2['attributes'] = {}
 
