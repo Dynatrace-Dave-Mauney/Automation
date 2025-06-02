@@ -11,7 +11,8 @@ from Reuse import new_platform_api
 
 
 def run():
-    put_segments('Prod', 'Downloads/prodV1/HG*.json')
+    # put_segments('Prod', 'Downloads/$History/prodV1/HG*.json')
+    put_segments('PreProd', 'Downloads/PreProd/*.json')
 
 
 def put_segments(env_name, path):
