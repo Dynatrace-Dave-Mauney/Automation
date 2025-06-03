@@ -37,7 +37,7 @@ def run():
     # put_documents('Prod', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/Prod/Dynatrace Architecture Launchpad.json')
     # put_documents('Prod', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/Prod/Dynatrace User Launchpad.json')
 
-    put_documents('Sandbox', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/Sandbox/Dynatrace User Launchpad.json')
+    # put_documents('Sandbox', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/Sandbox/Dynatrace User Launchpad.json')
     # put_documents('PreProd', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/PreProd/Dynatrace User Launchpad.json')
     # put_documents('Prod', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/Prod/Dynatrace User Launchpad.json')
 
