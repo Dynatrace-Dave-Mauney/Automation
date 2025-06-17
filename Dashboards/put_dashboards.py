@@ -241,10 +241,12 @@ def run():
     # env_name = 'PreProd'
     # env_name = 'Prod'
     # env_name = 'Personal'
-    put_dashboards(env_name, f'Custom/Overview-{env_name}/*.json', owner=owner, skip_list=current_customer_skip_list)
-    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000001-v4_{env_name}.json', owner=owner, skip_list=current_customer_skip_list)
-    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000800-v3.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/*.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000001-v4_{env_name}.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000800-v3.json', owner=owner, skip_list=current_customer_skip_list)
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000002000.json', owner=owner, skip_list=current_customer_skip_list)
+
+    # put_dashboards(env_name, f'../$Private/Customers/$Current/Managed/Dashboards/3d85d74d-808f-4113-a2c8-e34530d5188a.json', owner=owner, skip_list=current_customer_skip_list)
 
 def put_dashboards(env_name, path, **kwargs):
     prefix = kwargs.get('prefix')
@@ -261,6 +263,8 @@ def put_dashboards(env_name, path, **kwargs):
             dashboard_json = json.loads(dashboard)
             dashboard_id = dashboard_json.get('id')
             dashboard_name = dashboard_json.get('dashboardMetadata').get('name')
+
+            print(dashboard_name)
 
             # Skip any dashboards that are in the "skip list"
             skip_dashboard = False

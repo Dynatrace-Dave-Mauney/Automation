@@ -57,8 +57,8 @@ def run():
     # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE Node.js By Management Zone.json')
     # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE Full Stack Overview By Management Zone.json')
 
-    # Post Customer "Dynatrace" Launchpad
     # post_launchpads(env, f'../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/*.json')
+    post_launchpads(env, f'../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/TEMP/*.json')
 
 
 def post_dashboards(env_name, path):

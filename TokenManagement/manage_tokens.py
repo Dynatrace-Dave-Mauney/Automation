@@ -29,7 +29,8 @@ def process():
 	# Create some tokens!
 	# These are the most important ones for the "Automation" project...
 	# post_reduced_power_dynatrace_automation_token()
-	post_dynatrace_automation_token()
+	# post_saas_upgrade_assisant_token()
+	# post_dynatrace_automation_token()
 	# post_reporting_token()
 	# post_tools_token()
 
@@ -144,6 +145,21 @@ def post_dynatrace_automation_token():
 		"syntheticLocations.read",
 		])
 
+
+def post_saas_upgrade_assisant_token():
+	return post_token('SaaS Upgrade Assistant', [
+		"networkZones.read",
+		"networkZones.write",
+		"settings.read",
+		"settings.write",
+		"slo.read",
+		"slo.write",
+		"CaptureRequestData",
+		"DataExport",
+		"ExternalSyntheticIntegration",
+		"ReadConfig",
+		"WriteConfig",
+	])
 
 def post_reporting_token():
 	return post_token('Automation Reporting', ["activeGates.read", "activeGateTokenManagement.read", "apiTokens.read", "auditLogs.read", "entities.read", "events.read", "extensionConfigurations.read", "extensionEnvironment.read", "extensions.read", "metrics.read", "networkZones.read", "problems.read", "releases.read", "settings.read", "slo.read", "syntheticLocations.read", "credentialVault.read", "DataExport", "DssFileManagement", "ReadConfig", "ReadSyntheticData"])

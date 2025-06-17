@@ -31,9 +31,12 @@ def main():
         # input_glob_pattern = "/Temp/$Launchpads/*.json"
         # input_glob_pattern = "../../NewPlatform/Dashboards/Assets/*.json"
         # input_glob_pattern = "../../NewPlatform/Launchpads/Assets/LinksTemplate.json"
-        input_glob_pattern = "C:\\Users\\dave.mauney\\Downloads\\Dynatrace User Launchpad.json"
+        # input_glob_pattern = "C:\\Users\\dave.mauney\\Downloads\\Dynatrace User Launchpad.json"
+        # input_glob_pattern = "/Temp/Platform Infrastructure Launchpad-1.json"
+        # input_glob_pattern = "/Users/dave.mauney/Downloads/*.json"
+        input_glob_pattern = "/Temp/Formatting/Input/temp.json"
 
-        output_directory_name = '/Temp/Formatted'
+        output_directory_name = '/Temp/Formatting/Output'
 
         for file_name in glob.glob(input_glob_pattern, recursive=True):
             base_file_name = os.path.basename(file_name)

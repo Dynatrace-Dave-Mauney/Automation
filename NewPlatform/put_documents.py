@@ -41,6 +41,7 @@ def run():
     # put_documents('PreProd', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/PreProd/Dynatrace User Launchpad.json')
     # put_documents('Prod', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/Prod/Dynatrace User Launchpad.json')
 
+    # put_documents('PreProd', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/PreProd/*Launchpad.json')
 
 def put_documents(env_name, path):
     # print(f"put_documents({env_name}, {path})")
@@ -83,7 +84,7 @@ def get_optimistic_locking_version(env, oauth_bearer_token, document_id):
     document_results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents/{document_id}/metadata', None)
     document_json = json.loads(document_results.text)
     document_version = document_json.get("version")
-    payload_dict = {"documentVersion": document_version, "lockDurationInSeconds": 10}
+    payload_dict = {"documentVersion": document_version, "lockDurationInSeconds": 1}
     payload = json.dumps(payload_dict)
     document_lock_results = new_platform_api.post(oauth_bearer_token, f'{env}/platform/document/v1/documents/{document_id}:acquire-lock', payload)
     optimistic_locking_version = json.loads(document_lock_results.text).get("documentVersion")
