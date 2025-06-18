@@ -58,25 +58,45 @@ def process_datadog_dashboard(filename):
 		widget_definition = widget.get('definition')
 		widget_definition_title = widget_definition.get('title')
 		widget_definition_type = widget_definition.get('type')
-		if widget_definition_type not in ('query_value', 'timeseries'):
-			print(f'Got unexpected type value of {widget_definition_type} for {widget_definition_title}')
-			# exit(1)
-		widget_definition_requests = widget_definition.get('requests')
-		if len(widget_definition_requests) > 1:
-			print(f'Got more requests than expected for {widget_definition_title}')
-			# exit(1)
+		# if widget_definition_type not in ('query_value', 'timeseries'):
+		# 	print(f'Got unexpected type value of {widget_definition_type} for dashboard with title {dashboard_title} for widget with title {widget_definition_title}')
+		# 	print(f'Widget Definition: {widget_definition}')
+		widget_definition_requests = widget_definition.get('requests', [])
+		# if  not widget_definition_requests:
+		# 	print(f'Got no requests for dashboard with title {dashboard_title} for widget with title {widget_definition_title}')
+		# 	print(f'Widget Definition: {widget_definition}')
+		# else:
+		# 	if len(widget_definition_requests) > 1:
+		# 		print(f'Got more requests than expected for dashboard with title {dashboard_title} for widget with title {widget_definition_title}')
+		# 		print(f'Widget Definition: {widget_definition}')
 
-		if widget_definition_type in ('query_value', 'timeseries'):
-			widget_definition_requests_queries = widget_definition_requests[0].get('queries')
+		# if not widget_definition_requests:
+		# 	print(f'Got no requests for dashboard with title {dashboard_title} for widget with title {widget_definition_title}')
+		# 	print(f'Widget Definition: {widget_definition}')
+		# 	return
+
+		# if widget_definition_type in ('query_value', 'timeseries') and widget_definition_requests:
+		# if widget_definition_type in ('query_value', 'timeseries') and widget_definition_requests:
+		widget_definition_requests_queries = []
+		if len(widget_definition_requests) > 0:
+			widget_definition_requests_queries = widget_definition_requests[0].get('queries', [])
+
+		if len(widget_definition_requests_queries) == 0:
+			print(f'Got no queries for dashboard with title {dashboard_title} for widget with title {widget_definition_title}')
+			print(f'Widget Definition: {widget_definition}')
+			query_name = ''
+			query_data_source = ''
+			query = ''
+		else:
 			query_name = widget_definition_requests_queries[0].get('name')
 			query_data_source = widget_definition_requests_queries[0].get('data_source')
-			query = widget_definition_requests_queries[0].get('search').get('query')
+			query_search = widget_definition_requests_queries[0].get('search')
+			if query_search:
+				query = query_search.get('query')
+			else:
+				query = widget_definition_requests_queries[0].get('query')
 
-			# print(widget_definition_title, widget_definition_type)
-			# print(query_name, query_data_source, query)
-			# print(widget_definition, widget_definition_requests, widget_definition_requests_queries)
-
-			save_datadog_dashboard_summary_data(filename, dashboard_title, dashboard_description, widget_definition_title, widget_definition_type, query_name, query_data_source, query)
+		save_datadog_dashboard_summary_data(filename, dashboard_title, dashboard_description, widget_definition_title, widget_definition_type, query_name, query_data_source, query)
 
 
 def read_json(filename):
