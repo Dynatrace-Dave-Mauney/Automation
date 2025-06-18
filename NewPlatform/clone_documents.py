@@ -77,58 +77,55 @@ def replace_tenant_specific_strings(source_env_name, target_env_name, document):
     document = document.replace(source_prefix, target_prefix)
     document = document.replace(source_tenant, target_tenant)
     document = document.replace(source_tenant_alias, target_tenant_alias)
+
+    # document = replace_shares(source_env_name, target_env_name, document)
+
     return document
 
 
+def replace_shares(source_env_name, target_env_name, document):
+    return document
+
 def get_prefix(env_name):
-    if env_name.lower() == 'sandbox':
-        return "Sandbox"
-    else:
-        if env_name.lower() == 'preprod':
-            return "Preprod"
-        else:
-            if env_name.lower() == 'prod':
-                return "Prod"
-            else:
-                print(f'Unsupported environment name: {env_name}')
-                exit(1)
+    configuration_file = 'configurations.yaml'
+    tenant_prefix_dict = environment.get_configuration(f'tenant_prefix_dict', configuration_file=configuration_file)
+
+    tenant_prefix = tenant_prefix_dict.get(env_name.lower())
+
+    if not tenant_prefix:
+        print(f'Unsupported environment name: {env_name}')
+        exit(1)
+
+    return tenant_prefix
 
 
 def get_tenant(env_name):
-    sandbox = "kqt47535"
-    preprod = "agn93468"
-    prod = "hgj78449"
+    configuration_file = 'configurations.yaml'
+    tenant_dict = environment.get_configuration(f'tenant_dict', configuration_file=configuration_file)
 
+    tenant = tenant_dict.get(env_name.lower())
     if always_use_alias:
-        sandbox = "kroger-sandbox"
-        preprod = "kroger-nonprod"
-        prod = "kroger-prod"
+        tenant_alias_dict = environment.get_configuration(f'tenant_alias_dict', configuration_file=configuration_file)
+        tenant = tenant_alias_dict.get(env_name.lower())
 
-    if env_name.lower() == 'sandbox':
-        return "kqt47535"
-    else:
-        if env_name.lower() == 'preprod':
-            return "agn93468"
-        else:
-            if env_name.lower() == 'prod':
-                return "hgj78449"
-            else:
-                print(f'Unsupported environment name: {env_name}')
-                exit(1)
+    if not tenant:
+        print(f'Unsupported environment name: {env_name}')
+        exit(1)
+
+    return tenant
 
 
 def get_tenant_alias(env_name):
-    if env_name.lower() == 'sandbox':
-        return "kroger-sandbox"
-    else:
-        if env_name.lower() == 'preprod':
-            return "kroger-nonprod"
-        else:
-            if env_name.lower() == 'prod':
-                return "kroger-prod"
-            else:
-                print(f'Unsupported environment name: {env_name}')
-                exit(1)
+    configuration_file = 'configurations.yaml'
+    tenant_alias_dict = environment.get_configuration(f'tenant_alias_dict', configuration_file=configuration_file)
+
+    tenant_alias = tenant_alias_dict.get(env_name.lower())
+
+    if not tenant_alias:
+        print(f'Unsupported environment name: {env_name}')
+        exit(1)
+
+    return tenant_alias
 
 
 if __name__ == '__main__':
