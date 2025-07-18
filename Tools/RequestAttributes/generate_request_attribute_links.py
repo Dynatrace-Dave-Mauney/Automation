@@ -1,6 +1,7 @@
 from Reuse import dynatrace_api
 from Reuse import environment
 
+from urllib.parse import quote
 
 def process(env, token):
     endpoint = '/api/config/v1/service/requestAttributes'
@@ -14,10 +15,11 @@ def process(env, token):
             # if entity_id.startswith('aaaaaaaa-bbbb-cccc-dddd-2'):
             # if entity_id.startswith('aaaaaaaa-bbbb-cccc-dddd-3'):
             # if entity_id.startswith('aaaaaaaa-bbbb-cccc-dddd-9'):
-            if entity_id.startswith('aaaaaaaa-bbbb-cccc-dddd-9'):
-                name = inner_request_attributes_json.get('name').replace('(', '%28').replace(')','%29')
-                # print(env, name, entity_id)
-                print(f'{env}/ui/diagnostictools/mda?gtf=-24h%20to%20now&metric=REQUEST_COUNT&dimension=%7BRequest:Name%7D%20%7BRequestAttribute:{name}%7D&mergeServices=true&aggregation=COUNT&servicefilter=0%1E15%11{entity_id}')
+            # if entity_id.startswith('aaaaaaaa-bbbb-cccc-dddd-9'):
+            # name = inner_request_attributes_json.get('name').replace('(', '%28').replace(')','%29')
+            name = quote(inner_request_attributes_json.get('name'))
+            # print(env, name, entity_id)
+            print(f'{env}/ui/diagnostictools/mda?gtf=-24h%20to%20now&metric=REQUEST_COUNT&dimension=%7BRequest:Name%7D%20%7BRequestAttribute:{name}%7D&mergeServices=true&aggregation=COUNT&servicefilter=0%1E15%11{entity_id}')
 
 
 def main():

@@ -1,0 +1,35 @@
+import requests
+from bs4 import BeautifulSoup
+from Reuse import environment
+
+
+def process():
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/119.0'}
+
+    configuration_file = 'configurations.yaml'
+    extract_text_from_urls_input_file = environment.get_configuration('extract_text_from_urls_input_file', configuration_file=configuration_file)
+    print('extract_text_from_urls_input_file:', extract_text_from_urls_input_file)
+
+    with open(extract_text_from_urls_input_file, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            # print(line.strip())
+            r = requests.get(line, headers=headers)
+            # print(r.text)
+            # exit(9999)
+            soup = BeautifulSoup(r.text, 'html.parser')
+
+            for title in soup.find_all('title'):
+                print(title.text.strip())
+
+            print('')
+
+            for div in soup.find_all('div', translate='no'):
+                # div_p = div.find('p').text
+                print(div.text.strip())
+                print('')
+
+            print('~PG~')
+
+if __name__ == '__main__':
+    process()

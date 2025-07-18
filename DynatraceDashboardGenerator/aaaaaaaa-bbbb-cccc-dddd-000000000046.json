@@ -3,11 +3,11 @@
         "configurationVersions": [
             3
         ],
-        "clusterVersion": "1.306.65.20250123-155932"
+        "clusterVersion": "1.318.46.20250709-082328"
     },
     "id": "aaaaaaaa-bbbb-cccc-dddd-000000000046",
     "dashboardMetadata": {
-        "name": "Cloud Foundry",
+        "name": "Executor",
         "shared": false,
         "owner": "nobody@example.com",
         "sharingDetails": {
@@ -27,7 +27,7 @@
     },
     "tiles": [
         {
-            "name": "CF: Time to fetch cell states",
+            "name": "executor.completed.count",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -37,11 +37,11 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "CF: Time to fetch cell states",
+            "customName": "executor.completed.count",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.cloudfoundry.auctioneer.fetchDuration",
+                    "metric": "executor.completed.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
@@ -98,7 +98,7 @@
             }
         },
         {
-            "name": "CF: App instance placement failures",
+            "name": "executor.pool.core",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -108,11 +108,11 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "CF: App instance placement failures",
+            "customName": "executor.pool.core",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.cloudfoundry.auctioneer.lprFailed",
+                    "metric": "executor.pool.core",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
@@ -169,7 +169,7 @@
             }
         },
         {
-            "name": "CF: App instance starts",
+            "name": "executor.pool.max",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -179,11 +179,11 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "CF: App instance starts",
+            "customName": "executor.pool.max",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.cloudfoundry.auctioneer.lprStarted",
+                    "metric": "executor.pool.max",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
@@ -240,7 +240,7 @@
             }
         },
         {
-            "name": "CF: Task placement failures",
+            "name": "executor.pool.size",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -250,11 +250,11 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "CF: Task placement failures",
+            "customName": "executor.pool.size",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.cloudfoundry.auctioneer.taskFailed",
+                    "metric": "executor.pool.size",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
@@ -311,7 +311,7 @@
             }
         },
         {
-            "name": "CF: 502 responses",
+            "name": "executor.queue.remaining",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -321,11 +321,11 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "CF: 502 responses",
+            "customName": "executor.queue.remaining",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.cloudfoundry.http.badGateways",
+                    "metric": "executor.queue.remaining",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
@@ -382,7 +382,7 @@
             }
         },
         {
-            "name": "CF: Response latency",
+            "name": "executor.active",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -392,11 +392,11 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "CF: Response latency",
+            "customName": "executor.active",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.cloudfoundry.http.latency",
+                    "metric": "executor.active",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
@@ -453,7 +453,7 @@
             }
         },
         {
-            "name": "CF: 5xx responses",
+            "name": "executor.queued",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -463,11 +463,11 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "CF: 5xx responses",
+            "customName": "executor.queued",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.cloudfoundry.http.responses5xx",
+                    "metric": "executor.queued",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
@@ -524,7 +524,7 @@
             }
         },
         {
-            "name": "CF: Total requests",
+            "name": "executor_completed_tasks_total.count",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -534,15 +534,441 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "CF: Total requests",
+            "customName": "executor_completed_tasks_total.count",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.cloudfoundry.http.totalRequests",
+                    "metric": "executor_completed_tasks_total.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.cloud_application_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "executor_active_threads",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 608,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "executor_active_threads",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "executor_active_threads",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.cloud_application_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "executor_pool_core_threads",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 912,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "executor_pool_core_threads",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "executor_pool_core_threads",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.cloud_application_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "executor_pool_max_threads",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "executor_pool_max_threads",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "executor_pool_max_threads",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.cloud_application_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "executor_pool_size_threads",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "executor_pool_size_threads",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "executor_pool_size_threads",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.cloud_application_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "executor_queue_remaining_tasks",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 608,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "executor_queue_remaining_tasks",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "executor_queue_remaining_tasks",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.cloud_application_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "executor_queued_tasks",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 608,
+                "left": 304,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "executor_queued_tasks",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "executor_queued_tasks",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.cloud_application_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",

@@ -3,11 +3,11 @@
         "configurationVersions": [
             3
         ],
-        "clusterVersion": "1.306.65.20250123-155932"
+        "clusterVersion": "1.318.46.20250709-082328"
     },
     "id": "aaaaaaaa-bbbb-cccc-dddd-000000000044",
     "dashboardMetadata": {
-        "name": "Cert*",
+        "name": "Dynatrace Self-Monitoring: Storage",
         "shared": false,
         "owner": "nobody@example.com",
         "sharingDetails": {
@@ -27,7 +27,7 @@
     },
     "tiles": [
         {
-            "name": "Certificate status",
+            "name": "Storage - Ingest - Dropped Records",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -37,16 +37,14 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Certificate status",
+            "customName": "Storage - Ingest - Dropped Records",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "certificate.monitor.status",
+                    "metric": "dsfm:storage.ingest.dropped_records",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.python:certificate_monitor_certificate"
-                    ],
+                    "splitBy": [],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -98,7 +96,7 @@
             }
         },
         {
-            "name": "certwatcher_read_certificate_errors_total.count",
+            "name": "Storage - Ingest - Errors",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -108,16 +106,14 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "certwatcher_read_certificate_errors_total.count",
+            "customName": "Storage - Ingest - Errors",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "certwatcher_read_certificate_errors_total.count",
+                    "metric": "dsfm:storage.ingest.errors",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.cloud_application_instance"
-                    ],
+                    "splitBy": [],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -169,7 +165,7 @@
             }
         },
         {
-            "name": "certwatcher_read_certificate_total.count",
+            "name": "Storage - Ingest - Non Persisted Records",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -179,16 +175,152 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "certwatcher_read_certificate_total.count",
+            "customName": "Storage - Ingest - Non Persisted Records",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "certwatcher_read_certificate_total.count",
+                    "metric": "dsfm:storage.ingest.non_persisted_records",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.cloud_application_instance"
-                    ],
+                    "splitBy": [],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Storage - Ingest - Received Bytes",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 912,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Storage - Ingest - Received Bytes",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "dsfm:storage.ingest.received_bytes",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Storage - Ingest - Received Records",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Storage - Ingest - Received Records",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "dsfm:storage.ingest.received_records",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],

@@ -41,7 +41,8 @@ def process(env_name, env, token):
 				# Mass cleanup of Overview Framework Dashboards not needed for current customer
 				# if ': AWS' in name or ': Azure' in name or ': DB2' in name or ': F5' in name or ': Kafka' in name or ': IBM' in name or ': Microsoft' in name or ': Oracle' in name or ': VMware' in name or ': WebSphere' in name or ': SAP' in name or ': SOLR' in name:
 				# if True:
-				if dashboard_id.startswith('00000000-dddd-bbbb-ffff-'):
+				# if dashboard_id.startswith('00000000-dddd-bbbb-ffff-'):
+				if dashboard_id.startswith('aaaaaaaa-bbbb-cccc-dddd-'):
 				# if dashboard_id.startswith('aaaaaaaa-bbbb-cccc-dddd'):
 					delete_list.append(dashboard_id + ': ' + name + ': ' + owner)
 
@@ -106,17 +107,10 @@ def run():
 	friendly_function_name = 'Dynatrace Automation'
 	env_name_supplied = environment.get_env_name(friendly_function_name)
 	# For easy control from IDE
-	# env_name_supplied = 'Tenant1'
 	# env_name_supplied = 'Prod'
-	# env_name_supplied = 'NonProd'
-	# env_name_supplied = 'Sandbox'
-	#
-	# env_name_supplied = 'Upper'
-	# env_name_supplied = 'Lower'
 	# env_name_supplied = 'PreProd'
-	# env_name_supplied = 'Dev'
+	# env_name_supplied = 'Sandbox'
 	# env_name_supplied = 'Personal'
-	# env_name_supplied = 'Demo'
 	env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 	process(env_name, env, token)
 

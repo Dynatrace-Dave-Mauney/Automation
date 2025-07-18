@@ -3,42 +3,44 @@ from Reuse import environment
 
 endpoint = '/api/config/v1/service/requestAttributes'
 
-retain_list = [
-	'id(POST_PARAMETER)',
-	'id(QUERY_PARAMETER)',
-	'user(REQUEST_HEADER)',
-	'user(REQUEST_HEADER)-alternateServiceCenter',
-	'user(REQUEST_HEADER)-authorized',
-	'user(REQUEST_HEADER)-currentLocationServiceCenter',
-	'user(REQUEST_HEADER)-device',
-	'user(REQUEST_HEADER)-employeeFullId',
-	'user(REQUEST_HEADER)-employeeId',
-	'user(REQUEST_HEADER)-employeeMenuId',
-	'user(REQUEST_HEADER)-employeeName',
-	'user(REQUEST_HEADER)-forkliftNumber',
-	'user(REQUEST_HEADER)-ipAddress',
-	'user(REQUEST_HEADER)-originServiceCenter',
-	'user(REQUEST_HEADER)-supervisor',
-	'user(REQUEST_HEADER)-tabletSerialNumber',
-	'user(REQUEST_HEADER)-valid',
-	'userid(QUERY_PARAMETER)',
-	'username(POST_PARAMETER)',
-	'username(QUERY_PARAMETER)'
-	'username(SESSION_ATTRIBUTE)',
-]
+# retain_list = [
+	# 'id(POST_PARAMETER)',
+	# 'id(QUERY_PARAMETER)',
+	# 'user(REQUEST_HEADER)',
+	# 'user(REQUEST_HEADER)-alternateServiceCenter',
+	# 'user(REQUEST_HEADER)-authorized',
+	# 'user(REQUEST_HEADER)-currentLocationServiceCenter',
+	# 'user(REQUEST_HEADER)-device',
+	# 'user(REQUEST_HEADER)-employeeFullId',
+	# 'user(REQUEST_HEADER)-employeeId',
+	# 'user(REQUEST_HEADER)-employeeMenuId',
+	# 'user(REQUEST_HEADER)-employeeName',
+	# 'user(REQUEST_HEADER)-forkliftNumber',
+	# 'user(REQUEST_HEADER)-ipAddress',
+	# 'user(REQUEST_HEADER)-originServiceCenter',
+	# 'user(REQUEST_HEADER)-supervisor',
+	# 'user(REQUEST_HEADER)-tabletSerialNumber',
+	# 'user(REQUEST_HEADER)-valid',
+	# 'userid(QUERY_PARAMETER)',
+	# 'username(POST_PARAMETER)',
+	# 'username(QUERY_PARAMETER)'
+	# 'username(SESSION_ATTRIBUTE)',
+# ]
 
-retain_list = [
-	'id(SESSION_ATTRIBUTE)',
-	'id(POST_PARAMETER)',
-	'id(QUERY_PARAMETER)',
-	'name(QUERY_PARAMETER)',
-	'user(POST_PARAMETER)',
-	'user(QUERY_PARAMETER)',
-	'user(REQUEST_HEADER)',
-	'username(QUERY_PARAMETER)',
-	'username(SESSION_ATTRIBUTE)',
-	'username(POST_PARAMETER)',
-]
+# retain_list = [
+	# 'id(SESSION_ATTRIBUTE)',
+	# 'id(POST_PARAMETER)',
+	# 'id(QUERY_PARAMETER)',
+	# 'name(QUERY_PARAMETER)',
+	# 'user(POST_PARAMETER)',
+	# 'user(QUERY_PARAMETER)',
+	# 'user(REQUEST_HEADER)',
+	# 'username(QUERY_PARAMETER)',
+	# 'username(SESSION_ATTRIBUTE)',
+	# 'username(POST_PARAMETER)',
+# ]
+
+retain_list = []
 
 
 def process(env, token):
@@ -53,10 +55,14 @@ def process(env, token):
 			entity_id = value.get('id')
 			name = value.get('name')
 
-			if entity_id.startswith('aaaaaaaa-bbbb-cccc-dddd-') and not entity_id.startswith('aaaaaaaa-bbbb-cccc-dddd-0'):
-				if name not in retain_list:
-					print(name, entity_id)
-					delete_list.append((name, entity_id))
+			if name not in retain_list:
+				print(name, entity_id)
+				delete_list.append((name, entity_id))
+
+			# if entity_id.startswith('aaaaaaaa-bbbb-cccc-dddd-') and not entity_id.startswith('aaaaaaaa-bbbb-cccc-dddd-0'):
+			# 	if name not in retain_list:
+			# 		print(name, entity_id)
+			# 		delete_list.append((name, entity_id))
 
 			# if name == 'eap-requestuuid':
 			# 	delete_list.append((name, entity_id))

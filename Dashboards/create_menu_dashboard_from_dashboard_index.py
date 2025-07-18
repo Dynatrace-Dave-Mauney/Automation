@@ -8,7 +8,7 @@ INPUT_FILE = '../DynatraceDashboardGenerator/dashboard_index.txt'
 OUTPUT_FILE = f'../DynatraceDashboardGenerator/{GENERATED_ID}.json'
 
 OLD_ID_PATTERN = 'aaaaaaaa-bbbb-cccc-dddd-0'
-NEW_ID_PATTERN = 'aaaaaaaa-bbbb-cccc-dddd-1'
+NEW_ID_PATTERN = 'aaaaaaaa-bbbb-cccc-dddd-0'
 
 SORT_BY_NAME = True
 
