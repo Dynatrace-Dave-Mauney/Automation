@@ -14,10 +14,12 @@ add_table_for_donut_charts = True
 # notebook_input_path = 'customer_specific/PRIOR_CUSTOMER/NotebookToDashboardInput/CONVERT_MIX.json'
 # notebook_input_path = 'customer_specific/PRIOR_CUSTOMER/NotebookToDashboardInput/CONVERT_PIE.json'
 # notebook_input_path = 'customer_specific/PRIOR_CUSTOMER/NotebookToDashboardInput/*.json'
-notebook_input_path = 'customer_specific/PRIOR_CUSTOMER/DashboardTemplates/TEMPLATE_DONUT.json'
+# notebook_input_path = 'customer_specific/PRIOR_CUSTOMER/DashboardTemplates/TEMPLATE_DONUT.json'
 
-dashboard_output_path = '../$Private/Customers/PRIOR_CUSTOMER/Assets/NewPlatform/Dashboards'
 # dashboard_output_path = 'customer_specific/PRIOR_CUSTOMER/ConvertedDashboards'
+
+notebook_input_path = 'customer_specific/$Current/*.json'
+dashboard_output_path = '../$Private/Customers/$Current/Assets/NewPlatform/Dashboards'
 
 dashboard_template = {
     "version": 15,

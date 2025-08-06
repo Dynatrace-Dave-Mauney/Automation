@@ -31,7 +31,8 @@ save_content = ''
 # supported_environments = ['Prod', 'NonProd', 'PreProd', 'Dev', 'Personal', 'Demo']
 # supported_environments = ['Prod', 'NonProd']
 # supported_environments = ['Prod', 'PreProd', 'Dev', 'Personal', 'Demo']
-supported_environments = ['Upper', 'Lower', 'Sandbox', 'Personal', 'Demo']
+# supported_environments = ['Upper', 'Lower', 'Sandbox', 'Personal', 'Demo']
+supported_environments = ['Sandbox', 'PreProd', 'Prod', 'Personal', 'Demo']
 
 supported_modes = ['configs', 'entities', 'entities_v1', 'events', 'metrics', 'settings20']
 
@@ -657,10 +658,9 @@ def run():
     friendly_function_name = 'Dynatrace Automation Tools'
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
-    # env_name_supplied = 'Prod'
-    # env_name_supplied = 'PreProd'
     # env_name_supplied = 'Sandbox'
-    # env_name_supplied = 'Dev'
+    # env_name_supplied = 'PreProd'
+    # env_name_supplied = 'Prod'
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'Demo'
     env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)

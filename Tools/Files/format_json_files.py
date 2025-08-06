@@ -6,6 +6,8 @@ import os
 import glob
 import json
 
+from Reuse import environment
+
 
 def main():
     try:
@@ -34,9 +36,12 @@ def main():
         # input_glob_pattern = "C:\\Users\\dave.mauney\\Downloads\\Dynatrace User Launchpad.json"
         # input_glob_pattern = "/Temp/Platform Infrastructure Launchpad-1.json"
         # input_glob_pattern = "/Users/dave.mauney/Downloads/*.json"
-        input_glob_pattern = "/Temp/Formatting/Input/temp.json"
 
-        output_directory_name = '/Temp/Formatting/Output'
+        configuration_file = 'configurations.yaml'
+        input_glob_pattern = environment.get_configuration(f'input_glob_pattern', configuration_file=configuration_file)
+        output_directory_name = environment.get_configuration(f'output_directory_name', configuration_file=configuration_file)
+        # input_glob_pattern = "/Temp/Formatting/Input/temp.json"
+        # output_directory_name = '/Temp/Formatting/Output'
 
         for file_name in glob.glob(input_glob_pattern, recursive=True):
             base_file_name = os.path.basename(file_name)
