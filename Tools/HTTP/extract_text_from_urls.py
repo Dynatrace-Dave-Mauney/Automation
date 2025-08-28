@@ -24,7 +24,8 @@ def process():
 
             print('')
 
-            for div in soup.find_all('div', translate='no'):
+            # for div in soup.find_all('div', translate='no'):
+            for div in soup.find_all('div', class_='entry-content'):
                 # div_p = div.find('p').text
                 print(div.text.strip())
                 print('')

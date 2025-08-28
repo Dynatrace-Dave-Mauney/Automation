@@ -6,7 +6,8 @@ from Reuse import report_writer
 
 
 include_list = [
-    'builtin:rum.web.app-detection',
+    'builtin:davis.anomaly-detectors',
+    # 'builtin:rum.web.app-detection',
     # 'builtin:anomaly-detection.metric-events',
     # 'builtin:logmonitoring.schemaless-log-metric',
     # 'builtin:logmonitoring.log-events',
@@ -34,12 +35,12 @@ def process(env, token):
     rows = sorted(rows)
     report_name = 'Settings 2.0'
     report_writer.initialize_text_file(None)
-    # report_headers = ('Setting', 'Values of Interest', 'Enabled')
-    report_headers = ('Web Application Detection Pattern')
+    report_headers = ('Title', 'Enabled', 'Basis', 'Sliding Window')
+    # report_headers = ('Selected Objects')
     # report_writer.write_console(report_name, report_headers, rows, delimiter='|')
-    report_writer.write_console(report_name, report_headers, rows, delimiter='')
+    report_writer.write_console(report_name, report_headers, rows, delimiter='|')
     # report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
-    report_writer.write_text(None, report_name, report_headers, rows, delimiter='')
+    report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
     report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
     report_writer.write_html(None, report_name, report_headers, rows)
 
@@ -75,6 +76,38 @@ def format_schema(schema_id, json_data):
         config_item_title = value.get('config-item-title')
         return ['Log Storage Setting', config_item_title, enabled]
 
+    if schema_id == 'builtin:davis.anomaly-detectors':
+        value = json_data.get('value')
+        enabled = value.get('enabled')
+        title = value.get('title')
+
+        analyzer = value.get('analyzer')
+        input = analyzer.get('input')
+
+        sliding_window = '0'
+        basis = 'Unknown'
+
+        for i in input:
+            if 'query' in str(i) :
+                query = i.get('value')
+
+                if 'timeseries' in query and 'makeTimeseries' not in query:
+                    basis = 'Metrics'
+                else:
+                    if 'fetch' in query:
+                        if 'logs' in query:
+                            basis = 'Logs'
+                        else:
+                            if 'spans' in query:
+                                basis = 'Spans'
+                            else:
+                                basis = 'Unknown'
+
+            if 'slidingWindow' in str(i):
+                sliding_window = i.get('value')
+
+        return [title, enabled, basis, int(sliding_window)]
+
     # import json
     # print(schema_id)
     # print(json.dumps(json_data, indent=4, sort_keys=False))
@@ -86,8 +119,8 @@ def main():
     friendly_function_name = 'Dynatrace Automation Reporting'
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
-    # env_name_supplied = 'Prod'
-    env_name_supplied = 'NonProd'
+    env_name_supplied = 'Prod'
+    # env_name_supplied = 'NonProd'
     # env_name_supplied = 'Sandbox'
     #
     # env_name_supplied = 'Upper'

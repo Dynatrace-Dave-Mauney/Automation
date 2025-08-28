@@ -19,9 +19,14 @@ def process():
 
     href_list = []
     for link in soup.find_all('a'):
+    # for link in soup.find_all('h1', class_='entry-title'):
+    #     print(link)
         href = link.get('href')
-        href_list.append(href)
+        if href and 'https://' in href and '/20' in href:
+            # print(href)
+            href_list.append(href)
 
+    print(href_list)
     unique_hrefs = remove_duplicates(sorted(href_list))
 
     for unique_href in unique_hrefs:
