@@ -21,10 +21,8 @@ def run():
     # extract_dql_from_documents('Notebooks/Assets/*.json')
     # extract_dql_from_documents('customer_specific/*Tracker*.json')
     # extract_dql_from_documents('customer_specific/*.json')
-    # extract_dql_from_documents('/Users/dave.mauney/Downloads/*XP*Auth*.json')
     # extract_dql_from_documents('Notebooks/Downloads/*.json')
-    extract_dql_from_documents('customer_specific/NWM/NotebookToDashboardInput/*AuthN QA*.json')
-
+    extract_dql_from_documents('customer_specific/$Current/Davis Anomaly Detection Health Dashboard.json')
     print('')
     print('Bizevents:')
     for fetch_bizevent_query in fetch_bizevents:
