@@ -14,10 +14,10 @@ def process():
         with open(extract_text_from_urls_input_file, 'r') as f:
             lines = f.readlines()
             for line in lines:
-                # print(line.strip())
+                print(line.strip())
                 r = requests.get(line, headers=headers)
                 print(r.text)
-                # exit(9999)
+                exit(9999)
                 soup = BeautifulSoup(r.text, 'html.parser')
 
                 for title in soup.find_all('title'):
@@ -30,7 +30,8 @@ def process():
                 # for div in soup.find_all('div', class_='entry-content'):
                 # for div in soup.find_all('span', class_='AAYkC'):
                 # for div in soup.find_all('div', type='paragraph'):
-                for div in soup.find_all('span'):
+                # for div in soup.find_all('span'):
+                for div in soup.find_all('div', class_='et_pb_module_inner'):
                 # div_p = div.find('p').text
                 #     print(div.text)
 

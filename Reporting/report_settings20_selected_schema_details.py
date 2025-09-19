@@ -106,7 +106,7 @@ def format_schema(schema_id, json_data):
             if 'slidingWindow' in str(i):
                 sliding_window = i.get('value')
 
-        return [title, enabled, basis, int(sliding_window)]
+        return [title, enabled, basis, int(sliding_window), owner, actor]
 
     # import json
     # print(schema_id)

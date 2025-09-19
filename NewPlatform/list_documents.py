@@ -6,24 +6,28 @@ from Reuse import report_writer
 
 
 def process(env, client_id, client_secret):
-    scope = 'automation:workflows:read'
+    configuration_file = 'configurations.yaml'
+    my_owner_ids = environment.get_configuration('my_owner_ids', configuration_file=configuration_file)
+
+    print('Documents:')
+
+    scope = 'document:documents:read'
 
     oauth_bearer_token = new_platform_api.get_oauth_bearer_token(client_id, client_secret, scope)
-    params = {'page-size': 1000, 'only-compatible': False, 'adminAccess': False}
-    results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/automation/v1/workflows', params)
-    workflows_json = json.loads(results.text)
-    # print(workflows_json)
-    workflow_list = workflows_json.get('results')
-    headers = [['ID', 'Title', 'Description', 'Version', 'Owner']]
+    params = {'page-size': 1000}
+    results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents', params)
+    documents_json = json.loads(results.text)
+    document_list = documents_json.get('documents')
+    # headers = [['Document Type', 'Document Name', 'Document ID', 'Owner ID']]
+    headers = [['Document Type', 'Document Name', 'Document ID']]
     rows = []
-    for workflow in workflow_list:
-        workflow_id = workflow.get('id')
-        workflow_title = workflow.get('title')
-        workflow_description = workflow.get('description')
-        workflow_version = workflow.get('version')
-        workflow_owner = workflow.get('owner')
-        if workflow_owner == '758ea739-79ed-4584-9cc1-2e124be0c503':  # or '998b4dbc-45ec-4dea-ae44-38fd35974add':
-            rows.append([workflow_id, workflow_title, workflow_description, workflow_version, workflow_owner])
+    for document in document_list:
+        document_owner = document.get('owner')
+        document_id = document.get('id')
+        document_name = document.get('name')
+        document_type = document.get('type')
+        # rows.append([document_type, document_name, document_id, document_owner])
+        rows.append([document_type, document_name, document_id])
 
     report_writer.print_rows(headers, sorted(rows))
 
@@ -32,7 +36,7 @@ def main():
     friendly_function_name = 'Dynatrace Automation'
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
-    env_name_supplied = 'Prod'
+    # env_name_supplied = 'Prod'
     # env_name_supplied = 'NonProd'
     # env_name_supplied = 'Sandbox'
     #

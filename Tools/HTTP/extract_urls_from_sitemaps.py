@@ -1,10 +1,17 @@
 import xml.etree.ElementTree as ET
+from Reuse import environment
+
 
 def get_url_list():
     url_list = []
 
     filename = 'customer_specific/simple_stories_in_spanish_sitemap.txt'
-    with open(filename, 'r', encoding='utf-8') as f:
+
+    configuration_file = 'configurations.yaml'
+    extract_urls_from_sitemaps_input_file = environment.get_configuration('extract_urls_from_sitemaps_input_file', configuration_file=configuration_file)
+    print('extract_urls_from_sitemaps_input_file:', extract_urls_from_sitemaps_input_file)
+
+    with open(extract_urls_from_sitemaps_input_file, 'r', encoding='utf-8') as f:
         site_map_text = f.read()
 
     site_root = ET.fromstring(site_map_text)
