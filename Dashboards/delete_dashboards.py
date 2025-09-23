@@ -43,7 +43,6 @@ def process(env_name, env, token):
 				# if True:
 				# if dashboard_id.startswith('00000000-dddd-bbbb-ffff-'):
 				if dashboard_id.startswith('aaaaaaaa-bbbb-cccc-dddd-'):
-				# if dashboard_id.startswith('aaaaaaaa-bbbb-cccc-dddd'):
 					delete_list.append(dashboard_id + ': ' + name + ': ' + owner)
 
 			# Full clean of 'Personal' environment
@@ -107,7 +106,7 @@ def run():
 	friendly_function_name = 'Dynatrace Automation'
 	env_name_supplied = environment.get_env_name(friendly_function_name)
 	# For easy control from IDE
-	# env_name_supplied = 'Prod'
+	env_name_supplied = 'Prod'
 	# env_name_supplied = 'PreProd'
 	# env_name_supplied = 'Sandbox'
 	# env_name_supplied = 'Personal'

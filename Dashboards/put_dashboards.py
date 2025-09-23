@@ -238,7 +238,7 @@ def run():
 
     env_name = 'UNSET'
     # env_name = 'Sandbox'
-    env_name = 'PreProd'
+    # env_name = 'PreProd'
     # env_name = 'Prod'
     # env_name = 'Personal'
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/*.json', owner=owner, skip_list=current_customer_skip_list)
