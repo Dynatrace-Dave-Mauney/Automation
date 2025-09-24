@@ -21,6 +21,22 @@ def process(env, token):
     for settings_object in settings_object_list:
         items = settings_object.get('items')
         for item in items:
+
+            # For all details
+            # endpoint = f'/api/v2/settings/objects/{item.get("objectId")}'
+            # raw_params = ''
+            # params = urllib.parse.quote(raw_params, safe='/,&=')
+            # r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token, params=params, handle_exceptions=False)
+
+            # print(r)
+            # print(r.text)
+            # print(r.status_code)
+            # exit(9999)
+
+            # if r.status_code == 200:
+            #     if 'AssignmentGroup' in str(settings_object):
+            #         print(r.text)
+
             schema_id = item.get('schemaId')
             if schema_id in include_list:
                 row = format_schema(schema_id, item)
@@ -71,9 +87,12 @@ def format_schema(schema_id, json_data):
             if 'slidingWindow' in str(i):
                 sliding_window = i.get('value')
 
-        if str(title).startswith('Team_Thor - '):
-            object_id = json_data.get('objectId')
-            return [title, enabled, basis, int(sliding_window), object_id]
+        # if str(title).startswith('Team_Thor - '):
+        #     object_id = json_data.get('objectId')
+        #     return [title, enabled, basis, int(sliding_window), object_id]
+
+        object_id = json_data.get('objectId')
+        return [title, enabled, basis, int(sliding_window), object_id]
 
     return None
 
