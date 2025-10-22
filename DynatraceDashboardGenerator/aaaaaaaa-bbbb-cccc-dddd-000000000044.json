@@ -7,7 +7,7 @@
     },
     "id": "aaaaaaaa-bbbb-cccc-dddd-000000000044",
     "dashboardMetadata": {
-        "name": "Dynatrace Self-Monitoring: Storage",
+        "name": "Azure Ext Net App",
         "shared": false,
         "owner": "nobody@example.com",
         "sharingDetails": {
@@ -27,7 +27,7 @@
     },
     "tiles": [
         {
-            "name": "Storage - Ingest - Dropped Records",
+            "name": "Average read latency",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -37,14 +37,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Storage - Ingest - Dropped Records",
+            "customName": "Average read latency",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "dsfm:storage.ingest.dropped_records",
+                    "metric": "ext:cloud.azure.microsoft_netapp.netappaccounts.capacitypools.volumes.averagereadlatency",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -96,7 +98,7 @@
             }
         },
         {
-            "name": "Storage - Ingest - Errors",
+            "name": "Average write latency",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -106,14 +108,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Storage - Ingest - Errors",
+            "customName": "Average write latency",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "dsfm:storage.ingest.errors",
+                    "metric": "ext:cloud.azure.microsoft_netapp.netappaccounts.capacitypools.volumes.averagewritelatency",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -165,7 +169,7 @@
             }
         },
         {
-            "name": "Storage - Ingest - Non Persisted Records",
+            "name": "Read IOPS",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -175,14 +179,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Storage - Ingest - Non Persisted Records",
+            "customName": "Read IOPS",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "dsfm:storage.ingest.non_persisted_records",
+                    "metric": "ext:cloud.azure.microsoft_netapp.netappaccounts.capacitypools.volumes.readiops",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -234,7 +240,7 @@
             }
         },
         {
-            "name": "Storage - Ingest - Received Bytes",
+            "name": "Volume allocated size",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -244,14 +250,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Storage - Ingest - Received Bytes",
+            "customName": "Volume allocated size",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "dsfm:storage.ingest.received_bytes",
+                    "metric": "ext:cloud.azure.microsoft_netapp.netappaccounts.capacitypools.volumes.volumeallocatedsize",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -303,7 +311,7 @@
             }
         },
         {
-            "name": "Storage - Ingest - Received Records",
+            "name": "Volume consumed size",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -313,14 +321,371 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Storage - Ingest - Received Records",
+            "customName": "Volume consumed size",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "dsfm:storage.ingest.received_records",
+                    "metric": "ext:cloud.azure.microsoft_netapp.netappaccounts.capacitypools.volumes.volumelogicalsize",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Write IOPS",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Write IOPS",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.azure.microsoft_netapp.netappaccounts.capacitypools.volumes.writeiops",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Pool allocated size",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Pool allocated size",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.azure.microsoft_netapp.netappaccounts.capacitypools.volumepoolallocatedsize",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Pool allocated to volume size",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 304,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Pool allocated to volume size",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.azure.microsoft_netapp.netappaccounts.capacitypools.volumepoolallocatedused",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Pool consumed size",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 608,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Pool consumed size",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.azure.microsoft_netapp.netappaccounts.capacitypools.volumepooltotallogicalsize",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Total snapshot size for the pool",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 912,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Total snapshot size for the pool",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.azure.microsoft_netapp.netappaccounts.capacitypools.volumepooltotalsnapshotsize",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],

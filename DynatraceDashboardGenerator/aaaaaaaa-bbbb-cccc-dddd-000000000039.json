@@ -7,7 +7,7 @@
     },
     "id": "aaaaaaaa-bbbb-cccc-dddd-000000000039",
     "dashboardMetadata": {
-        "name": "Dynatrace Self-Monitoring: OneAgent",
+        "name": "Azure Ext Key Vault",
         "shared": false,
         "owner": "nobody@example.com",
         "sharingDetails": {
@@ -27,7 +27,7 @@
     },
     "tiles": [
         {
-            "name": "Oneagent - Code Module - Requests - Processed",
+            "name": "Vault availability",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -37,14 +37,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Oneagent - Code Module - Requests - Processed",
+            "customName": "Vault availability",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "dsfm:oneagent.code_module.requests.processed",
+                    "metric": "ext:cloud.azure.microsoft_keyvault.vaults.availability",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -96,7 +98,7 @@
             }
         },
         {
-            "name": "Oneagent - Code Module - Requests - Sampled",
+            "name": "Vault saturation",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -106,14 +108,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Oneagent - Code Module - Requests - Sampled",
+            "customName": "Vault saturation",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "dsfm:oneagent.code_module.requests.sampled",
+                    "metric": "ext:cloud.azure.microsoft_keyvault.vaults.saturationshoebox",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -165,7 +169,7 @@
             }
         },
         {
-            "name": "Oneagent - Code Module - Requests - Skipped",
+            "name": "Total service API hits",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -175,14 +179,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Oneagent - Code Module - Requests - Skipped",
+            "customName": "Total service API hits",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "dsfm:oneagent.code_module.requests.skipped",
+                    "metric": "ext:cloud.azure.microsoft_keyvault.vaults.serviceapihit",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -234,7 +240,7 @@
             }
         },
         {
-            "name": "Oneagent - Code Module - Traces - Processed",
+            "name": "Overall service API latency",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -244,14 +250,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Oneagent - Code Module - Traces - Processed",
+            "customName": "Overall service API latency",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "dsfm:oneagent.code_module.traces.processed",
+                    "metric": "ext:cloud.azure.microsoft_keyvault.vaults.serviceapilatency",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -303,7 +311,7 @@
             }
         },
         {
-            "name": "Oneagent - Code Module - Traces - Sampled",
+            "name": "Total service API results",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -313,83 +321,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Oneagent - Code Module - Traces - Sampled",
+            "customName": "Total service API results",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "dsfm:oneagent.code_module.traces.sampled",
+                    "metric": "ext:cloud.azure.microsoft_keyvault.vaults.serviceapiresult",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Oneagent - Service Calls - Processed",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 0,
-                "left": 1520,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Oneagent - Service Calls - Processed",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "dsfm:oneagent.service_calls.processed",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],

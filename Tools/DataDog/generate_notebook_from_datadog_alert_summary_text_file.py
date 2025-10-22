@@ -53,7 +53,7 @@ def process_datadog_alert_summary_text_files():
 
     filenames = [os.path.join(path, name) for path, subdirs, files in os.walk(input_directory) for name in files]
     for filename in filenames:
-        if filename.endswith('.txt'):
+        if filename.endswith('Services.txt'):
             process_datadog_alert_summary_text_file(filename)
 
 
