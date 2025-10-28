@@ -1,6 +1,7 @@
 # Copy/rename json files and modify "template" references in config.yaml to new json file names
 # The "name" in config.yaml is used for the new json file name
 
+import json
 import os
 import shutil
 import yaml
@@ -30,16 +31,18 @@ def process():
     old_config = read_yaml(f'{input_path}/config.yaml')
     configs = old_config['configs']
 
-    print(old_config)
+    # print(old_config)
 
     for config in configs:
         template = config['config']['template']
-        name = config['config']['name']
-        clean_file_name = directories_and_files.get_clean_file_name(name, '-')
-        output_filename = clean_file_name + '.json'
+        # name = config['config']['name']
+        # clean_file_name = directories_and_files.get_clean_file_name(name, '-')
+        # output_filename = clean_file_name + '.json'
         # print(template, name, output_filename)
-        copy_and_rename(f'{input_path}/{template}', f'{output_path}/{output_filename}')
-        config['config']['template'] = output_filename
+
+        copy_and_rename(f'{input_path}/{template}', f'{output_path}/{template}')
+
+        config['config']['template'] = template
         new_configs.append(config)
 
     new_config_dict = {'configs': new_configs}
@@ -47,7 +50,17 @@ def process():
 
 
 def copy_and_rename(src_path, dest_path):
-    shutil.copy2(src_path, dest_path)
+    json_data = read_json(src_path)
+    title = json_data['title']
+    # print(title)
+
+    if title.startswith('SCRS - Purchase'):
+        print(title)
+        shutil.copy2(src_path, dest_path)
+
+    if title.startswith('SCRS -  Purchase'):
+        print(title)
+        shutil.copy2(src_path, dest_path)
 
 
 def update_config(new_config_dict, config_template, output_filename):
@@ -70,6 +83,12 @@ def confirm(message):
         if not proceed:
             print('Operation aborted')
             exit()
+
+
+def read_json(input_file_name):
+    with open(input_file_name, 'r', encoding='utf-8') as infile:
+        json_data = json.loads(infile.read())
+        return json_data
 
 
 def read_yaml(input_file_name):

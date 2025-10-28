@@ -3,18 +3,9 @@ import glob
 import json
 import yaml
 
-# configuration_yaml_file = '/Temp/builtinmonitoring.slo/config.yaml'
-# input_glob_pattern = '/Temp/builtinmonitoring.slo/*.json'
-# output_configuration_yaml_file = '/Temp/builtinmonitoring.slo/new_config.yaml'
-
-# configuration_yaml_file = '/Temp/builtinmanagement-zones-output/config.yaml'
-# input_glob_pattern = '/Temp/builtinmanagement-zones-output/*.json'
-# output_configuration_yaml_file = '/Temp/builtinmanagement-zones-output/new_config.yaml'
-
-configuration_yaml_file = '/Dynatrace/Customers/ODFL/RequestAttributesUserPayloadExtracts/request-attributes-names/config.yaml'
-input_glob_pattern = '/Dynatrace/Customers/ODFL/RequestAttributesUserPayloadExtracts/request-attributes-names/*.json'
-output_configuration_yaml_file = '/Dynatrace/Customers/ODFL/RequestAttributesUserPayloadExtracts/request-attributes-names/new_config.yaml'
-
+configuration_yaml_file = '/Temp/Testing/config.yaml'
+input_glob_pattern = '/Temp/Testing/*.json'
+output_configuration_yaml_file = '/Temp/Testing/new_config.yaml'
 
 def main():
     ids_to_keep = []
