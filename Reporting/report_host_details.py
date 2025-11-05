@@ -47,6 +47,13 @@ def process_report(env, token, summary_mode):
             entity_id = inner_entities_json.get('entityId', '')
             display_name = inner_entities_json.get('displayName', '')
 
+            # special logic: part 1
+            # for when limited data is needed
+            # if 'u060api' in display_name or 'u060pay' in display_name:
+            #     pass
+            # else:
+            #     continue
+
             properties = inner_entities_json.get('properties')
 
             # import json
@@ -88,6 +95,9 @@ def process_report(env, token, summary_mode):
                     # To check for other paas_vendor_type settings...
                     # if paas_vendor_type != 'NONE':
                     #     print('paas_vendor_type: ', paas_vendor_type)
+
+            # special logic: part 2
+            # print('==>', display_name, host_group_name)
 
             management_zone_name_list = []
             management_zone_names = ''
