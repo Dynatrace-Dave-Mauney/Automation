@@ -38,7 +38,26 @@ def main():
                     # print(f'{metric} matches {metric_matcher}')
                     match_found = True
         if not match_found:
-            print(f'{metric} lacks coverage')
+            # Filter out the metrics that are always present
+            if  not metric.startswith('builtin:cloud.aws') and \
+                not metric.startswith('builtin:cloud.openstack') and \
+                not metric.startswith('builtin:host.zos') and \
+                not metric.startswith('builtin:security') and \
+                not metric.startswith('builtin:tech.Hadoop') and \
+                not metric.startswith('builtin:tech.couchbase') and \
+                not metric.startswith('builtin:tech.couchdb') and \
+                not metric.startswith('builtin:tech.customscripts') and \
+                not metric.startswith('builtin:tech.haproxy') and \
+                not metric.startswith('builtin:tech.hornetq') and \
+                not metric.startswith('builtin:tech.jboss') and \
+                not metric.startswith('builtin:tech.liberty') and \
+                not metric.startswith('builtin:tech.memcached') and \
+                not metric.startswith('builtin:tech.varnish') and \
+                not metric.startswith('builtin:tech.weblogic') and \
+                not metric.startswith('builtin:tech.wso2') and \
+                not metric.startswith('builtin:tech.zos') and \
+                not metric.startswith('dsfm:azure'):
+                    print(f'{metric} lacks coverage')
 
 
 if __name__ == '__main__':
