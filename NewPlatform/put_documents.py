@@ -29,6 +29,16 @@ def run():
     #   'Sandbox/00000000-dddd-bbbb-aaaa-????????????.json' # Strict reference
     #   'Sandbox/*.json' # Lenient reference
 
+    # CURRENT CUSTOMER
+    # put_documents('Prod', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/Prod/Dynatrace Architecture and Standards.json')
+    # put_documents('Prod', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/Prod/Dynatrace Architecture Launchpad.json')
+    # put_documents('Prod', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/Prod/Dynatrace User Launchpad.json')
+    # put_documents('Prod', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/Prod/Full Application List.json')
+    # put_documents('Prod', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/Prod/Quick Application List.json')
+
+
+    # REFERENCE
+
     # put_documents('tenant1', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/tenant1/Dynatrace Architecture Launchpad.json')
     # put_documents('tenant1', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/tenant1/Dynatrace User Launchpad.json')
     # put_documents('tenant1', '../$Private/Customers/$Current/Assets/NewPlatform/Notebooks/tenant1/*.json')
