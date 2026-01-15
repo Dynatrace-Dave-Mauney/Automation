@@ -30,12 +30,18 @@ def run():
     # post_dashboards(env, f'../$Private/$Output/Dashboards/ClassicConversion/*.json')
     # post_notebooks(env, f'../$Private/Customers/$Current/Assets/NewPlatform/Notebooks/{env}/*.json')
 
+    env='Prod'
     # env='Sandbox'
     # env='PreProd'
-    # env='Prod'
 
+    # CURRENT CUSTOMER (1/12/2026)
     # Initial deployment
     # post_dashboards(env, f'Dashboards/Assets/Templates/*.json')
+    # post_notebooks(env, f'Notebooks/Assets/*.json')
+    # post_launchpads(env, 'Launchpads/Assets/*.json')
+
+    # post_dashboards(env, f'Dashboards/Assets/Templates/*.json')
+    post_notebooks(env, f'C:\\Users\\dave.mauney\\PycharmProjects\\Automation\\$Private\\Customers\\$Current\\Vetting\\Notebooks\\*.json')
     # post_launchpads(env, 'Launchpads/Assets/*.json')
 
     # Add Management Zone Filtering
@@ -58,7 +64,7 @@ def run():
     # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE Full Stack Overview By Management Zone.json')
 
     # post_launchpads(env, f'../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/*.json')
-    post_launchpads(env, f'../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/TEMP/*.json')
+    # post_launchpads(env, f'../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/TEMP/*.json')
 
 
 def post_dashboards(env_name, path):

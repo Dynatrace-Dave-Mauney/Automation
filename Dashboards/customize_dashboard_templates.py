@@ -8,9 +8,10 @@ from inspect import currentframe
 
 from Reuse import dynatrace_api
 
-# env_name = 'Sandbox'
+env_name = 'Prod'
+
 # env_name = 'PreProd'
-# env_name = 'Prod'
+# env_name = 'Sandbox'
 # env_name = 'Personal'
 # env_name = 'Demo'
 
@@ -46,8 +47,10 @@ skip_file_name_list = [
     '00000000-dddd-bbbb-ffff-000000000001-v3b.json',
     '00000000-dddd-bbbb-ffff-000000000001-v3c.json',
     '00000000-dddd-bbbb-ffff-000000000001-v4_Lower.json',
-    '00000000-dddd-bbbb-ffff-000000000001-v4_Prod.json',
+    # '00000000-dddd-bbbb-ffff-000000000001-v4_Prod.json',
     '00000000-dddd-bbbb-ffff-000000000001-v4_Prod_BACKUP.json',
+    '00000000-dddd-bbbb-ffff-000000000001-v4_Prod_BACKUP2.json',
+    '00000000-dddd-bbbb-ffff-000000000001-v4_Tenant1.json',
     '00000000-dddd-bbbb-ffff-000000000001-v4_Upper.json',
     '00000000-dddd-bbbb-ffff-000000000014-v1.json',
     '00000000-dddd-bbbb-ffff-000000000015.json',
@@ -446,7 +449,7 @@ def customize_dashboard(dashboard):
     new_dashboard_json = copy.deepcopy(dashboard_json)
     dashboard_id = dashboard_json.get('id')
     name = dashboard_json.get('dashboardMetadata').get('name')
-    print(dashboard_id, name)
+    # print(dashboard_id, name)
 
     filters = []
     if ': Overview' in name:

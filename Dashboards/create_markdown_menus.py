@@ -4,20 +4,68 @@
 import codecs
 import glob
 import json
-# import pathlib
 
 env_name = 'Prod'
-# env_name = 'NonProd'
-# env_name = 'Sandbox'
-# env_name = 'Upper'
-# env_name = 'Lower'
 
-ootb_dashboards = [
-    ('Palo Alto', 'ab163c60-07f5-7e82-40d5-35cd6a8be991')
+# These will work with any customer, and are in the templates directory
+main_dashboards = [
+    'Administration',
+    'Application Overview - Home',
+    'Backend Overview',
+    'Calls To Databases',
+    'Containers',
+    'Detailed Drilldowns Menu',
+    'Dynatrace-owned Dashboards',
+    'Full Stack Overview',
+    'Hosts (Detailed)',
+    'Key Requests',
+    'Key User Actions',
+    'Monitoring Overview',
+    'Network (Host-Level Details)',
+    'Network (Process-Level Details)',
+    'Processes',
+    'Queues',
+    'Service Errors',
+    'Service HTTP Errors',
+    'Suspicious Activity Audit',
+    'Synthetics: Browser Monitor Events',
+    'Third Party Services',
 ]
 
-new_ui_links = [
-    ('New Platform: Shared Notebooks', 'https://{{.new_ui_tenant}}.apps.dynatrace.com/ui/document/v0/#share={{.new_ui_shared_notebooks_id}}')
+# These differ by customer, and are in the templates directory
+tech_dashboards = [
+    '.NET',
+    'Go',
+    'Java',
+    'Java Memory',
+    'Kubernetes - Home',
+    'Node.js',
+    'Tomcat',
+    'Web Servers',
+]
+
+# These differ by customer, and are not in the templates directory
+ootb_dashboards = [
+    # ('Palo Alto', 'ab163c60-07f5-7e82-40d5-35cd6a8be991')
+]
+
+# These differ by customer, and are not in the templates directory
+new_ui_dashboards = [
+    # ('New Platform: Shared Notebooks', 'https://{{.new_ui_tenant}}.apps.dynatrace.com/ui/document/v0/#share={{.new_ui_shared_notebooks_id}}')
+    # 'New Platform: Dynatrace Architecture Launchpad',
+    # 'New Platform: Dynatrace User Launchpad',
+]
+
+# These differ by customer, and are in the templates directory
+tech_dashboards = [
+    '.NET',
+    'Go',
+    'Java',
+    'Java Memory',
+    'Kubernetes - Home',
+    'Node.js',
+    'Tomcat',
+    'Web Servers',
 ]
 
 def load_dashboard_lookup():
@@ -37,7 +85,7 @@ def load_dashboard_lookup():
         dashboard_id = ootb_dashboard[1]
         dashboard_lookup[dashboard_name] = dashboard_id
 
-    for new_ui_link in new_ui_links:
+    for new_ui_link in new_ui_dashboards:
         link_name = new_ui_link[0]
         link_url = new_ui_link[1]
         dashboard_lookup[link_name] = link_url
@@ -46,65 +94,130 @@ def load_dashboard_lookup():
 
 
 def write_markdown_menus(dashboard_lookup):
-    # Current/Customer3-specific list
-    menu_item_list_v4 = [
-        '.NET',
-        'Administration',
-        'Application Overview - Home',
-        'AWS Home',
-        'Backend Overview',
-        'Calls To Databases',
-        'CICS',
-        'Cloud Foundry',
-        'Containers',
-        'ControlM',
-        'Custom PMI Metrics',
-        'DB2 - Home',
-        'Detailed Drilldowns Menu',
-        'Executor',
-        'F5 - Home',
-        'Full Stack Overview',
-        'Go',
-        'HikariCP',
-        'Hosts (Detailed)',
-        'IBM MQ Home',
-        'IBM WebSphere Home',
-        # 'IBM MQ Metrics by Best Split',
-        # 'IBM MQ Metrics by Queue Manager and Best Split',
-        # 'IBM MQ Metrics by Queue Manager',
-        'Java',
-        'Java Memory',
-        'Kafka Home',
-        # 'Kafka - Home',
-        'Key Requests',
-        'Key User Actions',
-        'Kubernetes - Home',
-        'Microsoft Exchange',
-        'Microsoft SQL Server',
-        'Monitoring Overview',
-        'Network (Host-Level Details)',
-        'Network (Process-Level Details)',
-        'New Platform: Shared Notebooks',
-        'NGIS',
-        'Node.js',
-        'Processes',
-        'Queues',
-        'R2DBC',
-        'Resilience4j',
-        'Service Errors',
-        'Service HTTP Errors',
-        'Snowflake',
-        'Spark',
-        'Spring',
-        'Suspicious Activity Audit',
-        'Synthetics: Browser Monitor Events',
-        'Third Party Services',
-        'Tomcat',
-        'VMware',
-        'Web Application Insights',
-        'Web Servers',
-    ]
+    markdown_menu = '			"markdown": "More Details\\n\\n'
+    # for menu_item in menu_item_list_v1:
+    # for menu_item in menu_item_list_v2:
+    # for menu_item in menu_item_list_v3:
+    # lower_skips = ['Redis - Home', 'F5 - Home', 'Palo Alto']
 
+    # Combine the dashboards that have templates
+    template_dashboards = sorted(main_dashboards + tech_dashboards)
+
+    for menu_item in template_dashboards:
+        # for menu_item in menu_item_list:
+        markdown_item_id = dashboard_lookup.get(menu_item)
+        if not markdown_item_id:
+            print(f'Dashboard lookup dictionary missing menu item: {menu_item}')
+            exit(1)
+        # if not (env_name == 'Lower' and menu_item in lower_skips):
+        if '{{.new_ui_tenant}}' in markdown_item_id:
+            markdown_menu += f'[{menu_item}]({markdown_item_id})  \\n'
+        else:
+            markdown_menu += f'[{menu_item}](#dashboard;id={markdown_item_id})  \\n'
+    markdown_menu += '"'
+
+    filename = f'Templates/Overview/markdown_menu_{env_name}.json'
+    with open(filename, 'w') as file:
+        file.write(markdown_menu)
+
+    print(f'Output File: {filename} for environment {env_name}')
+
+
+def main():
+    dashboard_lookup = load_dashboard_lookup()
+    # for i in dashboard_lookup:
+    #     print(i)
+    write_markdown_menus(dashboard_lookup)
+
+
+if __name__ == '__main__':
+    main()
+
+    # History for Reference if ever needed...
+    # 
+    # Current Customer list
+    # menu_item_list_v4 = [
+    #     'Administration',
+    #     'Application Overview - Home',
+    #     'Backend Overview',
+    #     'Calls To Databases',
+    #     'Containers',
+    #     'Detailed Drilldowns Menu',
+    #     'Dynatrace-owned Dashboards',
+    #     'Full Stack Overview',
+    #     'Hosts (Detailed)',
+    #     'Key Requests',
+    #     'Key User Actions',
+    #     'Monitoring Overview',
+    #     'Network (Host-Level Details)',
+    #     'Network (Process-Level Details)',
+    #     'Processes',
+    #     'Queues',
+    #     'Service Errors',
+    #     'Service HTTP Errors',
+    #     'Suspicious Activity Audit',
+    #     'Synthetics: Browser Monitor Events',
+    #     'Third Party Services',
+    # ]
+    # 
+    # menu_item_list_v4 = [
+    #     '.NET',
+    #     'Administration',
+    #     'Application Overview - Home',
+    #     'AWS Home',
+    #     'Backend Overview',
+    #     'Calls To Databases',
+    #     'CICS',
+    #     'Cloud Foundry',
+    #     'Containers',
+    #     'ControlM',
+    #     'Custom PMI Metrics',
+    #     'DB2 - Home',
+    #     'Detailed Drilldowns Menu',
+    #     'Executor',
+    #     'F5 - Home',
+    #     'Full Stack Overview',
+    #     'Go',
+    #     'HikariCP',
+    #     'Hosts (Detailed)',
+    #     'IBM MQ Home',
+    #     'IBM WebSphere Home',
+    #     # 'IBM MQ Metrics by Best Split',
+    #     # 'IBM MQ Metrics by Queue Manager and Best Split',
+    #     # 'IBM MQ Metrics by Queue Manager',
+    #     'Java',
+    #     'Java Memory',
+    #     'Kafka Home',
+    #     # 'Kafka - Home',
+    #     'Key Requests',
+    #     'Key User Actions',
+    #     'Kubernetes - Home',
+    #     'Microsoft Exchange',
+    #     'Microsoft SQL Server',
+    #     'Monitoring Overview',
+    #     'Network (Host-Level Details)',
+    #     'Network (Process-Level Details)',
+    #     'New Platform: Shared Notebooks',
+    #     'NGIS',
+    #     'Node.js',
+    #     'Processes',
+    #     'Queues',
+    #     'R2DBC',
+    #     'Resilience4j',
+    #     'Service Errors',
+    #     'Service HTTP Errors',
+    #     'Snowflake',
+    #     'Spark',
+    #     'Spring',
+    #     'Suspicious Activity Audit',
+    #     'Synthetics: Browser Monitor Events',
+    #     'Third Party Services',
+    #     'Tomcat',
+    #     'VMware',
+    #     'Web Application Insights',
+    #     'Web Servers',
+    # ]
+    #
     # Demo
     # menu_item_list = [
     #     '.NET',
@@ -280,38 +393,3 @@ def write_markdown_menus(dashboard_lookup):
     #     'Web Application Insights',
     #     'Web Servers',
     # ]
-
-    markdown_menu = '			"markdown": "More Details\\n\\n'
-    # for menu_item in menu_item_list_v1:
-    # for menu_item in menu_item_list_v2:
-    # for menu_item in menu_item_list_v3:
-    lower_skips = ['Redis - Home', 'F5 - Home', 'Palo Alto']
-    for menu_item in menu_item_list_v4:
-        # for menu_item in menu_item_list:
-        markdown_item_id = dashboard_lookup.get(menu_item)
-        if not markdown_item_id:
-            print(f'Dashboard lookup dictionary missing menu item: {menu_item}')
-            exit(1)
-        if not (env_name == 'Lower' and menu_item in lower_skips):
-            if '{{.new_ui_tenant}}' in markdown_item_id:
-                markdown_menu += f'[{menu_item}]({markdown_item_id})  \\n'
-            else:
-                markdown_menu += f'[{menu_item}](#dashboard;id={markdown_item_id})  \\n'
-    markdown_menu += '"'
-
-    filename = f'Templates/Overview/markdown_menu_{env_name}.json'
-    with open(filename, 'w') as file:
-        file.write(markdown_menu)
-
-    print(f'Output File: {filename} for environment {env_name}')
-
-
-def main():
-    dashboard_lookup = load_dashboard_lookup()
-    # for i in dashboard_lookup:
-    #     print(i)
-    write_markdown_menus(dashboard_lookup)
-
-
-if __name__ == '__main__':
-    main()

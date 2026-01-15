@@ -63,7 +63,7 @@ def get_document_id_list(env, client_id, client_secret):
             continue
 
         # Only share "official" dashboards with environment prefixes
-        if document_name.startswith('Sandbox ') or document_name.startswith('Preprod ') or document_name.startswith('Prod '):
+        if document_name.startswith('Prod ') or document_name.startswith('Preprod ') or document_name.startswith('Sandbox '):
             # print(f'{document_name} will be shared')
             document_id_list.append(document_id)
 
@@ -87,9 +87,9 @@ def main():
     friendly_function_name = 'Dynatrace Automation'
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
-    env_name_supplied = 'Sandbox'
-    # env_name_supplied = 'PreProd'
     # env_name_supplied = 'Prod'
+    # env_name_supplied = 'PreProd'
+    # env_name_supplied = 'Sandbox'
     # env_name_supplied = 'Personal'
     # env_name_supplied = 'Demo'
     env_name, env, client_id, client_secret = environment.get_client_environment_for_function(env_name_supplied, friendly_function_name)

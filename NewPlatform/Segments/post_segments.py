@@ -12,9 +12,9 @@ from Reuse import new_platform_api
 
 def run():
     pass
-    post_segments('Sandbox', 'Assets/*.json')
+    post_segments('Prod', 'Assets/*.json')
+    # post_segments('Sandbox', 'Assets/*.json')
     # post_segments('PreProd', 'Assets/*.json')
-    # post_segments('Prod', 'Assets/*.json')
     # post_segments('Personal', 'Assets/*.json')
 
 

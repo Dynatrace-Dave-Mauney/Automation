@@ -33,7 +33,7 @@ def main():
     # env_name_supplied = 'NonProd'
     # env_name_supplied = 'Sandbox'
     # env_name_supplied = 'Dev'
-    env_name_supplied = 'Personal'
+    # env_name_supplied = 'Personal'
     # env_name_supplied = 'Demo'
     env_name, env, client_id, client_secret = environment.get_client_environment_for_function(env_name_supplied, friendly_function_name)
 

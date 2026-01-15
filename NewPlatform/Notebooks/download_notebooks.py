@@ -64,9 +64,9 @@ def main():
     friendly_function_name = 'Dynatrace Automation'
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
-    # env_name_supplied = 'Sandbox'
-    # env_name_supplied = 'PreProd'
     # env_name_supplied = 'Prod'
+    # env_name_supplied = 'PreProd'
+    # env_name_supplied = 'Sandbox'
     # env_name_supplied = 'Personal'
     env_name, env, client_id, client_secret = environment.get_client_environment_for_function(env_name_supplied, friendly_function_name)
     process(env, env_name, client_id, client_secret)

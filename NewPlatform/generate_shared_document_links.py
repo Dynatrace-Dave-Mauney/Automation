@@ -1,3 +1,6 @@
+# First, share the documents using
+# add_environment_shares.py
+
 import json
 
 from Reuse import environment
@@ -10,6 +13,7 @@ my_owner_ids = []
 filter = ""
 # filter = "NMXP - Auth"
 # filter = "Rollup"
+
 
 def process(env_name, env, client_id, client_secret):
     configuration_file = 'configurations.yaml'
@@ -25,6 +29,7 @@ def process(env_name, env, client_id, client_secret):
 
 def generate_dashboard_links(env_name, env, environment_shares, dashboards):
     links = []
+
     dashboard_ids = dashboards.keys()
     for dashboard_id in dashboard_ids:
         environment_shares.get(dashboard_id)
@@ -39,7 +44,11 @@ def generate_dashboard_links(env_name, env, environment_shares, dashboards):
                 # links.append(f'{dashboard_name} Dashboard ({env_name}): {env}/ui/document/v0/#share={environment_share_id}')
                 links.append(f"\t\t(f'{dashboard_name}', f'https://{{tenant}}.apps.dynatrace.com/ui/document/v0/#share={environment_share_id}'),")
 
+    # Classic overview dashboard framework up front!
+    classic_overview_dashboard = f"\t\t(f'{{tenant_name}}: Overview (Classic Dashboard)', f'https://{{tenant}}.live.dynatrace.com/#dashboard;id=00000000-dddd-bbbb-ffff-000000000001'),"
+
     print(f'\t{env_name.lower()}_links = [')
+    print(classic_overview_dashboard)
     for link in sorted(links):
         print(link)
     print(f'\t]')
@@ -128,19 +137,11 @@ def get_notebooks(env, client_id, client_secret):
 def main():
     friendly_function_name = 'Dynatrace Automation'
 
-    # env_name_supplied = 'Sandbox'
+    env_name_supplied = 'Prod'
     # env_name_supplied = 'PreProd'
-    # env_name_supplied = 'Prod'
+    # env_name_supplied = 'Sandbox'
     env_name, env, client_id, client_secret = environment.get_client_environment_for_function(env_name_supplied, friendly_function_name)
     process(env_name, env, client_id, client_secret)
-
-    # env_name_supplied = 'PreProd'
-    # env_name, env, client_id, client_secret = environment.get_client_environment_for_function(env_name_supplied, friendly_function_name)
-    # process(env_name, env, client_id, client_secret)
-
-    # env_name_supplied = 'Sandbox'
-    # env_name, env, client_id, client_secret = environment.get_client_environment_for_function(env_name_supplied, friendly_function_name)
-    # process(env_name, env, client_id, client_secret)
 
 
 if __name__ == '__main__':

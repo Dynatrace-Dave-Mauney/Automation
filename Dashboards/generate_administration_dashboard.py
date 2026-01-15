@@ -24,19 +24,19 @@ def main():
 
     view_links = [
         ('Access Tokens', '/ui/access-tokens'),
-        ('Consumption', '/ui/consumption/ddu/overview'),
+        # ('Consumption', '/ui/consumption/ddu/overview'),
         ('Credential Vault', '#credentialvault'),
         ('Custom Devices', '#newcustomdevices'),
         ('Deploy Dynatrace', '#deploy'),
         ('Deployment Status', '/ui/deploymentstatus/oneagents'),
-        ('Dynatrace Hub', '/ui/hub'),
-        ('Extensions', '/ui/hub'),
+        ('Dynatrace Hub (Extensions)', '/ui/hub'),
+        # ('Extensions', '/ui/hub'),
         ('Synthetic', '#monitors'),
         ('System Notifications', '/ui/system-notifications'),
     ]
 
     setting_links = [
-        ('Settings', '#settings'),
+        ('Classic Settings', '#settings'),
         # 800-v2 has no AWS
         # ('AWS', '#settings/awsmonitoring'),
         ('Application Detection', '/ui/settings/builtin:rum.web.app-detection'),
@@ -140,7 +140,7 @@ def main():
         dashboard_key, dashboard_link = dashboard_link
         dashboard_markdown += f'  \\n[{dashboard_key}]({dashboard_link})'
 
-    setting_markdown_title = drilldown_title.replace('{{.title}}', 'Settings')
+    setting_markdown_title = drilldown_title.replace('{{.title}}', 'Classic Settings')
     setting_markdown = setting_markdown_title
     for setting_link in setting_links:
         setting_key, setting_link = setting_link
