@@ -61,16 +61,20 @@ def get_one_agent_links():
         ('Dynatrace OneAgent', 'https://docs.dynatrace.com/docs/shortlink/oneagent-hub'),
         # Windows
         ('Install OneAgent on Windows', 'https://docs.dynatrace.com/docs/shortlink/oneagent-windows-install'),
+        ('Windows Silent installation', 'https://docs.dynatrace.com/docs/shortlink/windows-custom-installation#silent-installation'),
+        ('OneAgent files and disk space requirements on Windows', 'https://docs.dynatrace.com/docs/shortlink/oneagent-disk-requirements-windows'),
         ('Update Dynatrace OneAgent on Windows', 'https://docs.dynatrace.com/docs/shortlink/oneagent-update-windows'),
         ('Stop/restart OneAgent on Windows', 'https://docs.dynatrace.com/docs/shortlink/stop-restart-oneagent-windows'),
         ('Uninstall Dynatrace OneAgent on Windows', 'https://docs.dynatrace.com/docs/shortlink/oneagent-uninstall-windows'),
         # Linux
         ('Install OneAgent on Linux', 'https://docs.dynatrace.com/docs/shortlink/oneagent-linux-install'),
+        ('OneAgent files and disk space requirements on Linux', 'https://docs.dynatrace.com/docs/shortlink/oneagent-disk-requirements-linux'),
         ('Update OneAgent on Linux', 'https://docs.dynatrace.com/docs/shortlink/oneagent-update-linux'),
         ('Stop/restart OneAgent on Linux', 'https://docs.dynatrace.com/docs/shortlink/stop-restart-oneagent-linux'),
         ('Uninstall OneAgent on Linux', 'https://docs.dynatrace.com/docs/shortlink/oneagent-uninstall-linux'),
-        # Linux
+        # AIX
         ('Install OneAgent on AIX', 'https://docs.dynatrace.com/docs/shortlink/oneagent-aix-install'),
+        ('OneAgent files and disk space requirements on AIX', 'https://docs.dynatrace.com/docs/shortlink/oneagent-disk-requirements-aix'),
         ('Update OneAgent on AIX', 'https://docs.dynatrace.com/docs/shortlink/oneagent-update-aix'),
         ('Stop/restart OneAgent on AIX', 'https://docs.dynatrace.com/docs/shortlink/stop-restart-oneagent-aix'),
         ('Uninstall OneAgent on AIX', 'https://docs.dynatrace.com/docs/shortlink/oneagent-uninstall-aix'),
@@ -105,8 +109,9 @@ def get_extension_links():
 
 def get_configuration_links():
     links = [
-        ('Organize your environment using host groups', 'https://docs.dynatrace.com/docs/shortlink/host-groups'),
+        ('Azure SAML configuration for Dynatrace', 'https://docs.dynatrace.com/docs/shortlink/saml-azure'),
         ('Network zones', 'https://docs.dynatrace.com/docs/shortlink/network-zones'),
+        ('Organize your environment using host groups', 'https://docs.dynatrace.com/docs/shortlink/host-groups'),
         ('Tags and metadata', 'https://docs.dynatrace.com/docs/shortlink/tags-and-metadata-hub'),
         ('Management zones', 'https://docs.dynatrace.com/docs/shortlink/management-zones-hub'),
         ('Segments', 'https://docs.dynatrace.com/docs/shortlink/segments'),
@@ -117,12 +122,11 @@ def get_configuration_links():
         ('Permissions in Grail', 'https://docs.dynatrace.com/docs/shortlink/assign-bucket-table-permissions'),
         ('Credential vault', 'https://docs.dynatrace.com/docs/shortlink/credential-vault'),
         ('OpenPipeline', 'https://docs.dynatrace.com/docs/shortlink/openpipeline'),
+        ('Request attributes', 'https://docs.dynatrace.com/docs/shortlink/request-attributes'),
         ('Remote configuration management of OneAgents and ActiveGates', 'https://docs.dynatrace.com/docs/shortlink/remote-configuration'),
         ('Dynatrace Configuration as Code', 'https://docs.dynatrace.com/docs/shortlink/configuration-as-code'),
         ('Monaco', 'https://docs.dynatrace.com/docs/shortlink/configuration-as-code-monaco'),
-        ('Request attributes', 'https://docs.dynatrace.com/docs/shortlink/request-attributes'),
         # ('OpenTelemetry and Dynatrace', 'https://docs.dynatrace.com/docs/shortlink/opentelemetry'),
-        # ('', ''),
         # ('', ''),
         # ('', ''),
         # ('', ''),

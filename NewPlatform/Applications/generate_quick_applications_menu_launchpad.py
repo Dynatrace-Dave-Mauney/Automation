@@ -7,103 +7,108 @@ from Reuse import new_platform_api
 skip_list = [
     'AWS Classic',
     'AWS Connector',
-    'AWS',
     'Access Tokens',
-    'Agentless Real User Monitoring',  # Customer-specific choice
+    'Agentless Real User Monitoring',
+    # 'Anomaly Detection',
     'App Shell',
     # 'Azure Classic',
-    # 'Azure',
-    'Cloud Foundry',  # Customer-specific choice
+    'Cloud Foundry',
     # 'Clouds',
     'Cluster DevTools',
     # 'Containers',
     'Credential Vault',
-    'Custom Applications',  # Customer-specific choice
-    # 'Dashboards Classic',
+    'Custom Applications',
     # 'Dashboards',
-    # 'Data Explorer',
+    # 'Dashboards Classic',
+    # 'Data Explorer Classic',
     # 'Database Services Classic',
     # 'Databases',
-    # 'Davis Anomaly Detection',
     # 'Davis CoPilot',
+    # 'Davis® for Workflows',
     'Deploy ActiveGate',
     'Deploy OneAgent',
     'Deployment Status',
     'Discovery & Coverage',
     # 'Distributed Traces Classic',
     # 'Distributed Tracing',
+    'Documents app',
     'EdgeConnect Management',
     'Email',
-    'Explore Business Events',
-    'Extensions',
-    'Extensions',
-    # 'Frontend',  # Customer-specific choice
+    'Error Inspector',
+    'Experience Vitals',
+    # 'Explore Business Events',
+    # 'Extensions',
+    # 'Extensions',
+    # 'Frontend',
     'GCP Classic',
     'GitHub',
     'GitLab',
     # 'Host Networking',
     # 'Hosts Classic',
-    # 'Hub',
+    'Hub',
     # 'Infrastructure & Operations',
     'Jenkins',
     'Jira',
-    # 'Kubernetes Classic',
-    # 'Kubernetes Workloads Classic',
     # 'Kubernetes',
+    # 'Kubernetes Classic',
+    'Kubernetes Connector',
+    # 'Kubernetes Workloads Classic',
     # 'Launcher',
-    # 'Learn DQL',
-    'Logs & Events Classic',
+    'Live Debugger',
     # 'Logs',
+    'Logs & Events Classic',
     # 'Message Queues',
-    # 'Metrics',
+    # 'Metrics Classic',
     'Microsoft 365',
+    'Microsoft Entra ID',
     'Microsoft Teams',
-    'Mobile',  # Customer-specific choice
+    # 'Mobile',
     # 'Multidimensional Analysis',
     # 'Notebooks',
     'OneAgent Health',
     'OpenPipeline',
+    'Outbound connections',
     'Ownership',
     'PaaS Integration',
     'PagerDuty',
     'Personal Access Tokens',
-    # 'Problems Classic',
+    'Platform Service Settings',
     # 'Problems',
+    # 'Problems Classic',
     # 'Profiling & Optimization',
     # 'Query User Sessions',
     'Red Hat Ansible',
-    'Releases',  # Customer-specific choice
-    'Security Investigator',  # Customer-specific choice
-    # 'Segments',
-    'Service-Level Objectives Classic',
+    'Releases',
+    'Security Investigator',
+    'Security Overview',
+    'Security Posture Management',
+    'Segments',
     'Service-Level Objectives',
+    'Service-Level Objectives Classic',
     'ServiceNow',
-    # 'Services Classic',
     # 'Services',
+    # 'Services Classic',
     # 'Session Replay Classic',
     # 'Session Segmentation',
-    'Settings Classic',
-    'Settings',
+    # 'Settings',
+    # 'Settings Classic',
     'Site Reliability Guardian',
     'Slack',
-    # 'Smartscape Topology',
+    # 'Smartscape Classic',
     'Storage Management',
-    # 'Synthetic Classic',
     # 'Synthetic',
+    # 'Synthetic Classic',
     'System Notifications',
     # 'Technologies & Processes Classic',
-    'User Settings',
-    'VMware Classic',
-    'Vulnerabilities',  # Customer-specific choice
-    # 'Web',
-    # 'Workflows',
-    'Attacks',
-    'Code-Level Vulnerabilities',
-    'Live Debugger',
-    'Outbound connections',
     'Text Processing',
     'Third-Party Vulnerabilities',
     'Threats & Exploits',
+    # 'User Settings',
+    # 'Users & Sessions',
+    'VMware Classic',
+    'Vulnerabilities',
+    # 'Web',
+    # 'Workflows',
 ]
 
 template = {
@@ -159,29 +164,29 @@ def process(env, client_id, client_secret):
     applications_json = json.loads(results.text)
     application_list = applications_json.get('apps')
     # print(applications_json)
-    headers = [['Name', 'ID', 'Version', 'Description', 'Resource Status', 'App Icon', 'Signed', 'Publisher', 'Created By', 'Last Modified By', 'Last Modified At']]
-    rows = []
+    # headers = [['Name', 'ID', 'Version', 'Description', 'Resource Status', 'App Icon', 'Signed', 'Publisher', 'Created By', 'Last Modified By', 'Last Modified At']]
+    # rows = []
     app_links = []
     for application in application_list:
         application_id = application.get('id')
         application_name = application.get('name')
-        application_version = application.get('version')
-        application_description = application.get('description')
-        application_resourceStatus = application.get('resourceStatus').get('status')
-        application_appIcon = application.get('appIcon').get('href')
-        application_signatureInfo_signed = application.get('signatureInfo').get('signed')
-        application_signatureInfo_publisher = application.get('signatureInfo').get('publisher')
-        application_modificationInfo = application.get('modificationInfo')
-        application_modificationInfo_createdBy = application_modificationInfo.get('createdBy')
-        application_modificationInfo_lastModifiedBy = application_modificationInfo.get('lastModifiedBy')
-        application_modificationInfo_lastModifiedAt = application_modificationInfo.get('lastModifiedAt')
-        # rows.append([application_name, application_id, application_version, application_description, application_resourceStatus, application_appIcon, application_signatureInfo_signed, application_signatureInfo_publisher, application_modificationInfo_createdBy, application_modificationInfo_lastModifiedBy, application_modificationInfo_lastModifiedAt])
+        # application_version = application.get('version')
+        # application_description = application.get('description')
+        # application_resourceStatus = application.get('resourceStatus').get('status')
+        application_app_icon = application.get('appIcon').get('href')
+        # application_signatureInfo_signed = application.get('signatureInfo').get('signed')
+        # application_signatureInfo_publisher = application.get('signatureInfo').get('publisher')
+        # application_modificationInfo = application.get('modificationInfo')
+        # application_modificationInfo_createdBy = application_modificationInfo.get('createdBy')
+        # application_modificationInfo_lastModifiedBy = application_modificationInfo.get('lastModifiedBy')
+        # application_modificationInfo_lastModifiedAt = application_modificationInfo.get('lastModifiedAt')
+        # rows.append([application_name, application_id, application_version, application_description, application_resourceStatus, application_app_icon, application_signatureInfo_signed, application_signatureInfo_publisher, application_modificationInfo_createdBy, application_modificationInfo_lastModifiedBy, application_modificationInfo_lastModifiedAt])
 
         app_link = copy.deepcopy(app_link_template)
         app_link['id'] = 'aaaaaaaa-bbbb-cccc-dddd-000000000001'
         app_link['title'] = application_name
         app_link['action']['appId'] = application_id
-        app_link['icon'] = application_appIcon
+        app_link['icon'] = application_app_icon
 
         # print(application_name)
         if application_name not in skip_list:
@@ -206,6 +211,12 @@ def process(env, client_id, client_secret):
     app_links_launchpad['containerList']['containers'][0]['blocks'][0]['content'] = sorted_app_links
     print(json.dumps(app_links_launchpad))
 
+    write_launchpad(app_links_launchpad)
+
+
+def write_launchpad(launchpad_json):
+    with open('Quick Application List.json', 'w', encoding='utf-8') as outfile:
+        outfile.write(json.dumps(launchpad_json, indent=4, sort_keys=False))
 
 
 def main():
