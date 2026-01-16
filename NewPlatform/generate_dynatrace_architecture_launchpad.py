@@ -110,6 +110,7 @@ def get_extension_links():
 def get_configuration_links():
     links = [
         ('Azure SAML configuration for Dynatrace', 'https://docs.dynatrace.com/docs/shortlink/saml-azure'),
+        ('Sign in with Microsoft in Dynatrace SaaS SSO', 'https://docs.dynatrace.com/docs/shortlink/sign-in-with-microsoft'),
         ('Network zones', 'https://docs.dynatrace.com/docs/shortlink/network-zones'),
         ('Organize your environment using host groups', 'https://docs.dynatrace.com/docs/shortlink/host-groups'),
         ('Tags and metadata', 'https://docs.dynatrace.com/docs/shortlink/tags-and-metadata-hub'),
