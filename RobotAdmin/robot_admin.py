@@ -146,6 +146,7 @@ fixed_auto_tag_ids = {
     'WebSphere Cluster': 'aaaaaaaa-bbbb-cccc-dddd-000000000113',
     'WebSphere Node': 'aaaaaaaa-bbbb-cccc-dddd-000000000114',
     'WebSphere Server': 'aaaaaaaa-bbbb-cccc-dddd-000000000115',
+    'Security Context': 'aaaaaaaa-bbbb-cccc-dddd-000000000200',
 }
 
 fixed_request_attribute_ids = {
@@ -246,14 +247,27 @@ def process():
     # For when everything is commented out below...
     pass
 
-    # Current Customer: Prod
+    # CURRENT CUSTOMER (Prod)
+    # DONE
+    # put_auto_tag_host_group()
+    # put_auto_tag_security_context()
+    # OF POSSIBLE FUTURE INTEREST
+    # put_request_attribute('Client IP Address', 'CLIENT_IP', None)
+    # put_request_attribute('User-Agent', 'REQUEST_HEADER', 'User-Agent')
+    # put_request_attribute('x-dynatrace (client-side)', 'REQUEST_HEADER', 'x-dynatrace')
+    # put_request_attribute('x-dynatrace', 'REQUEST_HEADER', 'x-dynatrace')
+    # put_request_attribute_with_value_processing_control('User Agent Type', 'REQUEST_HEADER', 'User-Agent', {'extractSubstring': {'delimiter': '/', 'position': 'BEFORE'}, 'splitAt': '', 'trim': False})
+
+    # SAFETY VALVE
+    exit(9999)
+
+    # Past Customer: Prod
     # put_auto_tag('Geolocation', 'OPENSTACK_REGION_NAME', 'EXISTS', '{GeolocationSite:Name}', 'PROCESS_GROUP')
 
-    # Current Customer: Production
+    # Past Customer: Production
     # process_customer_specific_production()
     # generate_shotgun_request_attributes()
     # generate_request_attribute_json_payload_extracts('REQUEST_HEADER', 'user', {"employeeId":"","employeeName":"","employeeFullId":"","employeeMenuId":"","forkliftNumber":"","valid":"","supervisor":"","originServiceCenter":"","alternateServiceCenter":"","currentLocationServiceCenter":"","device":"","authorized":0,"tabletSerialNumber":0,"ipAddress":""})
-    exit(9999)
 
     # process_customer_specific_auto_tags()
     # process_customer_specific_request_attributes()
@@ -498,6 +512,31 @@ def get_permutations(string_list):
 
 
 def process_customer_specific_auto_tags():
+    ###################################################################################################################
+    # customer_specific: Auto Tags
+    ###################################################################################################################
+    process_auto_tags_basics()
+    process_auto_tags_host()
+    process_auto_tags_process()
+    process_auto_tags_service()
+    process_auto_tags_database()
+    # process_auto_tags_aws()
+    process_auto_tags_kubernetes()
+    process_auto_tags_java()
+    process_auto_tags_springboot()
+    process_auto_tags_tomcat()
+    process_auto_tags_nodejs()
+    process_auto_tags_apache_http()
+    process_auto_tags_iis()
+    process_auto_tags_dotnet()
+    process_auto_tags_weblogic()
+    # process_auto_tags_websphere()
+    # process_auto_tags_iib()
+    process_auto_tags_google_cloud_platform()
+    print('customer_specific Auto Tags Complete')
+
+
+def old_process_customer_specific_auto_tags():
     ###################################################################################################################
     # customer_specific: Auto Tags
     ###################################################################################################################
@@ -1766,6 +1805,33 @@ def put_auto_tag_host_technology():
     endpoint = '/api/config/v1/autoTags'
     # delete(endpoint, 'a323b1be-ab6a-31b8-b880-2065fc8f51ec')
     # time.sleep(10)
+    if offline:
+        save('auto-tag', name, payload)
+    else:
+        put(endpoint, object_id, payload)
+
+
+def put_auto_tag_security_context():
+    name = 'Security Context'
+
+    object_id = fixed_auto_tag_ids.get(name)
+
+    if not object_id:
+        print('No entry for ' + name + ' found in the "fixed_auto_tag_ids dictionary"!')
+        exit(get_line_number())
+
+    if auto_tag_prefix != '':
+        name = auto_tag_prefix + ' ' + name
+
+    rules = []
+    conditions = []
+    condition_comparison_info = {'caseSensitive': None, 'negate': False, 'operator': 'EXISTS', 'type': 'STRING', 'value': None}
+    condition_key = {'attribute': 'PROCESS_GROUP_NAME', 'operator': 'EXISTS'}
+    condition = {'comparisonInfo': condition_comparison_info, 'key': condition_key}
+    conditions.append(condition)
+    rules.append({'conditions': conditions, 'enabled': True, 'propagationTypes': ['PROCESS_GROUP_TO_HOST', 'PROCESS_GROUP_TO_SERVICE'], 'type': 'PROCESS_GROUP', 'valueFormat': '{Host:Environment:dt.security_context}'})
+    payload = json.dumps({'name': name, 'rules': rules})
+    endpoint = '/api/config/v1/autoTags'
     if offline:
         save('auto-tag', name, payload)
     else:
