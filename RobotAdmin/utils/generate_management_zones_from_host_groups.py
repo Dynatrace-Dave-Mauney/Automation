@@ -23,11 +23,7 @@ def generate_management_zones(env, token):
         inner_entities_json_list = entities_json.get('entities')
         for inner_entities_json in inner_entities_json_list:
             display_name = inner_entities_json.get('displayName')
-            if display_name.startswith('a_') and display_name.endswith('_e_prod'):
-                management_zone_name = re.sub('_f_.*', '', display_name)
-                management_zone_name = re.sub('_e_.*', '', management_zone_name)
-                management_zone_name = management_zone_name.replace('a_', '')
-                management_zones.append(management_zone_name)
+            management_zones.append(display_name)
 
     management_zones = remove_duplicates(sorted(management_zones))
 
@@ -43,60 +39,46 @@ def remove_duplicates(any_list):
 
 def post_management_zone(env, token, management_zone_name):
     management_zone_template = {
-        "description": None,
-        "dimensionalRules": [],
-        "entitySelectorBasedRules": [],
-        "name": "",
-        "rules": [
-            {
-                "conditions": [
-                    {
-                        "comparisonInfo": {
-                            "negate": False,
-                            "operator": "EQUALS",
-                            "type": "TAG",
-                            "value": {
-                                "context": "CONTEXTLESS",
-                                "key": "Environment",
-                                "value": ""
-                            }
-                        },
-                        "key": {
-                            "attribute": "PROCESS_GROUP_TAGS",
-                            "type": "STATIC"
-                        }
+    "metadata": {
+        "currentConfigurationVersions": [
+            "1.0.13"
+        ],
+        "configurationVersions": [],
+        "clusterVersion": "1.330.55.20260126-105640"
+    },
+    "name": "HG: $$HG$$",
+    "description": None,
+    "rules": [
+        {
+            "type": "PROCESS_GROUP",
+            "enabled": True,
+            "propagationTypes": [
+                "PROCESS_GROUP_TO_HOST",
+                "PROCESS_GROUP_TO_SERVICE"
+            ],
+            "conditions": [
+                {
+                    "key": {
+                        "attribute": "HOST_GROUP_NAME",
+                        "type": "STATIC"
                     },
-                    {
-                        "comparisonInfo": {
-                            "negate": False,
-                            "operator": "EQUALS",
-                            "type": "TAG",
-                            "value": {
-                                "context": "CONTEXTLESS",
-                                "key": "Application",
-                                "value": ""
-                            }
-                        },
-                        "key": {
-                            "attribute": "PROCESS_GROUP_TAGS",
-                            "type": "STATIC"
-                        }
+                    "comparisonInfo": {
+                        "type": "STRING",
+                        "operator": "EQUALS",
+                        "value": "$$HG$$",
+                        "negate": False,
+                        "caseSensitive": True
                     }
-                ],
-                "enabled": True,
-                "propagationTypes": [
-                    "PROCESS_GROUP_TO_HOST",
-                    "PROCESS_GROUP_TO_SERVICE"
-                ],
-                "type": "PROCESS_GROUP"
-            }
-        ]
-    }
-
+                }
+            ]
+        }
+    ],
+    "dimensionalRules": [],
+    "entitySelectorBasedRules": []
+}
     management_zone = copy.deepcopy(management_zone_template)
-    management_zone['name'] = management_zone_name
-    management_zone['rules'][0]['conditions'][0]['comparisonInfo']['value']['value'] = 'prod'
-    management_zone['rules'][0]['conditions'][1]['comparisonInfo']['value']['value'] = management_zone_name
+    management_zone['name'] = f'HG: {management_zone_name}'
+    management_zone['rules'][0]['conditions'][0]['comparisonInfo']['value'] = management_zone_name
 
     endpoint = '/api/config/v1/managementZones'
     dynatrace_api.post_object(f'{env}{endpoint}', token, json.dumps(management_zone))
