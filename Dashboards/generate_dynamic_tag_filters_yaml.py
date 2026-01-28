@@ -71,10 +71,14 @@ def process_entity_type(env, token, entity_type):
 
             tags = inner_entities_json.get('tags')
             for tag in tags:
+                tag_context = tag.get('context')
                 tag_key = tag.get('key')
+                if tag_context == 'AZURE':
+                    tag_key = f'[Azure]{tag_key}'
                 if tag_key not in used_tags:
                     used_tags.append(tag_key)
 
+    # print(sorted(used_tags))
     return sorted(used_tags)
 
 

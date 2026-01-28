@@ -23,7 +23,7 @@ main_dashboards = [
     'Monitoring Overview',
     'Network (Host-Level Details)',
     'Network (Process-Level Details)',
-    'Processes',
+    # 'Processes',
     'Queues',
     'Service Errors',
     'Service HTTP Errors',
@@ -44,6 +44,7 @@ tech_dashboards = [
     'Web Servers',
 ]
 
+
 # These differ by customer, and are not in the templates directory
 ootb_dashboards = [
     # ('Palo Alto', 'ab163c60-07f5-7e82-40d5-35cd6a8be991')
@@ -54,18 +55,6 @@ new_ui_dashboards = [
     # ('New Platform: Shared Notebooks', 'https://{{.new_ui_tenant}}.apps.dynatrace.com/ui/document/v0/#share={{.new_ui_shared_notebooks_id}}')
     # 'New Platform: Dynatrace Architecture Launchpad',
     # 'New Platform: Dynatrace User Launchpad',
-]
-
-# These differ by customer, and are in the templates directory
-tech_dashboards = [
-    '.NET',
-    'Go',
-    'Java',
-    'Java Memory',
-    'Kubernetes - Home',
-    'Node.js',
-    'Tomcat',
-    'Web Servers',
 ]
 
 def load_dashboard_lookup():
