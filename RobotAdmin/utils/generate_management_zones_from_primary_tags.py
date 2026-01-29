@@ -31,7 +31,6 @@ def generate_management_zones(env, token):
                         management_zones.append(mz_tag)
 
     for management_zone in management_zones:
-        # print(management_zone)
         post_management_zone(env, token, management_zone)
 
 def post_management_zone(env, token, management_zone_name):
@@ -87,8 +86,9 @@ def post_management_zone(env, token, management_zone_name):
     management_zone['rules'][0]['conditions'][0]['comparisonInfo']['value']['value'] = value
 
     endpoint = '/api/config/v1/managementZones'
-    print(management_zone)
-    dynatrace_api.post_object(f'{env}{endpoint}', token, json.dumps(management_zone))
+    r = dynatrace_api.post_object(f'{env}{endpoint}', token, json.dumps(management_zone), handle_exceptions=False, exit_on_exception=False)
+    if r.status_code != 400:
+        print(f"Added management zone: {management_zone['name']}")
 
 def main():
     friendly_function_name = 'Dynatrace Automation Reporting'

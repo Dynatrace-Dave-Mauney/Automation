@@ -214,7 +214,7 @@ def post_object(url, token, payload, **kwargs):
 
     try:
         r = retry_with_backoff(fn)
-        if r.status_code not in [200, 201, 202, 204]:
+        if r.status_code not in [200, 201, 202, 204, 400]:
             error_filename = '$post_error_payload.json'
             with open(error_filename, 'w') as file:
                 file.write(formatted_payload)
@@ -228,7 +228,7 @@ def post_object(url, token, payload, **kwargs):
                 print('Error in "dynatrace_api.post_object" method')
                 print(f'Status Code/Reason: {r.status_code} - {r.reason}')
                 print(f'See {error_filename} for payload contents')
-        r.raise_for_status()
+                r.raise_for_status()
     except requests.exceptions.RequestException as e:
         # print('Requests Exception Handling', handle_exceptions, exit_on_exception)
         if handle_exceptions:

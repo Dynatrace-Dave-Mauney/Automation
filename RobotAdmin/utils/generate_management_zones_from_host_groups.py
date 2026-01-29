@@ -1,6 +1,5 @@
 import copy
 import json
-import re
 import urllib.parse
 
 from Reuse import dynatrace_api
@@ -28,7 +27,6 @@ def generate_management_zones(env, token):
     management_zones = remove_duplicates(sorted(management_zones))
 
     for management_zone in management_zones:
-        print(management_zone)
         post_management_zone(env, token, management_zone)
 
 def remove_duplicates(any_list):
@@ -81,7 +79,9 @@ def post_management_zone(env, token, management_zone_name):
     management_zone['rules'][0]['conditions'][0]['comparisonInfo']['value'] = management_zone_name
 
     endpoint = '/api/config/v1/managementZones'
-    dynatrace_api.post_object(f'{env}{endpoint}', token, json.dumps(management_zone))
+    r = dynatrace_api.post_object(f'{env}{endpoint}', token, json.dumps(management_zone), handle_exceptions=False, exit_on_exception=False)
+    if r.status_code != 400:
+        print(f"Added management zone: {management_zone['name']}")
 
 
 def main():
