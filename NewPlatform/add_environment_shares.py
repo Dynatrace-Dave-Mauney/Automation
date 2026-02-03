@@ -26,6 +26,8 @@ def process(env, client_id, client_secret):
             # environment_share_id = share_document(env, client_id, client_secret, document_id, 'read-write')
             results_text = share_document(env, client_id, client_secret, document_id, 'read')
             print(f'Shared: {results_text}')
+        else:
+            print(f'{document_id} is already shared')
 
 
 def get_environment_share_dict(env, client_id, client_secret):
@@ -64,7 +66,7 @@ def get_document_id_list(env, client_id, client_secret):
 
         # Only share "official" dashboards with environment prefixes
         if document_name.startswith('Prod ') or document_name.startswith('Preprod ') or document_name.startswith('Sandbox '):
-            # print(f'{document_name} will be shared')
+            print(f'{document_name} will be shared')
             document_id_list.append(document_id)
 
         # Superceded by the "official" check above...

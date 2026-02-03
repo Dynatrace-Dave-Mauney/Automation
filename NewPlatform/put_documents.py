@@ -31,11 +31,14 @@ def run():
 
     # CURRENT CUSTOMER
     # put_documents('Prod', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/Prod/Dynatrace Architecture and Standards.json')
-    put_documents('Prod', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/Prod/Dynatrace Architecture Launchpad.json')
+    # put_documents('Prod', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/Prod/Dynatrace Architecture Launchpad.json')
     # put_documents('Prod', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/Prod/Dynatrace User Launchpad.json')
     # put_documents('Prod', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/Prod/Full Application List.json')
     # put_documents('Prod', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/Prod/Quick Application List.json')
 
+    # Troubleshooting dashboard share issues
+    # put_documents('Prod', '/Users/dave.mauney/PycharmProjects/Automation/NewPlatform/Dashboards/Downloads/prod/Prod Backend Overview By Management Zone.json')
+    # put_documents('Prod', '/Users/dave.mauney/PycharmProjects/Automation/NewPlatform/Dashboards/Downloads/prod/Prod Containers.json')
 
     # REFERENCE
 

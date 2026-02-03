@@ -16,6 +16,8 @@ def process(env, client_id, client_secret):
     headers = [['Environment Share ID', 'Document ID', 'Access', 'Claims']]
     rows = []
     for environment_share in environment_share_list:
+        # print(environment_share)
+        # exit(9999)
         environment_share_id = environment_share.get('id')
         environment_share_document_id = environment_share.get('documentId')
         environment_share_access = environment_share.get('access')

@@ -26,7 +26,9 @@ def process(env, client_id, client_secret):
 		environment_share_claim_count = environment_share.get('claimCount')
 		environment_share_document_name = document_name_dict.get(environment_share_document_id)
 
-		if 'Event' in environment_share_document_name:
+		# print(environment_share_document_name)
+
+		if 'Prod ' in environment_share_document_name:
 			delete_list.append(f'{environment_share_id}:{environment_share_document_name}:{environment_share_document_id}:{environment_share_access}:{environment_share_claim_count}')
 
 	delete_list = sorted(delete_list)
