@@ -11,7 +11,11 @@ my_owner_ids = None
 
 def process(env, env_name, client_id, client_secret):
     configuration_file = 'configurations.yaml'
+
     my_owner_ids = environment.get_configuration('my_owner_ids', configuration_file=configuration_file)
+
+    # To get all...
+    # my_owner_ids = None
 
     if my_owner_ids:
         print('Downloading documents owned by:', my_owner_ids)

@@ -10,38 +10,40 @@ env_name = 'Prod'
 # These will work with any customer, and are in the templates directory
 main_dashboards = [
     'Administration',
-    'Application Overview - Home',
-    'Backend Overview',
-    'Calls To Databases',
-    'Containers',
+    # 'Application Overview - Home',
+    # 'Backend Overview',
+    # 'Calls To Databases',
+    # 'Containers',
     'Detailed Drilldowns Menu',
     'Dynatrace-owned Dashboards',
-    'Full Stack Overview',
+    # 'Full Stack Overview',
     'Hosts (Detailed)',
-    'Key Requests',
-    'Key User Actions',
-    'Monitoring Overview',
+    # 'Key Requests',
+    # 'Key User Actions',
+    # 'Monitoring Overview',
+    'NetApp OnTap',
     'Network (Host-Level Details)',
     'Network (Process-Level Details)',
     # 'Processes',
-    'Queues',
-    'Service Errors',
-    'Service HTTP Errors',
-    'Suspicious Activity Audit',
-    'Synthetics: Browser Monitor Events',
-    'Third Party Services',
+    'Pure Storage FlashArray',
+    # 'Queues',
+    # 'Service Errors',
+    # 'Service HTTP Errors',
+    # 'Suspicious Activity Audit',
+    # 'Synthetics: Browser Monitor Events',
+    # 'Third Party Services',
 ]
 
 # These differ by customer, and are in the templates directory
 tech_dashboards = [
-    '.NET',
-    'Go',
-    'Java',
-    'Java Memory',
-    'Kubernetes - Home',
-    'Node.js',
-    'Tomcat',
-    'Web Servers',
+    # '.NET',
+    # 'Go',
+    # 'Java',
+    # 'Java Memory',
+    # 'Kubernetes - Home',
+    # 'Node.js',
+    # 'Tomcat',
+    # 'Web Servers',
 ]
 
 
@@ -62,6 +64,7 @@ def load_dashboard_lookup():
 
     path = 'Templates/Overview/????????-????-????-????-????????????.json'
     for filename in glob.glob(path):
+        print(filename)
         with codecs.open(filename, encoding='utf-8') as f:
             dashboard = json.loads(f.read())
             dashboard_id = dashboard['id']

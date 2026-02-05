@@ -10,18 +10,20 @@ dashboard_name = '00000000-dddd-bbbb-ffff-000000002000.json'
 
 def main():
     dashboard_links = [
-        ('DPS Usage Details DEMO', '#dashboard;id=c4644591-ee8d-4bc2-8e50-d921344fe255'),
         ('Davis® health self-monitoring', '#dashboard;id=c15f39a8-7d74-4b97-af28-0b17a20dc711'),
-        ('Kubernetes cluster overview', '#dashboard;id=6b38732e-8c5c-4b32-80a1-7053ec8f37e1'),
-        ('Kubernetes namespace resource quotas', '#dashboard;id=6b38732e-609c-44e2-b34d-0286717ecdab'),
-        ('Kubernetes persistent volume claims', '#dashboard;id=6b38732e-7d72-4200-be06-61672d0b3f65'),
-        ('Kubernetes workload overview', '#dashboard;id=6b38732e-d26b-45c7-b107-ed85e87ff288'),
+        ('DPS Usage Details DEMO', '#dashboard;id=c4644591-ee8d-4bc2-8e50-d921344fe255'),
+        # ('Kubernetes cluster overview', '#dashboard;id=6b38732e-8c5c-4b32-80a1-7053ec8f37e1'),
+        # ('Kubernetes namespace resource quotas', '#dashboard;id=6b38732e-609c-44e2-b34d-0286717ecdab'),
+        # ('Kubernetes persistent volume claims', '#dashboard;id=6b38732e-7d72-4200-be06-61672d0b3f65'),
+        # ('Kubernetes workload overview', '#dashboard;id=6b38732e-d26b-45c7-b107-ed85e87ff288'),
         ('Metric & Dimension Usage + Rejections', '#dashboard;id=3b9c20e2-dc58-4a91-8dcb-f6217dc869ac'),
         ('Monitored Entities Health Check', '#dashboard;id=9172cf73-afd4-49cf-81f7-7dd2160a5405'),
-        ('OneAgent Traces - Adaptive traffic management DPS (deprecated)',
-         '#dashboard;id=f481dbe9-0853-465b-9b69-e31c403c6b84'),
-        ('Real User Monitoring', '#dashboard;id=c704bd72-92e9-452a-b40e-73e6f4df9f08'),
-        ('Synthetic Monitoring', '#dashboard;id=b6fc0160-9332-454f-a7bc-7217b2ae540c'),
+        ('NetApp OnTap Overview', '#dashboard;id=051f3484-3165-caf5-7a9d-caeae85b44f6'),
+        ('Pure Storage FlashArray Entities Overview', '#dashboard;id=bf6c71d8-0758-504c-787c-654c8d229250'),
+        ('Pure Storage FlashArray Fleet Overview (OpenMetrics)', '#dashboard;id=affc78a0-10fc-8107-5e90-3446f717fa47'),
+        # ('OneAgent Traces - Adaptive traffic management DPS (deprecated)', '#dashboard;id=f481dbe9-0853-465b-9b69-e31c403c6b84'),
+        # ('Real User Monitoring', '#dashboard;id=c704bd72-92e9-452a-b40e-73e6f4df9f08'),
+        # ('Synthetic Monitoring', '#dashboard;id=b6fc0160-9332-454f-a7bc-7217b2ae540c'),
         ('Tagging worker Dashboard (Deprecated) – Use Monitored Entities Health Check', '#dashboard;id=25bdae36-8e74-471d-a314-ac750b4ef190'),
     ]
     # dashboard_links = [
@@ -65,7 +67,7 @@ def main():
   "dashboardMetadata": {
     "name": "TEMPLATE: Dynatrace-owned Dashboards",
     "shared": true,
-    "preset": true,
+    "preset": false,
     "owner": "nobody@example.com",
     "tilesNameSize": "small",
     "hasConsistentColors": true
@@ -78,7 +80,7 @@ def main():
       "bounds": {
         "top": 0,
         "left": 0,
-        "width": 494,
+        "width": 1368,
         "height": 1368
       },
       "tileFilter": {},

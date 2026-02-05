@@ -25,7 +25,7 @@ def process(env, token):
             tag_application, tag_function, tag_environment, tag_tier, tag_zone, tag_verified = get_specific_tags(tags)
             host_group_name = properties.get('hostGroupName', 'None')
             network_zone = properties.get('networkZone', 'None')
-            cloud_type = properties.get('cloudType', 'onprem')
+            cloud_type = properties.get('cloudType', 'onprem').lower()
             result, violations_list = audit(display_name, host_group_name, network_zone, cloud_type, tag_application, tag_function, tag_environment, tag_tier, tag_zone, tag_verified)
             result_string = stringify_boolean(result)
             rows.append((display_name, host_group_name, network_zone, cloud_type, tag_application, tag_function, tag_environment, tag_tier, tag_zone, tag_verified, result_string, sort_and_stringify_list_items(violations_list)))
@@ -85,7 +85,7 @@ def audit(display_name, host_group_name, network_zone, cloud_type, tag_applicati
         violations_list.append('Invalid Network Zone')
         result = False
 
-    if cloud_type.lower() != tag_zone:
+    if cloud_type != tag_zone:
         violations_list.append('Network Zone and Cloud Type Mismatch')
         result = False
 
