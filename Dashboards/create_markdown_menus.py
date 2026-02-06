@@ -54,17 +54,18 @@ ootb_dashboards = [
 
 # These differ by customer, and are not in the templates directory
 new_ui_dashboards = [
-    # ('New Platform: Shared Notebooks', 'https://{{.new_ui_tenant}}.apps.dynatrace.com/ui/document/v0/#share={{.new_ui_shared_notebooks_id}}')
-    # 'New Platform: Dynatrace Architecture Launchpad',
-    # 'New Platform: Dynatrace User Launchpad',
+    ('Gen 3 Dynatrace User Launchpad', 'https://{{.tenant}}.apps.dynatrace.com/ui/apps/dynatrace.launcher/launchpad/bce5a9a6-bdc6-4b3f-9e9d-314dadc36461'),
+    ('Gen 3 Dynatrace Architecture Launchpad', 'https://{{.tenant}}.apps.dynatrace.com/ui/apps/dynatrace.launcher/launchpad/945124d7-14d1-4b3e-9e7b-95dad889978d'),
+    ('Gen 3 Overview Dashboard', 'https://{{.tenant}}.apps.dynatrace.com/ui/apps/dynatrace.dashboards/dashboard/57b60014-c4ab-45f0-89e5-e4409a52734c'),
+    ('Gen 3 Overview by Management Zone Dashboard', 'https://{{.tenant}}.apps.dynatrace.com/ui/apps/dynatrace.dashboards/dashboard/d3673a3e-27ca-48c2-b534-8fb2edb906a2'),
 ]
+
 
 def load_dashboard_lookup():
     dashboard_lookup = {}
 
     path = 'Templates/Overview/????????-????-????-????-????????????.json'
     for filename in glob.glob(path):
-        print(filename)
         with codecs.open(filename, encoding='utf-8') as f:
             dashboard = json.loads(f.read())
             dashboard_id = dashboard['id']
@@ -86,26 +87,28 @@ def load_dashboard_lookup():
 
 
 def write_markdown_menus(dashboard_lookup):
+    links = []
+
     markdown_menu = '			"markdown": "More Details\\n\\n'
-    # for menu_item in menu_item_list_v1:
-    # for menu_item in menu_item_list_v2:
-    # for menu_item in menu_item_list_v3:
-    # lower_skips = ['Redis - Home', 'F5 - Home', 'Palo Alto']
 
     # Combine the dashboards that have templates
     template_dashboards = sorted(main_dashboards + tech_dashboards)
 
     for menu_item in template_dashboards:
-        # for menu_item in menu_item_list:
         markdown_item_id = dashboard_lookup.get(menu_item)
         if not markdown_item_id:
             print(f'Dashboard lookup dictionary missing menu item: {menu_item}')
             exit(1)
-        # if not (env_name == 'Lower' and menu_item in lower_skips):
-        if '{{.new_ui_tenant}}' in markdown_item_id:
-            markdown_menu += f'[{menu_item}]({markdown_item_id})  \\n'
-        else:
-            markdown_menu += f'[{menu_item}](#dashboard;id={markdown_item_id})  \\n'
+        links.append((menu_item, f'#dashboard;id={markdown_item_id}'))
+
+    for ootb_item in ootb_dashboards:
+        links.append((ootb_item[0], f'#dashboard;id={ootb_item[1]}'))
+
+    for new_ui_item in new_ui_dashboards:
+        links.append((new_ui_item[0], new_ui_item[1]))
+
+    for menu_item in links:
+        markdown_menu += f'[{menu_item[0]}]({menu_item[1]})  \\n'
     markdown_menu += '"'
 
     filename = f'Templates/Overview/markdown_menu_{env_name}.json'
@@ -117,271 +120,8 @@ def write_markdown_menus(dashboard_lookup):
 
 def main():
     dashboard_lookup = load_dashboard_lookup()
-    # for i in dashboard_lookup:
-    #     print(i)
     write_markdown_menus(dashboard_lookup)
 
 
 if __name__ == '__main__':
     main()
-
-    # History for Reference if ever needed...
-    # 
-    # Current Customer list
-    # menu_item_list_v4 = [
-    #     'Administration',
-    #     'Application Overview - Home',
-    #     'Backend Overview',
-    #     'Calls To Databases',
-    #     'Containers',
-    #     'Detailed Drilldowns Menu',
-    #     'Dynatrace-owned Dashboards',
-    #     'Full Stack Overview',
-    #     'Hosts (Detailed)',
-    #     'Key Requests',
-    #     'Key User Actions',
-    #     'Monitoring Overview',
-    #     'Network (Host-Level Details)',
-    #     'Network (Process-Level Details)',
-    #     'Processes',
-    #     'Queues',
-    #     'Service Errors',
-    #     'Service HTTP Errors',
-    #     'Suspicious Activity Audit',
-    #     'Synthetics: Browser Monitor Events',
-    #     'Third Party Services',
-    # ]
-    # 
-    # menu_item_list_v4 = [
-    #     '.NET',
-    #     'Administration',
-    #     'Application Overview - Home',
-    #     'AWS Home',
-    #     'Backend Overview',
-    #     'Calls To Databases',
-    #     'CICS',
-    #     'Cloud Foundry',
-    #     'Containers',
-    #     'ControlM',
-    #     'Custom PMI Metrics',
-    #     'DB2 - Home',
-    #     'Detailed Drilldowns Menu',
-    #     'Executor',
-    #     'F5 - Home',
-    #     'Full Stack Overview',
-    #     'Go',
-    #     'HikariCP',
-    #     'Hosts (Detailed)',
-    #     'IBM MQ Home',
-    #     'IBM WebSphere Home',
-    #     # 'IBM MQ Metrics by Best Split',
-    #     # 'IBM MQ Metrics by Queue Manager and Best Split',
-    #     # 'IBM MQ Metrics by Queue Manager',
-    #     'Java',
-    #     'Java Memory',
-    #     'Kafka Home',
-    #     # 'Kafka - Home',
-    #     'Key Requests',
-    #     'Key User Actions',
-    #     'Kubernetes - Home',
-    #     'Microsoft Exchange',
-    #     'Microsoft SQL Server',
-    #     'Monitoring Overview',
-    #     'Network (Host-Level Details)',
-    #     'Network (Process-Level Details)',
-    #     'New Platform: Shared Notebooks',
-    #     'NGIS',
-    #     'Node.js',
-    #     'Processes',
-    #     'Queues',
-    #     'R2DBC',
-    #     'Resilience4j',
-    #     'Service Errors',
-    #     'Service HTTP Errors',
-    #     'Snowflake',
-    #     'Spark',
-    #     'Spring',
-    #     'Suspicious Activity Audit',
-    #     'Synthetics: Browser Monitor Events',
-    #     'Third Party Services',
-    #     'Tomcat',
-    #     'VMware',
-    #     'Web Application Insights',
-    #     'Web Servers',
-    # ]
-    #
-    # Demo
-    # menu_item_list = [
-    #     '.NET',
-    #     'Administration',
-    #     'Application Overview (HTTP Monitors and Services)',
-    #     'Application Overview (Services)',
-    #     'Application Overview (Synthetics and Services)',
-    #     'Application Overview (Web, HTTP Monitors, and Services)',
-    #     'Application Overview (Web, Synthetics, and Services)',
-    #     'Detailed Drilldowns Menu',
-    #     'Full Stack Overview',
-    #     'Hosts (Detailed)',
-    #     'Java',
-    #     'Java Memory',
-    #     'Kafka - Home',
-    #     'Key Requests',
-    #     'Network (Host-Level Details)',
-    #     'Network (Process-Level Details)',
-    #     'Processes',
-    #     'Service Errors',
-    #     'Service HTTP Errors',
-    #     'Service HTTP Errors from Non-Synthetics',
-    #     'Service HTTP Errors from Synthetics',
-    #     'Synthetics: Browser Monitor Events',
-    #     'Tomcat',
-    #     'VMware',
-    #     'Web Servers',
-    # ]
-    #
-    # # Customer1-specific list
-    # menu_item_list_v1 = [
-    #     '.NET',
-    #     'Administration',
-    #     'AWS Home',
-    #     'Application Overview (HTTP Monitors and Services)',
-    #     'Application Overview (Services)',
-    #     'Application Overview (Synthetics and Services)',
-    #     'Application Overview (Web, HTTP Monitors, and Services)',
-    #     'Application Overview (Web, Synthetics, and Services)',
-    #     'Detailed Drilldowns Menu',
-    #     'Full Stack Overview',
-    #     'Hosts (Detailed)',
-    #     'IBM DataPower by Host',
-    #     'IBM DataPower Overview',
-    #     'IBM MQ Metrics by Best Split',
-    #     'IBM MQ Metrics by Queue Manager and Best Split',
-    #     'IBM MQ Metrics by Queue Manager',
-    #     'IBM WebSphere Metrics by Pool',
-    #     'IBM WebSphere Metrics by Process and Pool',
-    #     'IBM WebSphere Metrics by Process',
-    #     'Java',
-    #     'Java Memory',
-    #     'Kafka - Home',
-    #     'Key Requests',
-    #     'Network (Host-Level Details)',
-    #     'Network (Process-Level Details)',
-    #     'Processes',
-    #     'SAP Hana Database',
-    #     'Service Errors',
-    #     'Service HTTP Errors',
-    #     'Service HTTP Errors from Non-Synthetics',
-    #     'Service HTTP Errors from Synthetics',
-    #     'Synthetics: Browser Monitor Events',
-    #     'Tomcat',
-    #     'VMware',
-    #     'Web Servers',
-    #     'WebLogic by Name',
-    #     'WebLogic by Process',
-    # ]
-    #
-    # # Customer2-specific list
-    # menu_item_list_v2 = [
-    #     '.NET',
-    #     'Administration',
-    #     'Application Overview - Home',
-    #     'Azure - Home',
-    #     'Backend Overview',
-    #     'Containers',
-    #     'Detailed Drilldowns Menu',
-    #     'Full Stack Overview',
-    #     'Go',
-    #     'Hosts (Detailed)',
-    #     'Java',
-    #     'Java Memory',
-    #     'Jetty',
-    #     'Key Requests',
-    #     'Kubernetes - Home',
-    #     'Microsoft SQL Server - Home',
-    #     'Monitoring Overview',
-    #     'Network (Host-Level Details)',
-    #     'Network (Process-Level Details)',
-    #     'Node.js',
-    #     'Oracle Database - Home',
-    #     'Processes',
-    #     'SOLR',
-    #     'Service Errors',
-    #     'Service HTTP Errors',
-    #     'Suspicious Activity Audit',
-    #     'Synthetics: Browser Monitor Events',
-    #     'Tomcat',
-    #     'Web Servers',
-    #     'WebLogic by Name',
-    #     'WebLogic by Process',
-    #     'WebSphere',
-    # ]
-    #
-    # Customer3-specific list
-    # menu_item_list_v3 = [
-    #     '.NET',
-    #     'Administration',
-    #     'Application Overview - Home',
-    #     'Backend Overview',
-    #     'Containers',
-    #     'Detailed Drilldowns Menu',
-    #     'Full Stack Overview',
-    #     'Go',
-    #     'Hosts (Detailed)',
-    #     'Java',
-    #     'Java Memory',
-    #     'Key Requests',
-    #     'Key User Actions',
-    #     'Kubernetes - Home',
-    #     'Monitoring Overview',
-    #     'Network (Host-Level Details)',
-    #     'Network (Process-Level Details)',
-    #     'Node.js',
-    #     'Processes',
-    #     'Service Errors',
-    #     'Service HTTP Errors',
-    #     'Suspicious Activity Audit',
-    #     'Synthetics: Browser Monitor Events',
-    #     'Tomcat',
-    #     'Web Application Insights',
-    #     'Web Servers',
-    #     'WebLogic by Name',
-    #     'WebLogic by Process',
-    # ]
-    # Customer3-specific list
-    # menu_item_list_v4 = [
-    #     '.NET',
-    #     'Administration',
-    #     'Application Overview - Home',
-    #     'Azure - Home',
-    #     'Backend Overview',
-    #     'Calls To Databases',
-    #     'Containers',
-    #     'Detailed Drilldowns Menu',
-    #     'F5 - Home',
-    #     'Full Stack Overview',
-    #     'Go',
-    #     'Hosts (Detailed)',
-    #     'Java',
-    #     'Java Memory',
-    #     'Kafka - Home',
-    #     'Key Requests',
-    #     'Key User Actions',
-    #     'Kubernetes - Home',
-    #     'Microsoft SQL Server - Home',
-    #     'Monitoring Overview',
-    #     'Network (Host-Level Details)',
-    #     'Network (Process-Level Details)',
-    #     'Node.js',
-    #     'Palo Alto',
-    #     'Processes',
-    #     'Queues',
-    #     'Redis - Home',
-    #     'Service Errors',
-    #     'Service HTTP Errors',
-    #     'Suspicious Activity Audit',
-    #     'Synthetics: Browser Monitor Events',
-    #     'Tomcat',
-    #     'VMware',
-    #     'Web Application Insights',
-    #     'Web Servers',
-    # ]

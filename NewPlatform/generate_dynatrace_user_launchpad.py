@@ -6,6 +6,8 @@ import re
 from Reuse import environment
 from Reuse import new_platform_api
 
+id_index = 1
+
 launchpad_template = {
     "schemaVersion": 2,
     "icon": "default",
@@ -64,10 +66,10 @@ def process(env_name, env, client_id, client_secret):
     shared_launchpad_blocks = shared_launchpad['containerList']['containers'][0]['blocks']
     shared_launchpad_blocks.append(generate_application_block())
     shared_launchpad_blocks.append(generate_ready_made_dashboard_links_block(env, client_id, client_secret))
-    shared_launchpad_blocks.append(generate_documentation_block('Custom Dashboards', get_dashboard_links(tenant_name, tenant)))
-    shared_launchpad_blocks.append(generate_documentation_block('Custom Dashboards by Management Zone', get_dashboard_links_by_management_zone(tenant_name, tenant)))
-    shared_launchpad_blocks.append(generate_documentation_block('Dynatrace User Documentation', get_documentation_links()))
-    shared_launchpad_blocks.append(generate_documentation_block('Dynatrace University', get_university_links()))
+    shared_launchpad_blocks.append(generate_markdown_block('Custom Dashboards', get_dashboard_links(tenant_name, tenant)))
+    shared_launchpad_blocks.append(generate_markdown_block('Custom Dashboards by Management Zone', get_dashboard_links_by_management_zone(tenant_name, tenant)))
+    shared_launchpad_blocks.append(generate_markdown_block('Dynatrace User markdown', get_links()))
+    shared_launchpad_blocks.append(generate_markdown_block('Dynatrace University', get_university_links()))
     write_launchpad(shared_launchpad)
 
 
@@ -224,7 +226,7 @@ def get_dashboard_links_by_management_zone(tenant_name, tenant):
         exit(1)
 
 
-def get_documentation_links():
+def get_links():
     links = [
         ('What is Dynatrace', 'https://docs.dynatrace.com/docs/shortlink/intro'),
         ('Navigate the Dynatrace platform', 'https://docs.dynatrace.com/docs/shortlink/navigation'),
@@ -274,14 +276,17 @@ def get_university_links():
     return links
 
 
-def generate_documentation_block(block_name, documentation_links):
+def generate_markdown_block(block_name, links):
     launchpad_block = copy.deepcopy(launchpad_markdown_block_template)
     shared_markdown_string = f'#  {block_name}  \n'
 
-    for documentation_link in documentation_links:
-        documentation_link_markdown = f'[{documentation_link[0]}]({documentation_link[1]})  \n'
-        shared_markdown_string += documentation_link_markdown
+    for link in links:
+        link_markdown = f'[{link[0]}]({link[1]})  \n'
+        shared_markdown_string += link_markdown
 
+    global id_index
+    launchpad_block['id'] = 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeee' + str(id_index)
+    id_index += 1
     launchpad_block['content'] = shared_markdown_string
     return launchpad_block
 

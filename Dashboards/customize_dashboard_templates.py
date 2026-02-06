@@ -9,9 +9,6 @@ from inspect import currentframe
 from Reuse import dynatrace_api
 
 env_name = 'Prod'
-
-# env_name = 'PreProd'
-# env_name = 'Sandbox'
 # env_name = 'Personal'
 # env_name = 'Demo'
 
@@ -19,6 +16,7 @@ env_name = 'Prod'
 # env_name = 'Upper'
 # env_name = 'Lower'
 # env_name = 'PreProd'
+# env_name = 'Sandbox'
 # env_name = 'Dev'
 
 tenant = os.getenv(f'DYNATRACE_{env_name.upper()}_TENANT')
@@ -38,21 +36,6 @@ PRESET = True
 MENU_PRESET = True
 
 skip_file_name_list = [
-    '00000000-dddd-bbbb-ffff-000000000001.json',
-    '00000000-dddd-bbbb-ffff-000000000001-v1.json',
-    '00000000-dddd-bbbb-ffff-000000000001-v2.json',
-    '00000000-dddd-bbbb-ffff-000000000001-v2a.json',
-    '00000000-dddd-bbbb-ffff-000000000001-v3.json',
-    '00000000-dddd-bbbb-ffff-000000000001-v3a.json',
-    '00000000-dddd-bbbb-ffff-000000000001-v3b.json',
-    '00000000-dddd-bbbb-ffff-000000000001-v3c.json',
-    '00000000-dddd-bbbb-ffff-000000000001-v4_Lower.json',
-    # '00000000-dddd-bbbb-ffff-000000000001-v4_Prod.json',
-    '00000000-dddd-bbbb-ffff-000000000001-v4_Prod_BACKUP.json',
-    '00000000-dddd-bbbb-ffff-000000000001-v4_Prod_BACKUP2.json',
-    '00000000-dddd-bbbb-ffff-000000000001-v4_Tenant1.json',
-    '00000000-dddd-bbbb-ffff-000000000001-v4_Upper.json',
-    '00000000-dddd-bbbb-ffff-000000000014-v1.json',
     '00000000-dddd-bbbb-ffff-000000000015.json',
     '00000000-dddd-bbbb-ffff-000000000016.json',
     '00000000-dddd-bbbb-ffff-000000000022.json',
@@ -136,16 +119,8 @@ skip_file_name_list = [
     '00000000-dddd-bbbb-ffff-000000000156.json',
     '00000000-dddd-bbbb-ffff-000000000157.json',
     '00000000-dddd-bbbb-ffff-000000000158.json',
-    '00000000-dddd-bbbb-ffff-000000000800.json',
-    '00000000-dddd-bbbb-ffff-000000000800-v1.json',
-    '00000000-dddd-bbbb-ffff-000000000800-v2.json',
-    '00000000-dddd-bbbb-ffff-000000000800-v3_BACKUP.json',
-    '00000000-dddd-bbbb-ffff-000000000800-v3_BACKUP2.json',
-    '00000000-dddd-bbbb-ffff-000000000800-v3_BACKUP3.json',
     '00000000-dddd-bbbb-ffff-000000000806.json',
     '00000000-dddd-bbbb-ffff-000000000807.json',
-    '00000000-dddd-bbbb-ffff-000000000900.json',
-    '00000000-dddd-bbbb-ffff-000000000900-v1.json',
     '00000000-dddd-bbbb-ffff-000000001000.json',
     '00000000-dddd-bbbb-ffff-000000001001.json',
     '00000000-dddd-bbbb-ffff-000000001002.json',
