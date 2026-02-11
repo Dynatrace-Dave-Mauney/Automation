@@ -55,35 +55,39 @@ def audit(display_name, host_group_name, network_zone, cloud_type, tag_applicati
     if host_group_name == 'None':
         violations_list.append('Host Group Not Set')
         result = False
-
-    tokens = host_group_name.split('_')
-    if len(tokens) != 3:
-        violations_list.append('Invalid Host Group Format')
-        result = False
     else:
-        if tag_application != tokens[0]:
-            violations_list.append('Host Group App != App Tag')
+        tokens = host_group_name.split('_')
+        if len(tokens) != 3:
+            violations_list.append('Invalid Host Group Format')
             result = False
+        else:
+            if tag_application != tokens[0]:
+                violations_list.append('Host Group App != App Tag')
+                result = False
 
-        if tag_function != tokens[1]:
-            violations_list.append('Host Group Function != Function Tag')
-            result = False
+            if tag_function != tokens[1]:
+                violations_list.append('Host Group Function != Function Tag')
+                result = False
 
-        if tag_environment != tokens[2]:
-            violations_list.append('Host Group Environment != Environment Tag')
+            if tag_environment != tokens[2]:
+                violations_list.append('Host Group Environment != Environment Tag')
+                result = False
+
+        if host_group_name != host_group_name.lower():
+            violations_list.append('Host Group Has Upper Case Character(s)')
             result = False
 
     if network_zone == 'None':
         violations_list.append('Network Zone Not Set')
         result = False
+    else:
+        if network_zone != tag_zone:
+            violations_list.append('Network Zone != Network Zone Tag')
+            result = False
 
-    if network_zone != tag_zone:
-        violations_list.append('Network Zone != Network Zone Tag')
-        result = False
-
-    if network_zone not in zone_allow_list:
-        violations_list.append('Invalid Network Zone')
-        result = False
+        if network_zone not in zone_allow_list:
+            violations_list.append('Invalid Network Zone')
+            result = False
 
     if cloud_type != tag_zone:
         violations_list.append('Network Zone and Cloud Type Mismatch')
@@ -92,6 +96,18 @@ def audit(display_name, host_group_name, network_zone, cloud_type, tag_applicati
     # if tag_application == 'None' or tag_function == 'None' or tag_environment == 'None' or tag_tier == 'None' or tag_zone == 'None':
     #     violations_list.append('One or More Tags Not Set')
     #     result = False
+
+    if tag_application == 'None':
+        violations_list.append('Application Tag Not Set')
+        result = False
+    else:
+        if tag_application != tag_application.lower():
+            violations_list.append('Application Tag Contains Upper Case Character(s)')
+            result = False
+
+        if '_' in tag_application:
+            violations_list.append('Application Tag Contains Underscore(s)')
+            result = False
 
     if tag_environment not in environment_allow_list:
         violations_list.append('Invalid Environment Tag')
