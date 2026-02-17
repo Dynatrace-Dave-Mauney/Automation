@@ -4,6 +4,7 @@ from Reuse import dynatrace_api
 from Reuse import environment
 from Reuse import report_writer
 from Reuse import date_time
+from Reuse import email
 
 
 def process(env, token):
@@ -42,8 +43,21 @@ def process(env, token):
         report_headers = ('Host Name', 'Host Group', 'Network Zone', 'Cloud Type', 'Application Tag', 'Function Tag', 'Environment Tag', 'Tier Tag', 'Network Zone Tag', 'Verification Date', 'Audit Status', 'Audit Violations')
         report_writer.write_console(report_name, report_headers, rows, delimiter='|')
         report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
-        report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
+        # report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
+        report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=(0, len(report_headers) - 1))
         report_writer.write_html(None, report_name, report_headers, rows)
+
+        send_email()
+
+
+def send_email():
+    configuration_file = 'configurations.yaml'
+    subject = environment.get_configuration('subject', configuration_file=configuration_file)
+    body = environment.get_configuration('body', configuration_file=configuration_file)
+    path = environment.get_configuration('path', configuration_file=configuration_file)
+    address = environment.get_configuration('address', configuration_file=configuration_file)
+    attachments = [path]
+    email.send_outlook_email(body, subject, address, attachments, True)
 
 
 def post_verifed_tag(entity_id, result, tag_verified, env, token):
