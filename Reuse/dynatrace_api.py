@@ -214,7 +214,7 @@ def post_object(url, token, payload, **kwargs):
 
     try:
         r = retry_with_backoff(fn)
-        if r.status_code not in [200, 201, 202, 204, 400]:
+        if r.status_code not in [200, 201, 202, 204]:
             error_filename = '$post_error_payload.json'
             with open(error_filename, 'w') as file:
                 file.write(formatted_payload)
