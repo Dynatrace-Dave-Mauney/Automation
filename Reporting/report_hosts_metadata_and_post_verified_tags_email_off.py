@@ -47,7 +47,7 @@ def process(env, token):
         report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=(0, len(report_headers) - 1))
         report_writer.write_html(None, report_name, report_headers, rows)
 
-        send_email()
+        # send_email()
 
 
 def send_email():
@@ -55,7 +55,7 @@ def send_email():
     subject = environment.get_configuration('subject', configuration_file=configuration_file)
     body = environment.get_configuration('body', configuration_file=configuration_file)
     path = environment.get_configuration('path', configuration_file=configuration_file)
-    address = environment.get_configuration('address', configuration_file=configuration_file)
+    address = environment.get_configuration('address-alt', configuration_file=configuration_file)
     attachments = [path]
     email.send_outlook_email(body, subject, address, attachments, True)
 
