@@ -6,6 +6,9 @@ from Reuse import report_writer
 from Reuse import date_time
 from Reuse import email
 
+# send_email_flag = True
+send_email_flag = False
+
 
 def process(env, token):
     rows = []
@@ -28,11 +31,22 @@ def process(env, token):
             tag_application, tag_function, tag_environment, tag_tier, tag_zone, tag_verified = get_specific_tags(tags)
             host_group_name = properties.get('hostGroupName', 'None')
             network_zone = properties.get('networkZone', 'None')
+            custom_host_metadata = properties.get('customHostMetadata')
+            security_context = 'None'
+            if custom_host_metadata:
+                # print(custom_host_metadata)
+                for custom_host_metadata_item in custom_host_metadata:
+                    # print(custom_host_metadata_item)
+                    key1 = custom_host_metadata_item.get('key')
+                    key2 = key1.get('key')
+                    if key2 == 'dt.security_context':
+                        security_context = custom_host_metadata_item.get('value')
+                        # print('security_context:', security_context)
             cloud_type = properties.get('cloudType', 'onprem').lower()
-            result, violations_list = audit(display_name, host_group_name, network_zone, cloud_type, tag_application, tag_function, tag_environment, tag_tier, tag_zone, tag_verified)
+            result, violations_list = audit(host_group_name, network_zone, cloud_type, security_context, tag_application, tag_function, tag_environment, tag_tier, tag_zone)
             result_string = stringify_boolean(result)
-            post_verifed_tag(entity_id, result, tag_verified, env, token)
-            rows.append((display_name, host_group_name, network_zone, cloud_type, tag_application, tag_function, tag_environment, tag_tier, tag_zone, tag_verified, result_string, sort_and_stringify_list_items(violations_list)))
+            post_verified_tag(entity_id, result, tag_verified, env, token)
+            rows.append((display_name, host_group_name, network_zone, cloud_type, security_context, tag_application, tag_function, tag_environment, tag_tier, tag_zone, tag_verified, result_string, sort_and_stringify_list_items(violations_list)))
 
         # for row in rows:
         #     print(row)
@@ -40,14 +54,15 @@ def process(env, token):
         rows = sorted(rows)
         report_name = 'Hosts'
         report_writer.initialize_text_file(None)
-        report_headers = ('Host Name', 'Host Group', 'Network Zone', 'Cloud Type', 'Application Tag', 'Function Tag', 'Environment Tag', 'Tier Tag', 'Network Zone Tag', 'Verification Date', 'Audit Status', 'Audit Violations')
+        report_headers = ('Host Name', 'Host Group', 'Network Zone', 'Cloud Type', 'Security Context', 'Application Tag', 'Function Tag', 'Environment Tag', 'Tier Tag', 'Network Zone Tag', 'Verification Date', 'Audit Status', 'Audit Violations')
         report_writer.write_console(report_name, report_headers, rows, delimiter='|')
         report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
         # report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
         report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=(0, len(report_headers) - 1))
         report_writer.write_html(None, report_name, report_headers, rows)
-
-        send_email()
+        
+        if send_email_flag:
+            send_email()
 
 
 def send_email():
@@ -60,8 +75,8 @@ def send_email():
     email.send_outlook_email(body, subject, address, attachments, True)
 
 
-def post_verifed_tag(entity_id, result, tag_verified, env, token):
-    print('entity_id:', entity_id, 'result:', result, 'tag_verified:', tag_verified)
+def post_verified_tag(entity_id, result, tag_verified, env, token):
+    # print('entity_id:', entity_id, 'result:', result, 'tag_verified:', tag_verified)
     endpoint = '/api/v2/tags'
 
     if result:
@@ -87,7 +102,7 @@ def post_verifed_tag(entity_id, result, tag_verified, env, token):
     return
 
 
-def audit(display_name, host_group_name, network_zone, cloud_type, tag_application, tag_function, tag_environment, tag_tier, tag_zone, tag_verified):
+def audit(host_group_name, network_zone, cloud_type, security_context, tag_application, tag_function, tag_environment, tag_tier, tag_zone):
     function_allow_list = ['app', 'db', 'oracle', 'sql-server', 'web']
     environment_allow_list = ['dev', 'dr', 'other', 'prep', 'prod', 'qa', 'stage', 'test']
     zone_allow_list = ['azure', 'onprem']
@@ -136,6 +151,14 @@ def audit(display_name, host_group_name, network_zone, cloud_type, tag_applicati
     if cloud_type != tag_zone:
         violations_list.append('Network Zone and Cloud Type Mismatch')
         result = False
+
+    if security_context == 'None':
+        violations_list.append('Security Context Not Set')
+        result = False
+    else:
+        if security_context != tag_application:
+            violations_list.append('Security Context != Application Tag')
+            result = False
 
     # if tag_application == 'None' or tag_function == 'None' or tag_environment == 'None' or tag_tier == 'None' or tag_zone == 'None':
     #     violations_list.append('One or More Tags Not Set')
