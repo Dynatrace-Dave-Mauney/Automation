@@ -68,7 +68,7 @@ def process(env_name, env, client_id, client_secret):
     shared_launchpad_blocks.append(generate_ready_made_dashboard_links_block(env, client_id, client_secret))
     shared_launchpad_blocks.append(generate_markdown_block('Custom Dashboards', get_dashboard_links(tenant_name, tenant)))
     shared_launchpad_blocks.append(generate_markdown_block('Custom Dashboards by Management Zone', get_dashboard_links_by_management_zone(tenant_name, tenant)))
-    shared_launchpad_blocks.append(generate_markdown_block('Dynatrace User markdown', get_links()))
+    shared_launchpad_blocks.append(generate_markdown_block('Dynatrace User Documentation', get_links()))
     shared_launchpad_blocks.append(generate_markdown_block('Dynatrace University', get_university_links()))
     write_launchpad(shared_launchpad)
 
@@ -97,6 +97,8 @@ def get_dashboard_links(tenant_name, tenant):
          f'https://{tenant}.apps.dynatrace.com/ui/apps/dynatrace.dashboards/dashboard/38d4a3ff-b141-49b7-a159-40bb5f9f24a9'),
         (f'{tenant_name} Pure Storage FlashArray',
          f'https://{tenant}.apps.dynatrace.com/ui/apps/dynatrace.dashboards/dashboard/3115bafc-90b4-48be-87b3-234dab3b22f2'),
+        (f'{tenant_name} Veritas',
+         f'https://{tenant}.apps.dynatrace.com/ui/apps/dynatrace.dashboards/dashboard/7662a958-d45d-439d-8f6a-92ba7f700a93'),
 
         # (f'{tenant_name} Backend Overview By Management Zone',
         #  f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=2e9b5aa4-9380-4dc4-a5d7-42c3febb9808'),
@@ -268,9 +270,7 @@ def get_links():
 
 def get_university_links():
     links = [
-        ('Beginner Level', 'https://university.dynatrace.com/ondemand?content=dynatrace&skillLevel=beginner'),
-        ('Intermediate Level', 'https://university.dynatrace.com/ondemand?content=dynatrace&skillLevel=intermediate'),
-        ('Advanced Level', 'https://university.dynatrace.com/ondemand?content=dynatrace&skillLevel=advanced'),
+        ('Dynatrace Essentials Learning Plan', 'https://university.dynatrace.com/learn/learning-plans/31/dynatrace-essentials-learning-plan'),
     ]
 
     return links

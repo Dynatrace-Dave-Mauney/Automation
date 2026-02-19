@@ -17,6 +17,7 @@ main_dashboards = [
     'Detailed Drilldowns Menu',
     'Dynatrace-owned Dashboards',
     # 'Full Stack Overview',
+    'Hosts',
     'Hosts (Detailed)',
     # 'Key Requests',
     # 'Key User Actions',
@@ -25,6 +26,7 @@ main_dashboards = [
     'Network (Host-Level Details)',
     'Network (Process-Level Details)',
     # 'Processes',
+    'Processes',
     'Pure Storage FlashArray',
     # 'Queues',
     # 'Service Errors',
@@ -32,6 +34,7 @@ main_dashboards = [
     # 'Suspicious Activity Audit',
     # 'Synthetics: Browser Monitor Events',
     # 'Third Party Services',
+    'Veritas',
 ]
 
 # These differ by customer, and are in the templates directory

@@ -23,6 +23,7 @@ include_list = [
     'Problems Classic',
     'Settings',
     'Settings Classic',
+    'Smartscape',
     'Smartscape Classic',
     'Technologies & Processes Classic',
     'User Settings',
