@@ -93,11 +93,15 @@ def process():
 	# for zone in unique_zone_list:
 	# 	print(zone)
 
-		# rows.append((server, env, appname, function, zone, tier))
-		rows.append((server, env, appname, function, zone, tier, ip_address, os, winrm, batch, deployment_date, oneagent_install_status, oneagent_uninstall_status, notes))
+		host_group = f'{appname}_{function}_{env}'
+		security_context = appname
+		network_zone = zone
 
-	report_headers = ('server', 'env', 'appname', 'function', 'zone', 'tier')
-	report_headers = ('server', 'env', 'appname', 'function', 'zone', 'tier', 'IP Address', 'OS', 'Missing WinRM', 'Batch', 'Deployment Date', 'OneAgent installation', 'Uninstalled OneAgent', 'Notes')
+		command_line = f'--set-host-group={host_group} --set-host-property=dt.security_context={appname} --set-host-tag=primary_tags.app={appname} --set-host-tag=primary_tags.function={function} --set-host-tag=primary_tags.env={env} --set-host-tag=primary_tags.tier={tier} --set-host-tag=primary_tags.zone={zone} --set-network-zone={zone} --set-monitoring-mode=infra-only --set-system-logs-access-enabled=true --set-app-log-content-access=true'
+
+		rows.append((server, appname, function, env, host_group, zone, tier, security_context, network_zone, ip_address, os, winrm, batch, deployment_date, oneagent_install_status, oneagent_uninstall_status, notes, command_line))
+
+	report_headers = ('server', 'appname', 'function', 'env', 'host-group', 'zone', 'tier', 'dt.security_context', 'network-zone', 'IP Address', 'OS', 'Missing WinRM', 'Batch', 'Deployment Date', 'OneAgent installation', 'Uninstalled OneAgent', 'Notes', 'Command Line')
 	report_writer.write_xlsx('MSHS Server Inventory Automation.xlsx', 'Automation', report_headers, rows, header_format=None, auto_filter=(0, len(report_headers) - 1))
 
 
@@ -128,7 +132,7 @@ def convert_appname(appname):
 	appname = appname.replace(' ', '-')
 	appname = appname.replace('_', '-')
 	appname = appname.replace(',', '-')
-	appname = appname.replace('(','-')
+	appname = appname.replace('(', '-')
 	appname = appname.replace(')', '-')
 	appname = appname.replace('--', '-')
 	appname = appname.replace('--', '-')
@@ -143,6 +147,7 @@ def convert_appname(appname):
 		appname = appname[0:len(appname) - 1]
 
 	return appname
+
 
 def convert_zone(zone):
 	if zone in ['onprem', 'azure']:
