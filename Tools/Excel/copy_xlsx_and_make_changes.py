@@ -129,7 +129,7 @@ def convert_appname(appname):
 	appname = appname.replace('_', '-')
 	appname = appname.replace(',', '-')
 	appname = appname.replace('(','-')
-	appname = appname.replace(')', ',')
+	appname = appname.replace(')', '-')
 	appname = appname.replace('--', '-')
 	appname = appname.replace('--', '-')
 	appname = appname.replace('/', '-')

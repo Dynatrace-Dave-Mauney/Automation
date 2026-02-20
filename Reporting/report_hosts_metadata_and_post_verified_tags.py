@@ -6,8 +6,8 @@ from Reuse import report_writer
 from Reuse import date_time
 from Reuse import email
 
-send_email_flag = True
-# send_email_flag = False
+# send_email_flag = True
+send_email_flag = False
 
 
 def process(env, token):
