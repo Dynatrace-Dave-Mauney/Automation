@@ -65,22 +65,6 @@ def process():
 
 		tier = convert_tier(tier)
 
-		print('server:                           ' + server)
-		print('env:                              ' + env)
-		print('appname:                          ' + appname)
-		print('function:                         ' + function)
-		print('zone:                             ' + zone)
-		print('tier:                             ' + str(tier))
-
-		print('ip_address                        ' + ip_address)
-		print('os                                ' + os)
-		print('winrm                             ' + winrm)
-		print('batch                             ' + str(batch))
-		print('deployment_date                   ' + str(deployment_date))
-		print('oneagent_install_status           ' + str(oneagent_install_status))
-		print('oneagent_uninstall_status         ' + str(oneagent_uninstall_status))
-		print('notes                             ' + str(notes))
-
 	# for appname in unique_appname_list:
 	# 	print(appname)
 
@@ -99,11 +83,31 @@ def process():
 
 		command_line = f'--set-host-group={host_group} --set-host-property=dt.security_context={appname} --set-host-tag=primary_tags.app={appname} --set-host-tag=primary_tags.function={function} --set-host-tag=primary_tags.env={env} --set-host-tag=primary_tags.tier={tier} --set-host-tag=primary_tags.zone={zone} --set-network-zone={zone} --set-monitoring-mode=infra-only --set-system-logs-access-enabled=true --set-app-log-content-access=true'
 
+		print('server:                           ' + server)
+		print('env:                              ' + env)
+		print('appname:                          ' + appname)
+		print('function:                         ' + function)
+		print('zone:                             ' + zone)
+		print('tier:                             ' + str(tier))
+		print('ip_address                        ' + ip_address)
+		print('os                                ' + os)
+		print('winrm                             ' + winrm)
+		print('batch                             ' + str(batch))
+		print('deployment_date                   ' + str(deployment_date))
+		print('oneagent_install_status           ' + str(oneagent_install_status))
+		print('oneagent_uninstall_status         ' + str(oneagent_uninstall_status))
+		print('notes                             ' + str(notes))
+		print('command_line                      ' + str(command_line))
+
 		rows.append((server, appname, function, env, host_group, zone, tier, security_context, network_zone, ip_address, os, winrm, batch, deployment_date, oneagent_install_status, oneagent_uninstall_status, notes, command_line))
 
 	report_headers = ('server', 'appname', 'function', 'env', 'host-group', 'zone', 'tier', 'dt.security_context', 'network-zone', 'IP Address', 'OS', 'Missing WinRM', 'Batch', 'Deployment Date', 'OneAgent installation', 'Uninstalled OneAgent', 'Notes', 'Command Line')
 	report_writer.write_xlsx('MSHS Server Inventory Automation.xlsx', 'Automation', report_headers, rows, header_format=None, auto_filter=(0, len(report_headers) - 1))
 
+	# Print the server and command line from each row that has no "invalid" contents
+	for row in rows:
+		if 'INVALID' not in row[17]:
+			print(f'{row[0]}: {row[17]}')
 
 def convert_env(env):
 	if env == 'production' or env == 'pre-production':

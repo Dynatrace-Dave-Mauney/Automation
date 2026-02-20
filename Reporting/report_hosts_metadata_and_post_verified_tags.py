@@ -88,16 +88,16 @@ def post_verified_tag(entity_id, result, tag_verified, env, token):
             raw_params = f'entitySelector=entityId("{entity_id}")'
             params = urllib.parse.quote(raw_params, safe='/,&=?')
             r = dynatrace_api.post_object(f'{env}{endpoint}?{params}', token, passed_payload_string)
-            print(r.status_code)
-            print(r.text)
+            if r.status_code != 200:
+                print(f'{r.status_code}; {r.text}')
     else:
         if tag_verified != 'FAILED':
             failed_payload_string = '{"tags": [{"key": "verified", "value": "FAILED"}]}'
             raw_params = f'entitySelector=entityId("{entity_id}")'
             params = urllib.parse.quote(raw_params, safe='/,&=?')
             r = dynatrace_api.post_object(f'{env}{endpoint}?{params}', token, failed_payload_string)
-            print(r.status_code)
-            print(r.text)
+            if r.status_code != 200:
+                print(f'{r.status_code}; {r.text}')
 
     return
 
