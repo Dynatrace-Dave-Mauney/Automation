@@ -6,8 +6,8 @@ from Reuse import report_writer
 from Reuse import date_time
 from Reuse import email
 
-# send_email_flag = True
-send_email_flag = False
+send_email_flag = True
+# send_email_flag = False
 
 
 def process(env, token):
@@ -79,25 +79,25 @@ def post_verified_tag(entity_id, result, tag_verified, env, token):
     # print('entity_id:', entity_id, 'result:', result, 'tag_verified:', tag_verified)
     endpoint = '/api/v2/tags'
 
+    raw_params = f'entitySelector=entityId("{entity_id}")&key=verified&deleteAllWithKey=true'
+    params = urllib.parse.quote(raw_params, safe='/,&=?')
+    r = dynatrace_api.delete_object(f'{env}{endpoint}?{params}', token)
+
     if result:
-        if date_time.is_valid_date_standard_format(tag_verified):
-            return
-        else:
-            current_date_formatted = date_time.get_current_date_standard_format()
-            passed_payload_string = '{"tags": [{"key": "verified", "value": "UNSET"}]}'.replace('UNSET', current_date_formatted)
-            raw_params = f'entitySelector=entityId("{entity_id}")'
-            params = urllib.parse.quote(raw_params, safe='/,&=?')
-            r = dynatrace_api.post_object(f'{env}{endpoint}?{params}', token, passed_payload_string)
-            if r.status_code != 200:
-                print(f'{r.status_code}; {r.text}')
+        current_date_formatted = date_time.get_current_date_standard_format()
+        passed_payload_string = '{"tags": [{"key": "verified", "value": "UNSET"}]}'.replace('UNSET', current_date_formatted)
+        raw_params = f'entitySelector=entityId("{entity_id}")'
+        params = urllib.parse.quote(raw_params, safe='/,&=?')
+        r = dynatrace_api.post_object(f'{env}{endpoint}?{params}', token, passed_payload_string)
+        if r.status_code != 200:
+            print(f'{r.status_code}; {r.text}')
     else:
-        if tag_verified != 'FAILED':
-            failed_payload_string = '{"tags": [{"key": "verified", "value": "FAILED"}]}'
-            raw_params = f'entitySelector=entityId("{entity_id}")'
-            params = urllib.parse.quote(raw_params, safe='/,&=?')
-            r = dynatrace_api.post_object(f'{env}{endpoint}?{params}', token, failed_payload_string)
-            if r.status_code != 200:
-                print(f'{r.status_code}; {r.text}')
+        failed_payload_string = '{"tags": [{"key": "verified", "value": "FAILED"}]}'
+        raw_params = f'entitySelector=entityId("{entity_id}")'
+        params = urllib.parse.quote(raw_params, safe='/,&=?')
+        r = dynatrace_api.post_object(f'{env}{endpoint}?{params}', token, failed_payload_string)
+        if r.status_code != 200:
+            print(f'{r.status_code}; {r.text}')
 
     return
 
