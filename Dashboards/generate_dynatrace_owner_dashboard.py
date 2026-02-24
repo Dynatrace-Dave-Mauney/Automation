@@ -25,6 +25,8 @@ def main():
         # ('Real User Monitoring', '#dashboard;id=c704bd72-92e9-452a-b40e-73e6f4df9f08'),
         # ('Synthetic Monitoring', '#dashboard;id=b6fc0160-9332-454f-a7bc-7217b2ae540c'),
         ('Tagging worker Dashboard (Deprecated) – Use Monitored Entities Health Check', '#dashboard;id=25bdae36-8e74-471d-a314-ac750b4ef190'),
+        ('VMware Extension Overview', '#dashboard;id=a5f3de52-5722-eec6-cae4-f55ba4a7d7a2'),
+        ('VMware Capacity Overview', '#dashboard;id=836ff169-081c-e2b3-e1b4-8249ff890b71'),
     ]
     # dashboard_links = [
     #     ('Active Directory Overview', '#dashboard;id=0de4b077-8eac-5074-1ce9-b5681a9e27b3'),

@@ -4,13 +4,37 @@ import requests
 from Reuse import environment
 from Reuse import report_writer
 
-# First, try to get the new/improved names
-account_id = os.getenv('DYNATRACE_AUTOMATION_ACCOUNT_ID')
-client_id = os.getenv('DYNATRACE_AUTOMATION_CLIENT_ID')
-client_secret = os.getenv('DYNATRACE_AUTOMATION_CLIENT_SECRET')
-skip_slow_api_calls = environment.get_boolean_environment_variable('SKIP_SLOW_API_CALLS', 'True')
-environment_variable_source = 'Environment Variable Names'
+# First, try to get the newest names using the new technique...
+friendly_function_name = 'Dynatrace Automation'
+env_name_supplied = environment.get_env_name(friendly_function_name)
+# For easy control from IDE
+# env_name_supplied = 'Sandbox'
+# env_name_supplied = 'PreProd'
+# env_name_supplied = 'Prod'
+env_name, env, client_id, client_secret = environment.get_client_environment_for_function(env_name_supplied, friendly_function_name)
+client_name = os.getenv(f'DYNATRACE_{env_name.upper()}_CLIENT_NAME')
+# print('client_name:', client_name)
+account_id = os.getenv(f'DYNATRACE_AUTOMATION_ACCOUNT_ID_{client_name}')
+skip_slow_api_calls = environment.get_boolean_environment_variable('DYNATRACE_AUTOMATION_SKIP_SLOW_ACCOUNT_MANAGEMENT_API_CALLS_{env_name}', 'True')
+environment_variable_source = 'Newest Environment Variable Names'
 
+# Next, try to get the new/improved names
+if not account_id and not client_id and not client_secret:
+    account_id = os.getenv('DYNATRACE_AUTOMATION_ACCOUNT_ID')
+    client_id = os.getenv('DYNATRACE_AUTOMATION_CLIENT_ID')
+    client_secret = os.getenv('DYNATRACE_AUTOMATION_CLIENT_SECRET')
+    skip_slow_api_calls = environment.get_boolean_environment_variable('SKIP_SLOW_API_CALLS', 'True')
+    environment_variable_source = 'New Environment Variable Names'
+
+
+# If the new/improved names are not found, fall back to the older names
+if not account_id and not client_id and not client_secret:
+    print('WARNING: Using deprecated environment variable names')
+    account_id = os.getenv('ACCOUNTID')
+    client_id = os.getenv('CLIENT_ID')
+    client_secret = os.getenv('CLIENT_SECRET')
+    skip_slow_api_calls = environment.get_boolean_environment_variable('DYNATRACE_SKIP_SLOW_ACCOUNT_MANAGEMENT_API_CALLS', 'True')
+    environment_variable_source = 'Old Environment Variable Names'
 
 configuration_path = 'configurations.yaml'
 if os.path.isfile(configuration_path):
@@ -26,6 +50,8 @@ print(f'client_secret: {client_secret[:5]}*{client_secret[70:]}')
 print(f'client_id: {client_id[:10]}*')
 print(f'skip_slow_api_calls: {skip_slow_api_calls}')
 print(f'environment_variable_source: {environment_variable_source}')
+
+
 
 
 def get_users():

@@ -35,6 +35,9 @@ main_dashboards = [
     # 'Synthetics: Browser Monitor Events',
     # 'Third Party Services',
     'Veritas',
+    'VMware Overview',
+    'VMware Host',
+    'VMware VM',
 ]
 
 # These differ by customer, and are in the templates directory

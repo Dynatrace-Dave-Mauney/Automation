@@ -5,7 +5,7 @@ import glob
 import json
 import os
 
-DASHBOARD_INPUT_PATH = '/Temp/MSHS/NewPlatform/Dashboards/Pure*json'
+DASHBOARD_INPUT_PATH = '/Temp/MSHS/NewPlatform/Dashboards/Prod*json'
 DASHBOARD_OUTPUT_PATH = '/Temp/MSHS/NewPlatform/Dashboards-Layout-Changed'
 
 

@@ -40,8 +40,9 @@ def run():
     # post_notebooks(env, f'Notebooks/Assets/*.json')
     # post_launchpads(env, 'Launchpads/Assets/*.json')
 
+    post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE VMware *.json')
     # post_dashboards(env, f'Dashboards/Assets/Templates/*.json')
-    post_notebooks(env, f'C:\\Users\\dave.mauney\\PycharmProjects\\Automation\\$Private\\Customers\\$Current\\Vetting\\Notebooks\\*.json')
+    # post_notebooks(env, f'C:\\Users\\dave.mauney\\PycharmProjects\\Automation\\$Private\\Customers\\$Current\\Vetting\\Notebooks\\*.json')
     # post_launchpads(env, 'Launchpads/Assets/*.json')
 
     # Add Management Zone Filtering
