@@ -5,14 +5,17 @@ import os
 import shutil
 from inspect import currentframe
 
-# DASHBOARD_INPUT_PATH = '../$Input/Dashboards/Examples'
-# DASHBOARD_OUTPUT_PATH = '../$Output/Dashboards/Sorted'
-
 DASHBOARD_INPUT_PATH = 'Templates-Overview-Clean'
 DASHBOARD_OUTPUT_PATH = 'Templates-Overview-Clean-Sorted'
 
+# DASHBOARD_INPUT_PATH = '\Temp\MSHS\Classic\Dashboards'
+# DASHBOARD_OUTPUT_PATH = '\Temp\MSHS\Classic\Dashboards-Sorted'
+
 # DASHBOARD_INPUT_PATH = 'Templates-Overview-Clean-Sorted'
 # DASHBOARD_OUTPUT_PATH = 'Templates-Overview-Clean-Resorted'
+
+# DASHBOARD_INPUT_PATH = '../$Input/Dashboards/Examples'
+# DASHBOARD_OUTPUT_PATH = '../$Output/Dashboards/Sorted'
 
 confirmation_required = True
 remove_directory_at_startup = True

@@ -6,11 +6,19 @@ import urllib.parse
 from Reuse import dynatrace_api
 from Reuse import environment
 
+update_mode = True
+
+
 def process(env, token):
     return generate_management_zones(env, token)
 
 
 def generate_management_zones(env, token):
+    existing_management_zones = []
+
+    if update_mode:
+        existing_management_zones = get_management_zones(env, token)
+
     management_zones = []
     endpoint = '/api/v2/entities'
     raw_params = 'pageSize=4000&entitySelector=type(HOST)&to=-5m&fields=properties,tags'
@@ -31,7 +39,20 @@ def generate_management_zones(env, token):
                         management_zones.append(mz_tag)
 
     for management_zone in management_zones:
-        post_management_zone(env, token, management_zone)
+        tokens = management_zone.split('=')
+        mz_prefix = tokens[0].upper()
+        value = tokens[1]
+        management_zone_formatted = f'{mz_prefix}:{value}'
+
+        if update_mode:
+            if management_zone_formatted not in existing_management_zones:
+                print('Posting management zone:', management_zone_formatted)
+                post_management_zone(env, token, management_zone)
+            else:
+                print('Skipping exiting management zone:', management_zone_formatted)
+        else:
+            print('Posting management zone:', management_zone_formatted)
+            post_management_zone(env, token, management_zone)
 
 def post_management_zone(env, token, management_zone_name):
     management_zone_template = {
@@ -42,7 +63,7 @@ def post_management_zone(env, token, management_zone_name):
         "configurationVersions": [],
         "clusterVersion": "1.330.55.20260126-105640"
     },
-    "name": "TAG: $$TAG$$",
+    "name": "$$NAME$$",
     "description": None,
     "rules": [
         {
@@ -76,12 +97,14 @@ def post_management_zone(env, token, management_zone_name):
     "entitySelectorBasedRules": []
 }
     management_zone = copy.deepcopy(management_zone_template)
-    management_zone['name'] = f'TAG: {management_zone_name}'
 
     tokens = management_zone_name.split('=')
     key = f'primary_tags.{tokens[0]}'
     value = tokens[1]
+    mz_prefix = tokens[0].upper()
 
+    management_zone['name'] = f'{mz_prefix}:{value}'
+    # print(management_zone['name'])
     management_zone['rules'][0]['conditions'][0]['comparisonInfo']['value']['key'] = key
     management_zone['rules'][0]['conditions'][0]['comparisonInfo']['value']['value'] = value
 
@@ -89,6 +112,17 @@ def post_management_zone(env, token, management_zone_name):
     r = dynatrace_api.post_object(f'{env}{endpoint}', token, json.dumps(management_zone), handle_exceptions=False, exit_on_exception=False)
     if r.status_code != 400:
         print(f"Added management zone: {management_zone['name']}")
+
+def get_management_zones(env,token):
+    management_zones = []
+    endpoint = '/api/config/v1/managementZones'
+    management_zones_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
+    mz_list = management_zones_json_list[0].get('values')
+    for mz in mz_list:
+        management_zones.append(mz.get('name'))
+
+    return management_zones
+
 
 def main():
     friendly_function_name = 'Dynatrace Automation Reporting'

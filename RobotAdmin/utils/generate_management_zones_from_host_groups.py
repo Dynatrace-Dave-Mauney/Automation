@@ -7,12 +7,19 @@ from Reuse import environment
 
 configuration_object = environment.get_configuration_object('configurations.yaml')
 
+update_mode = True
+
 
 def process(env, token):
     return generate_management_zones(env, token)
 
 
 def generate_management_zones(env, token):
+    existing_management_zones = []
+
+    if update_mode:
+        existing_management_zones = get_management_zones(env, token)
+
     management_zones = []
     endpoint = '/api/v2/entities'
     raw_params = 'pageSize=4000&entitySelector=type(HOST_GROUP)'
@@ -22,12 +29,32 @@ def generate_management_zones(env, token):
         inner_entities_json_list = entities_json.get('entities')
         for inner_entities_json in inner_entities_json_list:
             display_name = inner_entities_json.get('displayName')
-            management_zones.append(display_name)
+            management_zones.append(f'HG: {display_name}')
 
     management_zones = remove_duplicates(sorted(management_zones))
 
     for management_zone in management_zones:
-        post_management_zone(env, token, management_zone)
+        if update_mode:
+            if management_zone not in existing_management_zones:
+                print('Posting management zone:', management_zone)
+                post_management_zone(env, token, management_zone)
+            else:
+                print('Skipping exiting management zone:', management_zone)
+        else:
+            print('Posting management zone:', management_zone)
+            post_management_zone(env, token, management_zone)
+
+
+def get_management_zones(env,token):
+    management_zones = []
+    endpoint = '/api/config/v1/managementZones'
+    management_zones_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token)
+    mz_list = management_zones_json_list[0].get('values')
+    for mz in mz_list:
+        management_zones.append(mz.get('name'))
+
+    return management_zones
+
 
 def remove_duplicates(any_list):
     new_list = []
@@ -44,7 +71,7 @@ def post_management_zone(env, token, management_zone_name):
         "configurationVersions": [],
         "clusterVersion": "1.330.55.20260126-105640"
     },
-    "name": "HG: $$HG$$",
+    "name": "$$NAME$$",
     "description": None,
     "rules": [
         {
@@ -75,7 +102,7 @@ def post_management_zone(env, token, management_zone_name):
     "entitySelectorBasedRules": []
 }
     management_zone = copy.deepcopy(management_zone_template)
-    management_zone['name'] = f'HG: {management_zone_name}'
+    management_zone['name'] = management_zone_name
     management_zone['rules'][0]['conditions'][0]['comparisonInfo']['value'] = management_zone_name
 
     endpoint = '/api/config/v1/managementZones'

@@ -99,6 +99,12 @@ def get_dashboard_links(tenant_name, tenant):
          f'https://{tenant}.apps.dynatrace.com/ui/apps/dynatrace.dashboards/dashboard/3115bafc-90b4-48be-87b3-234dab3b22f2'),
         (f'{tenant_name} Veritas',
          f'https://{tenant}.apps.dynatrace.com/ui/apps/dynatrace.dashboards/dashboard/7662a958-d45d-439d-8f6a-92ba7f700a93'),
+        (f'{tenant_name} VMware Host',
+         f'https://{tenant}.apps.dynatrace.com/ui/apps/dynatrace.dashboards/dashboard/9b91cdd4-cbd0-4f44-8be8-ef2451cb966d'),
+        (f'{tenant_name} VMware Overview',
+         f'https://{tenant}.apps.dynatrace.com/ui/apps/dynatrace.dashboards/dashboard/36775a56-6325-492c-9a2c-9025a458a774'),
+        (f'{tenant_name} VMware VM',
+         f'https://{tenant}.apps.dynatrace.com/ui/apps/dynatrace.dashboards/dashboard/5bb26f48-8e77-4aa1-af6f-4c29f18228a7'),
 
         # (f'{tenant_name} Backend Overview By Management Zone',
         #  f'https://{tenant}.apps.dynatrace.com/ui/document/v0/#share=2e9b5aa4-9380-4dc4-a5d7-42c3febb9808'),
@@ -327,6 +333,8 @@ def get_ready_made_dashboard_links(env, client_id, client_secret):
         # 'Network performance',
         'OpenPipeline usage overview',
         'Pure Storage FlashArray Overview',
+        'Veritas Netbackup Overview',
+        'VMware Extension Overview',
     ]
     dynatrace_owner1 = '50436aec-8901-4282-ae81-690bd6509b18'
     dynatrace_owner2 = '60a34747-becc-47c2-ac3a-bfaf2c537471'
@@ -357,79 +365,13 @@ def get_ready_made_dashboard_links(env, client_id, client_secret):
 
 
 def generate_application_block():
-    selected_apps = [
-    'Anomaly Detection',
-    'Azure Classic',
-    # 'Clouds',
-    # 'Containers',
-    'Dashboards Classic',
-    'Dashboards',
-    'Data Explorer Classic',
-    # 'Database Services Classic',
-    # 'Databases',
-    # 'Davis CoPilot',
-    # 'Davis® for Workflows',
-    # 'Distributed Traces Classic',
-    # 'Distributed Tracing',
-    # 'Explore Business Events',
-    'Extensions',
-    # 'Frontend',
-    'Host Networking',
-    'Hosts Classic',
-    'Infrastructure & Operations',
-    # 'Kubernetes Classic',
-    # 'Kubernetes Workloads Classic',
-    # 'Kubernetes',
-    'Launcher',
-    'Logs',
-    # 'Message Queues',
-    'Metrics Classic',
-    # 'Mobile',
-    # 'Multidimensional Analysis',
-    'Notebooks',
-    'Problems Classic',
-    'Problems',
-    # 'Profiling & Optimization',
-    # 'Query User Sessions',
-    # 'Services Classic',
-    # 'Services',
-    # 'Session Replay Classic',
-    # 'Session Segmentation',
-    'Settings Classic',
-    'Settings',
-    'Smartscape Classic',
-    # 'Synthetic Classic',
-    # 'Synthetic',
-    'Technologies & Processes Classic',
-    'User Settings',
-    # 'Users & Sessions',
-    # 'Web',
-    'Workflows',
-    ]
-
-    app_dict = {}
-    filename = 'Launchpads/Assets/Full Application List.json'
+    filename = 'Assets/Quick Application List.json'
     with codecs.open(filename, encoding='utf-8') as f:
         document = f.read()
         document_json = json.loads(document)
         block = document_json.get('containerList').get('containers')[0].get('blocks')[0]
-        block['title'] = 'Quick Application Links'
-        block_content_list = block.get('content')
-        # print(block)
-        if block_content_list:
-            for link in block_content_list:
-                link_title = link.get('title')
-                app_dict[link_title] = link
-
-    launchpad_block = copy.deepcopy(block)
-    new_block_content_list = []
-
-    for selected_app in selected_apps:
-        link = app_dict[selected_app]
-        new_block_content_list.append(link)
-
-    launchpad_block['content'] = new_block_content_list
-    return launchpad_block
+        launchpad_block = copy.deepcopy(block)
+        return launchpad_block
 
 
 def write_launchpad(launchpad_json):

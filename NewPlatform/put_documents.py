@@ -30,11 +30,19 @@ def run():
     #   'Sandbox/*.json' # Lenient reference
 
     # CURRENT CUSTOMER
+    # Launchpads
     # put_documents('Prod', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/Prod/Dynatrace Architecture and Standards.json')
     # put_documents('Prod', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/Prod/Dynatrace Architecture Launchpad.json')
     # put_documents('Prod', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/Prod/Dynatrace User Launchpad.json')
     # put_documents('Prod', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/Prod/Full Application List.json')
-    put_documents('Prod', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/Prod/Quick Application List.json')
+    # put_documents('Prod', '../$Private/Customers/$Current/Assets/NewPlatform/Launchpads/Prod/Quick Application List.json')
+
+    # Dashboards
+    # put_documents('Prod', '../$Private/Customers/$Current/Assets/NewPlatform/Dashboards/Prod/Prod Overview.json')
+    put_documents('Prod', '../$Private/Customers/$Current/Assets/NewPlatform/Dashboards/Prod/Prod Overview By Management Zone.json')
+
+    # Notebooks
+    #
 
     # Troubleshooting dashboard share issues
     # put_documents('Prod', '/Users/dave.mauney/PycharmProjects/Automation/NewPlatform/Dashboards/Downloads/prod/Prod Backend Overview By Management Zone.json')

@@ -7,6 +7,10 @@
 [Network (Process-Level Details)](https://tid66827.apps.dynatrace.com/ui/apps/dynatrace.dashboards/dashboard/d944955f-1879-4946-a705-a944dbd3ec1f)  
 [NetApp OnTap](https://tid66827.apps.dynatrace.com/ui/apps/dynatrace.dashboards/dashboard/38d4a3ff-b141-49b7-a159-40bb5f9f24a9)  
 [Pure Storage FlashArray](https://tid66827.apps.dynatrace.com/ui/apps/dynatrace.dashboards/dashboard/3115bafc-90b4-48be-87b3-234dab3b22f2)  
+[Veritas](https://tid66827.apps.dynatrace.com/ui/apps/dynatrace.dashboards/dashboard/7662a958-d45d-439d-8f6a-92ba7f700a93)  
+[VMware Host](https://tid66827.apps.dynatrace.com/ui/apps/dynatrace.dashboards/dashboard/9b91cdd4-cbd0-4f44-8be8-ef2451cb966d)  
+[VMware Overview](https://tid66827.apps.dynatrace.com/ui/apps/dynatrace.dashboards/dashboard/36775a56-6325-492c-9a2c-9025a458a774)  
+[VMware VM](https://tid66827.apps.dynatrace.com/ui/apps/dynatrace.dashboards/dashboard/5bb26f48-8e77-4aa1-af6f-4c29f18228a7) 
 
 # Gen 3 Launchpads
 
@@ -29,3 +33,7 @@
 [Network (Process-Level Details)](https://tid66827.live.dynatrace.com/#dashboard;id=00000000-dddd-bbbb-ffff-000000000019)  
 [Processes](https://tid66827.live.dynatrace.com/#dashboard;id=00000000-dddd-bbbb-ffff-000000000009)  
 [Pure Storage FlashArray](https://tid66827.live.dynatrace.com/#dashboard;id=00000000-dddd-bbbb-ffff-000000000160)  
+[VMware Host](https://tid66827.live.dynatrace.com/#dashboard;id=00000000-dddd-bbbb-ffff-000000000171)  
+[VMware Overview](https://tid66827.live.dynatrace.com/#dashboard;id=00000000-dddd-bbbb-ffff-000000000170)  
+[VMware VM](https://tid66827.live.dynatrace.com/#dashboard;id=00000000-dddd-bbbb-ffff-000000000172)  
+[Veritas](https://tid66827.live.dynatrace.com/#dashboard;id=00000000-dddd-bbbb-ffff-000000000161)  
