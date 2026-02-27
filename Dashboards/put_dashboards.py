@@ -137,7 +137,21 @@ def run():
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000171.json', owner=owner, skip_list=current_customer_skip_list)
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000172.json', owner=owner, skip_list=current_customer_skip_list)
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000800.json', owner=owner, skip_list=current_customer_skip_list)
-    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000002000.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000002000.json', owner=owner, skip_list=current_customer_skip_list)
+
+    # Dynamic Filters
+    # Hosts
+    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000008.json', owner=owner, skip_list=current_customer_skip_list)
+    # Processes
+    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000009.json', owner=owner, skip_list=current_customer_skip_list)
+    # Prod: Hosts (Detailed)
+    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000020.json', owner=owner, skip_list=current_customer_skip_list)
+    # Prod: Network (Host-Level Details)
+    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000018.json', owner=owner, skip_list=current_customer_skip_list)
+    # Prod: Network (Process-Level Details)
+    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000019.json', owner=owner, skip_list=current_customer_skip_list)
+
+
 
     # Generated Dashboards
     # Main Menu

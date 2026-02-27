@@ -30,7 +30,8 @@ def process():
 	# These are the most important ones for the "Automation" project...
 	# post_reduced_power_dynatrace_automation_token()
 	# post_saas_upgrade_assisant_token()
-	post_dynatrace_automation_token()
+	# post_dynatrace_automation_token()
+	# post_remote_configuration_token()
 	# post_reporting_token()
 	# post_tools_token()
 
@@ -57,6 +58,13 @@ def process():
 
 def post_api_token():
 	return post_token('API Tokens (Read/Write)', ["apiTokens.read", "apiTokens.write"])
+
+
+def post_remote_configuration_token():
+	return post_token('Remote Configuration', [
+		"oneAgents.read",
+		"oneAgents.write",
+		])
 
 
 def post_reduced_power_dynatrace_automation_token():

@@ -75,6 +75,8 @@ def process_entity_type(env, token, entity_type):
                 tag_key = tag.get('key')
                 if tag_context == 'AZURE':
                     tag_key = f'[Azure]{tag_key}'
+                if tag_context == 'ENVIRONMENT':
+                    tag_key = f'[Environment]{tag_key}'
                 if tag_key not in used_tags:
                     used_tags.append(tag_key)
 
