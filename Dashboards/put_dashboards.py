@@ -130,7 +130,7 @@ def run():
     env_name = 'Prod'
     # env_name = 'Personal'
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/*.json', owner=owner, skip_list=current_customer_skip_list)
-    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000001.json', owner=owner, skip_list=current_customer_skip_list)
+    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000001.json', owner=owner, skip_list=current_customer_skip_list)
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000160.json', owner=owner, skip_list=current_customer_skip_list)
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000161.json', owner=owner, skip_list=current_customer_skip_list)
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000170.json', owner=owner, skip_list=current_customer_skip_list)
@@ -139,21 +139,83 @@ def run():
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000800.json', owner=owner, skip_list=current_customer_skip_list)
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000002000.json', owner=owner, skip_list=current_customer_skip_list)
 
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000072.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000077.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000078.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000079.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000080.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000081.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000082.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000083.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000084.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000085.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000086.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000087.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000088.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000089.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000090.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000091.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000092.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000093.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000094.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000095.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000096.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000097.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000098.json', owner=owner, skip_list=[])
+
+    # Put templates for sanity checking
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000072.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000077.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000078.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000079.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000080.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000081.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000082.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000083.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000084.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000085.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000086.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000087.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000088.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000089.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000090.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000091.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000092.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000093.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000094.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000095.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000096.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000097.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000098.json', owner=owner, skip_list=[])
+
+
     # Dynamic Filters
-    # Hosts
-    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000008.json', owner=owner, skip_list=current_customer_skip_list)
-    # Processes
-    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000009.json', owner=owner, skip_list=current_customer_skip_list)
-    # Prod: Hosts (Detailed)
-    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000020.json', owner=owner, skip_list=current_customer_skip_list)
-    # Prod: Network (Host-Level Details)
-    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000018.json', owner=owner, skip_list=current_customer_skip_list)
-    # Prod: Network (Process-Level Details)
-    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000019.json', owner=owner, skip_list=current_customer_skip_list)
-
-
+    # # Hosts
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000008.json', owner=owner, skip_list=current_customer_skip_list)
+    # # Processes
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000009.json', owner=owner, skip_list=current_customer_skip_list)
+    # # Prod: Java Monitoring
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000010.json', owner=owner, skip_list=current_customer_skip_list)
+    # # Prod: .NET
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000011.json', owner=owner, skip_list=current_customer_skip_list)
+    # # Prod: Tomcat
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000012.json', owner=owner, skip_list=current_customer_skip_list)
+    # # Prod: Hosts (Detailed)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000020.json', owner=owner, skip_list=current_customer_skip_list)
+    # # Prod: Network (Host-Level Details)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000018.json', owner=owner, skip_list=current_customer_skip_list)
+    # # Prod: Network (Process-Level Details)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000019.json', owner=owner, skip_list=current_customer_skip_list)
+    # # Prod: Web Servers
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000047.json', owner=owner, skip_list=current_customer_skip_list)
+    # # Prod: Node.js
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000069.json', owner=owner, skip_list=current_customer_skip_list)
+    # # Prod: Java Memory
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000075.json', owner=owner, skip_list=current_customer_skip_list)
 
     # Generated Dashboards
+    # All
+    # put_dashboards(env_name, f'../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-0000000*.json', owner=owner, skip_list=[])
     # Main Menu
     # put_dashboards(env_name, f'../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000000.json', owner=owner, skip_list=[])
     # Veritas
@@ -172,6 +234,55 @@ def run():
     # put_dashboards(env_name, f'../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000197.json', owner=owner, skip_list=[])
     # put_dashboards(env_name, f'../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000198.json', owner=owner, skip_list=[])
     # put_dashboards(env_name, f'../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000199.json', owner=owner, skip_list=[])
+
+    # Put templates for sanity checking
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000072.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000077.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000078.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000079.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000080.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000081.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000082.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000083.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000084.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000085.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000086.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000087.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000088.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000089.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000090.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000091.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000092.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000093.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000094.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000095.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000096.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000097.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'Templates/Overview/00000000-dddd-bbbb-ffff-000000000098.json', owner=owner, skip_list=[])
+    # 00000000-dddd-bbbb-ffff-000000000072|TEMPLATE: Microsoft SQL Server
+    # 00000000-dddd-bbbb-ffff-000000000077|TEMPLATE: Microsoft SQL Server - Home
+    # 00000000-dddd-bbbb-ffff-000000000078|TEMPLATE: Microsoft SQL Server External Extension Metrics: Combined
+    # 00000000-dddd-bbbb-ffff-000000000079|TEMPLATE: Microsoft SQL Server External Extension Metrics: Transactions/Blocks/Locks/Latches
+    # 00000000-dddd-bbbb-ffff-000000000080|TEMPLATE: Microsoft SQL Server External Extension Metrics: CPU/Memory
+    # 00000000-dddd-bbbb-ffff-000000000081|TEMPLATE: Microsoft SQL Server External Extension Metrics: Redo/Checkpoint/Backup/Filestream
+    # 00000000-dddd-bbbb-ffff-000000000082|TEMPLATE: Microsoft SQL Server External Extension Metrics: Log
+    # 00000000-dddd-bbbb-ffff-000000000083|TEMPLATE: Microsoft SQL Server External Extension Metrics: Health/State
+    # 00000000-dddd-bbbb-ffff-000000000084|TEMPLATE: Microsoft SQL Server External Extension Metrics: Always On
+    # 00000000-dddd-bbbb-ffff-000000000085|TEMPLATE: Microsoft SQL Server Databases
+    # 00000000-dddd-bbbb-ffff-000000000086|TEMPLATE: Microsoft SQL Server Online Databases
+    # 00000000-dddd-bbbb-ffff-000000000087|TEMPLATE: Microsoft SQL Server Offline Databases
+    # 00000000-dddd-bbbb-ffff-000000000088|TEMPLATE: Microsoft SQL Server Restoring Databases
+    # 00000000-dddd-bbbb-ffff-000000000089|TEMPLATE: Microsoft SQL Server Recovering Databases
+    # 00000000-dddd-bbbb-ffff-000000000090|TEMPLATE: Oracle Database - Home
+    # 00000000-dddd-bbbb-ffff-000000000091|TEMPLATE: Oracle Database: CPU/Memory
+    # 00000000-dddd-bbbb-ffff-000000000092|TEMPLATE: Oracle Database: ASM/Space
+    # 00000000-dddd-bbbb-ffff-000000000093|TEMPLATE: Oracle Database: Redo Log/Reads/Writes
+    # 00000000-dddd-bbbb-ffff-000000000094|TEMPLATE: Oracle Database: Times/Waits
+    # 00000000-dddd-bbbb-ffff-000000000095|TEMPLATE: Oracle Database: Sessions/Users/Connections/Limits
+    # 00000000-dddd-bbbb-ffff-000000000096|TEMPLATE: Oracle Database: Combined
+    # 00000000-dddd-bbbb-ffff-000000000097|TEMPLATE: Oracle Database Host, Database, ASM Disk Lists
+    # 00000000-dddd-bbbb-ffff-000000000098|TEMPLATE: Microsoft SQL Server
+
 
     # Versioned Dashboards (Obsolete)
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000001-v5_{env_name}.json', owner=owner, skip_list=current_customer_skip_list)

@@ -19,10 +19,12 @@ def main():
         ('Metric & Dimension Usage + Rejections', '#dashboard;id=3b9c20e2-dc58-4a91-8dcb-f6217dc869ac'),
         ('Monitored Entities Health Check', '#dashboard;id=9172cf73-afd4-49cf-81f7-7dd2160a5405'),
         ('NetApp OnTap Overview', '#dashboard;id=051f3484-3165-caf5-7a9d-caeae85b44f6'),
+        ('Oracle Database Overview', '#dashboard;id=28130395-2cf2-d9e3-b19b-ebfb64862f7e'),
         ('Pure Storage FlashArray Entities Overview', '#dashboard;id=bf6c71d8-0758-504c-787c-654c8d229250'),
         ('Pure Storage FlashArray Fleet Overview (OpenMetrics)', '#dashboard;id=affc78a0-10fc-8107-5e90-3446f717fa47'),
         # ('OneAgent Traces - Adaptive traffic management DPS (deprecated)', '#dashboard;id=f481dbe9-0853-465b-9b69-e31c403c6b84'),
         # ('Real User Monitoring', '#dashboard;id=c704bd72-92e9-452a-b40e-73e6f4df9f08'),
+        ('SQL Server Overview', '#dashboard;id=3fcc4524-520c-b971-fb56-7db04944d0cc'),
         # ('Synthetic Monitoring', '#dashboard;id=b6fc0160-9332-454f-a7bc-7217b2ae540c'),
         ('Tagging worker Dashboard (Deprecated) – Use Monitored Entities Health Check', '#dashboard;id=25bdae36-8e74-471d-a314-ac750b4ef190'),
         ('VMware Extension Overview', '#dashboard;id=a5f3de52-5722-eec6-cae4-f55ba4a7d7a2'),
@@ -114,7 +116,7 @@ def main():
 
     dashboard_template = dashboard_template.replace('{{.dashboard_markdown}}', dashboard_markdown)
 
-    print(dashboard_template)
+    # print(dashboard_template)
 
     write_json(directory_path, dashboard_name, json.loads(dashboard_template))
 
@@ -124,6 +126,7 @@ def write_json(path, filename, json_dict):
     file_path = f'{path}/{filename}'
     with open(file_path, 'w', encoding='utf-8') as file:
         file.write(json.dumps(json_dict, indent=4, sort_keys=False))
+        print(f'File written: {path}/{filename}')
 
 
 if __name__ == '__main__':

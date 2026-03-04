@@ -23,9 +23,9 @@ def process(env_name, env, token):
 			# # # CAUTION HERE!!!! # # #
 			# # # More flexible delete options are more dangerous! # # #
 
-			# if name.startswith('HG:'):
-			if '=' in name:
-			# if True:
+			if name.startswith('HG:'):
+			# if '=' in name:
+			######### if True:
 				# print(name)
 				delete_list.append(management_zone_id + ': ' + name)
 

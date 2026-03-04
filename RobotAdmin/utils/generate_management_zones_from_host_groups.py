@@ -103,7 +103,7 @@ def post_management_zone(env, token, management_zone_name):
 }
     management_zone = copy.deepcopy(management_zone_template)
     management_zone['name'] = management_zone_name
-    management_zone['rules'][0]['conditions'][0]['comparisonInfo']['value'] = management_zone_name
+    management_zone['rules'][0]['conditions'][0]['comparisonInfo']['value'] = management_zone_name.replace('HG:', '')
 
     endpoint = '/api/config/v1/managementZones'
     r = dynatrace_api.post_object(f'{env}{endpoint}', token, json.dumps(management_zone), handle_exceptions=False, exit_on_exception=False)

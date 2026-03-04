@@ -6,7 +6,8 @@ from Reuse import environment
 
 friendly_function_name = 'Dynatrace Automation Reporting'
 env_name_supplied = environment.get_env_name(friendly_function_name)
-env_name_supplied = 'Prod'
+# env_name_supplied = 'Prod'
+env_name_supplied = 'Personal'
 env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 
 # Use a new token later, this is a hack
@@ -35,13 +36,7 @@ def process():
 		exit(1)
 
 	host_list = [
-		# 'SEBAAPPP019004.msnyuhealth.org',
-		# 'SEBAAPPP019005.msnyuhealth.org',
-		# 'SEBAAPPP019006.msnyuhealth.org',
-		# 'SEBAAPPP019007.msnyuhealth.org',
-		# 'sEBAAppP019001.msnyuhealth.org',
-		# 'sEBAAppP019002.msnyuhealth.org',
-		# 'sEBAAppP019003.msnyuhealth.org',
+	'DT-8VBQQV3 accounting_app_prod',
 	]
 
 	host_id_list = []
@@ -50,27 +45,74 @@ def process():
 		host_id_list.append(host_id)
 
 
-	post_job_preview(host_id_list)
+	# get_current_job()
+	# get_finished_jobs()
+
+	post_host_tag_job(host_id_list, 'clear', 'primary_tags.zone: azure')
+	# post_host_tag_job(host_id_list, 'set', 'primary_tags.zone:azure')
+
 	# post_job(host_id_list)
 
 
 def get_host_id(host):
 	return host_lookup[host]
 
-def post_job_preview(host_id_list):
-	endpoint = '/api/v2/oneagents/remoteConfigurationManagement/preview'
+
+def get_current_job():
+	endpoint = '/api/v2/oneagents/remoteConfigurationManagement/current'
+	r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
+	print(r, r.status_code, r.text)
+	json_list = r.json()
+	print(json_list)
+	for json in json_list:
+		print(json)
+
+
+def get_finished_jobs():
+	endpoint = '/api/v2/oneagents/remoteConfigurationManagement'
+	r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
+	print(r, r.status_code, r.text)
+	json_response = r.json()
+	print(json_response)
+	json_list = json_response.get('jobs')
+	for job in json_list:
+		print(job)
+		job_id = job.get('id')
+		print(job_id)
+		get_job(job_id)
+
+
+def get_job(job_id):
+	endpoint = f'/api/v2/oneagents/remoteConfigurationManagement/{job_id}'
+	r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
+	print(r, r.status_code, r.text)
+	json_list = r.json()
+	print(json_list)
+
+
+def post_host_tag_job(host_id_list, operation, tag):
+	endpoint = '/api/v2/oneagents/remoteConfigurationManagement'
 	payload_dict = {
   "entities": [],
   "operations": [
     {
-      "attribute": "networkZone",
-      "operation": "set",
-      "value": "onprem"
+      "attribute": "hostTag",
+      "operation": f"{operation}",
+      "value": f"{tag}"
     }
   ]
 }
 	payload_dict['entities'] = host_id_list
 	payload = json.dumps(payload_dict)
+	print(payload)
+	post_validate_payload(payload)
+	exit(9999)
+	r = dynatrace_api.post_object(f'{env}{endpoint}', token, payload)
+	print(r, r.status_code, r.text)
+
+
+def post_validate_payload(payload):
+	endpoint = '/api/v2/oneagents/remoteConfigurationManagement/validator'
 	r = dynatrace_api.post_object(f'{env}{endpoint}', token, payload)
 	print(r, r.status_code, r.text)
 
@@ -83,7 +125,7 @@ def post_job(host_id_list):
     {
       "attribute": "networkZone",
       "operation": "set",
-      "value": "onprem"
+      "value": "azure"
     }
   ]
 }
