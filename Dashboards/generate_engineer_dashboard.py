@@ -80,7 +80,7 @@ def put_engineer_dashboard(env, token, app_list, management_zones):
     endpoint = '/api/config/v1/dashboards'
     formatted_engineer_dashboard = json.dumps(engineer_dashboard, indent=4, sort_keys=False)
     dynatrace_api.put(env, token, endpoint, engineer_dashboard_id, formatted_engineer_dashboard)
-    print(f'PUT {engineer_dashboard_name} dashboard to {env}) with id: {engineer_dashboard_id}')
+    print(f'PUT {engineer_dashboard_name} dashboard to {env}/#dashboard;id={engineer_dashboard_id}')
     print('')
 
 

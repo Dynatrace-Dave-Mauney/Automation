@@ -49,6 +49,7 @@ tech_dashboards = [
     'Java Memory',
     # 'Kubernetes - Home',
     'Node.js',
+    'PHP',
     'Tomcat',
     'Web Servers',
 ]
