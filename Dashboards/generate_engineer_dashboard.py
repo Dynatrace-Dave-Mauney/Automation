@@ -65,15 +65,23 @@ def put_engineer_dashboard(env, token, app_list, management_zones):
     new_tiles.extend(tier0_apps)
 
     top = app_template[0]['bounds']['top']
+    left = app_template[0]['bounds']['left']
     height = app_template[0]['bounds']['height']
 
     for app in app_list:
         mz_name = f'APP:{app}'
         mz_id = management_zones[mz_name]
         # print(app, mz_name, mz_id)
-        app_tiles = build_app_tiles(top, app, mz_name, mz_id, app_template)
+        app_tiles = build_app_tiles(top, left, app, mz_name, mz_id, app_template)
         new_tiles.extend(app_tiles)
         top += height
+
+        # Near actual max of 4864
+        if top >= 4712:
+        # Nice stopping point for even splitting
+        # if top >= 2888:
+            top = 0
+            left += 1178
 
     engineer_dashboard['tiles'] = new_tiles
 
@@ -84,8 +92,8 @@ def put_engineer_dashboard(env, token, app_list, management_zones):
     print('')
 
 
-def build_app_tiles(top, app, mz_name, mz_id, app_template):
-    print(top)
+def build_app_tiles(top, left, app, mz_name, mz_id, app_template):
+    print(top, left)
     new_tiles = []
     template = copy.deepcopy(app_template)
     for tile in template:
@@ -96,6 +104,7 @@ def build_app_tiles(top, app, mz_name, mz_id, app_template):
             tile['tileFilter']['managementZone']['id'] = mz_id
             tile['tileFilter']['managementZone']['name'] = mz_name
         tile['bounds']['top'] = top
+        tile['bounds']['left'] = tile['bounds']['left'] + left
         new_tiles.append(tile)
         print(tile)
 
