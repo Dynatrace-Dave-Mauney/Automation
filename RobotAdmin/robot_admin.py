@@ -15,9 +15,6 @@ friendly_function_name = 'Dynatrace Automation'
 env_name_supplied = environment.get_env_name(friendly_function_name)
 # For easy control from IDE
 # env_name_supplied = 'Prod'
-# env_name_supplied = 'PreProd'
-# env_name_supplied = 'Sandbox'
-# env_name_supplied = 'Dev'
 # env_name_supplied = 'Personal'
 # env_name_supplied = 'Demo'
 env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
@@ -248,23 +245,25 @@ def process():
     pass
 
     # CURRENT CUSTOMER (Prod)
-    # DONE
+    # XXXX
+    # process_auto_tags_basics()
+    # put_auto_tag_security_context()
+    # put_auto_tag_typical_process_group_dynamic_key('IIS App Pool', 'IIS_APP_POOL', '{ProcessGroup:IISAppPool}')
+    # put_auto_tag_typical_process_group_dynamic_key('IIS Role Name', 'IIS_ROLE_NAME', '{ProcessGroup:IISRoleName}')
+
+    # Safety Exit
+    print('Safety Exit!')
+    exit(1234)
+
+    # REFERENCE
     # put_auto_tag_host_group()
     # put_auto_tag_security_context()
-    # OF POSSIBLE FUTURE INTEREST
     # put_request_attribute('Client IP Address', 'CLIENT_IP', None)
     # put_request_attribute('User-Agent', 'REQUEST_HEADER', 'User-Agent')
     # put_request_attribute('x-dynatrace (client-side)', 'REQUEST_HEADER', 'x-dynatrace')
     # put_request_attribute('x-dynatrace', 'REQUEST_HEADER', 'x-dynatrace')
     # put_request_attribute_with_value_processing_control('User Agent Type', 'REQUEST_HEADER', 'User-Agent', {'extractSubstring': {'delimiter': '/', 'position': 'BEFORE'}, 'splitAt': '', 'trim': False})
-
-    # SAFETY VALVE
-    exit(9999)
-
-    # Past Customer: Prod
     # put_auto_tag('Geolocation', 'OPENSTACK_REGION_NAME', 'EXISTS', '{GeolocationSite:Name}', 'PROCESS_GROUP')
-
-    # Past Customer: Production
     # process_customer_specific_production()
     # generate_shotgun_request_attributes()
     # generate_request_attribute_json_payload_extracts('REQUEST_HEADER', 'user', {"employeeId":"","employeeName":"","employeeFullId":"","employeeMenuId":"","forkliftNumber":"","valid":"","supervisor":"","originServiceCenter":"","alternateServiceCenter":"","currentLocationServiceCenter":"","device":"","authorized":0,"tabletSerialNumber":0,"ipAddress":""})
@@ -286,10 +285,6 @@ def process():
 
     # Random Personal processes
     # process_all_request_attributes()
-
-    # Safety Exit
-    print('Safety Exit!')
-    exit(1234)
 
     # Usage Examples
 

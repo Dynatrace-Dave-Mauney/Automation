@@ -36,12 +36,12 @@ def generate_management_zones(env, token):
     for management_zone in management_zones:
         if update_mode:
             if management_zone not in existing_management_zones:
-                print('Posting management zone:', management_zone)
+                # print('Posting management zone:', management_zone)
                 post_management_zone(env, token, management_zone)
-            else:
-                print('Skipping exiting management zone:', management_zone)
+            # else:
+            #     print('Skipping exiting management zone:', management_zone)
         else:
-            print('Posting management zone:', management_zone)
+            # print('Posting management zone:', management_zone)
             post_management_zone(env, token, management_zone)
 
 

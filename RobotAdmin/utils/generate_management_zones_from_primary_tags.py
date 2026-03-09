@@ -38,7 +38,7 @@ def generate_management_zones(env, token):
                     if mz_tag not in management_zones:
                         management_zones.append(mz_tag)
 
-    for management_zone in management_zones:
+    for management_zone in sorted(management_zones):
         tokens = management_zone.split('=')
         mz_prefix = tokens[0].upper()
         value = tokens[1]
@@ -46,12 +46,12 @@ def generate_management_zones(env, token):
 
         if update_mode:
             if management_zone_formatted not in existing_management_zones:
-                print('Posting management zone:', management_zone_formatted)
+                # print('Posting management zone:', management_zone_formatted)
                 post_management_zone(env, token, management_zone)
-            else:
-                print('Skipping exiting management zone:', management_zone_formatted)
+            # else:
+            #     print('Skipping exiting management zone:', management_zone_formatted)
         else:
-            print('Posting management zone:', management_zone_formatted)
+            # print('Posting management zone:', management_zone_formatted)
             post_management_zone(env, token, management_zone)
 
 def post_management_zone(env, token, management_zone_name):
