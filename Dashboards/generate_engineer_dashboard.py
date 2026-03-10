@@ -79,7 +79,7 @@ def put_engineer_dashboard(env, token, app_list, management_zones):
         # Near actual max of 4864
         # if top >= 4712:
         # Nice stopping point for even splitting
-        if top >= 3648:
+        if top >= 4104:
             top = 0
             left += 1178
 
