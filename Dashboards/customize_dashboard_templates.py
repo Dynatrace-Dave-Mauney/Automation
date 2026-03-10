@@ -420,6 +420,7 @@ def customize_dashboards():
 
 def customize_dashboard(dashboard):
     # print(dashboard)
+    dashboard = dashboard.replace('{{.tenant}}', tenant)
     dashboard_json = json.loads(dashboard)
     new_dashboard_json = copy.deepcopy(dashboard_json)
     dashboard_id = dashboard_json.get('id')
