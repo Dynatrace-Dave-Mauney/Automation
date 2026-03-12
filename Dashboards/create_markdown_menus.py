@@ -19,6 +19,9 @@ main_dashboards = [
     'Full Stack Overview',
     'Hosts',
     'Hosts (Detailed)',
+    'Hosts: AIX',
+    'Hosts: Linux',
+    'Hosts: Windows',
     # 'Key Requests',
     # 'Key User Actions',
     'Monitoring Overview',
@@ -56,8 +59,14 @@ tech_dashboards = [
 
 
 # These differ by customer, and are not in the templates directory
+# Dynatrace-owned Dashboards may cover this use case (and does for the current customer)
 ootb_dashboards = [
     # ('Palo Alto', 'ab163c60-07f5-7e82-40d5-35cd6a8be991')
+]
+
+# Generated Dashboards that vary by customer
+generated_dashboards = [
+    ('Engineer', '00000001-0000-0000-0001-000000000000')
 ]
 
 # These differ by customer, and are not in the templates directory
@@ -86,6 +95,11 @@ def load_dashboard_lookup():
         dashboard_id = ootb_dashboard[1]
         dashboard_lookup[dashboard_name] = dashboard_id
 
+    for generated_dashboard in generated_dashboards:
+        dashboard_name = generated_dashboard[0]
+        dashboard_id = generated_dashboard[1]
+        dashboard_lookup[dashboard_name] = dashboard_id
+
     for new_ui_link in new_ui_dashboards:
         link_name = new_ui_link[0]
         link_url = new_ui_link[1]
@@ -112,10 +126,13 @@ def write_markdown_menus(dashboard_lookup):
     for ootb_item in ootb_dashboards:
         links.append((ootb_item[0], f'#dashboard;id={ootb_item[1]}'))
 
+    for generated_item in generated_dashboards:
+        links.append((generated_item[0], f'#dashboard;id={generated_item[1]}'))
+
     for new_ui_item in new_ui_dashboards:
         links.append((new_ui_item[0], new_ui_item[1]))
 
-    for menu_item in links:
+    for menu_item in sorted(links):
         markdown_menu += f'[{menu_item[0]}]({menu_item[1]})  \\n'
     markdown_menu += '"'
 

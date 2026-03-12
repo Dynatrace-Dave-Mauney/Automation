@@ -5,21 +5,21 @@ Generate "Administration Menu" Dashboard JSON.
 import json
 
 directory_path = 'Templates/Overview'
-dashboard_name = '00000000-dddd-bbbb-ffff-000000000800-v3.json'
+dashboard_name = '00000000-dddd-bbbb-ffff-000000000800.json'
 
 
 def main():
     dashboard_links = [
-        ('Dynatrace Usage and Billing', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000812'),
+        # ('Dynatrace Usage and Billing', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000812'),
         ('DPS Usage Details', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000811'),
-        ('Licensing Overview', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000801'),
-        ('Billing', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000805'),
+        # ('Licensing Overview', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000801'),
+        # ('Billing', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000805'),
         ('Dynatrace Self-Monitoring: Home', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000820'),
         ('OneAgent Health Overview', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000810'),
         ('Problem Notifications Health Overview', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000809'),
         ('Host Health Breakdown', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000807'),
         ('Management Zone Coverage', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000813'),
-        ('3rd Party XHR Detection', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000808'),
+        # ('3rd Party XHR Detection', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000808'),
     ]
 
     view_links = [
@@ -156,7 +156,7 @@ def main():
     dashboard_template = dashboard_template.replace('{{.view_markdown}}', view_markdown)
     dashboard_template = dashboard_template.replace('{{.setting_markdown}}', setting_markdown)
 
-    print(dashboard_template)
+    # print(dashboard_template)
 
     write_json(directory_path, dashboard_name, json.loads(dashboard_template))
 
@@ -166,7 +166,7 @@ def write_json(path, filename, json_dict):
     file_path = f'{path}/{filename}'
     with open(file_path, 'w', encoding='utf-8') as file:
         file.write(json.dumps(json_dict, indent=4, sort_keys=False))
-
+        print(f'Wrote dashboard to {file_path}')
 
 if __name__ == '__main__':
     main()

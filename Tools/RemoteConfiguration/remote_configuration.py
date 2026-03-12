@@ -48,8 +48,8 @@ def process():
 	# get_current_job()
 	# get_finished_jobs()
 
-	post_host_tag_job(host_id_list, 'clear', 'primary_tags.zone: azure')
-	# post_host_tag_job(host_id_list, 'set', 'primary_tags.zone:azure')
+	# post_host_tag_job(host_id_list, 'clear', 'primary_tags.zone=azure')
+	post_host_tag_job(host_id_list, 'set', 'primary_tags.zone=notazure')
 
 	# post_job(host_id_list)
 
@@ -105,8 +105,8 @@ def post_host_tag_job(host_id_list, operation, tag):
 	payload_dict['entities'] = host_id_list
 	payload = json.dumps(payload_dict)
 	print(payload)
-	post_validate_payload(payload)
-	exit(9999)
+	# post_validate_payload(payload)
+	# exit(9999)
 	r = dynatrace_api.post_object(f'{env}{endpoint}', token, payload)
 	print(r, r.status_code, r.text)
 

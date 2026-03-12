@@ -5,10 +5,16 @@ import urllib.parse
 from Reuse import dynatrace_api
 from Reuse import environment
 
-engineer_dashboard_prefix = '00000001-0000-0000-0001-'
-engineer_dashboard_name = 'Engineer'
-engineer_dashboard_id = f'{engineer_dashboard_prefix}000000000000'
+executive_dashboard_prefix = '00000001-0000-0000-0001-'
+executive_dashboard_name = 'Executive'
+executive_dashboard_id = f'{executive_dashboard_prefix}000000000001'
 
+# top = 0
+# left = 0
+height = 152
+width = 570
+# 570 works fine, 190 does not work!
+# width = 380
 
 def process_app_tags(env, token):
     app_list = []
@@ -29,10 +35,8 @@ def process_app_tags(env, token):
                 key = tag.get('key')
                 if key == 'primary_tags.app':
                     app_value = tag.get('value')
-                    # print(app_value)
                 if key == 'primary_tags.tier':
                     tier_value = tag.get('value')
-                    # print(tier_value)
 
             if tier_value == '1':
                 if app_value not in app_list:
@@ -43,30 +47,40 @@ def process_app_tags(env, token):
 
     management_zones = get_management_zones(env, token)
 
-    put_engineer_dashboard(env, token, sorted(app_list), management_zones)
+    put_executive_dashboard(env, token, sorted(app_list), management_zones)
 
 
-def put_engineer_dashboard(env, token, app_list, management_zones):
-    engineer_dashboard = load_engineer_dashboard_template()
+def put_executive_dashboard(env, token, app_list, management_zones):
+    executive_dashboard = load_executive_dashboard_template()
 
-    engineer_dashboard['id'] = engineer_dashboard_id
-    engineer_dashboard['dashboardMetadata']['name'] = engineer_dashboard_name
-    engineer_dashboard['dashboardMetadata']['shared'] = True
-    engineer_dashboard['dashboardMetadata']['preset'] = True
+    executive_dashboard['id'] = executive_dashboard_id
+    executive_dashboard['dashboardMetadata']['name'] = executive_dashboard_name
+    executive_dashboard['dashboardMetadata']['shared'] = True
+    executive_dashboard['dashboardMetadata']['preset'] = True
 
-    all_apps = engineer_dashboard['tiles'][0:5]
-    tier1_apps = engineer_dashboard['tiles'][5:10]
-    tier0_apps = engineer_dashboard['tiles'][10:15]
-    app_template = engineer_dashboard['tiles'][15:20]
+    all_apps = executive_dashboard['tiles'][0:1]
+    tier1_apps = executive_dashboard['tiles'][1:2]
+    tier0_apps = executive_dashboard['tiles'][2:3]
+    app_template = executive_dashboard['tiles'][3:4]
+
+    # print('app_apps:', all_apps)
+    # print('tier1_apps:', tier1_apps)
+    # print('tier0_apps:', tier0_apps)
+    # print('app_template:', app_template)
 
     new_tiles = []
     new_tiles.extend(all_apps)
     new_tiles.extend(tier1_apps)
     new_tiles.extend(tier0_apps)
 
+    # global top
+    # global left
+    global width
     top = app_template[0]['bounds']['top']
     left = app_template[0]['bounds']['left']
-    height = app_template[0]['bounds']['height']
+    # height = app_template[0]['bounds']['height']
+    # width = app_template[0]['bounds']['width']
+    print(top, left, height, width)
 
     for app in app_list:
         mz_name = f'APP:{app}'
@@ -79,16 +93,16 @@ def put_engineer_dashboard(env, token, app_list, management_zones):
         # Near actual max of 4864
         # if top >= 4712:
         # Nice stopping point for even splitting
-        if top >= 4104:
+        if top >= 2736:
             top = 0
-            left += 1178
+            left += width
 
-    engineer_dashboard['tiles'] = new_tiles
+    executive_dashboard['tiles'] = new_tiles
 
     endpoint = '/api/config/v1/dashboards'
-    formatted_engineer_dashboard = json.dumps(engineer_dashboard, indent=4, sort_keys=False)
-    dynatrace_api.put(env, token, endpoint, engineer_dashboard_id, formatted_engineer_dashboard)
-    print(f'PUT {engineer_dashboard_name} dashboard to {env}/#dashboard;id={engineer_dashboard_id}')
+    formatted_executive_dashboard = json.dumps(executive_dashboard, indent=4, sort_keys=False)
+    dynatrace_api.put(env, token, endpoint, executive_dashboard_id, formatted_executive_dashboard)
+    print(f'PUT {executive_dashboard_name} dashboard to {env}/#dashboard;id={executive_dashboard_id}')
     print('')
 
 
@@ -98,20 +112,23 @@ def build_app_tiles(top, left, app, mz_name, mz_id, app_template):
     template = copy.deepcopy(app_template)
     for tile in template:
         name = tile.get('name')
-        if name == 'Markdown':
-            tile['markdown'] = f'# {app}'
-        else:
+        # print(name)
+        if name != 'All Problems' and name != 'Tier 1 Problems' and name != 'Non Tier 1 Problems':
+            tile['name'] = app
+        if tile.get('tileFilter', {}).get('managementZone', {}).get('id', {}):
             tile['tileFilter']['managementZone']['id'] = mz_id
             tile['tileFilter']['managementZone']['name'] = mz_name
         tile['bounds']['top'] = top
         tile['bounds']['left'] = tile['bounds']['left'] + left
+        tile['bounds']['height'] = height
+        tile['bounds']['width'] = width
         new_tiles.append(tile)
         # print(tile)
 
     return new_tiles
 
-def load_engineer_dashboard_template():
-    with open('engineer_dashboard_template.json', 'r', encoding='utf-8') as infile:
+def load_executive_dashboard_template():
+    with open('executive_dashboard_template.json', 'r', encoding='utf-8') as infile:
         string = infile.read()
         return json.loads(string)
 
