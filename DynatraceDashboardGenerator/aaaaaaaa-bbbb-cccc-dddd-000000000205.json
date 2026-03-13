@@ -3,11 +3,11 @@
         "configurationVersions": [
             3
         ],
-        "clusterVersion": "1.333.49.20260227-170340"
+        "clusterVersion": "1.334.31.20260305-231837"
     },
     "id": "aaaaaaaa-bbbb-cccc-dddd-000000000205",
     "dashboardMetadata": {
-        "name": "VMware Grail Host",
+        "name": "VMware 6",
         "shared": false,
         "owner": "nobody@example.com",
         "sharingDetails": {
@@ -27,7 +27,7 @@
     },
     "tiles": [
         {
-            "name": "Connection Status",
+            "name": "Consolation Needed",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -37,15 +37,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Connection Status",
+            "customName": "Consolation Needed",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.connected.status",
+                    "metric": "vmware.vm.consolidation.needed",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -112,11 +112,82 @@
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.cpu.costop.summation",
+                    "metric": "vmware.vm.cpu.costop.summation",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "CPU Demand",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 608,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "CPU Demand",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "vmware.vm.cpu.demand.average",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -174,7 +245,7 @@
             "configured": true,
             "bounds": {
                 "top": 0,
-                "left": 608,
+                "left": 912,
                 "width": 304,
                 "height": 304
             },
@@ -183,11 +254,11 @@
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.cpu.idle.summation",
+                    "metric": "vmware.vm.cpu.idle.summation",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -245,7 +316,7 @@
             "configured": true,
             "bounds": {
                 "top": 0,
-                "left": 912,
+                "left": 1216,
                 "width": 304,
                 "height": 304
             },
@@ -254,11 +325,11 @@
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.cpu.latency.average",
+                    "metric": "vmware.vm.cpu.latency.average",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -316,7 +387,7 @@
             "configured": true,
             "bounds": {
                 "top": 0,
-                "left": 1216,
+                "left": 1520,
                 "width": 304,
                 "height": 304
             },
@@ -325,11 +396,11 @@
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.cpu.ready.percent",
+                    "metric": "vmware.vm.cpu.ready.percent",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -386,8 +457,8 @@
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 0,
-                "left": 1520,
+                "top": 304,
+                "left": 0,
                 "width": 304,
                 "height": 304
             },
@@ -396,11 +467,11 @@
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.cpu.ready.summation",
+                    "metric": "vmware.vm.cpu.ready.summation",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -458,7 +529,7 @@
             "configured": true,
             "bounds": {
                 "top": 304,
-                "left": 0,
+                "left": 304,
                 "width": 304,
                 "height": 304
             },
@@ -467,11 +538,11 @@
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.cpu.swapwait.summation",
+                    "metric": "vmware.vm.cpu.swapwait.summation",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -529,7 +600,7 @@
             "configured": true,
             "bounds": {
                 "top": 304,
-                "left": 304,
+                "left": 608,
                 "width": 304,
                 "height": 304
             },
@@ -538,11 +609,11 @@
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.cpu.usage.average",
+                    "metric": "vmware.vm.cpu.usage.average",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -595,78 +666,7 @@
             }
         },
         {
-            "name": "CPU Usage (max)",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 304,
-                "left": 608,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "CPU Usage (max)",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.host.cpu.usage.maximum",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.vmware:host"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "CPU Usage (min)",
+            "name": "CPU Usage",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -676,15 +676,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "CPU Usage (min)",
+            "customName": "CPU Usage",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.cpu.usage.minimum",
+                    "metric": "vmware.vm.cpu.usage.maximum",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -737,7 +737,7 @@
             }
         },
         {
-            "name": "CPU Usage in MHz (avg)",
+            "name": "CPU Usage in MHz",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -747,157 +747,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "CPU Usage in MHz (avg)",
+            "customName": "CPU Usage in MHz",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.cpu.usagemhz.average",
+                    "metric": "vmware.vm.cpu.usagemhz.maximum",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "CPU Usage in MHz (max)",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 304,
-                "left": 1520,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "CPU Usage in MHz (max)",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.host.cpu.usagemhz.maximum",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.vmware:host"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "CPU Usage in MHz (min)",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 608,
-                "left": 0,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "CPU Usage in MHz (min)",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.host.cpu.usagemhz.minimum",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -954,8 +812,8 @@
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 608,
-                "left": 304,
+                "top": 304,
+                "left": 1520,
                 "width": 304,
                 "height": 304
             },
@@ -964,11 +822,11 @@
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.cpu.wait.summation",
+                    "metric": "vmware.vm.cpu.wait.summation",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1021,7 +879,149 @@
             }
         },
         {
-            "name": "Number of CPU Cores",
+            "name": "CPU Max Usage",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 608,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "CPU Max Usage",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "vmware.vm.cpu.max_usage",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.vmware:virtualmachine"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "VM CPU Cores",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 608,
+                "left": 304,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "VM CPU Cores",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "vmware.vm.cpu.num_cores",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.vmware:virtualmachine"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Current Snapshot Age",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1031,15 +1031,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Number of CPU Cores",
+            "customName": "Current Snapshot Age",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.cpu.num_cores",
+                    "metric": "vmware.vm.current_snapshot.age",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1092,7 +1092,7 @@
             }
         },
         {
-            "name": "CPU Total Hz",
+            "name": "Datastore Max Total Latency",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1102,15 +1102,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "CPU Total Hz",
+            "customName": "Datastore Max Total Latency",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.cpu.total_hz",
+                    "metric": "vmware.vm.datastore.maxTotalLatency.latest",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1163,7 +1163,7 @@
             }
         },
         {
-            "name": "CPU Used Hz",
+            "name": "Datastore Read Latency",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1173,15 +1173,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "CPU Used Hz",
+            "customName": "Datastore Read Latency",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.cpu.used_hz",
+                    "metric": "vmware.vm.datastore.totalReadLatency.average",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1234,7 +1234,7 @@
             }
         },
         {
-            "name": "Disk Bus Resets",
+            "name": "Datastore Write Latency",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1244,15 +1244,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Disk Bus Resets",
+            "customName": "Datastore Write Latency",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.disk.busResets.summation.count",
+                    "metric": "vmware.vm.datastore.totalWriteLatency.average",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1305,7 +1305,7 @@
             }
         },
         {
-            "name": "Disk Commands",
+            "name": "Backing Device Capacity",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1315,15 +1315,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Disk Commands",
+            "customName": "Backing Device Capacity",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.disk.commands.summation",
+                    "metric": "vmware.vm.device.capacity",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1376,7 +1376,7 @@
             }
         },
         {
-            "name": "Disk Commands Aborted",
+            "name": "Disk Highest latency",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1386,15 +1386,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Disk Commands Aborted",
+            "customName": "Disk Highest latency",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.disk.commandsAborted.summation",
+                    "metric": "vmware.vm.disk.maxTotalLatency.latest",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1447,7 +1447,7 @@
             }
         },
         {
-            "name": "Physical Device Read Latency",
+            "name": "Read Requests",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1457,15 +1457,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Physical Device Read Latency",
+            "customName": "Read Requests",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.disk.deviceReadLatency.average",
+                    "metric": "vmware.vm.disk.numberReadAveraged.average",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1518,7 +1518,7 @@
             }
         },
         {
-            "name": "Physical Device Write Latency",
+            "name": "Write Requests",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1528,15 +1528,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Physical Device Write Latency",
+            "customName": "Write Requests",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.disk.deviceWriteLatency.average",
+                    "metric": "vmware.vm.disk.numberWriteAveraged.average",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1589,7 +1589,7 @@
             }
         },
         {
-            "name": "Disk Highest Latency",
+            "name": "Read rate",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1599,15 +1599,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Disk Highest Latency",
+            "customName": "Read rate",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.disk.maxTotalLatency.latest",
+                    "metric": "vmware.vm.disk.read.average",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1660,7 +1660,7 @@
             }
         },
         {
-            "name": "Disk Read Requests",
+            "name": "Disk Usage",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1670,15 +1670,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Disk Read Requests",
+            "customName": "Disk Usage",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.disk.numberRead.summation",
+                    "metric": "vmware.vm.disk.usage.average",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1731,7 +1731,7 @@
             }
         },
         {
-            "name": "Disk Write Requests",
+            "name": "Write rate",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1741,15 +1741,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Disk Write Requests",
+            "customName": "Write rate",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.disk.numberWrite.summation",
+                    "metric": "vmware.vm.disk.write.average",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1802,7 +1802,7 @@
             }
         },
         {
-            "name": "Queue Command Latency",
+            "name": "Fault Tolerance Status",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1812,15 +1812,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Queue Command Latency",
+            "customName": "Fault Tolerance Status",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.disk.queueLatency.average",
+                    "metric": "vmware.vm.fault.tolerance.status",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1873,7 +1873,7 @@
             }
         },
         {
-            "name": "Queue Write Latency",
+            "name": "Guest Heartbeat Status",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1883,16 +1883,14 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Queue Write Latency",
+            "customName": "Guest Heartbeat Status",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.disk.queueWriteLatency.average",
+                    "metric": "vmware.vm.guest.status",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.vmware:host"
-                    ],
+                    "splitBy": [],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -1944,7 +1942,7 @@
             }
         },
         {
-            "name": "Disk Read Rate",
+            "name": "Active Memory Used",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1954,654 +1952,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Disk Read Rate",
+            "customName": "Active Memory Used",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.disk.read.average",
+                    "metric": "vmware.vm.mem.active.average",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Command latency",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 1216,
-                "left": 1216,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Command latency",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.host.disk.totalLatency.average",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.vmware:host"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Read Latency",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 1216,
-                "left": 1520,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Read Latency",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.host.disk.totalReadLatency.average",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.vmware:host"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Write latency",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 1520,
-                "left": 0,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Write latency",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.host.disk.totalWriteLatency.average",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.vmware:host"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Disk I/O Rate",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 1520,
-                "left": 304,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Disk I/O Rate",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.host.disk.usage.average",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.vmware:host"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Disk Write Rate",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 1520,
-                "left": 608,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Disk Write Rate",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.host.disk.write.average",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.vmware:host"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Host Disk Capacity",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 1520,
-                "left": 912,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Host Disk Capacity",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.host.disk.capacity",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.vmware:host"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Memory Active (Avg)",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 1520,
-                "left": 1216,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Memory Active (Avg)",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.host.mem.active.average",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.vmware:host"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Memory Active (Max)",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 1520,
-                "left": 1520,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Memory Active (Max)",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.host.mem.active.maximum",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.vmware:host"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Memory Active (Min)",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 1824,
-                "left": 0,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Memory Active (Min)",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.host.mem.active.minimum",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -2658,8 +2017,8 @@
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 1824,
-                "left": 304,
+                "top": 1216,
+                "left": 1216,
                 "width": 304,
                 "height": 304
             },
@@ -2668,11 +2027,11 @@
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.mem.compressionRate.average",
+                    "metric": "vmware.vm.mem.compressionRate.average",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -2725,167 +2084,25 @@
             }
         },
         {
-            "name": "Memory Consumed (Avg)",
+            "name": "Memory Consumed",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 1824,
-                "left": 608,
+                "top": 1216,
+                "left": 1520,
                 "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Memory Consumed (Avg)",
+            "customName": "Memory Consumed",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.mem.consumed.average",
+                    "metric": "vmware.vm.mem.consumed.maximum",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Memory Consumed (Max)",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 1824,
-                "left": 912,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Memory Consumed (Max)",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.host.mem.consumed.maximum",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.vmware:host"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Memory Consumed (Min)",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 1824,
-                "left": 1216,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Memory Consumed (Min)",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.host.mem.consumed.minimum",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -2942,8 +2159,8 @@
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 1824,
-                "left": 1520,
+                "top": 1520,
+                "left": 0,
                 "width": 304,
                 "height": 304
             },
@@ -2952,11 +2169,11 @@
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.mem.decompressionRate.average",
+                    "metric": "vmware.vm.mem.decompressionRate.average",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -3009,380 +2226,25 @@
             }
         },
         {
-            "name": "Memory Granted (avg)",
+            "name": "Memory Granted",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 2128,
-                "left": 0,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Memory Granted (avg)",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.host.mem.granted.average",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.vmware:host"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Memory Granted (max)",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 2128,
+                "top": 1520,
                 "left": 304,
                 "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Memory Granted (max)",
+            "customName": "Memory Granted",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.mem.granted.maximum",
+                    "metric": "vmware.vm.mem.granted.maximum",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Memory Granted (min)",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 2128,
-                "left": 608,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Memory Granted (min)",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.host.mem.granted.minimum",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.vmware:host"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Memory cache consumed (avg)",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 2128,
-                "left": 912,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Memory cache consumed (avg)",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.host.mem.llSwapUsed.average",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.vmware:host"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Memory cache consumed (max)",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 2128,
-                "left": 1216,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Memory cache consumed (max)",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.host.mem.llSwapUsed.maximum",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.vmware:host"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Memory cache consumed (min)",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 2128,
-                "left": 1520,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Memory cache consumed (min)",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.host.mem.llSwapUsed.minimum",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -3439,8 +2301,8 @@
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 2432,
-                "left": 0,
+                "top": 1520,
+                "left": 608,
                 "width": 304,
                 "height": 304
             },
@@ -3449,11 +2311,11 @@
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.mem.swapinRate.average",
+                    "metric": "vmware.vm.mem.swapinRate.average",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -3510,8 +2372,8 @@
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 2432,
-                "left": 304,
+                "top": 1520,
+                "left": 912,
                 "width": 304,
                 "height": 304
             },
@@ -3520,11 +2382,11 @@
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.mem.swapoutRate.average",
+                    "metric": "vmware.vm.mem.swapoutRate.average",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -3577,167 +2439,25 @@
             }
         },
         {
-            "name": "Host Memory Consumed %",
+            "name": "Host Consumed Memory %",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 2432,
-                "left": 608,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Host Memory Consumed %",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.host.mem.usage.average",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.vmware:host"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Memory Consumed (max) %",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 2432,
-                "left": 912,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Memory Consumed (max) %",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.host.mem.usage.maximum",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.vmware:host"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Memory Consumed (min) %",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 2432,
+                "top": 1520,
                 "left": 1216,
                 "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Memory Consumed (min) %",
+            "customName": "Host Consumed Memory %",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.mem.usage.minimum",
+                    "metric": "vmware.vm.mem.usage.average",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -3790,25 +2510,25 @@
             }
         },
         {
-            "name": "Ballooned memory (avg)",
+            "name": "Memory Consumed %",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 2432,
+                "top": 1520,
                 "left": 1520,
                 "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Ballooned memory (avg)",
+            "customName": "Memory Consumed %",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.mem.vmmemctl.average",
+                    "metric": "vmware.vm.mem.usage.maximum",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -3861,25 +2581,25 @@
             }
         },
         {
-            "name": "Ballooned memory (max)",
+            "name": "Ballooned memory",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 2736,
+                "top": 1824,
                 "left": 0,
                 "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Ballooned memory (max)",
+            "customName": "Ballooned memory",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.mem.vmmemctl.maximum",
+                    "metric": "vmware.vm.mem.vmmemctl.maximum",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -3932,25 +2652,25 @@
             }
         },
         {
-            "name": "Ballooned memory (min)",
+            "name": "Ballooned Memory",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 2736,
+                "top": 1824,
                 "left": 304,
                 "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Ballooned memory (min)",
+            "customName": "Ballooned Memory",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.mem.vmmemctl.minimum",
+                    "metric": "vmware.vm.mem.ballooned",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -4003,25 +2723,25 @@
             }
         },
         {
-            "name": "Memory Size",
+            "name": "Compressed Memory",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 2736,
+                "top": 1824,
                 "left": 608,
                 "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Memory Size",
+            "customName": "Compressed Memory",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.mem.size",
+                    "metric": "vmware.vm.mem.compressed",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -4074,25 +2794,25 @@
             }
         },
         {
-            "name": "Memory Used (MB)",
+            "name": "Memory Max Usage",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 2736,
+                "top": 1824,
                 "left": 912,
                 "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Memory Used (MB)",
+            "customName": "Memory Max Usage",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.mem.used_mb",
+                    "metric": "vmware.vm.mem.max_usage",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -4145,25 +2865,167 @@
             }
         },
         {
-            "name": "Data Receive Rate",
+            "name": "VM Memory Size",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 2736,
+                "top": 1824,
                 "left": 1216,
                 "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Data Receive Rate",
+            "customName": "VM Memory Size",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.net.bytesRx.average",
+                    "metric": "vmware.vm.mem.size",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Swapped Memory",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1824,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Swapped Memory",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "vmware.vm.mem.swapped",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.vmware:virtualmachine"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Data received Rate",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2128,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Data received Rate",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "vmware.vm.net.bytesRx.average",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -4220,8 +3082,8 @@
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 2736,
-                "left": 1520,
+                "top": 2128,
+                "left": 304,
                 "width": 304,
                 "height": 304
             },
@@ -4230,11 +3092,11 @@
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.net.bytesTx.average",
+                    "metric": "vmware.vm.net.bytesTx.average",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -4287,26 +3149,24 @@
             }
         },
         {
-            "name": "Received Packets Dropped",
+            "name": "vmware.vm.net.droppedRx.summation.count",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 3040,
-                "left": 0,
+                "top": 2128,
+                "left": 608,
                 "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Received Packets Dropped",
+            "customName": "vmware.vm.net.droppedRx.summation.count",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.net.droppedRx.summation.count",
+                    "metric": "vmware.vm.net.droppedRx.summation.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.vmware:host"
-                    ],
+                    "splitBy": [],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -4358,26 +3218,24 @@
             }
         },
         {
-            "name": "Transmitted Packets Dropped",
+            "name": "vmware.vm.net.droppedTx.summation.count",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 3040,
-                "left": 304,
+                "top": 2128,
+                "left": 912,
                 "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Transmitted Packets Dropped",
+            "customName": "vmware.vm.net.droppedTx.summation.count",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.net.droppedTx.summation.count",
+                    "metric": "vmware.vm.net.droppedTx.summation.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.vmware:host"
-                    ],
+                    "splitBy": [],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -4433,8 +3291,8 @@
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 3040,
-                "left": 608,
+                "top": 2128,
+                "left": 1216,
                 "width": 304,
                 "height": 304
             },
@@ -4443,11 +3301,11 @@
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.net.received.average",
+                    "metric": "vmware.vm.net.received.average",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -4504,8 +3362,8 @@
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 3040,
-                "left": 912,
+                "top": 2128,
+                "left": 1520,
                 "width": 304,
                 "height": 304
             },
@@ -4514,11 +3372,11 @@
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.net.transmitted.average",
+                    "metric": "vmware.vm.net.transmitted.average",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -4571,309 +3429,25 @@
             }
         },
         {
-            "name": "Network Usage",
+            "name": "Network Utilization",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 3040,
-                "left": 1216,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Network Usage",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.host.net.usage.average",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.vmware:host"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Network Usage (max)",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 3040,
-                "left": 1520,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Network Usage (max)",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.host.net.usage.maximum",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.vmware:host"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Network Usage (min)",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 3344,
+                "top": 2432,
                 "left": 0,
                 "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Network Usage (min)",
+            "customName": "Network Utilization",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.net.usage.minimum",
+                    "metric": "vmware.vm.net.usage.maximum",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Host Network Interface Speed",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 3344,
-                "left": 304,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Host Network Interface Speed",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.host.nic.link_speed",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.vmware:host"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "System Overall Status",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 3344,
-                "left": 608,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "System Overall Status",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "vmware.host.overall.status",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -4930,8 +3504,8 @@
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 3344,
-                "left": 912,
+                "top": 2432,
+                "left": 304,
                 "width": 304,
                 "height": 304
             },
@@ -4940,11 +3514,11 @@
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.powered.status",
+                    "metric": "vmware.vm.power.status",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -5001,8 +3575,8 @@
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 3344,
-                "left": 1216,
+                "top": 2432,
+                "left": 608,
                 "width": 304,
                 "height": 304
             },
@@ -5011,11 +3585,11 @@
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.rescpu.actav1.latest",
+                    "metric": "vmware.vm.rescpu.actav1.latest",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -5072,8 +3646,8 @@
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 3344,
-                "left": 1520,
+                "top": 2432,
+                "left": 912,
                 "width": 304,
                 "height": 304
             },
@@ -5082,11 +3656,11 @@
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.rescpu.actpk1.latest",
+                    "metric": "vmware.vm.rescpu.actpk1.latest",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -5139,25 +3713,25 @@
             }
         },
         {
-            "name": "Running (1 min average)",
+            "name": "CPU Running (1 min average)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 3648,
-                "left": 0,
+                "top": 2432,
+                "left": 1216,
                 "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Running (1 min average)",
+            "customName": "CPU Running (1 min average)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.rescpu.runav1.latest",
+                    "metric": "vmware.vm.rescpu.runav1.latest",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -5214,8 +3788,8 @@
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 3648,
-                "left": 304,
+                "top": 2432,
+                "left": 1520,
                 "width": 304,
                 "height": 304
             },
@@ -5224,11 +3798,11 @@
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.rescpu.runpk1.latest",
+                    "metric": "vmware.vm.rescpu.runpk1.latest",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -5281,25 +3855,167 @@
             }
         },
         {
-            "name": "Sensor State",
+            "name": "VM CPU Reservation",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 3648,
+                "top": 2736,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "VM CPU Reservation",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "vmware.vm.reservation.cpu",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.vmware:virtualmachine"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "VM Memory Reservation",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2736,
+                "left": 304,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "VM Memory Reservation",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "vmware.vm.reservation.memory",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.vmware:virtualmachine"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Storage Committed",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2736,
                 "left": 608,
                 "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Sensor State",
+            "customName": "Storage Committed",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.sensor.state",
+                    "metric": "vmware.vm.storage.committed",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -5352,25 +4068,593 @@
             }
         },
         {
-            "name": "Host Availability",
+            "name": "Storage Uncommitted",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 3648,
+                "top": 2736,
                 "left": 912,
                 "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Host Availability",
+            "customName": "Storage Uncommitted",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "vmware.host.availability",
+                    "metric": "vmware.vm.storage.uncommitted",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.vmware:host"
+                        "dt.entity.vmware:virtualmachine"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Read Requests",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2736,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Read Requests",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "vmware.vm.virtualDisk.numberReadAveraged.average",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.vmware:virtualmachine"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Write Requests",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2736,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Write Requests",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "vmware.vm.virtualDisk.numberWriteAveraged.average",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.vmware:virtualmachine"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Read Rate",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3040,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Read Rate",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "vmware.vm.virtualDisk.read.average",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.vmware:virtualmachine"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Read Latency",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3040,
+                "left": 304,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Read Latency",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "vmware.vm.virtualDisk.totalReadLatency.average",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.vmware:virtualmachine"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Write Latency",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3040,
+                "left": 608,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Write Latency",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "vmware.vm.virtualDisk.totalWriteLatency.average",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.vmware:virtualmachine"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Write Rate",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3040,
+                "left": 912,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Write Rate",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "vmware.vm.virtualDisk.write.average",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.vmware:virtualmachine"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Volume Capacity",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3040,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Volume Capacity",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "vmware.vm.volume.capacity",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.vmware:virtualmachine"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Volume Free Space",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3040,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Volume Free Space",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "vmware.vm.volume.free_space",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.vmware:virtualmachine"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
