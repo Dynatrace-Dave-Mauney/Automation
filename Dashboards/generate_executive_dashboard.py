@@ -9,10 +9,25 @@ executive_dashboard_prefix = '00000001-0000-0000-0001-'
 executive_dashboard_name = 'Executive'
 executive_dashboard_id = f'{executive_dashboard_prefix}000000000001'
 
-# top = 0
-# left = 0
-height = 152
+top = 0
+left = 0
+
+# OG sizes
 width = 570
+height = 152
+
+# Fixed sizes
+fixed_area_width = 304
+fixed_area_height = 152
+
+# Medium sizes
+width = 304
+height = 38
+
+use_back_ground_color = True
+name_size = 'small'
+max_rows_per_column = 12
+
 # 570 works fine, 190 does not work!
 # width = 380
 
@@ -58,30 +73,56 @@ def put_executive_dashboard(env, token, app_list, management_zones):
     executive_dashboard['dashboardMetadata']['shared'] = True
     executive_dashboard['dashboardMetadata']['preset'] = True
 
-    all_apps = executive_dashboard['tiles'][0:1]
-    tier1_apps = executive_dashboard['tiles'][1:2]
-    tier0_apps = executive_dashboard['tiles'][2:3]
-    app_template = executive_dashboard['tiles'][3:4]
+    all_problems = executive_dashboard['tiles'][0:1]
+    tier1_problems = executive_dashboard['tiles'][1:2]
+    non_tier1_problems = executive_dashboard['tiles'][2:3]
+    onprem_problems = executive_dashboard['tiles'][3:4]
+    azure_problems = executive_dashboard['tiles'][4:5]
+    app_template = executive_dashboard['tiles'][5:6]
 
-    # print('app_apps:', all_apps)
-    # print('tier1_apps:', tier1_apps)
-    # print('tier0_apps:', tier0_apps)
+    # print('all_problems:', all_problems)
+    # print('tier1_problems:', tier1_problems)
+    # print('non_tier1_problems:', non_tier1_problems)
+    # print('onprem_problems:', onprem_problems)
+    # print('azure_problems:', azure_problems)
     # print('app_template:', app_template)
 
     new_tiles = []
-    new_tiles.extend(all_apps)
-    new_tiles.extend(tier1_apps)
-    new_tiles.extend(tier0_apps)
+    new_tiles.extend(all_problems)
+    new_tiles.extend(tier1_problems)
+    new_tiles.extend(non_tier1_problems)
+    new_tiles.extend(onprem_problems)
+    new_tiles.extend(azure_problems)
 
-    # global top
-    # global left
+    global top
+    global left
     global width
-    top = app_template[0]['bounds']['top']
-    left = app_template[0]['bounds']['left']
+    global height
+    global fixed_area_width
+    global fixed_area_height
+
+    # OG technique
+    # top = app_template[0]['bounds']['top']
+    # left = app_template[0]['bounds']['left']
     # height = app_template[0]['bounds']['height']
     # width = app_template[0]['bounds']['width']
-    print(top, left, height, width)
 
+    print(top, left, width, height)
+
+    rows = 1
+
+    for new_tile in new_tiles:
+        new_tile['bounds']['top'] = top
+        new_tile['bounds']['left'] = left
+        new_tile['bounds']['width'] = fixed_area_width
+        new_tile['bounds']['height'] = fixed_area_height
+        new_tile['useBackgroundColor'] = use_back_ground_color
+        left += fixed_area_width
+
+    top = fixed_area_height
+    left = 0
+
+    # top = app_template[0]['bounds']['top']
     for app in app_list:
         mz_name = f'APP:{app}'
         mz_id = management_zones[mz_name]
@@ -89,12 +130,16 @@ def put_executive_dashboard(env, token, app_list, management_zones):
         app_tiles = build_app_tiles(top, left, app, mz_name, mz_id, app_template)
         new_tiles.extend(app_tiles)
         top += height
+        rows += 1
 
         # Near actual max of 4864
         # if top >= 4712:
         # Nice stopping point for even splitting
-        if top >= 2736:
-            top = 0
+        # if top >= 2736:
+        # Switch to rows for flow control
+        if rows >= max_rows_per_column:
+            rows = 1
+            top = fixed_area_height
             left += width
 
     executive_dashboard['tiles'] = new_tiles
@@ -120,8 +165,10 @@ def build_app_tiles(top, left, app, mz_name, mz_id, app_template):
             tile['tileFilter']['managementZone']['name'] = mz_name
         tile['bounds']['top'] = top
         tile['bounds']['left'] = tile['bounds']['left'] + left
-        tile['bounds']['height'] = height
         tile['bounds']['width'] = width
+        tile['bounds']['height'] = height
+        tile['nameSize'] = name_size
+        tile['useBackgroundColor'] = use_back_ground_color
         new_tiles.append(tile)
         # print(tile)
 
@@ -130,6 +177,7 @@ def build_app_tiles(top, left, app, mz_name, mz_id, app_template):
 def load_executive_dashboard_template():
     with open('executive_dashboard_template.json', 'r', encoding='utf-8') as infile:
         string = infile.read()
+        # print(string)
         return json.loads(string)
 
 
