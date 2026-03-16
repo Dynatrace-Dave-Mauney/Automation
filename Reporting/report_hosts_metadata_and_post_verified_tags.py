@@ -106,7 +106,7 @@ def audit(host_group_name, network_zone, cloud_type, security_context, tag_appli
     function_allow_list = ['app', 'db', 'db-sql', 'db-ora', 'web']
     environment_allow_list = ['dev', 'dr', 'other', 'prep', 'prod', 'qa', 'stage', 'test']
     zone_allow_list = ['azure', 'onprem']
-    tier_allow_list = ['0', '1']
+    tier_allow_list = ['0', '1', 'None']
 
     result = True
     violations_list = []

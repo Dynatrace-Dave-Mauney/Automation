@@ -20,13 +20,14 @@ def process(env, token):
 
             tags = inner_entities_json.get('tags', [])
 
+            tier_value = 'Not Set'
             for tag in tags:
                 key = tag.get('key')
                 if key == 'primary_tags.app':
                     app_value = tag.get('value')
                     # print(app_value)
                 if key == 'primary_tags.tier':
-                    tier_value = tag.get('value')
+                    tier_value = tag.get('value', 'Not Set')
                     # print(tier_value)
 
             hosts_by_tier = app_hosts_by_tier.get(app_value, {})
