@@ -69,7 +69,8 @@ ootb_dashboards = [
 
 # Generated Dashboards that vary by customer
 generated_dashboards = [
-    ('Engineer', '00000001-0000-0000-0001-000000000000')
+    ('Engineer', '00000001-0000-0000-0001-000000000000'),
+    ('Executive', '00000001-0000-0000-0001-000000000001'),
 ]
 
 # These differ by customer, and are not in the templates directory
