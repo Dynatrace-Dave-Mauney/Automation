@@ -39,7 +39,7 @@ def run():
 
     # Dashboards
     # put_documents('Prod', '../$Private/Customers/$Current/Assets/NewPlatform/Dashboards/Prod/Prod Overview.json')
-    put_documents('Prod', '../$Private/Customers/$Current/Assets/NewPlatform/Dashboards/Prod/Prod Overview By Management Zone.json')
+    # put_documents('Prod', '../$Private/Customers/$Current/Assets/NewPlatform/Dashboards/Prod/Prod Overview By Management Zone.json')
 
     # Notebooks
     #

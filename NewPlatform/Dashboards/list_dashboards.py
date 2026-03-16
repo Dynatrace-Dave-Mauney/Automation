@@ -4,11 +4,20 @@ from Reuse import environment
 from Reuse import new_platform_api
 from Reuse import report_writer
 
+dynatrace_owners = [
+    'ed29e85d-9e5f-4157-a2b8-563dc624708f',  # Dynatrace
+    '50436aec-8901-4282-ae81-690bd6509b18',  # Dynatrace
+    '60a34747-becc-47c2-ac3a-bfaf2c537471',  # Dynatrace Extensions
+]
+
 selected_owners = [
     # '78cfc22b-0015-409e-bb07-0364eecc6ac3', # Me
     'ed29e85d-9e5f-4157-a2b8-563dc624708f', # Dynatrace
     '50436aec-8901-4282-ae81-690bd6509b18', # Dynatrace
+    '60a34747-becc-47c2-ac3a-bfaf2c537471',  # Dynatrace Extensions
 ]
+
+# selected_owners = []
 
 def process(env, client_id, client_secret):
     scope = 'document:documents:read'
@@ -18,7 +27,7 @@ def process(env, client_id, client_secret):
     results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents', params)
     documents_json = json.loads(results.text)
     document_list = documents_json.get('documents')
-    headers = [['Dashboard Name', 'Dashboard ID']]
+    headers = [['Dashboard Name', 'Dashboard ID', 'Owner']]
     rows = []
     for document in document_list:
         # print(document)
@@ -28,9 +37,10 @@ def process(env, client_id, client_secret):
             document_name = document.get('name')
             document_owner = document.get('owner')
 
-            if document_owner in selected_owners:
+            # if document_owner not in dynatrace_owners and document_owner != '78cfc22b-0015-409e-bb07-0364eecc6ac3':
+            if (selected_owners and document_owner in selected_owners) or (not selected_owners):
                 # rows.append([document_name, document_id])
-                rows.append([document_name, document_id])
+                rows.append([document_name, document_id, document_owner])
 
     report_writer.print_rows(headers, sorted(rows))
 
@@ -41,8 +51,6 @@ def main():
     friendly_function_name = 'Dynatrace Automation'
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
-    # env_name_supplied = 'Sandbox'
-    env_name_supplied = 'PreProd'
     # env_name_supplied = 'Prod'
     env_name, env, client_id, client_secret = environment.get_client_environment_for_function(env_name_supplied, friendly_function_name)
 
