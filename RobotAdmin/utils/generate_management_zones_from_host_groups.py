@@ -29,7 +29,7 @@ def generate_management_zones(env, token):
         inner_entities_json_list = entities_json.get('entities')
         for inner_entities_json in inner_entities_json_list:
             display_name = inner_entities_json.get('displayName')
-            management_zones.append(f'HG: {display_name}')
+            management_zones.append(f'HG:{display_name}')
 
     management_zones = remove_duplicates(sorted(management_zones))
 
