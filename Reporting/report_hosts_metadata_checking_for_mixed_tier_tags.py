@@ -9,7 +9,7 @@ def process(env, token):
     app_hosts_by_tier = {}
     rows = []
     endpoint = '/api/v2/entities'
-    raw_params = 'pageSize=4000&entitySelector=type(HOST)&from=-5m&fields=properties,tags,managementZones'
+    raw_params = 'pageSize=4000&entitySelector=type(HOST),isMonitoringCandidate(false)&from=now-5m&fields=properties,tags,managementZones'
     params = urllib.parse.quote(raw_params, safe='/,&=?')
     entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     for entities_json in entities_json_list:
@@ -21,6 +21,7 @@ def process(env, token):
             tags = inner_entities_json.get('tags', [])
 
             tier_value = 'Not Set'
+            app_value = 'Not Set'
             for tag in tags:
                 key = tag.get('key')
                 if key == 'primary_tags.app':

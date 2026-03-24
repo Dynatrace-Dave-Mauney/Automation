@@ -21,7 +21,7 @@ def generate_management_zones(env, token):
 
     management_zones = []
     endpoint = '/api/v2/entities'
-    raw_params = 'pageSize=4000&entitySelector=type(HOST)&to=-5m&fields=properties,tags'
+    raw_params = 'pageSize=4000&entitySelector=type(HOST),isMonitoringCandidate(false)&from=-5m&fields=properties,tags'
     params = urllib.parse.quote(raw_params, safe='/,&=?')
     entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     for entities_json in entities_json_list:

@@ -35,7 +35,8 @@ def process_report(env, token, summary_mode):
 
     endpoint = '/api/v2/entities'
     # raw_params = 'pageSize=4000&entitySelector=type(HOST)&to=-5m&fields=properties,tags,fromRelationships'
-    raw_params = 'pageSize=4000&entitySelector=type(HOST)&to=-5m&fields=properties,tags,managementZones'
+    # raw_params = 'pageSize=4000&entitySelector=type(HOST)&to=-5m&fields=properties,tags,managementZones'
+    raw_params = 'pageSize=4000&entitySelector=type(HOST),isMonitoringCandidate(false)&from=-5m&fields=properties,tags,managementZones'
     params = urllib.parse.quote(raw_params, safe='/,&=?')
     entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     for entities_json in entities_json_list:

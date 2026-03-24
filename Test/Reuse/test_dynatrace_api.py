@@ -31,7 +31,7 @@ def test_get_entity_types(env, token):
 
 
 def test_get_entity_type_host(env, token):
-    raw_params = 'pageSize=500&entitySelector=type(HOST)&fields=+properties.monitoringMode, +properties.state,+toRelationships'
+    raw_params = 'pageSize=500&entitySelector=type(HOST),isMonitoringCandidate(false)&fields=+properties.monitoringMode, +properties.state,+toRelationships'
     params = urllib.parse.quote(raw_params, safe='/,&=')
     return dynatrace_api.get_json_list_with_pagination(f'{env}{entities_endpoint}', token, params=params)
 

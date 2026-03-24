@@ -4,56 +4,19 @@ from Reuse import dynatrace_api
 from Reuse import environment
 from Reuse import report_writer
 
-tier1_list = [
-    'aig',
-    'allscripts-care-management-acm',
-    'altera-scm',
-    'altera-scm-downtime-server',
-    'beyondtrust',
-    'beyond-trust-password-safe',
-    'cbord',
-    'cirius',
-    'citrix',
-    'connexall',
-    'encapturemd',
-    'epic',
-    'epic-ecp',
-    'epicsim',
-    'facefirst',
-    'ge-carescape',
-    'ge-cpacs',
-    'ge-pacs',
-    'ge-ris',
-    'infor',
-    'muse-ekg',
-    'net-backup',
-    'nursecall',
-    'obix',
-    'onbase',
-    'optimum',
-    'powerpath',
-    'powerscribe',
-    'pyxis',
-    'qpathe',
-    'redcap',
-    'scc',
-    'scc-softlab',
-    'sectra',
-    'sinai-central',
-    'sunquest',
-    'sunquest-clinical-collect-prod',
-    'sunquest-lis',
-    'symantec-vip',
-    'totguard',
-    'ukg-kronos-time-&-attendance-mssn',
-    'ukg-kronos-time-attendance-mssn',
-    'vocera',
-    'xltek',
-    'xltek-citrix-server',
+tier0_list = [
+    'active-directory',
+    'ad-azure-password',
+    'adfr-dc-shared',
+    'adfs',
+    'ad-utility-server',
+    'azure-ad-connect',
+    'domain-controller',
+    'exchange',
 ]
 
 def process(env, token):
-    tier1_apps = []
+    tier0_apps = []
     rows = []
     endpoint = '/api/v2/entities'
     raw_params = 'pageSize=4000&entitySelector=type(HOST),isMonitoringCandidate(false)&from=-5m&fields=properties,tags,managementZones'
@@ -78,31 +41,31 @@ def process(env, token):
                     tier_value = tag.get('value', 'None')
                     # print(tier_value)
 
-            if tier_value and tier_value == '1':
-                if app_value not in tier1_apps:
-                    tier1_apps.append(app_value)
+            if tier_value and tier_value == '0':
+                if app_value not in tier0_apps:
+                    tier0_apps.append(app_value)
 
-    # apps set to tier 1 that should not be
-    for app in tier1_apps:
-        if app not in tier1_list:
-            rows.append([app])
-
-    # apps not yet set to tier 1 that should be
-    # for app in tier1_list:
-    #     if app not in tier1_apps:
+    # apps set to tier 0 that should not be
+    # for app in tier0_apps:
+    #     if app not in tier0_list:
     #         rows.append([app])
 
-    # apps set to tier 1 that should be
-    # for app in tier1_apps:
-    #     if app in tier1_list:
+    # apps not yet set to tier 0 that should be
+    for app in tier0_list:
+        if app not in tier0_apps:
+            rows.append([app])
+
+    # apps set to tier 0 that should be
+    # for app in tier0_apps:
+    #     if app in tier0_list:
     #         rows.append([app])
 
     # Normal reporting
-    # for app in tier1_apps:
+    # for app in tier0_apps:
     #     rows.append([app])
 
     rows = sorted(rows)
-    report_name = 'Tier1 Apps'
+    report_name = 'tier0 Apps'
     report_writer.initialize_text_file(None)
     report_headers = ('Application')
     report_writer.write_console(report_name, report_headers, rows, delimiter='')

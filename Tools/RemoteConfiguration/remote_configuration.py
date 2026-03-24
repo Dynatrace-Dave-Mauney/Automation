@@ -8,16 +8,157 @@ host_lookup = {}
 
 
 def process(env, main_token, remote_config_token):
-	# clear_all_tier_0_tags(env, main_token, remote_config_token)
-	# get_current_job(env, remote_config_token)
-	get_finished_jobs(env, remote_config_token, True)
+	pass
+	# clear_some_tier_0_tags(env, main_token, remote_config_token)
+	# set_some_tier_0_tags(env, main_token, remote_config_token)
 
+	# clear_some_tier_1_tags(env, main_token, remote_config_token)
+	# set_some_tier_1_tags(env, main_token, remote_config_token)
+
+	# clear_all_tier_0_tags(env, main_token, remote_config_token)
+
+	get_current_job(env, remote_config_token)
+	# get_finished_jobs(env, remote_config_token, True)
+
+
+def clear_some_tier_0_tags(env, main_token, remote_config_token):
+	apps_to_clear = [
+	'dsrip',
+	'omnicell',
+	]
+	host_id_list = []
+	endpoint = '/api/v2/entities'
+	# raw_params = 'pageSize=4000&entitySelector=type(HOST)&to=-5m&fields=properties,tags,managementZones'
+	raw_params = 'pageSize=4000&entitySelector=type(HOST),isMonitoringCandidate(false)&from=-5m&fields=tags'
+	params = urllib.parse.quote(raw_params, safe='/,&=?')
+	entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', main_token, params=params)
+	for entities_json in entities_json_list:
+		inner_entities_json_list = entities_json.get('entities')
+		for inner_entities_json in inner_entities_json_list:
+			entity_id = inner_entities_json.get('entityId', '')
+			display_name = inner_entities_json.get('displayName', '')
+			tags = inner_entities_json.get('tags', [])
+			if "'key': 'primary_tags.tier', 'value': '0'" in str(tags):
+				app_tag = get_tag(tags)
+				if app_tag in apps_to_clear:
+					print(f'Removing tier:0 tag for app {app_tag}:', display_name, entity_id)
+					host_id_list.append(entity_id)
+
+	post_host_tag_job(env, remote_config_token, host_id_list, 'clear', 'primary_tags.tier=0')
+
+
+def set_some_tier_0_tags(env, main_token, remote_config_token):
+	apps_to_set = [
+		'active-directory',
+		'ad-azure-password',
+		'ad-utility-server',
+		'adfr-dc-shared',
+		'adfs',
+		'azure-ad-connect',
+		'domain-controller',
+		'exchange',
+	]
+
+	host_id_list = []
+	endpoint = '/api/v2/entities'
+	raw_params = 'pageSize=4000&entitySelector=type(HOST),isMonitoringCandidate(false)&from=-5m&fields=tags'
+	params = urllib.parse.quote(raw_params, safe='/,&=?')
+	entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', main_token, params=params)
+	for entities_json in entities_json_list:
+		inner_entities_json_list = entities_json.get('entities')
+		for inner_entities_json in inner_entities_json_list:
+			entity_id = inner_entities_json.get('entityId', '')
+			display_name = inner_entities_json.get('displayName', '')
+			tags = inner_entities_json.get('tags', [])
+			app_tag = get_tag(tags)
+			if app_tag in apps_to_set:
+				print(f'Setting tier:0 tag for app {app_tag}:', display_name, entity_id)
+				host_id_list.append(entity_id)
+
+	post_host_tag_job(env, remote_config_token, host_id_list, 'set', 'primary_tags.tier=0')
+
+
+def clear_some_tier_1_tags(env, main_token, remote_config_token):
+	apps_to_clear = [
+	'3m',
+	'3m-enterprise-crs-application-server',
+	'3m-enterprise-hdm-app-prod-server',
+	'3m-enterprise-interface-prod-server',
+	'3m-enterprise-rep-core-server',
+	'3m-enterprise-report-prod-server',
+	'3m-enterprise-sql-prod-server',
+	'3m-enterprise-web-prod-server',
+	'edr',
+	'exchange',
+	'geviewpoint',
+	'qpathe',
+	'symantec-vip',
+	'ukg-kronos-time-attendance-mssn',
+	]
+	apps_to_clear = [
+	'ad-azure-password',
+	'adfr-dc-shared',
+	'azure-ad-connect',
+	'exchange',
+	]
+	host_id_list = []
+	endpoint = '/api/v2/entities'
+	# raw_params = 'pageSize=4000&entitySelector=type(HOST)&to=-5m&fields=properties,tags,managementZones'
+	raw_params = 'pageSize=4000&entitySelector=type(HOST),isMonitoringCandidate(false)&from=-5m&fields=tags'
+	params = urllib.parse.quote(raw_params, safe='/,&=?')
+	entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', main_token, params=params)
+	for entities_json in entities_json_list:
+		inner_entities_json_list = entities_json.get('entities')
+		for inner_entities_json in inner_entities_json_list:
+			entity_id = inner_entities_json.get('entityId', '')
+			display_name = inner_entities_json.get('displayName', '')
+			tags = inner_entities_json.get('tags', [])
+			if "'key': 'primary_tags.tier', 'value': '1'" in str(tags):
+				app_tag = get_tag(tags)
+				if app_tag in apps_to_clear:
+					print(f'Removing tier:1 tag for app {app_tag}:', display_name, entity_id)
+					host_id_list.append(entity_id)
+
+	post_host_tag_job(env, remote_config_token, host_id_list, 'clear', 'primary_tags.tier=1')
+
+def set_some_tier_1_tags(env, main_token, remote_config_token):
+	# apps_to_set = [
+	# 	'aig',
+	# 	'beyond-trust-password-safe',
+	# 	'ge-pacs',
+	# 	'sectra',
+	# 	'ukg-kronos-time-&-attendance-mssn',
+	# ]
+	apps_to_set = [
+		'qpathe',
+		'symantec-vip',
+		'ukg-kronos-time-attendance-mssn',
+	]
+
+	host_id_list = []
+	endpoint = '/api/v2/entities'
+	# raw_params = 'pageSize=4000&entitySelector=type(HOST)&to=-5m&fields=properties,tags,managementZones'
+	raw_params = 'pageSize=4000&entitySelector=type(HOST),isMonitoringCandidate(false)&from=-5m&fields=tags'
+	params = urllib.parse.quote(raw_params, safe='/,&=?')
+	entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', main_token, params=params)
+	for entities_json in entities_json_list:
+		inner_entities_json_list = entities_json.get('entities')
+		for inner_entities_json in inner_entities_json_list:
+			entity_id = inner_entities_json.get('entityId', '')
+			display_name = inner_entities_json.get('displayName', '')
+			tags = inner_entities_json.get('tags', [])
+			app_tag = get_tag(tags)
+			if app_tag in apps_to_set:
+				print(f'Setting tier:1 tag for app {app_tag}:', display_name, entity_id)
+				host_id_list.append(entity_id)
+
+	post_host_tag_job(env, remote_config_token, host_id_list, 'set', 'primary_tags.tier=1')
 
 def clear_all_tier_0_tags(env, main_token, remote_config_token):
 	host_id_list = []
 	endpoint = '/api/v2/entities'
 	# raw_params = 'pageSize=4000&entitySelector=type(HOST)&to=-5m&fields=properties,tags,managementZones'
-	raw_params = 'pageSize=4000&entitySelector=type(HOST)&to=-5m&fields=tags'
+	raw_params = 'pageSize=4000&entitySelector=type(HOST),isMonitoringCandidate(false)&from=-5m&fields=tags'
 	params = urllib.parse.quote(raw_params, safe='/,&=?')
 	entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', main_token, params=params)
 	for entities_json in entities_json_list:
@@ -30,11 +171,21 @@ def clear_all_tier_0_tags(env, main_token, remote_config_token):
 			if "'key': 'primary_tags.tier', 'value': '0'" in str(tags):
 				print('Tier0:', display_name, entity_id)
 				host_id_list.append(entity_id)
-				# host_lookup[display_name] = entity_id
+			# host_lookup[display_name] = entity_id
 			else:
 				print('Tier1:', display_name, entity_id)
 
 	post_host_tag_job(env, remote_config_token, host_id_list, 'clear', 'primary_tags.tier=0')
+
+
+def get_tag(tags):
+	app_tag = None
+	for tag in tags:
+		if "'key': 'primary_tags.app'" in str(tag):
+			app_tag = tag.get('value')
+			# print(app_tag, tag)
+
+	return app_tag
 
 
 	########################################################################################################
@@ -105,10 +256,13 @@ def get_current_job(env, token):
 	endpoint = '/api/v2/oneagents/remoteConfigurationManagement/current'
 	r = dynatrace_api.get_without_pagination(f'{env}{endpoint}', token)
 	print(r, r.status_code, r.text)
-	json_list = r.json()
-	print(json_list)
-	for json in json_list:
-		print(json)
+	if r.status_code == 204:
+		print('No remote configuration management job is currently running')
+	else:
+		json_list = r.json()
+		print(json_list)
+		for json in json_list:
+			print(json)
 
 
 def get_finished_jobs(env, token, most_recent):

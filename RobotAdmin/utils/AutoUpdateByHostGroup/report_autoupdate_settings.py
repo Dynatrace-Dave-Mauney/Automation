@@ -51,7 +51,7 @@ def process():
     load_host_group_lookup()
     endpoint = '/api/v2/entities'
     # raw_params = 'pageSize=4000&entitySelector=type(HOST)&to=-24h&fields=properties,tags'
-    raw_params = 'pageSize=4000&entitySelector=type(HOST)&to=-24h&fields=properties.installerVersion,tags'
+    raw_params = 'pageSize=4000&entitySelector=type(HOST),isMonitoringCandidate(false)&from=-24h&fields=properties.installerVersion,tags'
     params = urllib.parse.quote(raw_params, safe='/,&=')
     entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     print('Host Group Name' + '|' + 'Host Name' + '|' + 'Installer Version' + '|' + 'Host Group ID' + '|' + 'Host ID')

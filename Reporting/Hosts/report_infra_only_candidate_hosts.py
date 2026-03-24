@@ -16,7 +16,7 @@ def process_report(env, token):
     total_estimated_host_units = 0
 
     endpoint = '/api/v2/entities'
-    raw_params = f'pageSize=500&entitySelector=type(HOST)&fields=+properties.monitoringMode,+properties.state,+properties.physicalMemory,+toRelationships'
+    raw_params = f'pageSize=500&entitySelector=type(HOST),isMonitoringCandidate(false)&fields=+properties.monitoringMode,+properties.state,+properties.physicalMemory,+toRelationships'
     params = urllib.parse.quote(raw_params, safe='/,&=')
     hosts = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
 

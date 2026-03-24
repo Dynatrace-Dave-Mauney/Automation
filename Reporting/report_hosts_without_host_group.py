@@ -23,7 +23,7 @@ def process_report(env, token, summary_mode):
     count_has_no_host_group_but_should_probably = 0
 
     endpoint = '/api/v2/entities'
-    raw_params = 'pageSize=4000&entitySelector=type(HOST)&to=-5m&fields=properties,tags'
+    raw_params = 'pageSize=4000&entitySelector=type(HOST),isMonitoringCandidate(false)&from=-5m&fields=properties,tags'
     params = urllib.parse.quote(raw_params, safe='/,&=?')
     entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', token, params=params)
     for entities_json in entities_json_list:
