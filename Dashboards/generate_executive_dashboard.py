@@ -26,7 +26,7 @@ height = 38
 
 use_back_ground_color = True
 name_size = 'small'
-max_rows_per_column = 12
+max_rows_per_column = 10
 
 # 570 works fine, 190 does not work!
 # width = 380
@@ -45,6 +45,8 @@ def process_app_tags(env, token):
             # properties = inner_entities_json.get('properties')
 
             tags = inner_entities_json.get('tags', [])
+
+            tier_value = 'None'
 
             for tag in tags:
                 key = tag.get('key')
@@ -107,7 +109,7 @@ def put_executive_dashboard(env, token, app_list, management_zones):
     # height = app_template[0]['bounds']['height']
     # width = app_template[0]['bounds']['width']
 
-    print(top, left, width, height)
+    # print(top, left, width, height)
 
     rows = 1
 

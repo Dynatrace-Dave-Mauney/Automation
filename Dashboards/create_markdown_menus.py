@@ -70,6 +70,7 @@ ootb_dashboards = [
 # Generated Dashboards that vary by customer
 generated_dashboards = [
     ('Engineer', '00000001-0000-0000-0001-000000000000'),
+    ('Engineer: Host Group', '00000001-0000-0000-0001-000000000002'),
     ('Executive', '00000001-0000-0000-0001-000000000001'),
 ]
 

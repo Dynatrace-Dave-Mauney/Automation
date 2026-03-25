@@ -75,10 +75,10 @@ Unless you also plan to use PyCharm, continue to the "Configure Automation Proje
 ## Configure Automation Project
 
 - Set Required Environment Variables
-  - There are two key environment variables needed for almost all modules: Tenant and Token, as shown the example Python code below:
+  - There are three key environment variables needed for almost all modules: env_name, env and token, as shown the example Python code below:
 
   ```
-  env_name, tenant_key, token_key = ('Prod', 'PROD_TENANT', 'ROBOT_ADMIN_PROD_TOKEN')
+  env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name) 
   ```
   - Here the friendly environment name of "Prod" is associated with two environment variables ("PROD_TENANT" and "ROBOT_ADMIN_PROD_TOKEN").
   - This naming standard is only a suggestion, but it does simplify things to include the environment (PROD), function (ROBOT_ADMIN) and variable type (TENANT or TOKEN) in the names.

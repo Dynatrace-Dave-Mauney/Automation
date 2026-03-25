@@ -13,6 +13,8 @@ engineer_dashboard_id = f'{engineer_dashboard_prefix}000000000002'
 def process_host_group_tags(env, token):
     host_group_list = []
 
+    tier_value = 'None'
+
     endpoint = '/api/v2/entities'
     raw_params = 'pageSize=4000&entitySelector=type(HOST),isMonitoringCandidate(false)&from=-5m&fields=properties,tags,managementZones'
     params = urllib.parse.quote(raw_params, safe='/,&=?')
@@ -72,7 +74,7 @@ def put_engineer_dashboard(env, token, host_group_list, management_zones):
     height = host_group_template[0]['bounds']['height']
 
     for host_group in host_group_list:
-        mz_name = f'HG: {host_group}'
+        mz_name = f'HG:{host_group}'
         mz_id = management_zones[mz_name]
         # print(host_group, mz_name, mz_id)
         host_group_tiles = build_host_group_tiles(top, left, host_group, mz_name, mz_id, host_group_template)

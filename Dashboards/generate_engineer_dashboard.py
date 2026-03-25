@@ -25,6 +25,8 @@ def process_app_tags(env, token):
 
             tags = inner_entities_json.get('tags', [])
 
+            tier_value = 'None'
+
             for tag in tags:
                 key = tag.get('key')
                 if key == 'primary_tags.app':
