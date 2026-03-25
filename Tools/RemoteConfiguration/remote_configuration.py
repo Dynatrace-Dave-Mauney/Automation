@@ -58,6 +58,14 @@ def set_some_tier_0_tags(env, main_token, remote_config_token):
 		'domain-controller',
 		'exchange',
 	]
+	apps_to_set = [
+		'beyondtrust',
+		'beyond-trust-password-safe',
+		'net-backup',
+		'powerpath',
+		'symantec-vip',
+		'ukg-kronos-time-attendance-mssn'
+	]
 
 	host_id_list = []
 	endpoint = '/api/v2/entities'
@@ -100,6 +108,14 @@ def clear_some_tier_1_tags(env, main_token, remote_config_token):
 	'adfr-dc-shared',
 	'azure-ad-connect',
 	'exchange',
+	]
+	apps_to_clear = [
+		'beyondtrust',
+		'beyond-trust-password-safe',
+		'net-backup',
+		'powerpath',
+		'symantec-vip',
+		'ukg-kronos-time-attendance-mssn'
 	]
 	host_id_list = []
 	endpoint = '/api/v2/entities'
