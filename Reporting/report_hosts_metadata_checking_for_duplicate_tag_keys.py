@@ -21,12 +21,13 @@ def process(env, token):
             duplicate_tags = check_for_duplicate_tag_keys(tags)
 
             if duplicate_tags:
-                rows.append((display_name, sort_and_stringify_list_items(duplicate_tags)))
+                app_tag = get_app_tag(tags)
+                rows.append((app_tag, display_name, sort_and_stringify_list_items(duplicate_tags)))
 
         rows = sorted(rows)
         report_name = 'Hosts'
         report_writer.initialize_text_file(None)
-        report_headers = ('Host Name', 'Duplicate Tag Keys/Values')
+        report_headers = ('Application', 'Host Name', 'Duplicate Tag Keys/Values')
         report_writer.write_console(report_name, report_headers, rows, delimiter='|')
         report_writer.write_text(None, report_name, report_headers, rows, delimiter='|')
         report_writer.write_xlsx(None, report_name, report_headers, rows, header_format=None, auto_filter=None)
@@ -53,6 +54,16 @@ def check_for_duplicate_tag_keys(tags):
     #     print(dups)
 
     return dups
+
+
+def get_app_tag(tags):
+    app_tag = None
+    for tag in tags:
+        if "'key': 'primary_tags.app'" in str(tag):
+            app_tag = tag.get('value')
+            # print(app_tag, tag)
+
+    return app_tag
 
 
 def sort_and_stringify_dictionary_items(any_dict):

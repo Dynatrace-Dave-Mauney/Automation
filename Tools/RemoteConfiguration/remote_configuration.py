@@ -10,17 +10,21 @@ host_lookup = {}
 def process(env, main_token, remote_config_token):
     pass
     # clear_some_tier_0_tags(env, main_token, remote_config_token)
-    # set_some_tier_0_tags(env, main_token, remote_config_token)
-
     # clear_some_tier_1_tags(env, main_token, remote_config_token)
+    # clear_some_tier_tags(env, main_token, remote_config_token)
+
+    # set_some_tier_0_tags(env, main_token, remote_config_token)
     # set_some_tier_1_tags(env, main_token, remote_config_token)
+    # set_some_tier_2_tags(env, main_token, remote_config_token)
 
     # clear_all_tier_0_tags(env, main_token, remote_config_token)
+    # set_all_tier_unset_tags_to_tier_2(env, main_token, remote_config_token)
 
-    # WIP1
+    # clear_some_network_zone_tags(env, main_token, remote_config_token, 'onprem')
+
     # set_some_network_zones(env, main_token, remote_config_token, 'azure')
     # set_some_network_zones(env, main_token, remote_config_token, 'onprem')
-    # clear_some_network_zone_tags(env, main_token, remote_config_token, 'onprem')
+
     # set_some_network_zone_tags(env, main_token, remote_config_token, 'azure')
 
     get_current_job(env, remote_config_token)
@@ -45,12 +49,105 @@ def clear_some_tier_0_tags(env, main_token, remote_config_token):
             display_name = inner_entities_json.get('displayName', '')
             tags = inner_entities_json.get('tags', [])
             if "'key': 'primary_tags.tier', 'value': '0'" in str(tags):
-                app_tag = get_tag(tags)
+                app_tag = get_app_tag(tags)
                 if app_tag in apps_to_clear:
                     print(f'Removing tier:0 tag for app {app_tag}:', display_name, entity_id)
                     host_id_list.append(entity_id)
 
     post_host_tag_job(env, remote_config_token, host_id_list, 'clear', 'primary_tags.tier=0')
+
+
+def clear_some_tier_tags(env, main_token, remote_config_token):
+    tier0_apps_to_clear = [
+        'ad-azure-password',
+        'adfr-dc-shared',
+        'adfs',
+        'azure-ad-connect',
+        'domain-controller',
+        'exchange',
+    ]
+
+    tier1_apps_to_clear = [
+        'beyond-trust-password-safe',
+        'beyondtrust',
+        'citrix',
+        'net-backup',
+        'obix',
+        'powerpath',
+        'symantec-vip',
+        'ukg-kronos-time-attendance-mssn',
+    ]
+
+    tier2_apps_to_clear = [
+        'cache-server',
+        'citrix-federated-authentication-services',
+        'digital-marketing',
+        'dsrip',
+        'dynatrace',
+        'eclipse',
+        'main-web-site-marketing',
+        'msdw',
+        'nxlog',
+        'pakedge',
+        'research-it',
+        'scottcare',
+        'v4',
+    ]
+    host_id_list_0 = []
+    host_id_list_1 = []
+    host_id_list_2 = []
+
+    endpoint = '/api/v2/entities'
+    # raw_params = 'pageSize=4000&entitySelector=type(HOST)&to=-5m&fields=properties,tags,managementZones'
+    raw_params = 'pageSize=4000&entitySelector=type(HOST),isMonitoringCandidate(false)&from=-5m&fields=tags'
+    params = urllib.parse.quote(raw_params, safe='/,&=?')
+    entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', main_token, params=params)
+    for entities_json in entities_json_list:
+        inner_entities_json_list = entities_json.get('entities')
+        for inner_entities_json in inner_entities_json_list:
+            entity_id = inner_entities_json.get('entityId', '')
+            display_name = inner_entities_json.get('displayName', '')
+            tags = inner_entities_json.get('tags', [])
+            if "'key': 'primary_tags.tier', 'value': '0'" in str(tags):
+                app_tag = get_app_tag(tags)
+                if app_tag in tier1_apps_to_clear or app_tag in tier2_apps_to_clear:
+                    print(f'Removing tier:0 tag for app {app_tag}:', display_name, entity_id)
+                    host_id_list_0.append(entity_id)
+            if "'key': 'primary_tags.tier', 'value': '1'" in str(tags):
+                app_tag = get_app_tag(tags)
+                if app_tag in tier0_apps_to_clear or app_tag in tier2_apps_to_clear:
+                    print(f'Removing tier:1 tag for app {app_tag}:', display_name, entity_id)
+                    host_id_list_1.append(entity_id)
+            if "'key': 'primary_tags.tier', 'value': '2'" in str(tags):
+                app_tag = get_app_tag(tags)
+                if app_tag in tier0_apps_to_clear or app_tag in tier1_apps_to_clear:
+                    print(f'Removing tier:2 tag for app {app_tag}:', display_name, entity_id)
+                    host_id_list_2.append(entity_id)
+
+    # print('Tier 0 Clears')
+    # for key in host_id_list_0:
+    #     print(key)
+    #
+    # print('')
+    # print('Tier 1 Clears')
+    # for key in host_id_list_1:
+    #     print(key)
+    #
+    # print('')
+    # print('Tier 2 Clears')
+    # for key in host_id_list_2:
+    #     print(key)
+
+
+    import time
+    if host_id_list_0:
+        post_host_tag_job(env, remote_config_token, host_id_list_0, 'clear', 'primary_tags.tier=0')
+        time.sleep(60)
+    if host_id_list_1:
+        post_host_tag_job(env, remote_config_token, host_id_list_1, 'clear', 'primary_tags.tier=1')
+        time.sleep(60)
+    if host_id_list_2:
+        post_host_tag_job(env, remote_config_token, host_id_list_2, 'clear', 'primary_tags.tier=2')
 
 
 def clear_some_network_zone_tags(env, main_token, remote_config_token, zone):
@@ -188,7 +285,7 @@ def set_some_tier_0_tags(env, main_token, remote_config_token):
             entity_id = inner_entities_json.get('entityId', '')
             display_name = inner_entities_json.get('displayName', '')
             tags = inner_entities_json.get('tags', [])
-            app_tag = get_tag(tags)
+            app_tag = get_app_tag(tags)
             if app_tag in apps_to_set:
                 print(f'Setting tier:0 tag for app {app_tag}:', display_name, entity_id)
                 host_id_list.append(entity_id)
@@ -344,7 +441,7 @@ def clear_some_tier_1_tags(env, main_token, remote_config_token):
             display_name = inner_entities_json.get('displayName', '')
             tags = inner_entities_json.get('tags', [])
             if "'key': 'primary_tags.tier', 'value': '1'" in str(tags):
-                app_tag = get_tag(tags)
+                app_tag = get_app_tag(tags)
                 if app_tag in apps_to_clear:
                     print(f'Removing tier:1 tag for app {app_tag}:', display_name, entity_id)
                     host_id_list.append(entity_id)
@@ -359,10 +456,14 @@ def set_some_tier_1_tags(env, main_token, remote_config_token):
     # 	'sectra',
     # 	'ukg-kronos-time-&-attendance-mssn',
     # ]
+    # apps_to_set = [
+    #     'qpathe',
+    #     'symantec-vip',
+    #     'ukg-kronos-time-attendance-mssn',
+    # ]
     apps_to_set = [
-        'qpathe',
-        'symantec-vip',
-        'ukg-kronos-time-attendance-mssn',
+        'citrix',
+        'obix',
     ]
 
     host_id_list = []
@@ -377,12 +478,57 @@ def set_some_tier_1_tags(env, main_token, remote_config_token):
             entity_id = inner_entities_json.get('entityId', '')
             display_name = inner_entities_json.get('displayName', '')
             tags = inner_entities_json.get('tags', [])
-            app_tag = get_tag(tags)
+            app_tag = get_app_tag(tags)
             if app_tag in apps_to_set:
                 print(f'Setting tier:1 tag for app {app_tag}:', display_name, entity_id)
                 host_id_list.append(entity_id)
 
     post_host_tag_job(env, remote_config_token, host_id_list, 'set', 'primary_tags.tier=1')
+
+def set_some_tier_2_tags(env, main_token, remote_config_token):
+    apps_to_set = [
+        'pakedge',
+        'scottcare',
+    ]
+
+    host_id_list = []
+    endpoint = '/api/v2/entities'
+    # raw_params = 'pageSize=4000&entitySelector=type(HOST)&to=-5m&fields=properties,tags,managementZones'
+    raw_params = 'pageSize=4000&entitySelector=type(HOST),isMonitoringCandidate(false)&from=-5m&fields=tags'
+    params = urllib.parse.quote(raw_params, safe='/,&=?')
+    entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', main_token, params=params)
+    for entities_json in entities_json_list:
+        inner_entities_json_list = entities_json.get('entities')
+        for inner_entities_json in inner_entities_json_list:
+            entity_id = inner_entities_json.get('entityId', '')
+            display_name = inner_entities_json.get('displayName', '')
+            tags = inner_entities_json.get('tags', [])
+            app_tag = get_app_tag(tags)
+            if app_tag in apps_to_set:
+                print(f'Setting tier:2 tag for app {app_tag}:', display_name, entity_id)
+                host_id_list.append(entity_id)
+
+    post_host_tag_job(env, remote_config_token, host_id_list, 'set', 'primary_tags.tier=2')
+
+def set_all_tier_unset_tags_to_tier_2(env, main_token, remote_config_token):
+    host_id_list = []
+    endpoint = '/api/v2/entities'
+    # raw_params = 'pageSize=4000&entitySelector=type(HOST)&to=-5m&fields=properties,tags,managementZones'
+    raw_params = 'pageSize=4000&entitySelector=type(HOST),isMonitoringCandidate(false)&from=-5m&fields=tags'
+    params = urllib.parse.quote(raw_params, safe='/,&=?')
+    entities_json_list = dynatrace_api.get_json_list_with_pagination(f'{env}{endpoint}', main_token, params=params)
+    for entities_json in entities_json_list:
+        inner_entities_json_list = entities_json.get('entities')
+        for inner_entities_json in inner_entities_json_list:
+            entity_id = inner_entities_json.get('entityId', '')
+            display_name = inner_entities_json.get('displayName', '')
+            tags = inner_entities_json.get('tags', [])
+            tier_tag = get_tier_tag(tags)
+            if not tier_tag or tier_tag == '0':
+                print(f'Setting tier:2 tag:', tier_tag, display_name, entity_id)
+                host_id_list.append(entity_id)
+
+    post_host_tag_job(env, remote_config_token, host_id_list, 'set', 'primary_tags.tier=2')
 
 def clear_all_tier_0_tags(env, main_token, remote_config_token):
     host_id_list = []
@@ -516,7 +662,7 @@ def set_some_network_zones(env, main_token, remote_config_token, network_zone):
     post_host_network_zone_job(env, remote_config_token, host_id_list, 'set', network_zone)
 
 
-def get_tag(tags):
+def get_app_tag(tags):
     app_tag = None
     for tag in tags:
         if "'key': 'primary_tags.app'" in str(tag):
@@ -525,6 +671,13 @@ def get_tag(tags):
 
     return app_tag
 
+def get_tier_tag(tags):
+    tier_tag = None
+    for tag in tags:
+        if "'key': 'primary_tags.tier'" in str(tag):
+            tier_tag = tag.get('value')
+
+    return tier_tag
 
     ########################################################################################################
     #                                                                                                      #
