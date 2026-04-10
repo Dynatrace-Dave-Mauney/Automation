@@ -48,6 +48,11 @@ def process(env, token):
             post_verified_tag(entity_id, result, tag_verified, env, token)
             rows.append((display_name, host_group_name, network_zone, cloud_type, security_context, tag_application, tag_function, tag_environment, tag_tier, tag_zone, tag_verified, result_string, sort_and_stringify_list_items(violations_list)))
 
+            # DEBUG print
+            if not result:
+                print('DEBUG: inner_entities_json:')
+                print(inner_entities_json)
+
         # for row in rows:
         #     print(row)
 
@@ -149,7 +154,7 @@ def audit(host_group_name, network_zone, cloud_type, security_context, tag_appli
             result = False
 
     if cloud_type != tag_zone:
-        violations_list.append('Network Zone and Cloud Type Mismatch')
+        violations_list.append('Network Zone Tag and Cloud Type Mismatch')
         result = False
 
     if security_context == 'None':

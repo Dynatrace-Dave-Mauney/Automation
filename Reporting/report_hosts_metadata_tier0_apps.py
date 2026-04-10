@@ -12,6 +12,7 @@ tier0_list = [
     'ad-utility-server',
     'azure-ad-connect',
     'domain-controller',
+    'domaincontroller',
     'exchange',
 ]
 

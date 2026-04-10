@@ -83,14 +83,14 @@ def process(env, token):
                     tier1_apps.append(app_value)
 
     # apps set to tier 1 that should not be
-    for app in tier1_apps:
-        if app not in tier1_list:
-            rows.append([app])
+    # for app in tier1_apps:
+    #     if app not in tier1_list:
+    #         rows.append([app])
 
     # apps not yet set to tier 1 that should be
-    # for app in tier1_list:
-    #     if app not in tier1_apps:
-    #         rows.append([app])
+    for app in tier1_list:
+        if app not in tier1_apps:
+            rows.append([app])
 
     # apps set to tier 1 that should be
     # for app in tier1_apps:
