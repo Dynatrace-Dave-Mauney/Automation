@@ -13,6 +13,7 @@ owner_id_list = None
 def process(env, env_name, client_id, client_secret):
     configuration_file = 'configurations.yaml'
     my_owner_ids = environment.get_configuration('my_owner_ids', configuration_file=configuration_file)
+    # my_owner_ids = None
 
     if my_owner_ids:
         print('Downloading segment owned by:', my_owner_ids)
