@@ -31,10 +31,16 @@ def run():
     # post_notebooks(env, f'../$Private/Customers/$Current/Assets/NewPlatform/Notebooks/{env}/*.json')
 
     env='Prod'
-    # env='Sandbox'
-    # env='PreProd'
+    # env='Int'
+    # env='NonProd'
 
-    # CURRENT CUSTOMER (1/12/2026)
+    # CURRENT CUSTOMER (5/21/2026)
+    # post_launchpads(env, 'Launchpads/Assets/Dynatrace Architecture and Standards.json')
+
+
+
+
+    # PRIOR CUSTOMER (1/12/2026)
     # Initial deployment
     # post_dashboards(env, f'Dashboards/Assets/Templates/*.json')
     # post_notebooks(env, f'Notebooks/Assets/*.json')

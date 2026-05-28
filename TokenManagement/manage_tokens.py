@@ -50,11 +50,13 @@ def process():
 
 	# See "test()" method for common examples, if you don't see it above...
 
-	# Current Customer
+	# Prior Customer
 	# post_monaco_token()
 	# post_read_metrics_token()
 	# post_dynatrace_automation_token()
 
+	# Current Customer
+	# post_dynatrace_automation_token()
 
 def post_api_token():
 	return post_token('API Tokens (Read/Write)', ["apiTokens.read", "apiTokens.write"])
@@ -111,7 +113,7 @@ def post_reduced_power_dynatrace_automation_token():
 def post_dynatrace_automation_token():
 	# Supports Token Key: DYNATRACE_AUTOMATION_PERSONAL_TOKEN (where "PERSONAL" can be any environment name).
 	# Has every known permission needed by the automation project (and maybe some more!)
-	return post_token('Automation:SHARED', [
+	return post_token('Automation', [
 		"ActiveGateCertManagement",
 		"CaptureRequestData",
 		"DTAQLAccess",
