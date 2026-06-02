@@ -26,10 +26,12 @@ def process(env, client_id, client_secret):
 			params = {'optimistic-locking-version': document_version}
 
 			# if not document_name.startswith('Tenant'):
-			if not document_name.startswith('Delete'):
-				continue
+			# if not document_name.startswith('Delete'):
+			# if 'Management Zone' not in document_name:
+			# 	continue
 
-			delete_list.append(f'{document_name}:{document_id}:{document_version}')
+			if 'Veritas' in document_name:
+				delete_list.append(f'{document_name}:{document_id}:{document_version}')
 
 	delete_list = sorted(delete_list)
 

@@ -10,27 +10,27 @@ dashboard_name = '00000000-dddd-bbbb-ffff-000000000800.json'
 
 def main():
     dashboard_links = [
-        # ('Dynatrace Usage and Billing', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000812'),
+        ('Dynatrace Usage and Billing', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000812'),
         ('DPS Usage Details', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000811'),
-        # ('Licensing Overview', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000801'),
-        # ('Billing', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000805'),
+        ('Licensing Overview', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000801'),
+        ('Billing', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000805'),
         ('Dynatrace Self-Monitoring: Home', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000820'),
         ('OneAgent Health Overview', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000810'),
         ('Problem Notifications Health Overview', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000809'),
         ('Host Health Breakdown', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000807'),
         ('Management Zone Coverage', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000813'),
-        # ('3rd Party XHR Detection', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000808'),
+        ('3rd Party XHR Detection', '#dashboard;id=00000000-dddd-bbbb-ffff-000000000808'),
     ]
 
     view_links = [
         ('Access Tokens', '/ui/access-tokens'),
-        # ('Consumption', '/ui/consumption/ddu/overview'),
+        ('Consumption', '/ui/consumption/ddu/overview'),
         ('Credential Vault', '#credentialvault'),
         ('Custom Devices', '#newcustomdevices'),
         ('Deploy Dynatrace', '#deploy'),
         ('Deployment Status', '/ui/deploymentstatus/oneagents'),
         ('Dynatrace Hub (Extensions)', '/ui/hub'),
-        # ('Extensions', '/ui/hub'),
+        ('Extensions', '/ui/hub'),
         ('Synthetic', '#monitors'),
         ('System Notifications', '/ui/system-notifications'),
     ]
@@ -38,7 +38,7 @@ def main():
     setting_links = [
         ('Classic Settings', '#settings'),
         # 800-v2 has no AWS
-        # ('AWS', '#settings/awsmonitoring'),
+        ('AWS', '#settings/awsmonitoring'),
         ('Application Detection', '/ui/settings/builtin:rum.web.app-detection'),
         ('Automatically applied tags', '/ui/settings/builtin:tags.auto-tagging'),
         ('Calculated Service Metrics', '#settings/serviceMetrics'),

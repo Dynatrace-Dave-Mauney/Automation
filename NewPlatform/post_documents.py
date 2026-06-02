@@ -36,6 +36,7 @@ def run():
 
     # CURRENT CUSTOMER (5/21/2026)
     # post_launchpads(env, 'Launchpads/Assets/Dynatrace Architecture and Standards.json')
+    post_dashboards(env, f'Dashboards/Assets/Templates/*.json')
 
 
 

@@ -5,28 +5,30 @@ from Reuse import environment
 from Reuse import new_platform_api
 
 include_list = [
-    'Anomaly Detection',
-    'Azure Classic',
+    'AWS Classic',
     'Clouds',
+    'Containers',
     'Dashboards',
     'Dashboards Classic',
     'Data Explorer Classic',
-    'Extensions',
+    'Database Services Classic',
+    'Databases',
+    'Frontend',
     'Host Networking',
     'Hosts Classic',
     'Infrastructure & Operations',
-    'Launcher',
     'Logs',
     'Metrics Classic',
     'Notebooks',
     'Problems',
     'Problems Classic',
-    'Settings',
-    'Settings Classic',
     'Smartscape',
     'Smartscape Classic',
+    'Synthetic',
+    'Synthetic Classic',
     'Technologies & Processes Classic',
-    'User Settings',
+    'VMware Classic',
+    'Web',
     'Workflows',
 ]
 
@@ -93,6 +95,8 @@ def process(env, client_id, client_secret):
 
         if application_name in include_list:
             app_links.append(app_link)
+        else:
+            print('Skipping:', application_name)
 
     app_link_dict = {}
     for app_link in app_links:

@@ -43,6 +43,11 @@ def main():
     index_by_name_file = pathlib.Path('Templates/Overview/dashboard_index_by_name.txt')
     index_dashboards(path, index_by_id_file, index_by_name_file)
 
+    path = 'Custom/Overview-Prod/????????-????-????-????-????????????.json'
+    index_by_id_file = pathlib.Path('Custom/Overview-Prod/dashboard_index_by_id.txt')
+    index_by_name_file = pathlib.Path('Custom/Overview-Prod/dashboard_index_by_name.txt')
+    index_dashboards(path, index_by_id_file, index_by_name_file)
+
     path = 'Sandbox/????????-????-????-????-????????????.json'
     index_by_id_file = pathlib.Path('Sandbox/dashboard_index_by_id.txt')
     index_by_name_file = pathlib.Path('Sandbox/dashboard_index_by_name.txt')

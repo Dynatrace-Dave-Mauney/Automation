@@ -7,57 +7,100 @@ import json
 
 env_name = 'Prod'
 
-# These will work with any customer, and are in the templates directory
+# These will work with any (full stack) customer, and are in the templates directory
 main_dashboards = [
     'Administration',
     'Application Overview - Home',
     'Backend Overview',
-    # 'Calls To Databases',
-    'Citrix',
+    'Calls To Databases',
     'Containers',
     'Detailed Drilldowns Menu',
     'Dynatrace-owned Dashboards',
     'Full Stack Overview',
-    'Hosts',
     'Hosts (Detailed)',
     'Hosts: AIX',
     'Hosts: Linux',
     'Hosts: Windows',
-    # 'Key Requests',
-    # 'Key User Actions',
+    'Key Requests',
+    'Key User Actions',
     'Monitoring Overview',
-    'Microsoft SQL Server - Home',
-    'NetApp OnTap',
-    'Netscaler 1',
-    'Netscaler 2',
     'Network (Host-Level Details)',
     'Network (Process-Level Details)',
-    'Oracle Database - Home',
     'Processes',
-    'Pure Storage FlashArray',
-    # 'Queues',
+    'Queues',
     'Service Errors',
     'Service HTTP Errors',
     'Suspicious Activity Audit',
-    # 'Synthetics: Browser Monitor Events',
-    # 'Third Party Services',
-    'Veritas',
-    'VMware Overview',
-    'VMware Host',
-    'VMware VM',
+    'Synthetics: Browser Monitor Events',
+    'Third Party Services',
+    'Web Application Insights',
 ]
+
+# Prior Customer
+# main_dashboards = [
+#     'Administration',
+#     'Application Overview - Home',
+#     'Backend Overview',
+#     # 'Calls To Databases',
+#     'Citrix',
+#     'Containers',
+#     'Detailed Drilldowns Menu',
+#     'Dynatrace-owned Dashboards',
+#     'Full Stack Overview',
+#     'Hosts',
+#     'Hosts (Detailed)',
+#     'Hosts: AIX',
+#     'Hosts: Linux',
+#     'Hosts: Windows',
+#     # 'Key Requests',
+#     # 'Key User Actions',
+#     'Monitoring Overview',
+#     'Microsoft SQL Server - Home',
+#     'NetApp OnTap',
+#     'Netscaler 1',
+#     'Netscaler 2',
+#     'Network (Host-Level Details)',
+#     'Network (Process-Level Details)',
+#     'Oracle Database - Home',
+#     'Processes',
+#     'Pure Storage FlashArray',
+#     # 'Queues',
+#     'Service Errors',
+#     'Service HTTP Errors',
+#     'Suspicious Activity Audit',
+#     # 'Synthetics: Browser Monitor Events',
+#     # 'Third Party Services',
+#     'Veritas',
+#     'VMware Overview',
+#     'VMware Host',
+#     'VMware VM',
+# ]
 
 # These differ by customer, and are in the templates directory
 tech_dashboards = [
     '.NET',
-    # 'Go',
+    'AWS Home',
+    'Go',
+    'IBM MQ Home',
+    'IBM WebSphere Home',
     'Java',
     'Java Memory',
-    # 'Kubernetes - Home',
+    # 'Jetty',
+    # 'Kafka - Home',
+    'Kubernetes - Home',
+    # 'Microsoft SQL Server - Home',
+    'Netscaler 1',
+    'Netscaler 2',
     'Node.js',
-    'PHP',
+    'Oracle Database - Home',
+    # 'Redis - Home',
+    # 'Spark',
+    # 'Spring',
     'Tomcat',
     'Web Servers',
+    'WebLogic by Name',
+    'WebLogic by Process',
+    'VMware',
 ]
 
 
@@ -69,17 +112,17 @@ ootb_dashboards = [
 
 # Generated Dashboards that vary by customer
 generated_dashboards = [
-    ('Engineer', '00000001-0000-0000-0001-000000000000'),
-    ('Engineer: Host Group', '00000001-0000-0000-0001-000000000002'),
-    ('Executive', '00000001-0000-0000-0001-000000000001'),
+    # ('Engineer', '00000001-0000-0000-0001-000000000000'),
+    # ('Engineer: Host Group', '00000001-0000-0000-0001-000000000002'),
+    # ('Executive', '00000001-0000-0000-0001-000000000001'),
 ]
 
 # These differ by customer, and are not in the templates directory
 new_ui_dashboards = [
-    ('Gen 3 Dynatrace User Launchpad', 'https://{{.tenant}}.apps.dynatrace.com/ui/apps/dynatrace.launcher/launchpad/bce5a9a6-bdc6-4b3f-9e9d-314dadc36461'),
-    ('Gen 3 Dynatrace Architecture Launchpad', 'https://{{.tenant}}.apps.dynatrace.com/ui/apps/dynatrace.launcher/launchpad/945124d7-14d1-4b3e-9e7b-95dad889978d'),
-    ('Gen 3 Overview Dashboard', 'https://{{.tenant}}.apps.dynatrace.com/ui/apps/dynatrace.dashboards/dashboard/57b60014-c4ab-45f0-89e5-e4409a52734c'),
-    ('Gen 3 Overview by Management Zone Dashboard', 'https://{{.tenant}}.apps.dynatrace.com/ui/apps/dynatrace.dashboards/dashboard/d3673a3e-27ca-48c2-b534-8fb2edb906a2'),
+    # ('Gen 3 Dynatrace User Launchpad', 'https://{{.tenant}}.apps.dynatrace.com/ui/apps/dynatrace.launcher/launchpad/bce5a9a6-bdc6-4b3f-9e9d-314dadc36461'),
+    # ('Gen 3 Dynatrace Architecture Launchpad', 'https://{{.tenant}}.apps.dynatrace.com/ui/apps/dynatrace.launcher/launchpad/945124d7-14d1-4b3e-9e7b-95dad889978d'),
+    # ('Gen 3 Overview Dashboard', 'https://{{.tenant}}.apps.dynatrace.com/ui/apps/dynatrace.dashboards/dashboard/57b60014-c4ab-45f0-89e5-e4409a52734c'),
+    # ('Gen 3 Overview by Management Zone Dashboard', 'https://{{.tenant}}.apps.dynatrace.com/ui/apps/dynatrace.dashboards/dashboard/d3673a3e-27ca-48c2-b534-8fb2edb906a2'),
 ]
 
 

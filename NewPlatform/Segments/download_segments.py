@@ -13,7 +13,7 @@ owner_id_list = None
 def process(env, env_name, client_id, client_secret):
     configuration_file = 'configurations.yaml'
     my_owner_ids = environment.get_configuration('my_owner_ids', configuration_file=configuration_file)
-    # my_owner_ids = None
+    my_owner_ids = None
 
     if my_owner_ids:
         print('Downloading segment owned by:', my_owner_ids)
@@ -61,8 +61,8 @@ def main():
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
     # env_name_supplied = 'Prod'
-    # env_name_supplied = 'PreProd'
-    # env_name_supplied = 'Sandbox'
+    # env_name_supplied = 'NonProd'
+    # env_name_supplied = 'Int'
     # env_name_supplied = 'Personal'
     env_name, env, client_id, client_secret = environment.get_client_environment_for_function(env_name_supplied, friendly_function_name)
     process(env, env_name, client_id, client_secret)

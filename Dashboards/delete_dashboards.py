@@ -41,9 +41,10 @@ def process(env_name, env, token):
 				# Mass cleanup of Overview Framework Dashboards not needed for current customer
 				# if ': AWS' in name or ': Azure' in name or ': DB2' in name or ': F5' in name or ': Kafka' in name or ': IBM' in name or ': Microsoft' in name or ': Oracle' in name or ': VMware' in name or ': WebSphere' in name or ': SAP' in name or ': SOLR' in name:
 				# if True:
-				# if dashboard_id.startswith('00000000-dddd-bbbb-ffff-'):
-				if dashboard_id.startswith('aaaaaaaa-bbbb-cccc-dddd-'):
-					delete_list.append(dashboard_id + ': ' + name + ': ' + owner)
+				if dashboard_id.startswith('00000000-dddd-bbbb-ffff-'):
+				# if dashboard_id.startswith('aaaaaaaa-bbbb-cccc-dddd-'):
+					if name.startswith('Prod: '):
+						delete_list.append(dashboard_id + ': ' + name + ': ' + owner)
 
 			# Full clean of 'Personal' environment
 			# if 'TagReferenceCheck' in name or 'Dynatrace Resources' in name:

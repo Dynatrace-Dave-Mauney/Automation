@@ -10,27 +10,33 @@ dashboard_name = '00000000-dddd-bbbb-ffff-000000001000.json'
 
 def main():
 	dashboard_links = [
+		# Sync with generate_dynatrace_owner_dashboard.py!
+		# These are from AWS Extension
 		('AWS API Usage', '#dashboard;id=bbfc992a-da6d-45ee-be47-df6b217ad765'),
-		('AWS DMS', '#dashboard;id=8e25b445-26ea-4812-b805-88df626afbd6'),
-		('AWS Step Functions', '#dashboard;id=4387929f-68b1-4d71-a2b1-4e601856ef09'),
-		('AWS Systems Manager - Run Command', '#dashboard;id=2907d217-d5ef-480e-9b44-c7b66a8028a8'),
+		('AWS Billing', '#dashboard;id=c12daf08-2a86-4efa-b713-9175b5b4017b'),
 		('AWS Trusted Advisor', '#dashboard;id=a55d8a88-0841-43fd-be97-68f4b877f97b'),
-		('AWS WAF Classic', '#dashboard;id=758754a5-8e25-46ec-b970-d4da24424425'),
 		('AWS WAFV2', '#dashboard;id=ee0dd7a8-15ca-4b94-af6e-0a37f8361f1a'),
+		('Active Directory Overview', '#dashboard;id=0de4b077-8eac-5074-1ce9-b5681a9e27b3'),
+		('Amazon ActiveMQ', '#dashboard;id=492fa8c2-427e-430c-8856-7bf32d6be64d'),
 		('Amazon CloudWatch Logs', '#dashboard;id=b8e6ea06-70c3-4bfa-8fef-d3c68c7a7c67'),
-		('Amazon EC2 Auto Scaling', '#dashboard;id=7906dd7c-d5b0-4cf5-be45-8228d45d349e'),
+		('Amazon Connect', '#dashboard;id=c82a7373-c954-4b32-a374-fdb0be89de92'),
+		('Amazon ECS Container Insights', '#dashboard;id=7645a470-292c-486a-b9cc-b60be94d52f5'),
 		('Amazon EventBridge', '#dashboard;id=0c111823-b2c6-4ee6-98a1-5acba91c8579'),
-		('Amazon MSK (Kafka)', '#dashboard;id=a3302849-c910-489b-b12d-547da6652b8f'),
+		('Amazon MSK (Kafka)', '#dashboard;id=0b4a7075-9107-4e01-aaa4-2cca590470b1'),
+		('Amazon Route 53', '#dashboard;id=454c4321-e972-401d-847d-53c421c76fcb'),
+		('Amazon Textract', '#dashboard;id=3bd5a934-bd30-4513-8097-04be12ba4b99'),
+
+		# These are from DynatraceDashboardGenerator
 		('AWS API Gateway', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001102'),
 		('AWS AZ', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001103'),
 		('AWS Aurora', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001104'),
-		('AWS Auto Scaling', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001105'),
+		# ('AWS Auto Scaling', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001105'),
 		('AWS Cloudfront', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001106'),
 		('AWS EC', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001107'),
 		('AWS ECS', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001108'),
 		('AWS EFS', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001109'),
 		('AWS ES', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001110'),
-		('AWS Elastic Transcoder', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001111'),
+		# ('AWS Elastic Transcoder', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001111'),
 		('AWS Events', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001112'),
 		('AWS Kafka 1', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001113'),
 		('AWS Kafka 2', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001114'),
@@ -39,10 +45,10 @@ def main():
 		('AWS Lambda', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001117'),
 		('AWS Route 53', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001118'),
 		('AWS S3', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001119'),
-		('AWS SES', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001120'),
+		# ('AWS SES', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001120'),
 		('AWS SNS', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001121'),
 		('AWS SQS', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001122'),
-		('AWS SSM Run Command', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001123'),
+		# ('AWS SSM Run Command', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001123'),
 		('AWS States', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001124'),
 		('AWS WAF', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001125'),
 	]
@@ -222,7 +228,7 @@ def main():
 	dashboard_template = dashboard_template.replace('{{.dashboard_markdown}}', dashboard_markdown)
 	dashboard_template = dashboard_template.replace('{{.view_markdown}}', view_markdown)
 
-	print(dashboard_template)
+	# print(dashboard_template)
 
 	write_json(directory_path, dashboard_name, json.loads(dashboard_template))
 

@@ -65,7 +65,7 @@ def get_document_id_list(env, client_id, client_secret):
             continue
 
         # Only share "official" dashboards with environment prefixes
-        if document_name.startswith('Prod ') or document_name.startswith('Preprod ') or document_name.startswith('Sandbox '):
+        if document_name.startswith('Prod ') or document_name.startswith('NonProd ') or document_name.startswith('Int '):
             print(f'{document_name} will be shared')
             document_id_list.append(document_id)
 

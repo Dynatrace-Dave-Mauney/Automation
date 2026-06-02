@@ -21,14 +21,24 @@ def run():
 def post_segments(env_name, path):
     # print(f"post_segments({env_name}, {path})")
     friendly_function_name = 'Dynatrace Automation'
-    _, env, client_id, client_secret = environment.get_client_environment_for_function(env_name, friendly_function_name)
-    platform_token = environment.get_platform_token_for_function(env_name, friendly_function_name)
+    env_name_supplied = environment.get_env_name(friendly_function_name)
+    # For easy control from IDE
+    # env_name_supplied = 'Prod'
+    # env_name_supplied = 'NonProd'
+    # env_name_supplied = 'Int'
+    # env_name_supplied = 'Personal'
+    env_name, env, client_id, client_secret = environment.get_client_environment_for_function(env_name_supplied, friendly_function_name)
+
+    # platform_token = environment.get_platform_token_for_function(env_name, friendly_function_name)
+    # print(env_name, env, client_id, client_secret, platform_token)
+
+    print(env_name, env, client_id, client_secret)
 
     scope = 'storage:filter-segments:read storage:filter-segments:write storage:filter-segments:share'
 
-    # If Client Token is every required...
-    # oauth_bearer_token = new_platform_api.get_oauth_bearer_token(client_id, client_secret, scope=scope)
-    oauth_bearer_token = platform_token
+    # If Client Token is ever required...
+    oauth_bearer_token = new_platform_api.get_oauth_bearer_token(client_id, client_secret, scope=scope)
+    # oauth_bearer_token = platform_token
     for filename in glob.glob(path):
         print(filename)
         if filename.endswith(".json"):

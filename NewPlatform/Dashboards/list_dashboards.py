@@ -11,10 +11,10 @@ dynatrace_owners = [
 ]
 
 selected_owners = [
-    # '78cfc22b-0015-409e-bb07-0364eecc6ac3', # Me
-    'ed29e85d-9e5f-4157-a2b8-563dc624708f', # Dynatrace
-    '50436aec-8901-4282-ae81-690bd6509b18', # Dynatrace
-    '60a34747-becc-47c2-ac3a-bfaf2c537471',  # Dynatrace Extensions
+    '78cfc22b-0015-409e-bb07-0364eecc6ac3', # Me
+    # 'ed29e85d-9e5f-4157-a2b8-563dc624708f', # Dynatrace
+    # '50436aec-8901-4282-ae81-690bd6509b18', # Dynatrace
+    # '60a34747-becc-47c2-ac3a-bfaf2c537471',  # Dynatrace Extensions
 ]
 
 # selected_owners = []
@@ -29,6 +29,7 @@ def process(env, client_id, client_secret):
     document_list = documents_json.get('documents')
     headers = [['Dashboard Name', 'Dashboard ID', 'Owner']]
     rows = []
+    print_lines = []
     for document in document_list:
         # print(document)
         document_type = document.get('type')
@@ -40,7 +41,17 @@ def process(env, client_id, client_secret):
             # if document_owner not in dynatrace_owners and document_owner != '78cfc22b-0015-409e-bb07-0364eecc6ac3':
             if (selected_owners and document_owner in selected_owners) or (not selected_owners):
                 # rows.append([document_name, document_id])
-                rows.append([document_name, document_id, document_owner])
+                # rows.append([document_name, document_id, document_owner])
+                if 'Prod' in document_name and 'By Man' not in document_name:
+                    if 'NetApp' in document_name or 'Pure' in document_name or 'VMware ' in document_name or 'Veritas' in document_name:
+                        pass
+                    else:
+                        # rows.append([document_name, document_id])
+                        print_lines.append("        (f'{tenant_name} " +  document_name.replace('Prod ', '') + "' ,f'https://{tenant}.apps.dynatrace.com/ui/apps/dynatrace.dashboards/dashboard/" + document_id + "'),")
+
+    print_lines = sorted(print_lines)
+    for print_line in print_lines:
+        print(print_line)
 
     report_writer.print_rows(headers, sorted(rows))
 
