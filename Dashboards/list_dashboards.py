@@ -21,7 +21,8 @@ def process(env, token):
 		# if dashboard_id.startswith('FF'):
 		# if dashboard_id.startswith('00000001-0000-0000-000'):
 		# if dashboard_id.startswith('00000000-dddd') and not dashboard_id.startswith('00000000-dddd-bbbb'):
-		if dashboard_id.startswith('aaaaaaaa-bbbb'):
+		# if dashboard_id.startswith('aaaaaaaa-bbbb'):
+		if dashboard_id.startswith('00000000-dddd'):
 		# if True:
 		# 	lines.append(f'{dashboard_name}|{dashboard_id}|{dashboard_owner}')
 			lines.append(f'{dashboard_name}')

@@ -131,8 +131,13 @@ def run():
     # env_name = 'Personal'
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/*.json', owner=owner, skip_list=current_customer_skip_list)
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000001-v4.json', owner=owner, skip_list=current_customer_skip_list)
-    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000001000.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000001000.json', owner=owner, skip_list=current_customer_skip_list)
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000002000.json', owner=owner, skip_list=current_customer_skip_list)
+
+    # Generated Dashboards
+    # All
+    # put_dashboards(env_name, f'../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-0000000*.json', owner=owner, skip_list=[])
+    # put_dashboards(env_name, f'../DynatraceDashboardGenerator/aaaaaaaa-bbbb-cccc-dddd-000000000000.json', owner=owner, skip_list=[])
 
     # # Dynamic Filters
     # # Prod: Web Applications

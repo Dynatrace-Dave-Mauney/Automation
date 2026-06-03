@@ -533,6 +533,11 @@ def main():
         # This wii be off a bit for smaller tiles (like DATABASE_SERVICE) but not worth worrying about at this point...
         # We could adjust after every tile of entity type in the loop, but that seems absurd
         max_top = height - 304
+
+        # print('max_top', max_top)
+        # print('max_left', max_left)
+        # exit(9999)
+
         # Default to this size, but allow smaller tiles to override in the loop below...
         tile_height = 304
         tiles = []

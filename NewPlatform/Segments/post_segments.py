@@ -12,9 +12,9 @@ from Reuse import new_platform_api
 
 def run():
     pass
-    post_segments('Prod', 'Assets/*.json')
-    # post_segments('Sandbox', 'Assets/*.json')
-    # post_segments('PreProd', 'Assets/*.json')
+    # post_segments('Prod', 'Assets/*.json')
+    # post_segments('NonProd', 'Assets/*.json')
+    # post_segments('Int', 'Assets/*.json')
     # post_segments('Personal', 'Assets/*.json')
 
 
@@ -25,7 +25,7 @@ def post_segments(env_name, path):
     # For easy control from IDE
     # env_name_supplied = 'Prod'
     # env_name_supplied = 'NonProd'
-    # env_name_supplied = 'Int'
+    env_name_supplied = 'Int'
     # env_name_supplied = 'Personal'
     env_name, env, client_id, client_secret = environment.get_client_environment_for_function(env_name_supplied, friendly_function_name)
 

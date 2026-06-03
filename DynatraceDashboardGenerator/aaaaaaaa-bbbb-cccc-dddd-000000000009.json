@@ -7,7 +7,7 @@
     },
     "id": "aaaaaaaa-bbbb-cccc-dddd-000000000009",
     "dashboardMetadata": {
-        "name": "Azure Event Hub",
+        "name": "AWS DynamoDB",
         "shared": false,
         "owner": "nobody@example.com",
         "sharingDetails": {
@@ -27,7 +27,7 @@
     },
     "tiles": [
         {
-            "name": "Capture backlog",
+            "name": "ConditionalCheckFailedRequests Sum (deprecated)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -37,15 +37,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Capture backlog",
+            "customName": "ConditionalCheckFailedRequests Sum (deprecated)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.azure.eventHub.capture.backlog",
+                    "metric": "ext:cloud.aws.dynamodb.ConditionalCheckFailedRequestsSum",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.azure_event_hub"
+                        "dt.entity.custom_device_group"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -98,7 +98,7 @@
             }
         },
         {
-            "name": "Captured bytes",
+            "name": "ReadThrottleEvents Sum",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -108,15 +108,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Captured bytes",
+            "customName": "ReadThrottleEvents Sum",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.azure.eventHub.capture.bytes",
+                    "metric": "ext:cloud.aws.dynamodb.ReadThrottleEventsSum",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.azure_event_hub"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -169,7 +169,7 @@
             }
         },
         {
-            "name": "Captured messages",
+            "name": "SystemErrors Sum (by Operation)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -179,15 +179,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Captured messages",
+            "customName": "SystemErrors Sum (by Operation)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.azure.eventHub.capture.msg",
+                    "metric": "ext:cloud.aws.dynamodb.SystemErrorsSumByOperation",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.azure_event_hub"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -240,7 +240,7 @@
             }
         },
         {
-            "name": "Quota exceeded errors",
+            "name": "ThrottledRequests Sum (by Operation)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -250,15 +250,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Quota exceeded errors",
+            "customName": "ThrottledRequests Sum (by Operation)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.azure.eventHub.errors.quotaExceeded",
+                    "metric": "ext:cloud.aws.dynamodb.ThrottledRequestsSumByOperation",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.azure_event_hub"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -311,7 +311,7 @@
             }
         },
         {
-            "name": "Server errors",
+            "name": "TransactionConflict Sum",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -321,15 +321,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Server errors",
+            "customName": "TransactionConflict Sum",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.azure.eventHub.errors.server",
+                    "metric": "ext:cloud.aws.dynamodb.TransactionConflictSum",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.azure_event_hub"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -382,7 +382,7 @@
             }
         },
         {
-            "name": "User errors",
+            "name": "UserErrors Sum (by Region)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -392,15 +392,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "User errors",
+            "customName": "UserErrors Sum (by Region)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.azure.eventHub.errors.user",
+                    "metric": "ext:cloud.aws.dynamodb.UserErrorsSum",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.azure_event_hub"
+                        "dt.entity.custom_device_group"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -453,7 +453,7 @@
             }
         },
         {
-            "name": "Incoming requests",
+            "name": "WriteThrottleEvents Sum",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -463,15 +463,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Incoming requests",
+            "customName": "WriteThrottleEvents Sum",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.azure.eventHub.requests.incoming",
+                    "metric": "ext:cloud.aws.dynamodb.WriteThrottleEventsSum",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.azure_event_hub"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -524,7 +524,7 @@
             }
         },
         {
-            "name": "Successful requests",
+            "name": "ConsumedReadCapacityUnits Sum",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -534,15 +534,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Successful requests",
+            "customName": "ConsumedReadCapacityUnits Sum",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.azure.eventHub.requests.successful",
+                    "metric": "ext:cloud.aws.dynamodb.consumedReadCapacityUnitsSum",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.azure_event_hub"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -595,7 +595,7 @@
             }
         },
         {
-            "name": "Throttled requests",
+            "name": "ConsumedWriteCapacityUnits Sum",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -605,15 +605,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Throttled requests",
+            "customName": "ConsumedWriteCapacityUnits Sum",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.azure.eventHub.requests.throttled",
+                    "metric": "ext:cloud.aws.dynamodb.consumedWriteCapacityUnitsSum",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.azure_event_hub"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -666,7 +666,7 @@
             }
         },
         {
-            "name": "Incoming bytes",
+            "name": "ProvisionedReadCapacityUnits Sum",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -676,15 +676,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Incoming bytes",
+            "customName": "ProvisionedReadCapacityUnits Sum",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.azure.eventHub.traffic.bytesIn",
+                    "metric": "ext:cloud.aws.dynamodb.provisionedReadCapacityUnitsSum",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.azure_event_hub"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -737,7 +737,7 @@
             }
         },
         {
-            "name": "Outgoing bytes",
+            "name": "ProvisionedWriteCapacityUnits Sum",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -747,15 +747,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Outgoing bytes",
+            "customName": "ProvisionedWriteCapacityUnits Sum",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.azure.eventHub.traffic.bytesOut",
+                    "metric": "ext:cloud.aws.dynamodb.provisionedWriteCapacityUnitsSum",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.azure_event_hub"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -808,7 +808,7 @@
             }
         },
         {
-            "name": "Incoming messages",
+            "name": "ReturnedItemCount Sum (by Operation)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -818,15 +818,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Incoming messages",
+            "customName": "ReturnedItemCount Sum (by Operation)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.azure.eventHub.traffic.msgIn",
+                    "metric": "ext:cloud.aws.dynamodb.returnedItemCountSumByOperation",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.azure_event_hub"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -879,7 +879,7 @@
             }
         },
         {
-            "name": "Outgoing messages",
+            "name": "SuccessfulRequestLatency (by Operation)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -889,228 +889,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Outgoing messages",
+            "customName": "SuccessfulRequestLatency (by Operation)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.azure.eventHub.traffic.msgOut",
+                    "metric": "ext:cloud.aws.dynamodb.successfulRequestLatencyByOperation",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.azure_event_hub"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Active connections",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 608,
-                "left": 304,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Active connections",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "builtin:cloud.azure.eventHubNamespace.connections.active",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.azure_event_hub_namespace"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Closed connections",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 608,
-                "left": 608,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Closed connections",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "builtin:cloud.azure.eventHubNamespace.connections.closed",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.azure_event_hub_namespace"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": "DEFAULT",
-                    "threshold": {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ]
-                    },
-                    "seriesType": "LINE"
-                },
-                "rules": [],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name": "Opened connections",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 608,
-                "left": 912,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "Opened connections",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "builtin:cloud.azure.eventHubNamespace.connections.opened",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.azure_event_hub_namespace"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",

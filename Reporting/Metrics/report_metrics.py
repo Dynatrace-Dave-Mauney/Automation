@@ -32,11 +32,11 @@ def process(env, token):
             # if 'kafka' in display_name.lower() or 'kafka' in metric_id:
             #     rows.append((metric_id, display_name, report_writer.convert_epoch_in_milliseconds_to_local(created)))
 
-            if 'azure' in display_name.lower() or 'azure' in metric_id:
-                rows.append((metric_id, display_name, report_writer.convert_epoch_in_milliseconds_to_local(created)))
+            # if 'azure' in display_name.lower() or 'azure' in metric_id:
+            #     rows.append((metric_id, display_name, report_writer.convert_epoch_in_milliseconds_to_local(created)))
 
             # Report All Metrics
-            # rows.append((metric_id, display_name, report_writer.convert_epoch_in_milliseconds_to_local(created)))
+            rows.append((metric_id, display_name, report_writer.convert_epoch_in_milliseconds_to_local(created)))
 
     rows = sorted(rows)
     report_name = 'Metrics'
