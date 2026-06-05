@@ -1,0 +1,256 @@
+{
+    "version": 21,
+    "variables": [],
+    "tiles": {
+        "0": {
+            "type": "markdown",
+            "content": "## CPU"
+        },
+        "2": {
+            "title": "Foreground CPU",
+            "type": "data",
+            "query": "timeseries foregroundTotal = avg(`com.dynatrace.extension.sql-oracle.cpu.foregroundTotal`), by: { `dt.entity.sql:com_dynatrace_extension_sql-oracle_instance` }\n| sort arrayAvg(foregroundTotal) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "3": {
+            "title": "DB CPU",
+            "type": "data",
+            "query": "/*\nWarning:\n - Rollup `value` is not supported in DQL.\n*/\ntimeseries count = avg(`com.dynatrace.extension.sql-oracle.queries.cpuTime.count`), by: { `dt.entity.sql:com_dynatrace_extension_sql-oracle_instance` }\n| sort arrayAvg(count) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "4": {
+            "type": "markdown",
+            "content": "## Memory"
+        },
+        "5": {
+            "title": "Allocated PGA",
+            "type": "data",
+            "query": "timeseries allocated = avg(`com.dynatrace.extension.sql-oracle.memory.pga.allocated`), by: { `dt.entity.sql:com_dynatrace_extension_sql-oracle_instance` }\n| sort arrayAvg(allocated) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "6": {
+            "title": "PGA memory used",
+            "type": "data",
+            "query": "timeseries used = avg(`com.dynatrace.extension.sql-oracle.memory.pga.used`), by: { `dt.entity.sql:com_dynatrace_extension_sql-oracle_instance` }\n| sort arrayAvg(used) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "7": {
+            "title": "PGA aggregate limit",
+            "type": "data",
+            "query": "timeseries pgaAggregateLimit = avg(`com.dynatrace.extension.sql-oracle.memory.pga.size.pgaAggregateLimit`), by: { `dt.entity.sql:com_dynatrace_extension_sql-oracle_instance` }\n| sort arrayAvg(pgaAggregateLimit) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "8": {
+            "title": "PGA aggregate target",
+            "type": "data",
+            "query": "timeseries pgaAggregateTarget = avg(`com.dynatrace.extension.sql-oracle.memory.pga.size.pgaAggregateTarget`), by: { `dt.entity.sql:com_dynatrace_extension_sql-oracle_instance` }\n| sort arrayAvg(pgaAggregateTarget) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "9": {
+            "title": "Library cache hit ratio",
+            "type": "data",
+            "query": "timeseries libraryCacheHitRatio = avg(`com.dynatrace.extension.sql-oracle.memory.libraryCacheHitRatio`), by: { `dt.entity.sql:com_dynatrace_extension_sql-oracle_instance` }\n| sort arrayAvg(libraryCacheHitRatio) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "10": {
+            "title": "Sorts on disk",
+            "type": "data",
+            "query": "/*\nWarning:\n - Rollup `value` is not supported in DQL.\n*/\ntimeseries count = avg(`com.dynatrace.extension.sql-oracle.memory.diskSorts.count`), by: { `dt.entity.sql:com_dynatrace_extension_sql-oracle_instance` }\n| sort arrayAvg(count) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "11": {
+            "title": "Sorts in memory",
+            "type": "data",
+            "query": "/*\nWarning:\n - Rollup `value` is not supported in DQL.\n*/\ntimeseries count = avg(`com.dynatrace.extension.sql-oracle.memory.memorySorts.count`), by: { `dt.entity.sql:com_dynatrace_extension_sql-oracle_instance` }\n| sort arrayAvg(count) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "12": {
+            "title": "Shared pool free",
+            "type": "data",
+            "query": "timeseries sharedPoolFree = avg(`com.dynatrace.extension.sql-oracle.memory.sga.cacheBuffer.sharedPoolFree`), by: { `dt.entity.sql:com_dynatrace_extension_sql-oracle_instance` }\n| sort arrayAvg(sharedPoolFree) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        }
+    },
+    "layouts": {
+        "0": {
+            "x": 0,
+            "y": 0,
+            "w": 36,
+            "h": 1
+        },
+        "2": {
+            "x": 0,
+            "y": 1,
+            "w": 18,
+            "h": 8
+        },
+        "3": {
+            "x": 18,
+            "y": 1,
+            "w": 18,
+            "h": 8
+        },
+        "4": {
+            "x": 0,
+            "y": 9,
+            "w": 36,
+            "h": 1
+        },
+        "5": {
+            "x": 0,
+            "y": 10,
+            "w": 9,
+            "h": 8
+        },
+        "6": {
+            "x": 9,
+            "y": 10,
+            "w": 9,
+            "h": 8
+        },
+        "7": {
+            "x": 18,
+            "y": 10,
+            "w": 9,
+            "h": 8
+        },
+        "8": {
+            "x": 27,
+            "y": 10,
+            "w": 9,
+            "h": 8
+        },
+        "9": {
+            "x": 0,
+            "y": 18,
+            "w": 9,
+            "h": 8
+        },
+        "10": {
+            "x": 9,
+            "y": 18,
+            "w": 9,
+            "h": 8
+        },
+        "11": {
+            "x": 18,
+            "y": 18,
+            "w": 9,
+            "h": 8
+        },
+        "12": {
+            "x": 27,
+            "y": 18,
+            "w": 9,
+            "h": 8
+        }
+    },
+    "importedWithCode": false,
+    "settings": {
+        "gridLayout": {
+            "mode": "responsive",
+            "columnsCount": 36
+        }
+    },
+    "annotations": []
+}

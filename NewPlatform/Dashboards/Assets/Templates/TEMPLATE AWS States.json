@@ -1,0 +1,60 @@
+{
+    "version": 21,
+    "variables": [],
+    "tiles": {
+        "0": {
+            "type": "data",
+            "title": "ThrottledEvents Sum (by Region and APIName)",
+            "query": "/*\nWarning:\n - Rollup `value` is not supported in DQL.\n*/\ntimeseries throttled_events_sum_by_region_apiname = avg(cloud.aws.states.throttled_events_sum_by_region_apiname), by: { dt.entity.custom_device_group }\n| sort arrayAvg(throttled_events_sum_by_region_apiname) desc\n| limit 20",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "visualization": "lineChart"
+        },
+        "1": {
+            "type": "data",
+            "title": "ConsumedCapacity Sum (by Region and APIName)",
+            "query": "/*\nWarning:\n - Rollup `value` is not supported in DQL.\n*/\ntimeseries consumed_capacity_sum_by_region_apiname = avg(cloud.aws.states.consumed_capacity_sum_by_region_apiname), by: { dt.entity.custom_device_group }\n| sort arrayAvg(consumed_capacity_sum_by_region_apiname) desc\n| limit 20",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "visualization": "lineChart"
+        }
+    },
+    "layouts": {
+        "0": {
+            "x": 0,
+            "y": 0,
+            "w": 24,
+            "h": 10
+        },
+        "1": {
+            "x": 24,
+            "y": 0,
+            "w": 24,
+            "h": 10
+        }
+    },
+    "importedWithCode": false,
+    "settings": {
+        "gridLayout": {
+            "mode": "responsive",
+            "columnsCount": 48
+        }
+    },
+    "annotations": []
+}

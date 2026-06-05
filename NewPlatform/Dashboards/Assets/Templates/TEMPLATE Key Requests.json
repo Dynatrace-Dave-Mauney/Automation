@@ -1,0 +1,412 @@
+{
+    "version": 21,
+    "variables": [],
+    "tiles": {
+        "5": {
+            "title": "Failure rate (server side errors)",
+            "type": "data",
+            "query": "timeseries { failure_count = sum(dt.service.request.failure_count), count = sum(dt.service.request.count) }, by: { endpoint.name }\n| fieldsAdd count = failure_count[] / count[]\n| sort arrayAvg(count) desc\n| fieldsRemove failure_count\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "6": {
+            "title": "Failure rate (client side errors)",
+            "type": "data",
+            "query": "timeseries { failure_count = sum(dt.service.request.failure_count), count = sum(dt.service.request.count) }, by: { endpoint.name }\n| fieldsAdd rate = failure_count[] / count[]\n| sort arrayAvg(rate) desc\n| fieldsRemove failure_count, count\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "7": {
+            "title": "Number of server side errors",
+            "type": "data",
+            "query": "/*\nWarning:\n - Rollup `value` is not supported in DQL.\n*/\ntimeseries failure_count = avg(dt.service.request.failure_count), by: { endpoint.name }\n| sort arrayAvg(failure_count) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "8": {
+            "title": "Number of client side errors",
+            "type": "data",
+            "query": "/*\nWarning:\n - Rollup `value` is not supported in DQL.\n*/\ntimeseries failure_count = avg(dt.service.request.failure_count), by: { endpoint.name }\n| sort arrayAvg(failure_count) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "13": {
+            "title": "Failure rate (HTTP 5xx errors)",
+            "type": "data",
+            "query": "timeseries { count = sum(dt.service.request.count, filter: { (http.response.status_code >= 500) AND (http.response.status_code <= 599) }), count.0 = sum(dt.service.request.count) }, by: { endpoint.name }\n| fieldsAdd rate = count[] / count.0[]\n| sort arrayAvg(rate) desc\n| fieldsRemove count.0, count\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "14": {
+            "title": "Failure rate (HTTP 4xx errors)",
+            "type": "data",
+            "query": "timeseries { count = sum(dt.service.request.count, filter: { (http.response.status_code >= 400) AND (http.response.status_code <= 499) }), count.0 = sum(dt.service.request.count) }, by: { endpoint.name }\n| fieldsAdd rate = count[] / count.0[]\n| sort arrayAvg(rate) desc\n| fieldsRemove count.0, count\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "15": {
+            "title": "Number of HTTP 5xx errors",
+            "type": "data",
+            "query": "/*\nWarning:\n - Rollup `value` is not supported in DQL.\n*/\ntimeseries count = avg(dt.service.request.count, filter: { (http.response.status_code >= 500) AND (http.response.status_code <= 599) }), by: { endpoint.name }\n| sort arrayAvg(count) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "16": {
+            "title": "Number of HTTP 4xx errors",
+            "type": "data",
+            "query": "/*\nWarning:\n - Rollup `value` is not supported in DQL.\n*/\ntimeseries count = avg(dt.service.request.count, filter: { (http.response.status_code >= 400) AND (http.response.status_code <= 499) }), by: { endpoint.name }\n| sort arrayAvg(count) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "22": {
+            "title": "Server side response time",
+            "type": "data",
+            "query": "timeseries response_time = avg(dt.service.request.response_time), by: { endpoint.name }\n| sort arrayAvg(response_time) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "23": {
+            "title": "Method response time",
+            "type": "data",
+            "query": "timeseries response_time = avg(dt.service.request.response_time), by: { endpoint.name }\n| sort arrayAvg(response_time) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "24": {
+            "title": "Client side response time",
+            "type": "data",
+            "query": "timeseries response_time = avg(dt.service.request.response_time), by: { endpoint.name }\n| sort arrayAvg(response_time) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "43": {
+            "title": "Request count",
+            "type": "data",
+            "query": "/*\nWarning:\n - Rollup `value` is not supported in DQL.\n*/\ntimeseries count = avg(dt.service.request.count), by: { endpoint.name }\n| sort arrayAvg(count) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "44": {
+            "title": "Request count - server",
+            "type": "data",
+            "query": "/*\nWarning:\n - Rollup `value` is not supported in DQL.\n*/\ntimeseries count = avg(dt.service.request.count), by: { endpoint.name }\n| sort arrayAvg(count) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "45": {
+            "title": "Request count - client",
+            "type": "data",
+            "query": "/*\nWarning:\n - Rollup `value` is not supported in DQL.\n*/\ntimeseries count = avg(dt.service.request.count), by: { endpoint.name }\n| sort arrayAvg(count) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "51": {
+            "title": "Number of calls without server side errors",
+            "type": "data",
+            "query": "/*\nWarning:\n - Rollup `value` is not supported in DQL.\n*/\ntimeseries count = avg(dt.service.request.count, filter: { failed == false }), by: { endpoint.name }\n| sort arrayAvg(count) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "52": {
+            "title": "Number of calls without HTTP 5xx errors",
+            "type": "data",
+            "query": "/*\nWarning:\n - Rollup `value` is not supported in DQL.\n*/\ntimeseries count = avg(dt.service.request.count, filter: { (http.response.status_code < 500) OR (http.response.status_code > 599) }), by: { endpoint.name }\n| sort arrayAvg(count) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "53": {
+            "title": "Number of calls without client side errors",
+            "type": "data",
+            "query": "/*\nWarning:\n - Rollup `value` is not supported in DQL.\n*/\ntimeseries count = avg(dt.service.request.count, filter: { failed == false }), by: { endpoint.name }\n| sort arrayAvg(count) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "54": {
+            "title": "Number of calls without HTTP 4xx errors",
+            "type": "data",
+            "query": "/*\nWarning:\n - Rollup `value` is not supported in DQL.\n*/\ntimeseries count = avg(dt.service.request.count, filter: { (http.response.status_code < 400) OR (http.response.status_code > 499) }), by: { endpoint.name }\n| sort arrayAvg(count) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        }
+    },
+    "layouts": {
+        "5": {
+            "x": 0,
+            "y": 0,
+            "w": 8,
+            "h": 8
+        },
+        "6": {
+            "x": 8,
+            "y": 0,
+            "w": 8,
+            "h": 8
+        },
+        "7": {
+            "x": 16,
+            "y": 0,
+            "w": 8,
+            "h": 8
+        },
+        "8": {
+            "x": 24,
+            "y": 0,
+            "w": 8,
+            "h": 8
+        },
+        "13": {
+            "x": 0,
+            "y": 8,
+            "w": 8,
+            "h": 8
+        },
+        "14": {
+            "x": 8,
+            "y": 8,
+            "w": 8,
+            "h": 8
+        },
+        "15": {
+            "x": 16,
+            "y": 8,
+            "w": 8,
+            "h": 8
+        },
+        "16": {
+            "x": 24,
+            "y": 8,
+            "w": 8,
+            "h": 8
+        },
+        "22": {
+            "x": 8,
+            "y": 16,
+            "w": 8,
+            "h": 8
+        },
+        "23": {
+            "x": 16,
+            "y": 16,
+            "w": 8,
+            "h": 8
+        },
+        "24": {
+            "x": 24,
+            "y": 16,
+            "w": 8,
+            "h": 8
+        },
+        "43": {
+            "x": 0,
+            "y": 16,
+            "w": 8,
+            "h": 8
+        },
+        "44": {
+            "x": 8,
+            "y": 24,
+            "w": 8,
+            "h": 8
+        },
+        "45": {
+            "x": 16,
+            "y": 24,
+            "w": 8,
+            "h": 8
+        },
+        "51": {
+            "x": 0,
+            "y": 24,
+            "w": 8,
+            "h": 8
+        },
+        "52": {
+            "x": 0,
+            "y": 32,
+            "w": 8,
+            "h": 8
+        },
+        "53": {
+            "x": 8,
+            "y": 32,
+            "w": 8,
+            "h": 8
+        },
+        "54": {
+            "x": 24,
+            "y": 24,
+            "w": 8,
+            "h": 8
+        }
+    },
+    "importedWithCode": false,
+    "settings": {
+        "gridLayout": {
+            "mode": "responsive",
+            "columnsCount": 36
+        }
+    },
+    "annotations": []
+}
