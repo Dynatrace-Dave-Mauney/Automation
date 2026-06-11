@@ -1,0 +1,2148 @@
+{
+    "version": 17,
+    "variables": [
+        {
+            "key": "ManagementZone",
+            "type": "code",
+            "input": "import { settingsObjectsClient } from \"@dynatrace-sdk/client-classic-environment-v2\";\nexport default async function () {\n  let mzs = [];\n  let data = await settingsObjectsClient.getSettingsObjects({\n    schemaIds: \"builtin:management-zones\",\n    pageSize: 500\n  });\n  mzs = data.items;\n  if(data.hasOwnProperty(\"nextPageKey\") && data.nextPageKey != null){\n    const q = await next(data.nextPageKey);\n  }\n  let arr = [];\n  (mzs).map(result => {\n    arr.push(result.value.name);\n  });\n  console.log(mzs.length);\n  return [\"Select a Management Zone\"].concat(arr.sort());\n  async function next(npk){\n    const more = await settingsObjectsClient.getSettingsObjects({nextPageKey: npk});\n    console.log(more);\n    mzs = mzs.concat(more.items);\n    if(more.hasOwnProperty(\"nextPageKey\") && more.nextPageKey != null) return await next(more.nextPageKey);\n    else return 1;\n  }\n}",
+            "multiple": false
+        }
+    ],
+    "tiles": {
+        "0": {
+            "type": "data",
+            "title": "Failures",
+            "query": "timeseries sum(dt.service.request.failure_count), by: { dt.entity.service }, \nfilter:dt.entity.service in [fetch dt.entity.service | filter in(managementZones, $ManagementZone) | fields id]\n| fieldsAdd dt.service.request.failure_count = \"sum(dt.service.request.failure_count)\"\n| fieldsAdd service.request.failure_count = arraySum(`sum(dt.service.request.failure_count)`)\n| fieldsAdd name=entityAttr(dt.entity.service, \"entity.name\")\n| sort service.request.failure_count desc\n| limit 20",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "xAxisScaling": "analyzedTimeframe",
+                    "gapPolicy": "gap",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "curve": "linear",
+                    "pointsDisplay": "auto",
+                    "categoricalBarChartSettings": {
+                        "layout": "horizontal",
+                        "categoryAxisTickLayout": "horizontal",
+                        "scale": "absolute",
+                        "groupMode": "stacked",
+                        "colorPaletteMode": "multi-color",
+                        "categoryAxis": [
+                            "name"
+                        ],
+                        "categoryAxisLabel": "name",
+                        "valueAxis": [
+                            "service.request.failure_count"
+                        ],
+                        "valueAxisLabel": "service.request.failure_count",
+                        "tooltipVariant": "single",
+                        "isCategoryLabelVisible": false,
+                        "isValueLabelVisible": false
+                    },
+                    "colorPalette": "categorical",
+                    "valueRepresentation": "absolute",
+                    "truncationMode": "middle",
+                    "xAxisLabel": "timeframe",
+                    "xAxisIsLabelVisible": false,
+                    "hiddenLegendFields": [
+                        "host",
+                        "interval",
+                        "service.request.count",
+                        "service.request.failure_count"
+                    ],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "sum(dt.service.request.failure_count)"
+                        ]
+                    },
+                    "leftYAxisSettings": {
+                        "isLabelVisible": true,
+                        "label": "service.request.count"
+                    },
+                    "legend": {
+                        "hidden": true
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "service.request.count",
+                    "prefixIcon": "",
+                    "recordField": "service.request.count",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "trend": {
+                        "trendType": "auto",
+                        "isVisible": true
+                    },
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "linewrapEnabled": false,
+                    "lineWrapIds": [],
+                    "monospacedFontEnabled": false,
+                    "monospacedFontColumns": [],
+                    "columnWidths": {},
+                    "columnTypeOverrides": [
+                        {
+                            "fields": [
+                                "sum(dt.service.request.failure_count)"
+                            ],
+                            "value": "sparkline",
+                            "id": 1739313391162
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": {
+                        "hidden": false,
+                        "position": "auto"
+                    },
+                    "displayedFields": [
+                        "dt.entity.service",
+                        "dt.service.request.failure_count",
+                        "name"
+                    ],
+                    "dataMappings": {
+                        "value": "service.request.failure_count"
+                    },
+                    "truncationMode": "middle",
+                    "colorMode": "color-palette",
+                    "colorPalette": "blue"
+                },
+                "histogram": {
+                    "legend": "auto",
+                    "yAxis": {
+                        "label": "Frequency",
+                        "scale": "linear"
+                    },
+                    "colorPalette": "categorical",
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "service.request.failure_count",
+                            "rangeAxis": ""
+                        }
+                    ],
+                    "variant": "single",
+                    "truncationMode": "middle",
+                    "displayedFields": [
+                        "dt.entity.service"
+                    ]
+                },
+                "label": {
+                    "showLabel": false
+                },
+                "icon": {
+                    "showIcon": false,
+                    "icon": ""
+                },
+                "valueBoundaries": {
+                    "min": "auto",
+                    "max": "auto"
+                },
+                "autoSelectVisualization": false,
+                "unitsOverrides": [
+                    {
+                        "identifier": "service.request.failure_count",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "none",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1739306406961
+                    }
+                ]
+            },
+            "visualization": "categoricalBarChart",
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "2": {
+            "type": "data",
+            "title": "Failures",
+            "query": "timeseries sum(dt.service.request.failure_count), by: { dt.entity.service }, \nfilter:dt.entity.service in [fetch dt.entity.service | filter in(managementZones, $ManagementZone) | fields id]\n| fieldsAdd dt.service.request.failure_count = \"sum(dt.service.request.failure_count)\"\n| fieldsAdd service.request.failure_count = arraySum(`sum(dt.service.request.failure_count)`)\n| fieldsAdd name=entityAttr(dt.entity.service, \"entity.name\")\n| sort service.request.failure_count desc\n| limit 20",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "xAxisScaling": "analyzedTimeframe",
+                    "gapPolicy": "gap",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "curve": "linear",
+                    "pointsDisplay": "auto",
+                    "categoricalBarChartSettings": {
+                        "layout": "horizontal",
+                        "categoryAxisTickLayout": "horizontal",
+                        "scale": "absolute",
+                        "groupMode": "stacked",
+                        "colorPaletteMode": "multi-color",
+                        "categoryAxis": [
+                            "dt.entity.service",
+                            "dt.service.request.failure_count",
+                            "name"
+                        ],
+                        "categoryAxisLabel": "dt.entity.service,dt.service.request.failure_count,name",
+                        "valueAxis": [
+                            "service.request.failure_count"
+                        ],
+                        "valueAxisLabel": "service.request.failure_count",
+                        "tooltipVariant": "single"
+                    },
+                    "colorPalette": "categorical",
+                    "valueRepresentation": "absolute",
+                    "truncationMode": "middle",
+                    "xAxisLabel": "timeframe",
+                    "xAxisIsLabelVisible": false,
+                    "hiddenLegendFields": [
+                        "dt.entity.service",
+                        "dt.service.request.failure_count",
+                        "interval",
+                        "service.request.failure_count"
+                    ],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "sum(dt.service.request.failure_count)"
+                        ]
+                    },
+                    "leftYAxisSettings": {
+                        "isLabelVisible": false,
+                        "label": "service.request.count"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "service.request.count",
+                    "prefixIcon": "",
+                    "recordField": "service.request.count",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "trend": {
+                        "trendType": "auto",
+                        "isVisible": true
+                    },
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "linewrapEnabled": false,
+                    "lineWrapIds": [],
+                    "monospacedFontEnabled": false,
+                    "monospacedFontColumns": [],
+                    "columnWidths": {},
+                    "columnTypeOverrides": [
+                        {
+                            "fields": [
+                                "sum(dt.service.request.failure_count)"
+                            ],
+                            "value": "sparkline",
+                            "id": 1739313391500
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": {
+                        "hidden": false,
+                        "position": "auto"
+                    },
+                    "displayedFields": [
+                        "dt.entity.service",
+                        "dt.service.request.failure_count",
+                        "name"
+                    ],
+                    "dataMappings": {
+                        "value": "service.request.failure_count"
+                    },
+                    "truncationMode": "middle",
+                    "colorMode": "color-palette",
+                    "colorPalette": "blue"
+                },
+                "histogram": {
+                    "legend": "auto",
+                    "yAxis": {
+                        "label": "Frequency",
+                        "scale": "linear"
+                    },
+                    "colorPalette": "categorical",
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "service.request.failure_count",
+                            "rangeAxis": ""
+                        }
+                    ],
+                    "variant": "single",
+                    "truncationMode": "middle",
+                    "displayedFields": [
+                        "dt.entity.service"
+                    ]
+                },
+                "label": {
+                    "showLabel": false
+                },
+                "icon": {
+                    "showIcon": false,
+                    "icon": ""
+                },
+                "valueBoundaries": {
+                    "min": "auto",
+                    "max": "auto"
+                },
+                "autoSelectVisualization": false,
+                "unitsOverrides": [
+                    {
+                        "identifier": "service.request.failure_count",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "none",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1739306531607
+                    }
+                ]
+            },
+            "visualization": "lineChart",
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "20": {
+            "type": "markdown",
+            "title": "",
+            "content": "# Failures - Overall "
+        },
+        "21": {
+            "type": "markdown",
+            "title": "",
+            "content": "# 5xx Errors"
+        },
+        "22": {
+            "type": "markdown",
+            "title": "",
+            "content": "# 4xx Errors"
+        },
+        "25": {
+            "type": "data",
+            "title": "Successful Requests (HTTP 4xx errors)",
+            "query": "timeseries sum(dt.service.request.count),\n    by:{dt.entity.service},\n    filter:{\n      failed == false\n      and http.response.status_code >= 400\n      and http.response.status_code <= 499\n and dt.entity.service in [fetch dt.entity.service | filter in(managementZones, $ManagementZone) | fields id]}\n| fieldsAdd name=entityAttr(dt.entity.service, \"entity.name\")\n| fieldsAdd service.request.count = arraySum(`sum(dt.service.request.count)`)\n| sort service.request.count desc\n| limit 20\n",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "xAxisScaling": "analyzedTimeframe",
+                    "gapPolicy": "gap",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "curve": "linear",
+                    "pointsDisplay": "auto",
+                    "categoricalBarChartSettings": {
+                        "layout": "horizontal",
+                        "categoryAxisTickLayout": "horizontal",
+                        "scale": "absolute",
+                        "groupMode": "stacked",
+                        "colorPaletteMode": "multi-color",
+                        "categoryAxis": [
+                            "name"
+                        ],
+                        "categoryAxisLabel": "name",
+                        "valueAxis": [
+                            "service.request.count"
+                        ],
+                        "valueAxisLabel": "service.request.count",
+                        "tooltipVariant": "single",
+                        "isCategoryLabelVisible": false,
+                        "isValueLabelVisible": false
+                    },
+                    "colorPalette": "categorical",
+                    "valueRepresentation": "absolute",
+                    "truncationMode": "middle",
+                    "xAxisLabel": "timeframe",
+                    "xAxisIsLabelVisible": false,
+                    "hiddenLegendFields": [
+                        "host",
+                        "interval",
+                        "service.request.count",
+                        "service.request.failure_count",
+                        "http.response.status_code"
+                    ],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "sum(dt.service.request.count)"
+                        ]
+                    },
+                    "leftYAxisSettings": {
+                        "isLabelVisible": true,
+                        "label": "service.request.count"
+                    },
+                    "legend": {
+                        "hidden": true
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "service.request.count",
+                    "prefixIcon": "",
+                    "recordField": "service.request.count",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "trend": {
+                        "trendType": "auto",
+                        "isVisible": true
+                    },
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "linewrapEnabled": false,
+                    "lineWrapIds": [],
+                    "monospacedFontEnabled": false,
+                    "monospacedFontColumns": [],
+                    "columnWidths": {},
+                    "columnTypeOverrides": [
+                        {
+                            "fields": [
+                                "sum(dt.service.request.count)"
+                            ],
+                            "value": "sparkline",
+                            "id": 1739317862252
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": {
+                        "hidden": false,
+                        "position": "auto"
+                    },
+                    "displayedFields": [
+                        "dt.entity.service",
+                        "name"
+                    ],
+                    "dataMappings": {
+                        "value": "service.request.count"
+                    },
+                    "truncationMode": "middle",
+                    "colorMode": "color-palette",
+                    "colorPalette": "blue"
+                },
+                "histogram": {
+                    "legend": "auto",
+                    "yAxis": {
+                        "label": "Frequency",
+                        "scale": "linear"
+                    },
+                    "colorPalette": "categorical",
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "service.request.count",
+                            "rangeAxis": ""
+                        }
+                    ],
+                    "variant": "single",
+                    "truncationMode": "middle",
+                    "displayedFields": [
+                        "dt.entity.service",
+                        "name"
+                    ]
+                },
+                "label": {
+                    "showLabel": false
+                },
+                "icon": {
+                    "showIcon": false,
+                    "icon": ""
+                },
+                "valueBoundaries": {
+                    "min": "auto",
+                    "max": "auto"
+                },
+                "autoSelectVisualization": false,
+                "unitsOverrides": [
+                    {
+                        "identifier": "service.request.count",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "none",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1739316461756
+                    }
+                ]
+            },
+            "visualization": "categoricalBarChart",
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "26": {
+            "type": "data",
+            "title": "Successful Requests (HTTP 4xx errors)",
+            "query": "timeseries sum(dt.service.request.count),\n    by:{dt.entity.service},\n    filter:{\n      failed == false\n      and http.response.status_code >= 400\n      and http.response.status_code <= 499\n and dt.entity.service in [fetch dt.entity.service | filter in(managementZones, $ManagementZone) | fields id]}\n| fieldsAdd name=entityAttr(dt.entity.service, \"entity.name\")\n| fieldsAdd service.request.count = arraySum(`sum(dt.service.request.count)`)\n| sort service.request.count desc\n| limit 20\n",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "xAxisScaling": "analyzedTimeframe",
+                    "gapPolicy": "gap",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "curve": "linear",
+                    "pointsDisplay": "auto",
+                    "categoricalBarChartSettings": {
+                        "layout": "horizontal",
+                        "categoryAxisTickLayout": "horizontal",
+                        "scale": "absolute",
+                        "groupMode": "stacked",
+                        "colorPaletteMode": "multi-color",
+                        "categoryAxis": [
+                            "dt.entity.service",
+                            "name"
+                        ],
+                        "categoryAxisLabel": "dt.entity.service,name",
+                        "valueAxis": [
+                            "service.request.count"
+                        ],
+                        "valueAxisLabel": "service.request.count",
+                        "tooltipVariant": "single"
+                    },
+                    "colorPalette": "categorical",
+                    "valueRepresentation": "absolute",
+                    "truncationMode": "middle",
+                    "xAxisLabel": "timeframe",
+                    "xAxisIsLabelVisible": false,
+                    "hiddenLegendFields": [
+                        "dt.entity.service",
+                        "interval",
+                        "service.request.count"
+                    ],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "sum(dt.service.request.count)"
+                        ]
+                    },
+                    "leftYAxisSettings": {
+                        "isLabelVisible": false,
+                        "label": "service.request.count"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "service.request.count",
+                    "prefixIcon": "",
+                    "recordField": "service.request.count",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "trend": {
+                        "trendType": "auto",
+                        "isVisible": true
+                    },
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "linewrapEnabled": false,
+                    "lineWrapIds": [],
+                    "monospacedFontEnabled": false,
+                    "monospacedFontColumns": [],
+                    "columnWidths": {},
+                    "columnTypeOverrides": [
+                        {
+                            "fields": [
+                                "sum(dt.service.request.count)"
+                            ],
+                            "value": "sparkline",
+                            "id": 1739317862252
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": {
+                        "hidden": false,
+                        "position": "auto"
+                    },
+                    "displayedFields": [
+                        "dt.entity.service",
+                        "name"
+                    ],
+                    "dataMappings": {
+                        "value": "service.request.count"
+                    },
+                    "truncationMode": "middle",
+                    "colorMode": "color-palette",
+                    "colorPalette": "blue"
+                },
+                "histogram": {
+                    "legend": "auto",
+                    "yAxis": {
+                        "label": "Frequency",
+                        "scale": "linear"
+                    },
+                    "colorPalette": "categorical",
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "service.request.count",
+                            "rangeAxis": ""
+                        }
+                    ],
+                    "variant": "single",
+                    "truncationMode": "middle",
+                    "displayedFields": [
+                        "dt.entity.service",
+                        "name"
+                    ]
+                },
+                "label": {
+                    "showLabel": false
+                },
+                "icon": {
+                    "showIcon": false,
+                    "icon": ""
+                },
+                "valueBoundaries": {
+                    "min": "auto",
+                    "max": "auto"
+                },
+                "autoSelectVisualization": false,
+                "unitsOverrides": [
+                    {
+                        "identifier": "service.request.count",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "none",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1739316461756
+                    }
+                ]
+            },
+            "visualization": "lineChart",
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "27": {
+            "type": "data",
+            "title": "Failed Requests (HTTP 4xx errors)",
+            "query": "timeseries sum(dt.service.request.count),\n    by:{dt.entity.service},\n    filter:{\n      failed == true\n      and http.response.status_code >= 400\n      and http.response.status_code <= 499 and dt.entity.service in [fetch dt.entity.service | filter in(managementZones, $ManagementZone) | fields id]}\n| fieldsAdd name=entityAttr(dt.entity.service, \"entity.name\")\n| fieldsAdd service.request.count = arraySum(`sum(dt.service.request.count)`)\n| sort service.request.count desc\n| limit 20\n",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "xAxisScaling": "analyzedTimeframe",
+                    "gapPolicy": "gap",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "curve": "linear",
+                    "pointsDisplay": "auto",
+                    "categoricalBarChartSettings": {
+                        "layout": "horizontal",
+                        "categoryAxisTickLayout": "horizontal",
+                        "scale": "absolute",
+                        "groupMode": "stacked",
+                        "colorPaletteMode": "multi-color",
+                        "categoryAxis": [
+                            "name"
+                        ],
+                        "categoryAxisLabel": "name",
+                        "valueAxis": [
+                            "service.request.count"
+                        ],
+                        "valueAxisLabel": "service.request.count",
+                        "tooltipVariant": "single",
+                        "isCategoryLabelVisible": false,
+                        "isValueLabelVisible": false
+                    },
+                    "colorPalette": "categorical",
+                    "valueRepresentation": "absolute",
+                    "truncationMode": "middle",
+                    "xAxisLabel": "timeframe",
+                    "xAxisIsLabelVisible": false,
+                    "hiddenLegendFields": [
+                        "host",
+                        "interval",
+                        "service.request.count",
+                        "service.request.failure_count",
+                        "http.response.status_code"
+                    ],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "sum(dt.service.request.count)"
+                        ]
+                    },
+                    "leftYAxisSettings": {
+                        "isLabelVisible": true,
+                        "label": "service.request.count"
+                    },
+                    "legend": {
+                        "hidden": true
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "service.request.count",
+                    "prefixIcon": "",
+                    "recordField": "service.request.count",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "trend": {
+                        "trendType": "auto",
+                        "isVisible": true
+                    },
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "linewrapEnabled": false,
+                    "lineWrapIds": [],
+                    "monospacedFontEnabled": false,
+                    "monospacedFontColumns": [],
+                    "columnWidths": {},
+                    "columnTypeOverrides": [
+                        {
+                            "fields": [
+                                "sum(dt.service.request.count)"
+                            ],
+                            "value": "sparkline",
+                            "id": 1739317862252
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": {
+                        "hidden": false,
+                        "position": "auto"
+                    },
+                    "displayedFields": [
+                        "dt.entity.service",
+                        "name"
+                    ],
+                    "dataMappings": {
+                        "value": "service.request.count"
+                    },
+                    "truncationMode": "middle",
+                    "colorMode": "color-palette",
+                    "colorPalette": "blue"
+                },
+                "histogram": {
+                    "legend": "auto",
+                    "yAxis": {
+                        "label": "Frequency",
+                        "scale": "linear"
+                    },
+                    "colorPalette": "categorical",
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "service.request.count",
+                            "rangeAxis": ""
+                        }
+                    ],
+                    "variant": "single",
+                    "truncationMode": "middle",
+                    "displayedFields": [
+                        "dt.entity.service",
+                        "name"
+                    ]
+                },
+                "label": {
+                    "showLabel": false
+                },
+                "icon": {
+                    "showIcon": false,
+                    "icon": ""
+                },
+                "valueBoundaries": {
+                    "min": "auto",
+                    "max": "auto"
+                },
+                "autoSelectVisualization": false,
+                "unitsOverrides": [
+                    {
+                        "identifier": "service.request.count",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "none",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1739316461756
+                    }
+                ]
+            },
+            "visualization": "categoricalBarChart",
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "28": {
+            "type": "data",
+            "title": "Failed Requests (HTTP 4xx errors)",
+            "query": "timeseries sum(dt.service.request.count),\n    by:{dt.entity.service},\n    filter:{\n      failed == true\n      and http.response.status_code >= 400\n      and http.response.status_code <= 499 and dt.entity.service in [fetch dt.entity.service | filter in(managementZones, $ManagementZone) | fields id]}\n| fieldsAdd name=entityAttr(dt.entity.service, \"entity.name\")\n| fieldsAdd service.request.count = arraySum(`sum(dt.service.request.count)`)\n| sort service.request.count desc\n| limit 20\n",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "xAxisScaling": "analyzedTimeframe",
+                    "gapPolicy": "gap",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "curve": "linear",
+                    "pointsDisplay": "auto",
+                    "categoricalBarChartSettings": {
+                        "layout": "horizontal",
+                        "categoryAxisTickLayout": "horizontal",
+                        "scale": "absolute",
+                        "groupMode": "stacked",
+                        "colorPaletteMode": "multi-color",
+                        "categoryAxis": [
+                            "name"
+                        ],
+                        "categoryAxisLabel": "name",
+                        "valueAxis": [
+                            "service.request.count"
+                        ],
+                        "valueAxisLabel": "service.request.count",
+                        "tooltipVariant": "single"
+                    },
+                    "colorPalette": "categorical",
+                    "valueRepresentation": "absolute",
+                    "truncationMode": "middle",
+                    "xAxisLabel": "timeframe",
+                    "xAxisIsLabelVisible": false,
+                    "hiddenLegendFields": [
+                        "dt.entity.service",
+                        "interval",
+                        "service.request.count"
+                    ],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "sum(dt.service.request.count)"
+                        ]
+                    },
+                    "leftYAxisSettings": {
+                        "isLabelVisible": false,
+                        "label": "service.request.count"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "service.request.count",
+                    "prefixIcon": "",
+                    "recordField": "service.request.count",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "trend": {
+                        "trendType": "auto",
+                        "isVisible": true
+                    },
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "linewrapEnabled": false,
+                    "lineWrapIds": [],
+                    "monospacedFontEnabled": false,
+                    "monospacedFontColumns": [],
+                    "columnWidths": {},
+                    "columnTypeOverrides": [
+                        {
+                            "fields": [
+                                "sum(dt.service.request.count)"
+                            ],
+                            "value": "sparkline",
+                            "id": 1739317862252
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": {
+                        "hidden": false,
+                        "position": "auto"
+                    },
+                    "displayedFields": [
+                        "dt.entity.service",
+                        "name"
+                    ],
+                    "dataMappings": {
+                        "value": "service.request.count"
+                    },
+                    "truncationMode": "middle",
+                    "colorMode": "color-palette",
+                    "colorPalette": "blue"
+                },
+                "histogram": {
+                    "legend": "auto",
+                    "yAxis": {
+                        "label": "Frequency",
+                        "scale": "linear"
+                    },
+                    "colorPalette": "categorical",
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "service.request.count",
+                            "rangeAxis": ""
+                        }
+                    ],
+                    "variant": "single",
+                    "truncationMode": "middle",
+                    "displayedFields": [
+                        "dt.entity.service",
+                        "name"
+                    ]
+                },
+                "label": {
+                    "showLabel": false
+                },
+                "icon": {
+                    "showIcon": false,
+                    "icon": ""
+                },
+                "valueBoundaries": {
+                    "min": "auto",
+                    "max": "auto"
+                },
+                "autoSelectVisualization": false,
+                "unitsOverrides": [
+                    {
+                        "identifier": "service.request.count",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "none",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1739316461756
+                    }
+                ]
+            },
+            "visualization": "lineChart",
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "29": {
+            "type": "data",
+            "title": "Failed Requests (HTTP 5xx errors)",
+            "query": "timeseries sum(dt.service.request.count),\n    by:{dt.entity.service},\n    filter:{\n      failed == true\n      and http.response.status_code >= 500\n      and http.response.status_code <= 599 and dt.entity.service in [fetch dt.entity.service | filter in(managementZones, $ManagementZone) | fields id]}\n| fieldsAdd name=entityAttr(dt.entity.service, \"entity.name\")\n| fieldsAdd service.request.count = arraySum(`sum(dt.service.request.count)`)\n| sort service.request.count desc\n| limit 20\n",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "xAxisScaling": "analyzedTimeframe",
+                    "gapPolicy": "gap",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "curve": "linear",
+                    "pointsDisplay": "auto",
+                    "categoricalBarChartSettings": {
+                        "layout": "horizontal",
+                        "categoryAxisTickLayout": "horizontal",
+                        "scale": "absolute",
+                        "groupMode": "stacked",
+                        "colorPaletteMode": "multi-color",
+                        "categoryAxis": [
+                            "name"
+                        ],
+                        "categoryAxisLabel": "name",
+                        "valueAxis": [
+                            "service.request.count"
+                        ],
+                        "valueAxisLabel": "service.request.count",
+                        "tooltipVariant": "single",
+                        "isCategoryLabelVisible": false,
+                        "isValueLabelVisible": false
+                    },
+                    "colorPalette": "categorical",
+                    "valueRepresentation": "absolute",
+                    "truncationMode": "middle",
+                    "xAxisLabel": "timeframe",
+                    "xAxisIsLabelVisible": false,
+                    "hiddenLegendFields": [
+                        "host",
+                        "interval",
+                        "service.request.count",
+                        "service.request.failure_count",
+                        "http.response.status_code"
+                    ],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "sum(dt.service.request.count)"
+                        ]
+                    },
+                    "leftYAxisSettings": {
+                        "isLabelVisible": true,
+                        "label": "service.request.count"
+                    },
+                    "legend": {
+                        "hidden": true
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "service.request.count",
+                    "prefixIcon": "",
+                    "recordField": "service.request.count",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "trend": {
+                        "trendType": "auto",
+                        "isVisible": true
+                    },
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "linewrapEnabled": false,
+                    "lineWrapIds": [],
+                    "monospacedFontEnabled": false,
+                    "monospacedFontColumns": [],
+                    "columnWidths": {},
+                    "columnTypeOverrides": [
+                        {
+                            "fields": [
+                                "sum(dt.service.request.count)"
+                            ],
+                            "value": "sparkline",
+                            "id": 1739317862252
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": {
+                        "hidden": false,
+                        "position": "auto"
+                    },
+                    "displayedFields": [
+                        "dt.entity.service",
+                        "name"
+                    ],
+                    "dataMappings": {
+                        "value": "service.request.count"
+                    },
+                    "truncationMode": "middle",
+                    "colorMode": "color-palette",
+                    "colorPalette": "blue"
+                },
+                "histogram": {
+                    "legend": "auto",
+                    "yAxis": {
+                        "label": "Frequency",
+                        "scale": "linear"
+                    },
+                    "colorPalette": "categorical",
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "service.request.count",
+                            "rangeAxis": ""
+                        }
+                    ],
+                    "variant": "single",
+                    "truncationMode": "middle",
+                    "displayedFields": [
+                        "dt.entity.service",
+                        "name"
+                    ]
+                },
+                "label": {
+                    "showLabel": false
+                },
+                "icon": {
+                    "showIcon": false,
+                    "icon": ""
+                },
+                "valueBoundaries": {
+                    "min": "auto",
+                    "max": "auto"
+                },
+                "autoSelectVisualization": false,
+                "unitsOverrides": [
+                    {
+                        "identifier": "service.request.count",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "none",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1739316461756
+                    }
+                ]
+            },
+            "visualization": "categoricalBarChart",
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "30": {
+            "type": "data",
+            "title": "Failed Requests (HTTP 5xx errors)",
+            "query": "timeseries sum(dt.service.request.count),\n    by:{dt.entity.service},\n    filter:{\n      failed == true\n      and http.response.status_code >= 500\n      and http.response.status_code <= 599 and dt.entity.service in [fetch dt.entity.service | filter in(managementZones, $ManagementZone) | fields id]}\n| fieldsAdd name=entityAttr(dt.entity.service, \"entity.name\")\n| fieldsAdd service.request.count = arraySum(`sum(dt.service.request.count)`)\n| sort service.request.count desc\n| limit 20\n",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "xAxisScaling": "analyzedTimeframe",
+                    "gapPolicy": "gap",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "curve": "linear",
+                    "pointsDisplay": "auto",
+                    "categoricalBarChartSettings": {
+                        "layout": "horizontal",
+                        "categoryAxisTickLayout": "horizontal",
+                        "scale": "absolute",
+                        "groupMode": "stacked",
+                        "colorPaletteMode": "multi-color",
+                        "categoryAxis": [
+                            "dt.entity.service",
+                            "name"
+                        ],
+                        "categoryAxisLabel": "dt.entity.service,name",
+                        "valueAxis": [
+                            "service.request.count"
+                        ],
+                        "valueAxisLabel": "service.request.count",
+                        "tooltipVariant": "single"
+                    },
+                    "colorPalette": "categorical",
+                    "valueRepresentation": "absolute",
+                    "truncationMode": "middle",
+                    "xAxisLabel": "timeframe",
+                    "xAxisIsLabelVisible": false,
+                    "hiddenLegendFields": [
+                        "dt.entity.service",
+                        "interval",
+                        "service.request.count"
+                    ],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "sum(dt.service.request.count)"
+                        ]
+                    },
+                    "leftYAxisSettings": {
+                        "isLabelVisible": false,
+                        "label": "service.request.count"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "service.request.count",
+                    "prefixIcon": "",
+                    "recordField": "service.request.count",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "trend": {
+                        "trendType": "auto",
+                        "isVisible": true
+                    },
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "linewrapEnabled": false,
+                    "lineWrapIds": [],
+                    "monospacedFontEnabled": false,
+                    "monospacedFontColumns": [],
+                    "columnWidths": {},
+                    "columnTypeOverrides": [
+                        {
+                            "fields": [
+                                "sum(dt.service.request.count)"
+                            ],
+                            "value": "sparkline",
+                            "id": 1739317862252
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": {
+                        "hidden": false,
+                        "position": "auto"
+                    },
+                    "displayedFields": [
+                        "dt.entity.service",
+                        "name"
+                    ],
+                    "dataMappings": {
+                        "value": "service.request.count"
+                    },
+                    "truncationMode": "middle",
+                    "colorMode": "color-palette",
+                    "colorPalette": "blue"
+                },
+                "histogram": {
+                    "legend": "auto",
+                    "yAxis": {
+                        "label": "Frequency",
+                        "scale": "linear"
+                    },
+                    "colorPalette": "categorical",
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "service.request.count",
+                            "rangeAxis": ""
+                        }
+                    ],
+                    "variant": "single",
+                    "truncationMode": "middle",
+                    "displayedFields": [
+                        "dt.entity.service",
+                        "name"
+                    ]
+                },
+                "label": {
+                    "showLabel": false
+                },
+                "icon": {
+                    "showIcon": false,
+                    "icon": ""
+                },
+                "valueBoundaries": {
+                    "min": "auto",
+                    "max": "auto"
+                },
+                "autoSelectVisualization": false,
+                "unitsOverrides": [
+                    {
+                        "identifier": "service.request.count",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "none",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1739316461756
+                    }
+                ]
+            },
+            "visualization": "lineChart",
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "31": {
+            "type": "data",
+            "title": "Successful Requests (HTTP 5xx errors)",
+            "query": "timeseries sum(dt.service.request.count),\n    by:{dt.entity.service},\n    filter:{\n      failed == false\n      and http.response.status_code >= 500\n      and http.response.status_code <= 599 and dt.entity.service in [fetch dt.entity.service | filter in(managementZones, $ManagementZone) | fields id]}\n| fieldsAdd name=entityAttr(dt.entity.service, \"entity.name\")\n| fieldsAdd service.request.count = arraySum(`sum(dt.service.request.count)`)\n| sort service.request.count desc\n| limit 20\n",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "xAxisScaling": "analyzedTimeframe",
+                    "gapPolicy": "gap",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "curve": "linear",
+                    "pointsDisplay": "auto",
+                    "categoricalBarChartSettings": {
+                        "layout": "horizontal",
+                        "categoryAxisTickLayout": "horizontal",
+                        "scale": "absolute",
+                        "groupMode": "stacked",
+                        "colorPaletteMode": "multi-color",
+                        "categoryAxis": [
+                            "name"
+                        ],
+                        "categoryAxisLabel": "name",
+                        "valueAxis": [
+                            "service.request.count"
+                        ],
+                        "valueAxisLabel": "service.request.count",
+                        "tooltipVariant": "single",
+                        "isCategoryLabelVisible": false,
+                        "isValueLabelVisible": false
+                    },
+                    "colorPalette": "categorical",
+                    "valueRepresentation": "absolute",
+                    "truncationMode": "middle",
+                    "xAxisLabel": "timeframe",
+                    "xAxisIsLabelVisible": false,
+                    "hiddenLegendFields": [
+                        "host",
+                        "interval",
+                        "service.request.count",
+                        "service.request.failure_count",
+                        "http.response.status_code"
+                    ],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "sum(dt.service.request.count)"
+                        ]
+                    },
+                    "leftYAxisSettings": {
+                        "isLabelVisible": true,
+                        "label": "service.request.count"
+                    },
+                    "legend": {
+                        "hidden": true
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "service.request.count",
+                    "prefixIcon": "",
+                    "recordField": "service.request.count",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "trend": {
+                        "trendType": "auto",
+                        "isVisible": true
+                    },
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "linewrapEnabled": false,
+                    "lineWrapIds": [],
+                    "monospacedFontEnabled": false,
+                    "monospacedFontColumns": [],
+                    "columnWidths": {},
+                    "columnTypeOverrides": [
+                        {
+                            "fields": [
+                                "sum(dt.service.request.count)"
+                            ],
+                            "value": "sparkline",
+                            "id": 1739317862252
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": {
+                        "hidden": false,
+                        "position": "auto"
+                    },
+                    "displayedFields": [
+                        "dt.entity.service",
+                        "name"
+                    ],
+                    "dataMappings": {
+                        "value": "service.request.count"
+                    },
+                    "truncationMode": "middle",
+                    "colorMode": "color-palette",
+                    "colorPalette": "blue"
+                },
+                "histogram": {
+                    "legend": "auto",
+                    "yAxis": {
+                        "label": "Frequency",
+                        "scale": "linear"
+                    },
+                    "colorPalette": "categorical",
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "service.request.count",
+                            "rangeAxis": ""
+                        }
+                    ],
+                    "variant": "single",
+                    "truncationMode": "middle",
+                    "displayedFields": [
+                        "dt.entity.service",
+                        "name"
+                    ]
+                },
+                "label": {
+                    "showLabel": false
+                },
+                "icon": {
+                    "showIcon": false,
+                    "icon": ""
+                },
+                "valueBoundaries": {
+                    "min": "auto",
+                    "max": "auto"
+                },
+                "autoSelectVisualization": false,
+                "unitsOverrides": [
+                    {
+                        "identifier": "service.request.count",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "none",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1739316461756
+                    }
+                ]
+            },
+            "visualization": "categoricalBarChart",
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "32": {
+            "type": "data",
+            "title": "Successful Requests (HTTP 5xx errors)",
+            "query": "timeseries sum(dt.service.request.count),\n    by:{dt.entity.service},\n    filter:{\n      failed == false\n      and http.response.status_code >= 500\n      and http.response.status_code <= 599 and dt.entity.service in [fetch dt.entity.service | filter in(managementZones, $ManagementZone) | fields id]}\n| fieldsAdd name=entityAttr(dt.entity.service, \"entity.name\")\n| fieldsAdd service.request.count = arraySum(`sum(dt.service.request.count)`)\n| sort service.request.count desc\n| limit 20\n",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "xAxisScaling": "analyzedTimeframe",
+                    "gapPolicy": "gap",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "curve": "linear",
+                    "pointsDisplay": "auto",
+                    "categoricalBarChartSettings": {
+                        "layout": "horizontal",
+                        "categoryAxisTickLayout": "horizontal",
+                        "scale": "absolute",
+                        "groupMode": "stacked",
+                        "colorPaletteMode": "multi-color",
+                        "categoryAxis": [
+                            "dt.entity.service",
+                            "name"
+                        ],
+                        "categoryAxisLabel": "dt.entity.service,name",
+                        "valueAxis": [
+                            "service.request.count"
+                        ],
+                        "valueAxisLabel": "service.request.count",
+                        "tooltipVariant": "single"
+                    },
+                    "colorPalette": "categorical",
+                    "valueRepresentation": "absolute",
+                    "truncationMode": "middle",
+                    "xAxisLabel": "timeframe",
+                    "xAxisIsLabelVisible": false,
+                    "hiddenLegendFields": [
+                        "dt.entity.service",
+                        "interval",
+                        "service.request.count"
+                    ],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "sum(dt.service.request.count)"
+                        ]
+                    },
+                    "leftYAxisSettings": {
+                        "isLabelVisible": false,
+                        "label": "service.request.count"
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "service.request.count",
+                    "prefixIcon": "",
+                    "recordField": "service.request.count",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "trend": {
+                        "trendType": "auto",
+                        "isVisible": true
+                    },
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "linewrapEnabled": false,
+                    "lineWrapIds": [],
+                    "monospacedFontEnabled": false,
+                    "monospacedFontColumns": [],
+                    "columnWidths": {},
+                    "columnTypeOverrides": [
+                        {
+                            "fields": [
+                                "sum(dt.service.request.count)"
+                            ],
+                            "value": "sparkline",
+                            "id": 1739317862252
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": {
+                        "hidden": false,
+                        "position": "auto"
+                    },
+                    "displayedFields": [
+                        "dt.entity.service",
+                        "name"
+                    ],
+                    "dataMappings": {
+                        "value": "service.request.count"
+                    },
+                    "truncationMode": "middle",
+                    "colorMode": "color-palette",
+                    "colorPalette": "blue"
+                },
+                "histogram": {
+                    "legend": "auto",
+                    "yAxis": {
+                        "label": "Frequency",
+                        "scale": "linear"
+                    },
+                    "colorPalette": "categorical",
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        },
+                        {
+                            "valueAxis": "service.request.count",
+                            "rangeAxis": ""
+                        }
+                    ],
+                    "variant": "single",
+                    "truncationMode": "middle",
+                    "displayedFields": [
+                        "dt.entity.service",
+                        "name"
+                    ]
+                },
+                "label": {
+                    "showLabel": false
+                },
+                "icon": {
+                    "showIcon": false,
+                    "icon": ""
+                },
+                "valueBoundaries": {
+                    "min": "auto",
+                    "max": "auto"
+                },
+                "autoSelectVisualization": false,
+                "unitsOverrides": [
+                    {
+                        "identifier": "service.request.count",
+                        "unitCategory": "unspecified",
+                        "baseUnit": "none",
+                        "displayUnit": null,
+                        "decimals": 0,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1739316461756
+                    }
+                ]
+            },
+            "visualization": "lineChart",
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "33": {
+            "type": "data",
+            "title": "HTTP 5xx Rate",
+            "query": "// calculate HTTP 5xx response status code request rate\ntimeseries {total = sum(dt.service.request.count)}\n| join [\n  timeseries {fiveXX = sum(dt.service.request.count, default: 0.0)},\n  filter:http.response.status_code >= 500 and http.response.status_code <= 599 and dt.entity.service in [fetch dt.entity.service | filter in(managementZones, $ManagementZone) | fields id]], kind:leftOuter, prefix: \"httpState.\", on:{ timeframe }\n  | fieldsAdd {rate5xx = httpState.fiveXX[] / total[] * 100}\n  | fields rate5xx, timeframe, interval",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "xAxisScaling": "analyzedTimeframe",
+                    "gapPolicy": "gap",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "curve": "linear",
+                    "pointsDisplay": "auto",
+                    "categoricalBarChartSettings": {
+                        "layout": "horizontal",
+                        "categoryAxisTickLayout": "horizontal",
+                        "scale": "absolute",
+                        "groupMode": "stacked",
+                        "colorPaletteMode": "multi-color",
+                        "categoryAxis": [
+                            "interval"
+                        ],
+                        "categoryAxisLabel": "interval",
+                        "valueAxis": [
+                            "interval"
+                        ],
+                        "valueAxisLabel": "interval",
+                        "tooltipVariant": "single"
+                    },
+                    "colorPalette": "categorical",
+                    "valueRepresentation": "absolute",
+                    "truncationMode": "middle",
+                    "xAxisLabel": "timeframe",
+                    "xAxisIsLabelVisible": false,
+                    "hiddenLegendFields": [
+                        "host",
+                        "interval",
+                        "service.request.failure_count"
+                    ],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "rate5xx"
+                        ]
+                    },
+                    "leftYAxisSettings": {
+                        "isLabelVisible": false,
+                        "label": "service.request.failure_count"
+                    },
+                    "legend": {
+                        "hidden": true
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "service.request.failure_count",
+                    "prefixIcon": "",
+                    "recordField": "service.request.failure_count",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "trend": {
+                        "trendType": "auto",
+                        "isVisible": true
+                    },
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "linewrapEnabled": false,
+                    "lineWrapIds": [],
+                    "monospacedFontEnabled": false,
+                    "monospacedFontColumns": [],
+                    "columnWidths": {},
+                    "columnTypeOverrides": [
+                        {
+                            "fields": [
+                                "rate5xx"
+                            ],
+                            "value": "sparkline",
+                            "id": 1739386257239
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": {
+                        "hidden": false,
+                        "position": "auto"
+                    },
+                    "displayedFields": [],
+                    "dataMappings": {},
+                    "truncationMode": "middle",
+                    "colorMode": "color-palette",
+                    "colorPalette": "blue"
+                },
+                "histogram": {
+                    "legend": "auto",
+                    "yAxis": {
+                        "label": "Frequency",
+                        "scale": "linear"
+                    },
+                    "colorPalette": "categorical",
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ],
+                    "variant": "single",
+                    "truncationMode": "middle",
+                    "displayedFields": []
+                },
+                "label": {
+                    "showLabel": false
+                },
+                "icon": {
+                    "showIcon": false,
+                    "icon": ""
+                },
+                "valueBoundaries": {
+                    "min": "auto",
+                    "max": "auto"
+                },
+                "autoSelectVisualization": false,
+                "unitsOverrides": [
+                    {
+                        "identifier": "rate5xx",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1739372752487
+                    }
+                ]
+            },
+            "visualization": "lineChart",
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        },
+        "34": {
+            "type": "data",
+            "title": "HTTP 4xx Rate",
+            "query": "// calculate HTTP 5xx response status code request rate\ntimeseries {total = sum(dt.service.request.count)}\n| join [\n  timeseries {fiveXX = sum(dt.service.request.count, default: 0.0)},\n  filter:http.response.status_code >= 400 and http.response.status_code <= 499 and dt.entity.service in [fetch dt.entity.service | filter in(managementZones, $ManagementZone) | fields id]], kind:leftOuter, prefix: \"httpState.\", on:{ timeframe }\n  | fieldsAdd {rate5xx = httpState.fiveXX[] / total[] * 100}\n  | fields rate5xx, timeframe, interval",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "thresholds": [],
+                "chartSettings": {
+                    "xAxisScaling": "analyzedTimeframe",
+                    "gapPolicy": "gap",
+                    "circleChartSettings": {
+                        "groupingThresholdType": "relative",
+                        "groupingThresholdValue": 0,
+                        "valueType": "relative"
+                    },
+                    "categoryOverrides": {},
+                    "curve": "linear",
+                    "pointsDisplay": "auto",
+                    "categoricalBarChartSettings": {
+                        "layout": "horizontal",
+                        "categoryAxisTickLayout": "horizontal",
+                        "scale": "absolute",
+                        "groupMode": "stacked",
+                        "colorPaletteMode": "multi-color",
+                        "categoryAxis": [
+                            "interval"
+                        ],
+                        "categoryAxisLabel": "interval",
+                        "valueAxis": [
+                            "interval"
+                        ],
+                        "valueAxisLabel": "interval",
+                        "tooltipVariant": "single"
+                    },
+                    "colorPalette": "categorical",
+                    "valueRepresentation": "absolute",
+                    "truncationMode": "middle",
+                    "xAxisLabel": "timeframe",
+                    "xAxisIsLabelVisible": false,
+                    "hiddenLegendFields": [
+                        "host",
+                        "interval",
+                        "service.request.failure_count"
+                    ],
+                    "fieldMapping": {
+                        "timestamp": "timeframe",
+                        "leftAxisValues": [
+                            "rate5xx"
+                        ]
+                    },
+                    "leftYAxisSettings": {
+                        "isLabelVisible": false,
+                        "label": "service.request.failure_count"
+                    },
+                    "legend": {
+                        "hidden": true
+                    }
+                },
+                "singleValue": {
+                    "showLabel": true,
+                    "label": "service.request.failure_count",
+                    "prefixIcon": "",
+                    "recordField": "service.request.failure_count",
+                    "autoscale": true,
+                    "alignment": "center",
+                    "trend": {
+                        "trendType": "auto",
+                        "isVisible": true
+                    },
+                    "colorThresholdTarget": "value"
+                },
+                "table": {
+                    "rowDensity": "condensed",
+                    "enableSparklines": false,
+                    "hiddenColumns": [],
+                    "linewrapEnabled": false,
+                    "lineWrapIds": [],
+                    "monospacedFontEnabled": false,
+                    "monospacedFontColumns": [],
+                    "columnWidths": {},
+                    "columnTypeOverrides": [
+                        {
+                            "fields": [
+                                "rate5xx"
+                            ],
+                            "value": "sparkline",
+                            "id": 1739372841610
+                        }
+                    ]
+                },
+                "honeycomb": {
+                    "shape": "hexagon",
+                    "legend": {
+                        "hidden": false,
+                        "position": "auto"
+                    },
+                    "displayedFields": [],
+                    "dataMappings": {},
+                    "truncationMode": "middle",
+                    "colorMode": "color-palette",
+                    "colorPalette": "blue"
+                },
+                "histogram": {
+                    "legend": "auto",
+                    "yAxis": {
+                        "label": "Frequency",
+                        "scale": "linear"
+                    },
+                    "colorPalette": "categorical",
+                    "dataMappings": [
+                        {
+                            "valueAxis": "interval",
+                            "rangeAxis": ""
+                        }
+                    ],
+                    "variant": "single",
+                    "truncationMode": "middle",
+                    "displayedFields": []
+                },
+                "label": {
+                    "showLabel": false
+                },
+                "icon": {
+                    "showIcon": false,
+                    "icon": ""
+                },
+                "valueBoundaries": {
+                    "min": "auto",
+                    "max": "auto"
+                },
+                "autoSelectVisualization": false,
+                "unitsOverrides": [
+                    {
+                        "identifier": "rate5xx",
+                        "unitCategory": "percentage",
+                        "baseUnit": "percent",
+                        "displayUnit": null,
+                        "decimals": 2,
+                        "suffix": "",
+                        "delimiter": false,
+                        "added": 1739372752487
+                    }
+                ]
+            },
+            "visualization": "lineChart",
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            }
+        }
+    },
+    "layouts": {
+        "0": {
+            "x": 0,
+            "y": 1,
+            "w": 12,
+            "h": 6
+        },
+        "2": {
+            "x": 12,
+            "y": 1,
+            "w": 12,
+            "h": 6
+        },
+        "20": {
+            "x": 0,
+            "y": 0,
+            "w": 24,
+            "h": 1
+        },
+        "21": {
+            "x": 0,
+            "y": 13,
+            "w": 24,
+            "h": 1
+        },
+        "22": {
+            "x": 0,
+            "y": 26,
+            "w": 24,
+            "h": 1
+        },
+        "25": {
+            "x": 0,
+            "y": 33,
+            "w": 12,
+            "h": 6
+        },
+        "26": {
+            "x": 12,
+            "y": 33,
+            "w": 12,
+            "h": 6
+        },
+        "27": {
+            "x": 0,
+            "y": 27,
+            "w": 12,
+            "h": 6
+        },
+        "28": {
+            "x": 12,
+            "y": 27,
+            "w": 12,
+            "h": 6
+        },
+        "29": {
+            "x": 0,
+            "y": 14,
+            "w": 12,
+            "h": 6
+        },
+        "30": {
+            "x": 12,
+            "y": 14,
+            "w": 12,
+            "h": 6
+        },
+        "31": {
+            "x": 0,
+            "y": 20,
+            "w": 12,
+            "h": 6
+        },
+        "32": {
+            "x": 12,
+            "y": 20,
+            "w": 12,
+            "h": 6
+        },
+        "33": {
+            "x": 0,
+            "y": 7,
+            "w": 12,
+            "h": 6
+        },
+        "34": {
+            "x": 12,
+            "y": 7,
+            "w": 12,
+            "h": 6
+        }
+    },
+    "importedWithCode": false,
+    "settings": {}
+}

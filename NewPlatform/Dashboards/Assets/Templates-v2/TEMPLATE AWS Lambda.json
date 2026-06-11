@@ -1,0 +1,148 @@
+{
+    "version": 21,
+    "variables": [],
+    "tiles": {
+        "0": {
+            "type": "data",
+            "title": "LambdaFunction concurrent executions count",
+            "query": "timeseries conc_executions = avg(dt.cloud.aws.lambda.conc_executions), by: { dt.entity.aws_lambda_function }\n| sort arrayAvg(conc_executions) desc\n| limit 20",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "visualization": "lineChart"
+        },
+        "1": {
+            "type": "data",
+            "title": "LambdaFunction code execution time.",
+            "query": "timeseries duration = avg(dt.cloud.aws.lambda.duration), by: { dt.entity.aws_lambda_function }\n| sort arrayAvg(duration) desc\n| limit 20",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "visualization": "lineChart"
+        },
+        "2": {
+            "type": "data",
+            "title": "LambdaFunction number of failed invocations with HTTP 4XX status code",
+            "query": "/*\nWarning:\n - Rollup `value` is not supported in DQL.\n*/\ntimeseries errors = avg(dt.cloud.aws.lambda.errors), by: { dt.entity.aws_lambda_function }\n| sort arrayAvg(errors) desc\n| limit 20",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "visualization": "lineChart"
+        },
+        "4": {
+            "type": "data",
+            "title": "LambdaFunction rate of failed invocations to all invocations %",
+            "query": "timeseries errors_rate = avg(dt.cloud.aws.lambda.errors_rate), by: { dt.entity.aws_lambda_function }\n| sort arrayAvg(errors_rate) desc\n| limit 20",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "visualization": "lineChart"
+        },
+        "5": {
+            "type": "data",
+            "title": "LambdaFunction number of times a function is invoked",
+            "query": "/*\nWarning:\n - Rollup `value` is not supported in DQL.\n*/\ntimeseries invocations = avg(dt.cloud.aws.lambda.invocations), by: { dt.entity.aws_lambda_function }\n| sort arrayAvg(invocations) desc\n| limit 20",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "visualization": "lineChart"
+        },
+        "6": {
+            "type": "data",
+            "title": "LambdaFunction throttled function invocation count",
+            "query": "/*\nWarning:\n - Rollup `value` is not supported in DQL.\n*/\ntimeseries throttlers = avg(dt.cloud.aws.lambda.throttlers), by: { dt.entity.aws_lambda_function }\n| sort arrayAvg(throttlers) desc\n| limit 20",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "visualization": "lineChart"
+        }
+    },
+    "layouts": {
+        "0": {
+            "x": 0,
+            "y": 0,
+            "w": 16,
+            "h": 8
+        },
+        "1": {
+            "x": 16,
+            "y": 0,
+            "w": 16,
+            "h": 8
+        },
+        "2": {
+            "x": 32,
+            "y": 0,
+            "w": 16,
+            "h": 8
+        },
+        "4": {
+            "x": 0,
+            "y": 8,
+            "w": 16,
+            "h": 8
+        },
+        "5": {
+            "x": 16,
+            "y": 8,
+            "w": 16,
+            "h": 8
+        },
+        "6": {
+            "x": 32,
+            "y": 8,
+            "w": 16,
+            "h": 8
+        }
+    },
+    "importedWithCode": false,
+    "settings": {
+        "gridLayout": {
+            "mode": "responsive",
+            "columnsCount": 48
+        }
+    },
+    "annotations": []
+}

@@ -5,7 +5,7 @@
         "0": {
             "type": "data",
             "title": "Requests Sum (by Region)",
-            "query": "/*\nWarning:\n - Rollup `value` is not supported in DQL.\n*/\ntimeseries requests_sum_by_region = avg(cloud.aws.cloudfront.requests_sum_by_region), by: { dt.entity.custom_device }\n| sort arrayAvg(requests_sum_by_region) desc\n| limit 20",
+            "query": "/*\nWarning:\n - Rollup `value` is not supported in DQL.\n*/\ntimeseries requests_sum_by_region = avg(cloud.aws.cloudfront.requests_sum_by_region), by: { dt.entity.custom_device }\n| fieldsAdd name=entityAttr(dt.entity.custom_device, \"entity.name\")\n| sort arrayAvg(requests_sum_by_region) desc\n| limit 20",
             "davis": {
                 "enabled": false,
                 "davisVisualization": {
@@ -13,15 +13,19 @@
                 }
             },
             "visualizationSettings": {
-                "autoSelectVisualization": false,
-                "unitsOverrides": []
+                "unitsOverrides": [],
+                "dataMapping": {
+                    "displayedFields": [
+                        "name"
+                    ]
+                }
             },
             "visualization": "lineChart"
         },
         "1": {
             "type": "data",
             "title": "TotalErrorRate Average (by Region)",
-            "query": "timeseries total_error_rate_average_by_region = avg(cloud.aws.cloudfront.total_error_rate_average_by_region), by: { dt.entity.custom_device }\n| sort arrayAvg(total_error_rate_average_by_region) desc\n| limit 20",
+            "query": "timeseries total_error_rate_average_by_region = avg(cloud.aws.cloudfront.total_error_rate_average_by_region), by: { dt.entity.custom_device }\n| fieldsAdd name=entityAttr(dt.entity.custom_device, \"entity.name\")\n| sort arrayAvg(total_error_rate_average_by_region) desc\n| limit 20",
             "davis": {
                 "enabled": false,
                 "davisVisualization": {
@@ -29,8 +33,12 @@
                 }
             },
             "visualizationSettings": {
-                "autoSelectVisualization": false,
-                "unitsOverrides": []
+                "unitsOverrides": [],
+                "dataMapping": {
+                    "displayedFields": [
+                        "name"
+                    ]
+                }
             },
             "visualization": "lineChart"
         }

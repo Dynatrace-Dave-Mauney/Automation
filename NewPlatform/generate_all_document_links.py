@@ -1,0 +1,124 @@
+# First, share the documents using
+# add_environment_shares.py
+
+import json
+
+from Reuse import environment
+from Reuse import new_platform_api
+
+# Use configurations.yaml to set this variable
+my_owner_ids = []
+
+# Use an empty string for filter to create links to all shared dashboards and notebooks
+filter = ""
+# filter = "NMXP - Auth"
+# filter = "Rollup"
+
+
+def process(env_name, env, client_id, client_secret):
+    configuration_file = 'configurations.yaml'
+    global my_owner_ids
+    my_owner_ids = environment.get_configuration('my_owner_ids', configuration_file=configuration_file)
+
+    dashboards = get_dashboards(env, client_id, client_secret)
+    notebooks = get_notebooks(env, client_id, client_secret)
+    generate_dashboard_links(env_name, env, dashboards)
+    generate_notebook_links(env_name, env, notebooks)
+
+
+def generate_dashboard_links(env_name, env, dashboards):
+    links = []
+
+    dashboard_ids = dashboards.keys()
+    for dashboard_id in dashboard_ids:
+        dashboard_name = dashboards.get(dashboard_id)
+
+        dashbooard_name_prefix = dashboard_name.split(' ')[0]
+        dashboard_name = dashboard_name.replace(dashbooard_name_prefix, '{tenant_name}')
+
+        if filter in dashboard_name:
+            # links.append(f'{dashboard_name} Dashboard ({env_name}): {env}/ui/document/v0/#share={environment_share_id}')
+            # links.append(f"\t\t(f'{dashboard_name}', f'https://{{tenant}}.apps.dynatrace.com/ui/document/v0/#share={environment_share_id}'),")
+            links.append(f"\t\t(f'{dashboard_name}', f'https://{{tenant}}.apps.dynatrace.com/ui/apps/dynatrace.dashboards/dashboard/{dashboard_id}'),")
+    # https://wnb35140.apps.dynatrace.com/ui/apps/dynatrace.dashboards/dashboard/4a3812f6-7c78-425f-a46c-8c3f70d731bb
+    # Classic overview dashboard framework up front!
+    classic_overview_dashboard = f"\t\t(f'{{tenant_name}}: Overview (Classic Dashboard)', f'https://{{tenant}}.live.dynatrace.com/#dashboard;id=00000000-dddd-bbbb-ffff-000000000001'),"
+
+    print(f'\t{env_name.lower()}_links = [')
+    print(classic_overview_dashboard)
+    for link in sorted(links):
+        print(link)
+    print(f'\t]')
+
+
+def generate_notebook_links(env_name, env, notebooks):
+    links = []
+    notebook_ids = notebooks.keys()
+    for notebook_id in notebook_ids:
+        notebook_name = notebooks.get(notebook_id)
+        if filter in notebook_name:
+            # links.append(f'{notebook_name} Notebook ({env_name}): {env}/ui/document/v0/#share={environment_share_id}')
+            links.append(f'{notebook_name} Notebook ({env_name}): {env}/ui/apps/dynatrace.notebooks/notebook/{notebook_id}')
+
+    for link in sorted(links):
+        print(link)
+
+
+def get_dashboards(env, client_id, client_secret):
+    dashboards = {}
+
+    scope = 'document:documents:read'
+
+    oauth_bearer_token = new_platform_api.get_oauth_bearer_token(client_id, client_secret, scope)
+    params = {'page-size': 1000}
+    results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents', params)
+    dashboards_json = json.loads(results.text)
+    dashboard_list = dashboards_json.get('documents')
+    for dashboard in dashboard_list:
+        dashboard_type = dashboard.get('type')
+        if dashboard_type == 'dashboard':
+            dashboard_id = dashboard.get('id')
+            dashboard_name = dashboard.get('name')
+            dashboard_owner = dashboard.get('owner')
+
+            if dashboard_owner in my_owner_ids:
+                dashboards[dashboard_id] = dashboard_name
+
+    return dashboards
+
+
+def get_notebooks(env, client_id, client_secret):
+    notebooks = {}
+
+    scope = 'document:documents:read'
+
+    oauth_bearer_token = new_platform_api.get_oauth_bearer_token(client_id, client_secret, scope)
+    params = {'page-size': 1000}
+    results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents', params)
+    notebooks_json = json.loads(results.text)
+    notebook_list = notebooks_json.get('documents')
+    for notebook in notebook_list:
+        notebook_type = notebook.get('type')
+        if notebook_type == 'notebook':
+            notebook_id = notebook.get('id')
+            notebook_name = notebook.get('name')
+            notebook_owner = notebook.get('owner')
+
+            if notebook_owner in my_owner_ids:
+                notebooks[notebook_id] = notebook_name
+
+    return notebooks
+
+
+def main():
+    friendly_function_name = 'Dynatrace Automation'
+
+    env_name_supplied = 'Prod'
+    # env_name_supplied = 'PreProd'
+    # env_name_supplied = 'Sandbox'
+    env_name, env, client_id, client_secret = environment.get_client_environment_for_function(env_name_supplied, friendly_function_name)
+    process(env_name, env, client_id, client_secret)
+
+
+if __name__ == '__main__':
+    main()

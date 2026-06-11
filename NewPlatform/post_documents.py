@@ -36,7 +36,17 @@ def run():
 
     # CURRENT CUSTOMER (5/21/2026)
     # post_launchpads(env, 'Launchpads/Assets/Dynatrace Architecture and Standards.json')
-    post_dashboards(env, f'Dashboards/Assets/Templates/*.json')
+    # post_dashboards(env, f'Dashboards/Assets/Templates/*.json')
+    # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE .NET Monitoring.json')
+    # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE AWS*.json')
+    # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE Databases.json')
+    # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE IBM*.json')
+    # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE IBM WebSphere Metrics by Process.json')
+    # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE Java Monitoring.json')
+    # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE Key Requests.json')
+    # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE Netscaler *.json')
+    # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE Oracle.json')
+    # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE * By Management Zone.json')
 
 
 

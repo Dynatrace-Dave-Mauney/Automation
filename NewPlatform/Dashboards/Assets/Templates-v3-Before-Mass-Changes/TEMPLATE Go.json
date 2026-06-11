@@ -1,0 +1,412 @@
+{
+    "version": 21,
+    "variables": [],
+    "tiles": {
+        "0": {
+            "title": "Total requests",
+            "type": "data",
+            "query": "/*\nWarning:\n - Rollup `value` is not supported in DQL.\n*/\ntimeseries requests = avg(dt.runtime.go.http.requests), by: { dt.entity.process_group_instance }\n| sort arrayAvg(requests) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "3": {
+            "title": "Response latency",
+            "type": "data",
+            "query": "timeseries latency = avg(dt.runtime.go.http.latency), by: { dt.entity.process_group_instance }\n| sort arrayAvg(latency) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "4": {
+            "title": "Committed memory",
+            "type": "data",
+            "query": "timeseries committed = avg(dt.runtime.go.memory.committed), by: { dt.entity.process_group_instance }\n| sort arrayAvg(committed) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "5": {
+            "title": "Used memory",
+            "type": "data",
+            "query": "timeseries used = avg(dt.runtime.go.memory.used), by: { dt.entity.process_group_instance }\n| sort arrayAvg(used) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "7": {
+            "title": "Heap live size",
+            "type": "data",
+            "query": "timeseries heap = avg(dt.runtime.go.memory.heap), by: { dt.entity.process_group_instance }\n| sort arrayAvg(heap) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "8": {
+            "title": "Heap idle size",
+            "type": "data",
+            "query": "timeseries heap = avg(dt.runtime.go.memory.heap), by: { dt.entity.process_group_instance }\n| sort arrayAvg(heap) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "9": {
+            "title": "Heap allocated Go objects count",
+            "type": "data",
+            "query": "timeseries object_count = avg(dt.runtime.go.memory.heap.object_count), by: { dt.entity.process_group_instance }\n| sort arrayAvg(object_count) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "10": {
+            "title": "Garbage collector invocation count",
+            "type": "data",
+            "query": "/*\nWarning:\n - Rollup `value` is not supported in DQL.\n*/\ntimeseries collection_count = avg(dt.runtime.go.gc.collection_count), by: { dt.entity.process_group_instance }\n| sort arrayAvg(collection_count) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "11": {
+            "title": "Worker thread count",
+            "type": "data",
+            "query": "timeseries worker_thread_count = avg(dt.runtime.go.scheduler.worker_thread_count), by: { dt.entity.process_group_instance }\n| sort arrayAvg(worker_thread_count) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "12": {
+            "title": "Parked worker thread count",
+            "type": "data",
+            "query": "timeseries worker_thread_count = avg(dt.runtime.go.scheduler.worker_thread_count), by: { dt.entity.process_group_instance }\n| sort arrayAvg(worker_thread_count) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "13": {
+            "title": "Average number of active Goroutines",
+            "type": "data",
+            "query": "timeseries goroutine_count = avg(dt.profiling.go.scheduler.goroutine_count, filter: { thread.state_category != \"Waiting\" }), by: { dt.entity.process_group_instance }\n| sort arrayAvg(goroutine_count) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "15": {
+            "title": "Application Goroutine count",
+            "type": "data",
+            "query": "timeseries goroutine_count = avg(dt.runtime.go.scheduler.goroutine_count), by: { dt.entity.process_group_instance }\n| sort arrayAvg(goroutine_count) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "16": {
+            "title": "System Goroutine count",
+            "type": "data",
+            "query": "timeseries goroutine_count = avg(dt.runtime.go.scheduler.goroutine_count), by: { dt.entity.process_group_instance }\n| sort arrayAvg(goroutine_count) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "17": {
+            "title": "Global Goroutine run queue size",
+            "type": "data",
+            "query": "timeseries queue_size = avg(dt.runtime.go.scheduler.queue_size), by: { dt.entity.process_group_instance }\n| sort arrayAvg(queue_size) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "18": {
+            "title": "Go runtime system call count",
+            "type": "data",
+            "query": "/*\nWarning:\n - Rollup `value` is not supported in DQL.\n*/\ntimeseries sys_calls = avg(dt.runtime.go.sys_calls), by: { dt.entity.process_group_instance }\n| sort arrayAvg(sys_calls) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "19": {
+            "title": "Idle scheduling context count",
+            "type": "data",
+            "query": "timeseries idle_count = avg(dt.runtime.go.scheduler.context.idle_count), by: { dt.entity.process_group_instance }\n| sort arrayAvg(idle_count) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "20": {
+            "title": "Out-of-work worker thread count",
+            "type": "data",
+            "query": "timeseries worker_thread_count = avg(dt.runtime.go.scheduler.worker_thread_count), by: { dt.entity.process_group_instance }\n| sort arrayAvg(worker_thread_count) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "21": {
+            "title": "Go to C language (cgo) call count",
+            "type": "data",
+            "query": "/*\nWarning:\n - Rollup `value` is not supported in DQL.\n*/\ntimeseries cgo_calls = avg(dt.runtime.go.cgo_calls), by: { dt.entity.process_group_instance }\n| sort arrayAvg(cgo_calls) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        }
+    },
+    "layouts": {
+        "0": {
+            "x": 0,
+            "y": 0,
+            "w": 8,
+            "h": 8
+        },
+        "3": {
+            "x": 8,
+            "y": 0,
+            "w": 8,
+            "h": 8
+        },
+        "4": {
+            "x": 16,
+            "y": 0,
+            "w": 8,
+            "h": 8
+        },
+        "5": {
+            "x": 24,
+            "y": 0,
+            "w": 8,
+            "h": 8
+        },
+        "7": {
+            "x": 0,
+            "y": 8,
+            "w": 8,
+            "h": 8
+        },
+        "8": {
+            "x": 8,
+            "y": 8,
+            "w": 8,
+            "h": 8
+        },
+        "9": {
+            "x": 16,
+            "y": 8,
+            "w": 8,
+            "h": 8
+        },
+        "10": {
+            "x": 24,
+            "y": 8,
+            "w": 8,
+            "h": 8
+        },
+        "11": {
+            "x": 0,
+            "y": 16,
+            "w": 8,
+            "h": 8
+        },
+        "12": {
+            "x": 8,
+            "y": 16,
+            "w": 8,
+            "h": 8
+        },
+        "13": {
+            "x": 16,
+            "y": 16,
+            "w": 8,
+            "h": 8
+        },
+        "15": {
+            "x": 24,
+            "y": 16,
+            "w": 8,
+            "h": 8
+        },
+        "16": {
+            "x": 0,
+            "y": 24,
+            "w": 8,
+            "h": 8
+        },
+        "17": {
+            "x": 8,
+            "y": 24,
+            "w": 8,
+            "h": 8
+        },
+        "18": {
+            "x": 16,
+            "y": 24,
+            "w": 8,
+            "h": 8
+        },
+        "19": {
+            "x": 24,
+            "y": 24,
+            "w": 8,
+            "h": 8
+        },
+        "20": {
+            "x": 0,
+            "y": 32,
+            "w": 8,
+            "h": 8
+        },
+        "21": {
+            "x": 8,
+            "y": 32,
+            "w": 8,
+            "h": 8
+        }
+    },
+    "importedWithCode": false,
+    "settings": {
+        "gridLayout": {
+            "mode": "responsive",
+            "columnsCount": 32
+        }
+    },
+    "annotations": []
+}

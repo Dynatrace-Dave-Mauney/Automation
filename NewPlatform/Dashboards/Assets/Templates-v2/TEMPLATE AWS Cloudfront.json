@@ -1,0 +1,59 @@
+{
+    "version": 21,
+    "variables": [],
+    "tiles": {
+        "0": {
+            "type": "data",
+            "title": "Requests Sum (by Region)",
+            "query": "/*\nWarning:\n - Rollup `value` is not supported in DQL.\n*/\ntimeseries requests_sum_by_region = avg(cloud.aws.cloudfront.requests_sum_by_region), by: { dt.entity.custom_device }\n| sort arrayAvg(requests_sum_by_region) desc\n| limit 20",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "visualization": "lineChart"
+        },
+        "1": {
+            "type": "data",
+            "title": "TotalErrorRate Average (by Region)",
+            "query": "timeseries total_error_rate_average_by_region = avg(cloud.aws.cloudfront.total_error_rate_average_by_region), by: { dt.entity.custom_device }\n| sort arrayAvg(total_error_rate_average_by_region) desc\n| limit 20",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "visualization": "lineChart"
+        }
+    },
+    "layouts": {
+        "0": {
+            "x": 0,
+            "y": 0,
+            "w": 8,
+            "h": 8
+        },
+        "1": {
+            "x": 8,
+            "y": 0,
+            "w": 8,
+            "h": 8
+        }
+    },
+    "importedWithCode": false,
+    "settings": {
+        "gridLayout": {
+            "mode": "responsive"
+        }
+    },
+    "annotations": []
+}

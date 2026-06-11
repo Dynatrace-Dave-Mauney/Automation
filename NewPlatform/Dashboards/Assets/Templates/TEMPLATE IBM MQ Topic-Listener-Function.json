@@ -1,0 +1,284 @@
+{
+    "version": 21,
+    "variables": [],
+    "tiles": {
+        "0": {
+            "title": "Inhibit publish",
+            "type": "data",
+            "query": "timeseries inhibit_pub = avg(ibmmq.topic.inhibit_pub), by: { `dt.entity.ibmmq:topic` }\n| fieldsAdd name=entityAttr(`dt.entity.ibmmq:topic`, \"entity.name\")\n| sort arrayAvg(inhibit_pub) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": [],
+                "dataMapping": {
+                    "displayedFields": [
+                        "name"
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "1": {
+            "title": "Inhibit subscription",
+            "type": "data",
+            "query": "timeseries inhibit_sub = avg(ibmmq.topic.inhibit_sub), by: { `dt.entity.ibmmq:topic` }\n| fieldsAdd name=entityAttr(`dt.entity.ibmmq:topic`, \"entity.name\")\n| sort arrayAvg(inhibit_sub) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": [],
+                "dataMapping": {
+                    "displayedFields": [
+                        "name"
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "2": {
+            "title": "Publish count",
+            "type": "data",
+            "query": "timeseries pub_cnt = avg(ibmmq.topic.pub_cnt), by: { `dt.entity.ibmmq:topic` }\n| fieldsAdd name=entityAttr(`dt.entity.ibmmq:topic`, \"entity.name\")\n| sort arrayAvg(pub_cnt) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": [],
+                "dataMapping": {
+                    "displayedFields": [
+                        "name"
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "3": {
+            "title": "Subcription count",
+            "type": "data",
+            "query": "timeseries sub_cnt = avg(ibmmq.topic.sub_cnt), by: { `dt.entity.ibmmq:topic` }\n| fieldsAdd name=entityAttr(`dt.entity.ibmmq:topic`, \"entity.name\")\n| sort arrayAvg(sub_cnt) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": [],
+                "dataMapping": {
+                    "displayedFields": [
+                        "name"
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "4": {
+            "title": "Availability",
+            "type": "data",
+            "query": "timeseries availability = avg(ibmmq.listener.availability), by: { `dt.entity.ibmmq:listener` }\n| fieldsAdd name=entityAttr(`dt.entity.ibmmq:listener`, \"entity.name\")\n| sort arrayAvg(availability) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": [],
+                "dataMapping": {
+                    "displayedFields": [
+                        "name"
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "5": {
+            "title": "Enqueue rate",
+            "type": "data",
+            "query": "timeseries enqueue_cnt = avg(ibmmq.queue.enqueue_cnt), by: { low_q_depth_limit, service_interval, device.address, queue_type, max_queue_depth, dt.metrics.source, description, `dt.entity.ibmmq:local_queue`, connection_name_list, backout_threshold, queue_monitoring, queue_name, connected_host, trigger_control, queue_manager, backout_requeue_name, queue_usage, actual_qm_name, high_q_depth_limit, trigger_depth, `dt.entity.ibmmq:queue_manager` }\n| fieldsAdd enqueue_rate = enqueue_cnt[] / 60\n| summarize { enqueue_rate = avg(enqueue_rate[] ) }, by: { `dt.entity.ibmmq:local_queue`, timeframe, interval }\n| fieldsAdd name=entityAttr(`dt.entity.ibmmq:local_queue`, \"entity.name\")\n| sort arrayAvg(enqueue_rate) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": [],
+                "dataMapping": {
+                    "displayedFields": [
+                        "name"
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "6": {
+            "title": "Dequeue rate",
+            "type": "data",
+            "query": "timeseries dequeue_cnt = avg(ibmmq.queue.dequeue_cnt), by: { low_q_depth_limit, service_interval, device.address, queue_type, max_queue_depth, dt.metrics.source, description, `dt.entity.ibmmq:local_queue`, connection_name_list, backout_threshold, queue_monitoring, queue_name, connected_host, trigger_control, queue_manager, backout_requeue_name, queue_usage, actual_qm_name, high_q_depth_limit, trigger_depth, `dt.entity.ibmmq:queue_manager` }\n| fieldsAdd dequeue_rate = dequeue_cnt[] / 60\n| summarize { dequeue_rate = avg(dequeue_rate[] ) }, by: { `dt.entity.ibmmq:local_queue`, timeframe, interval }\n| fieldsAdd name=entityAttr(`dt.entity.ibmmq:local_queue`, \"entity.name\")\n| sort arrayAvg(dequeue_rate) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": [],
+                "dataMapping": {
+                    "displayedFields": [
+                        "name"
+                    ]
+                }
+            },
+            "querySettings": {
+                "maxResultRecords": 1000,
+                "defaultScanLimitGbytes": 500,
+                "maxResultMegaBytes": 1,
+                "defaultSamplingRatio": 10,
+                "enableSampling": false
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "7": {
+            "type": "markdown",
+            "content": "Topic"
+        },
+        "8": {
+            "type": "markdown",
+            "content": "Listener"
+        },
+        "9": {
+            "type": "markdown",
+            "content": "Func"
+        }
+    },
+    "layouts": {
+        "0": {
+            "x": 0,
+            "y": 1,
+            "w": 8,
+            "h": 8
+        },
+        "1": {
+            "x": 8,
+            "y": 1,
+            "w": 8,
+            "h": 8
+        },
+        "2": {
+            "x": 16,
+            "y": 1,
+            "w": 8,
+            "h": 8
+        },
+        "3": {
+            "x": 24,
+            "y": 1,
+            "w": 8,
+            "h": 8
+        },
+        "4": {
+            "x": 0,
+            "y": 10,
+            "w": 8,
+            "h": 8
+        },
+        "5": {
+            "x": 8,
+            "y": 10,
+            "w": 12,
+            "h": 8
+        },
+        "6": {
+            "x": 20,
+            "y": 10,
+            "w": 12,
+            "h": 8
+        },
+        "7": {
+            "x": 0,
+            "y": 0,
+            "w": 32,
+            "h": 1
+        },
+        "8": {
+            "x": 0,
+            "y": 9,
+            "w": 8,
+            "h": 1
+        },
+        "9": {
+            "x": 8,
+            "y": 9,
+            "w": 24,
+            "h": 1
+        }
+    },
+    "importedWithCode": false,
+    "settings": {
+        "gridLayout": {
+            "mode": "responsive",
+            "columnsCount": 32
+        }
+    },
+    "annotations": []
+}

@@ -1,0 +1,59 @@
+{
+    "version": 21,
+    "variables": [],
+    "tiles": {
+        "0": {
+            "type": "data",
+            "title": "Dequeue rate",
+            "query": "timeseries dequeue_cnt = avg(ibmmq.queue.dequeue_cnt), by: { low_q_depth_limit, service_interval, device.address, queue_type, max_queue_depth, dt.metrics.source, description, `dt.entity.ibmmq:local_queue`, connection_name_list, backout_threshold, queue_monitoring, queue_name, connected_host, trigger_control, queue_manager, backout_requeue_name, queue_usage, actual_qm_name, high_q_depth_limit, trigger_depth, `dt.entity.ibmmq:queue_manager` }\n| fieldsAdd dequeue_rate = dequeue_cnt[] / 60\n| summarize { dequeue_rate = avg(dequeue_rate[] ) }, by: { `dt.entity.ibmmq:local_queue`, timeframe, interval }\n| sort arrayAvg(dequeue_rate) desc\n| limit 20",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "visualization": "lineChart"
+        },
+        "1": {
+            "type": "data",
+            "title": "Enqueue rate",
+            "query": "timeseries enqueue_cnt = avg(ibmmq.queue.enqueue_cnt), by: { low_q_depth_limit, service_interval, device.address, queue_type, max_queue_depth, dt.metrics.source, description, `dt.entity.ibmmq:local_queue`, connection_name_list, backout_threshold, queue_monitoring, queue_name, connected_host, trigger_control, queue_manager, backout_requeue_name, queue_usage, actual_qm_name, high_q_depth_limit, trigger_depth, `dt.entity.ibmmq:queue_manager` }\n| fieldsAdd enqueue_rate = enqueue_cnt[] / 60\n| summarize { enqueue_rate = avg(enqueue_rate[] ) }, by: { `dt.entity.ibmmq:local_queue`, timeframe, interval }\n| sort arrayAvg(enqueue_rate) desc\n| limit 20",
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            },
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "visualization": "lineChart"
+        }
+    },
+    "layouts": {
+        "0": {
+            "x": 0,
+            "y": 0,
+            "w": 8,
+            "h": 8
+        },
+        "1": {
+            "x": 8,
+            "y": 0,
+            "w": 8,
+            "h": 8
+        }
+    },
+    "importedWithCode": false,
+    "settings": {
+        "gridLayout": {
+            "mode": "responsive"
+        }
+    },
+    "annotations": []
+}

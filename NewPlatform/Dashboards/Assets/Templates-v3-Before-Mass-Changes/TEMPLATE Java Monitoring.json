@@ -1,0 +1,148 @@
+{
+    "version": 21,
+    "variables": [],
+    "tiles": {
+        "4": {
+            "title": "JVM GC suspension time",
+            "type": "data",
+            "query": "timeseries suspension_time = avg(dt.runtime.jvm.gc.suspension_time), by: { dt.entity.process_group_instance }\n| sort arrayAvg(suspension_time) desc\n| limit 10",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "5": {
+            "title": "JVM GC invocations",
+            "type": "data",
+            "query": "/*\nWarning:\n - Rollup `value` is not supported in DQL.\n*/\ntimeseries collection_count = avg(dt.runtime.jvm.gc.collection_count), by: { dt.entity.process_group_instance }\n| sort arrayAvg(collection_count) desc\n| limit 10",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "6": {
+            "title": "JVM GC time",
+            "type": "data",
+            "query": "/*\nWarning:\n - Rollup `value` is not supported in DQL.\n*/\ntimeseries collection_time = avg(dt.runtime.jvm.gc.collection_time), by: { dt.entity.process_group_instance, jvm.memory.pool.name, process.pid, jvm.gc.name }\n| sort arrayAvg(collection_time) desc\n| limit 10",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "10": {
+            "title": "JVM memory (committed)",
+            "type": "data",
+            "query": "timeseries committed = avg(dt.runtime.jvm.memory_pool.committed), by: { dt.entity.process_group_instance, jvm.memory.pool.name, process.pid }\n| sort arrayAvg(committed) desc\n| limit 10",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "11": {
+            "title": "JVM memory (used)",
+            "type": "data",
+            "query": "timeseries used = avg(dt.runtime.jvm.memory_pool.used), by: { dt.entity.process_group_instance, jvm.memory.pool.name, process.pid }\n| sort arrayAvg(used) desc\n| limit 10",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "12": {
+            "title": "JVM thread count",
+            "type": "data",
+            "query": "timeseries count = avg(dt.runtime.jvm.threads.count), by: { dt.entity.process_group_instance }\n| sort arrayAvg(count) desc\n| limit 10",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        }
+    },
+    "layouts": {
+        "4": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 8
+        },
+        "5": {
+            "x": 12,
+            "y": 0,
+            "w": 12,
+            "h": 8
+        },
+        "6": {
+            "x": 24,
+            "y": 0,
+            "w": 12,
+            "h": 8
+        },
+        "10": {
+            "x": 0,
+            "y": 8,
+            "w": 12,
+            "h": 8
+        },
+        "11": {
+            "x": 12,
+            "y": 8,
+            "w": 12,
+            "h": 8
+        },
+        "12": {
+            "x": 24,
+            "y": 8,
+            "w": 12,
+            "h": 8
+        }
+    },
+    "importedWithCode": false,
+    "settings": {
+        "gridLayout": {
+            "mode": "responsive",
+            "columnsCount": 40
+        }
+    },
+    "annotations": []
+}

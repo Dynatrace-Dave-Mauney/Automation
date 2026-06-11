@@ -5,7 +5,7 @@
         "0": {
             "type": "data",
             "title": "Number of running EC2 instances (AZ)",
-            "query": "timeseries running = avg(dt.cloud.aws.az.running), by: { dt.entity.aws_credentials }\n| sort arrayAvg(running) desc\n| limit 20",
+            "query": "timeseries running = avg(dt.cloud.aws.az.running), by: { dt.entity.aws_credentials }\n| fieldsAdd name=entityAttr(dt.entity.aws_credentials, \"entity.name\")\n| sort arrayAvg(running) desc\n| limit 20",
             "davis": {
                 "enabled": false,
                 "davisVisualization": {
@@ -13,15 +13,19 @@
                 }
             },
             "visualizationSettings": {
-                "autoSelectVisualization": false,
-                "unitsOverrides": []
+                "unitsOverrides": [],
+                "dataMapping": {
+                    "displayedFields": [
+                        "name"
+                    ]
+                }
             },
             "visualization": "lineChart"
         },
         "1": {
             "type": "data",
             "title": "Number of stopped EC2 instances (AZ)",
-            "query": "timeseries stopped = avg(dt.cloud.aws.az.stopped), by: { dt.entity.aws_credentials }\n| sort arrayAvg(stopped) desc\n| limit 20",
+            "query": "timeseries stopped = avg(dt.cloud.aws.az.stopped), by: { dt.entity.aws_credentials }\n| fieldsAdd name=entityAttr(dt.entity.aws_credentials, \"entity.name\")\n| sort arrayAvg(stopped) desc\n| limit 20",
             "davis": {
                 "enabled": false,
                 "davisVisualization": {
@@ -29,15 +33,19 @@
                 }
             },
             "visualizationSettings": {
-                "autoSelectVisualization": false,
-                "unitsOverrides": []
+                "unitsOverrides": [],
+                "dataMapping": {
+                    "displayedFields": [
+                        "name"
+                    ]
+                }
             },
             "visualization": "lineChart"
         },
         "2": {
             "type": "data",
             "title": "Number of terminated EC2 instances (AZ)",
-            "query": "timeseries terminated = avg(dt.cloud.aws.az.terminated), by: { dt.entity.aws_credentials }\n| sort arrayAvg(terminated) desc\n| limit 20",
+            "query": "timeseries terminated = avg(dt.cloud.aws.az.terminated), by: { dt.entity.aws_credentials }\n| fieldsAdd name=entityAttr(dt.entity.aws_credentials, \"entity.name\")\n| sort arrayAvg(terminated) desc\n| limit 20",
             "davis": {
                 "enabled": false,
                 "davisVisualization": {
@@ -45,8 +53,12 @@
                 }
             },
             "visualizationSettings": {
-                "autoSelectVisualization": false,
-                "unitsOverrides": []
+                "unitsOverrides": [],
+                "dataMapping": {
+                    "displayedFields": [
+                        "name"
+                    ]
+                }
             },
             "visualization": "lineChart"
         }

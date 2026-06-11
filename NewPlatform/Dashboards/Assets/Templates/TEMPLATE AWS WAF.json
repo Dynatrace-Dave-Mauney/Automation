@@ -5,7 +5,7 @@
         "0": {
             "type": "data",
             "title": "AllowedRequests Sum (by Region and Rule)",
-            "query": "/*\nWarning:\n - Rollup `value` is not supported in DQL.\n*/\ntimeseries allowed_requests_sum_by_region_rule = avg(cloud.aws.wafv2.allowed_requests_sum_by_region_rule), by: { dt.entity.custom_device }\n| sort arrayAvg(allowed_requests_sum_by_region_rule) desc\n| limit 20",
+            "query": "/*\nWarning:\n - Rollup `value` is not supported in DQL.\n*/\ntimeseries allowed_requests_sum_by_region_rule = avg(cloud.aws.wafv2.allowed_requests_sum_by_region_rule), by: { dt.entity.custom_device }\n| fieldsAdd name=entityAttr(dt.entity.custom_device, \"entity.name\")\n| sort arrayAvg(allowed_requests_sum_by_region_rule) desc\n| limit 20",
             "davis": {
                 "enabled": false,
                 "davisVisualization": {
@@ -13,8 +13,12 @@
                 }
             },
             "visualizationSettings": {
-                "autoSelectVisualization": false,
-                "unitsOverrides": []
+                "unitsOverrides": [],
+                "dataMapping": {
+                    "displayedFields": [
+                        "name"
+                    ]
+                }
             },
             "visualization": "lineChart"
         }

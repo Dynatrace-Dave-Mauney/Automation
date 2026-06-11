@@ -1,0 +1,103 @@
+{
+    "version": 21,
+    "variables": [],
+    "tiles": {
+        "4": {
+            "title": "Requests",
+            "type": "data",
+            "query": "/*\nWarning:\n - Rollup `value` is not supported in DQL.\n*/\ntimeseries count = avg(dt.service.request.count, filter: { in(dt.entity.service, classicEntitySelector(\"type(service),servicetype(\\\"DATABASE_SERVICE\\\")\")) }), by: { dt.entity.service }\n| sort arrayAvg(count) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "5": {
+            "title": "Response time - Median",
+            "type": "data",
+            "query": "timeseries response_time = percentile(dt.service.request.response_time, 50, filter: { in(dt.entity.service, classicEntitySelector(\"type(service),servicetype(\\\"DATABASE_SERVICE\\\")\")) }), by: { dt.entity.service }\n| sort arrayPercentile(response_time, 50) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "6": {
+            "title": "Response time - Slowest 10%",
+            "type": "data",
+            "query": "timeseries response_time = percentile(dt.service.request.response_time, 50, filter: { in(dt.entity.service, classicEntitySelector(\"type(service),servicetype(\\\"DATABASE_SERVICE\\\")\")) }), by: { dt.entity.service }\n| sort arrayPercentile(response_time, 50) desc\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        },
+        "10": {
+            "title": "Failure rate",
+            "type": "data",
+            "query": "timeseries { failure_count = sum(dt.service.request.failure_count), count = sum(dt.service.request.count) }, by: { dt.entity.service }, filter: { in(dt.entity.service, classicEntitySelector(\"type(service),servicetype(\\\"DATABASE_SERVICE\\\")\")) }\n| fieldsAdd rate = failure_count[] / count[]\n| sort arrayAvg(rate) desc\n| fieldsRemove failure_count, count\n| limit 20",
+            "visualization": "lineChart",
+            "visualizationSettings": {
+                "autoSelectVisualization": false,
+                "unitsOverrides": []
+            },
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
+        }
+    },
+    "layouts": {
+        "4": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 8
+        },
+        "5": {
+            "x": 12,
+            "y": 0,
+            "w": 12,
+            "h": 8
+        },
+        "6": {
+            "x": 0,
+            "y": 8,
+            "w": 12,
+            "h": 8
+        },
+        "10": {
+            "x": 12,
+            "y": 8,
+            "w": 12,
+            "h": 8
+        }
+    },
+    "importedWithCode": false,
+    "settings": {
+        "gridLayout": {
+            "mode": "responsive"
+        }
+    },
+    "annotations": []
+}

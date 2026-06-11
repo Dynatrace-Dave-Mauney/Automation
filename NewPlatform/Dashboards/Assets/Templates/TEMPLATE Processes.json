@@ -1,58 +1,26 @@
 {
-    "version": 20,
+    "version": 21,
     "variables": [],
     "tiles": {
         "0": {
-            "type": "data",
             "title": "CPU Usage",
+            "type": "data",
             "query": "timeseries usage = avg(dt.process.cpu.usage, scalar: true), by: { dt.entity.process_group_instance }\n| fieldsAdd entityName(dt.entity.process_group_instance)\n| sort usage desc\n| limit 10",
-            "davis": {
-                "enabled": false,
-                "davisVisualization": {
-                    "isAvailable": true
-                }
-            },
+            "visualization": "categoricalBarChart",
             "visualizationSettings": {
                 "chartSettings": {
                     "categoricalBarChartSettings": {
+                        "isCategoryLabelVisible": false,
+                        "categoryAxis": [
+                            "dt.entity.process_group_instance.name"
+                        ],
                         "valueAxis": [
                             "usage"
                         ],
-                        "valueAxisLabel": "usage",
-                        "categoryAxis": [
-                            "dt.entity.process_group_instance.name"
-                        ]
+                        "valueAxisLabel": "usage"
                     }
                 },
                 "autoSelectVisualization": false,
-                "thresholds": [
-                    {
-                        "id": "0",
-                        "title": "",
-                        "field": "usage",
-                        "rules": [
-                            {
-                                "id": "0",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#7dc540"
-                            },
-                            {
-                                "id": "1",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "id": "2",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#dc172a"
-                            }
-                        ],
-                        "isEnabled": true
-                    }
-                ],
                 "unitsOverrides": []
             },
             "querySettings": {
@@ -62,48 +30,20 @@
                 "defaultSamplingRatio": 10,
                 "enableSampling": false
             },
-            "visualization": "categoricalBarChart"
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
         },
         "4": {
-            "type": "data",
             "title": "CPU Usage",
+            "type": "data",
             "query": "timeseries usage = avg(dt.process.cpu.usage), by: { dt.entity.process_group_instance }\n| fieldsAdd entityName(dt.entity.process_group_instance)\n| sort arrayAvg(usage) desc\n| limit 10",
-            "davis": {
-                "enabled": false,
-                "davisVisualization": {
-                    "isAvailable": true
-                }
-            },
+            "visualization": "lineChart",
             "visualizationSettings": {
                 "autoSelectVisualization": false,
-                "thresholds": [
-                    {
-                        "id": "0",
-                        "title": "",
-                        "field": "usage",
-                        "rules": [
-                            {
-                                "id": "0",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#7dc540"
-                            },
-                            {
-                                "id": "1",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "id": "2",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#dc172a"
-                            }
-                        ],
-                        "isEnabled": true
-                    }
-                ],
                 "unitsOverrides": []
             },
             "querySettings": {
@@ -113,59 +53,32 @@
                 "defaultSamplingRatio": 10,
                 "enableSampling": false
             },
-            "visualization": "lineChart"
-        },
-        "7": {
-            "type": "data",
-            "title": "Memory Page Faults",
-            "query": "timeseries page_faults = avg(dt.process.memory.page_faults, scalar: true), by: { dt.entity.process_group_instance }\n| fieldsAdd entityName(dt.entity.process_group_instance)\n| sort page_faults desc\n| limit 10",
             "davis": {
                 "enabled": false,
                 "davisVisualization": {
                     "isAvailable": true
                 }
-            },
+            }
+        },
+        "7": {
+            "title": "Memory Page Faults",
+            "type": "data",
+            "query": "timeseries page_faults = avg(dt.process.memory.page_faults, scalar: true), by: { dt.entity.process_group_instance }\n| fieldsAdd entityName(dt.entity.process_group_instance)\n| sort page_faults desc\n| limit 10",
+            "visualization": "categoricalBarChart",
             "visualizationSettings": {
                 "chartSettings": {
                     "categoricalBarChartSettings": {
+                        "isCategoryLabelVisible": false,
+                        "categoryAxis": [
+                            "dt.entity.process_group_instance.name"
+                        ],
                         "valueAxis": [
                             "page_faults"
                         ],
-                        "valueAxisLabel": "page_faults",
-                        "categoryAxis": [
-                            "dt.entity.process_group_instance.name"
-                        ]
+                        "valueAxisLabel": "page_faults"
                     }
                 },
                 "autoSelectVisualization": false,
-                "thresholds": [
-                    {
-                        "id": "0",
-                        "title": "",
-                        "field": "page_faults",
-                        "rules": [
-                            {
-                                "id": "0",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#7dc540"
-                            },
-                            {
-                                "id": "1",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "id": "2",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#dc172a"
-                            }
-                        ],
-                        "isEnabled": true
-                    }
-                ],
                 "unitsOverrides": []
             },
             "querySettings": {
@@ -175,59 +88,32 @@
                 "defaultSamplingRatio": 10,
                 "enableSampling": false
             },
-            "visualization": "categoricalBarChart"
-        },
-        "8": {
-            "type": "data",
-            "title": "Memory Working Set Size",
-            "query": "timeseries working_set_size = avg(dt.process.memory.working_set_size, scalar: true), by: { dt.entity.process_group_instance }\n| fieldsAdd entityName(dt.entity.process_group_instance)\n| sort working_set_size desc\n| limit 10",
             "davis": {
                 "enabled": false,
                 "davisVisualization": {
                     "isAvailable": true
                 }
-            },
+            }
+        },
+        "8": {
+            "title": "Memory Working Set Size",
+            "type": "data",
+            "query": "timeseries working_set_size = avg(dt.process.memory.working_set_size, scalar: true), by: { dt.entity.process_group_instance }\n| fieldsAdd entityName(dt.entity.process_group_instance)\n| sort working_set_size desc\n| limit 10",
+            "visualization": "categoricalBarChart",
             "visualizationSettings": {
                 "chartSettings": {
                     "categoricalBarChartSettings": {
+                        "isCategoryLabelVisible": false,
+                        "categoryAxis": [
+                            "dt.entity.process_group_instance.name"
+                        ],
                         "valueAxis": [
                             "working_set_size"
                         ],
-                        "valueAxisLabel": "working_set_size",
-                        "categoryAxis": [
-                            "dt.entity.process_group_instance.name"
-                        ]
+                        "valueAxisLabel": "working_set_size"
                     }
                 },
                 "autoSelectVisualization": false,
-                "thresholds": [
-                    {
-                        "id": "0",
-                        "title": "",
-                        "field": "working_set_size",
-                        "rules": [
-                            {
-                                "id": "0",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#7dc540"
-                            },
-                            {
-                                "id": "1",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "id": "2",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#dc172a"
-                            }
-                        ],
-                        "isEnabled": true
-                    }
-                ],
                 "unitsOverrides": []
             },
             "querySettings": {
@@ -237,59 +123,32 @@
                 "defaultSamplingRatio": 10,
                 "enableSampling": false
             },
-            "visualization": "categoricalBarChart"
-        },
-        "9": {
-            "type": "data",
-            "title": "Process Count",
-            "query": "timeseries process_count = avg(dt.process.process_count, scalar: true), by: { dt.entity.process_group_instance }\n| fieldsAdd entityName(dt.entity.process_group_instance)\n| sort process_count desc\n| limit 10",
             "davis": {
                 "enabled": false,
                 "davisVisualization": {
                     "isAvailable": true
                 }
-            },
+            }
+        },
+        "9": {
+            "title": "Process Count",
+            "type": "data",
+            "query": "timeseries process_count = avg(dt.process.process_count, scalar: true), by: { dt.entity.process_group_instance }\n| fieldsAdd entityName(dt.entity.process_group_instance)\n| sort process_count desc\n| limit 10",
+            "visualization": "categoricalBarChart",
             "visualizationSettings": {
                 "chartSettings": {
                     "categoricalBarChartSettings": {
+                        "isCategoryLabelVisible": false,
+                        "categoryAxis": [
+                            "dt.entity.process_group_instance.name"
+                        ],
                         "valueAxis": [
                             "process_count"
                         ],
-                        "valueAxisLabel": "process_count",
-                        "categoryAxis": [
-                            "dt.entity.process_group_instance.name"
-                        ]
+                        "valueAxisLabel": "process_count"
                     }
                 },
                 "autoSelectVisualization": false,
-                "thresholds": [
-                    {
-                        "id": "0",
-                        "title": "",
-                        "field": "process_count",
-                        "rules": [
-                            {
-                                "id": "0",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#7dc540"
-                            },
-                            {
-                                "id": "1",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "id": "2",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#dc172a"
-                            }
-                        ],
-                        "isEnabled": true
-                    }
-                ],
                 "unitsOverrides": []
             },
             "querySettings": {
@@ -299,48 +158,20 @@
                 "defaultSamplingRatio": 10,
                 "enableSampling": false
             },
-            "visualization": "categoricalBarChart"
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
         },
         "10": {
-            "type": "data",
             "title": "Memory Page Faults",
+            "type": "data",
             "query": "timeseries page_faults = avg(dt.process.memory.page_faults), by: { dt.entity.process_group_instance }\n| fieldsAdd entityName(dt.entity.process_group_instance)\n| sort arrayAvg(page_faults) desc\n| limit 10",
-            "davis": {
-                "enabled": false,
-                "davisVisualization": {
-                    "isAvailable": true
-                }
-            },
+            "visualization": "lineChart",
             "visualizationSettings": {
                 "autoSelectVisualization": false,
-                "thresholds": [
-                    {
-                        "id": "0",
-                        "title": "",
-                        "field": "page_faults",
-                        "rules": [
-                            {
-                                "id": "0",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#7dc540"
-                            },
-                            {
-                                "id": "1",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "id": "2",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#dc172a"
-                            }
-                        ],
-                        "isEnabled": true
-                    }
-                ],
                 "unitsOverrides": []
             },
             "querySettings": {
@@ -350,48 +181,20 @@
                 "defaultSamplingRatio": 10,
                 "enableSampling": false
             },
-            "visualization": "lineChart"
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
         },
         "11": {
-            "type": "data",
             "title": "Memory Working Set Size",
+            "type": "data",
             "query": "timeseries working_set_size = avg(dt.process.memory.working_set_size), by: { dt.entity.process_group_instance }\n| fieldsAdd entityName(dt.entity.process_group_instance)\n| sort arrayAvg(working_set_size) desc\n| limit 10",
-            "davis": {
-                "enabled": false,
-                "davisVisualization": {
-                    "isAvailable": true
-                }
-            },
+            "visualization": "lineChart",
             "visualizationSettings": {
                 "autoSelectVisualization": false,
-                "thresholds": [
-                    {
-                        "id": "0",
-                        "title": "",
-                        "field": "working_set_size",
-                        "rules": [
-                            {
-                                "id": "0",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#7dc540"
-                            },
-                            {
-                                "id": "1",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "id": "2",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#dc172a"
-                            }
-                        ],
-                        "isEnabled": true
-                    }
-                ],
                 "unitsOverrides": []
             },
             "querySettings": {
@@ -401,48 +204,20 @@
                 "defaultSamplingRatio": 10,
                 "enableSampling": false
             },
-            "visualization": "lineChart"
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
         },
         "12": {
-            "type": "data",
             "title": "Process Count",
+            "type": "data",
             "query": "timeseries process_count = avg(dt.process.process_count), by: { dt.entity.process_group_instance }\n| fieldsAdd entityName(dt.entity.process_group_instance)\n| sort arrayAvg(process_count) desc\n| limit 10",
-            "davis": {
-                "enabled": false,
-                "davisVisualization": {
-                    "isAvailable": true
-                }
-            },
+            "visualization": "lineChart",
             "visualizationSettings": {
                 "autoSelectVisualization": false,
-                "thresholds": [
-                    {
-                        "id": "0",
-                        "title": "",
-                        "field": "process_count",
-                        "rules": [
-                            {
-                                "id": "0",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#7dc540"
-                            },
-                            {
-                                "id": "1",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "id": "2",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#dc172a"
-                            }
-                        ],
-                        "isEnabled": true
-                    }
-                ],
                 "unitsOverrides": []
             },
             "querySettings": {
@@ -452,59 +227,32 @@
                 "defaultSamplingRatio": 10,
                 "enableSampling": false
             },
-            "visualization": "lineChart"
-        },
-        "13": {
-            "type": "data",
-            "title": "IO Bytes Read",
-            "query": "timeseries bytes_read = avg(dt.process.io.bytes_read, scalar: true), by: { dt.entity.process_group_instance }\n| fieldsAdd entityName(dt.entity.process_group_instance)\n| sort bytes_read desc\n| limit 10",
             "davis": {
                 "enabled": false,
                 "davisVisualization": {
                     "isAvailable": true
                 }
-            },
+            }
+        },
+        "13": {
+            "title": "IO Bytes Read",
+            "type": "data",
+            "query": "timeseries bytes_read = avg(dt.process.io.bytes_read, scalar: true), by: { dt.entity.process_group_instance }\n| fieldsAdd entityName(dt.entity.process_group_instance)\n| sort bytes_read desc\n| limit 10",
+            "visualization": "categoricalBarChart",
             "visualizationSettings": {
                 "chartSettings": {
                     "categoricalBarChartSettings": {
+                        "isCategoryLabelVisible": false,
+                        "categoryAxis": [
+                            "dt.entity.process_group_instance.name"
+                        ],
                         "valueAxis": [
                             "bytes_read"
                         ],
-                        "valueAxisLabel": "bytes_read",
-                        "categoryAxis": [
-                            "dt.entity.process_group_instance.name"
-                        ]
+                        "valueAxisLabel": "bytes_read"
                     }
                 },
                 "autoSelectVisualization": false,
-                "thresholds": [
-                    {
-                        "id": "0",
-                        "title": "",
-                        "field": "bytes_read",
-                        "rules": [
-                            {
-                                "id": "0",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#7dc540"
-                            },
-                            {
-                                "id": "1",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "id": "2",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#dc172a"
-                            }
-                        ],
-                        "isEnabled": true
-                    }
-                ],
                 "unitsOverrides": []
             },
             "querySettings": {
@@ -514,59 +262,32 @@
                 "defaultSamplingRatio": 10,
                 "enableSampling": false
             },
-            "visualization": "categoricalBarChart"
-        },
-        "14": {
-            "type": "data",
-            "title": "IO Bytes Written",
-            "query": "timeseries bytes_written = avg(dt.process.io.bytes_written, scalar: true), by: { dt.entity.process_group_instance }\n| fieldsAdd entityName(dt.entity.process_group_instance)\n| sort bytes_written desc\n| limit 10",
             "davis": {
                 "enabled": false,
                 "davisVisualization": {
                     "isAvailable": true
                 }
-            },
+            }
+        },
+        "14": {
+            "title": "IO Bytes Written",
+            "type": "data",
+            "query": "timeseries bytes_written = avg(dt.process.io.bytes_written, scalar: true), by: { dt.entity.process_group_instance }\n| fieldsAdd entityName(dt.entity.process_group_instance)\n| sort bytes_written desc\n| limit 10",
+            "visualization": "categoricalBarChart",
             "visualizationSettings": {
                 "chartSettings": {
                     "categoricalBarChartSettings": {
+                        "isCategoryLabelVisible": false,
+                        "categoryAxis": [
+                            "dt.entity.process_group_instance.name"
+                        ],
                         "valueAxis": [
                             "bytes_written"
                         ],
-                        "valueAxisLabel": "bytes_written",
-                        "categoryAxis": [
-                            "dt.entity.process_group_instance.name"
-                        ]
+                        "valueAxisLabel": "bytes_written"
                     }
                 },
                 "autoSelectVisualization": false,
-                "thresholds": [
-                    {
-                        "id": "0",
-                        "title": "",
-                        "field": "bytes_written",
-                        "rules": [
-                            {
-                                "id": "0",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#7dc540"
-                            },
-                            {
-                                "id": "1",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "id": "2",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#dc172a"
-                            }
-                        ],
-                        "isEnabled": true
-                    }
-                ],
                 "unitsOverrides": []
             },
             "querySettings": {
@@ -576,48 +297,20 @@
                 "defaultSamplingRatio": 10,
                 "enableSampling": false
             },
-            "visualization": "categoricalBarChart"
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
         },
         "15": {
-            "type": "data",
             "title": "IO Bytes Read",
+            "type": "data",
             "query": "timeseries bytes_read = avg(dt.process.io.bytes_read), by: { dt.entity.process_group_instance }\n| fieldsAdd entityName(dt.entity.process_group_instance)\n| sort arrayAvg(bytes_read) desc\n| limit 10",
-            "davis": {
-                "enabled": false,
-                "davisVisualization": {
-                    "isAvailable": true
-                }
-            },
+            "visualization": "lineChart",
             "visualizationSettings": {
                 "autoSelectVisualization": false,
-                "thresholds": [
-                    {
-                        "id": "0",
-                        "title": "",
-                        "field": "bytes_read",
-                        "rules": [
-                            {
-                                "id": "0",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#7dc540"
-                            },
-                            {
-                                "id": "1",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "id": "2",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#dc172a"
-                            }
-                        ],
-                        "isEnabled": true
-                    }
-                ],
                 "unitsOverrides": []
             },
             "querySettings": {
@@ -627,48 +320,20 @@
                 "defaultSamplingRatio": 10,
                 "enableSampling": false
             },
-            "visualization": "lineChart"
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
         },
         "16": {
-            "type": "data",
             "title": "IO Bytes Written",
+            "type": "data",
             "query": "timeseries bytes_written = avg(dt.process.io.bytes_written), by: { dt.entity.process_group_instance }\n| fieldsAdd entityName(dt.entity.process_group_instance)\n| sort arrayAvg(bytes_written) desc\n| limit 10",
-            "davis": {
-                "enabled": false,
-                "davisVisualization": {
-                    "isAvailable": true
-                }
-            },
+            "visualization": "lineChart",
             "visualizationSettings": {
                 "autoSelectVisualization": false,
-                "thresholds": [
-                    {
-                        "id": "0",
-                        "title": "",
-                        "field": "bytes_written",
-                        "rules": [
-                            {
-                                "id": "0",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#7dc540"
-                            },
-                            {
-                                "id": "1",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "id": "2",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#dc172a"
-                            }
-                        ],
-                        "isEnabled": true
-                    }
-                ],
                 "unitsOverrides": []
             },
             "querySettings": {
@@ -678,59 +343,32 @@
                 "defaultSamplingRatio": 10,
                 "enableSampling": false
             },
-            "visualization": "lineChart"
-        },
-        "17": {
-            "type": "data",
-            "title": "IO Requested Bytes Read",
-            "query": "timeseries req_bytes_read = avg(dt.process.io.req_bytes_read, scalar: true), by: { dt.entity.process_group_instance }\n| fieldsAdd entityName(dt.entity.process_group_instance)\n| sort req_bytes_read desc\n| limit 10",
             "davis": {
                 "enabled": false,
                 "davisVisualization": {
                     "isAvailable": true
                 }
-            },
+            }
+        },
+        "17": {
+            "title": "IO Requested Bytes Read",
+            "type": "data",
+            "query": "timeseries req_bytes_read = avg(dt.process.io.req_bytes_read, scalar: true), by: { dt.entity.process_group_instance }\n| fieldsAdd entityName(dt.entity.process_group_instance)\n| sort req_bytes_read desc\n| limit 10",
+            "visualization": "categoricalBarChart",
             "visualizationSettings": {
                 "chartSettings": {
                     "categoricalBarChartSettings": {
+                        "isCategoryLabelVisible": false,
+                        "categoryAxis": [
+                            "dt.entity.process_group_instance.name"
+                        ],
                         "valueAxis": [
                             "req_bytes_read"
                         ],
-                        "valueAxisLabel": "req_bytes_read",
-                        "categoryAxis": [
-                            "dt.entity.process_group_instance.name"
-                        ]
+                        "valueAxisLabel": "req_bytes_read"
                     }
                 },
                 "autoSelectVisualization": false,
-                "thresholds": [
-                    {
-                        "id": "0",
-                        "title": "",
-                        "field": "req_bytes_read",
-                        "rules": [
-                            {
-                                "id": "0",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#7dc540"
-                            },
-                            {
-                                "id": "1",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "id": "2",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#dc172a"
-                            }
-                        ],
-                        "isEnabled": true
-                    }
-                ],
                 "unitsOverrides": []
             },
             "querySettings": {
@@ -740,59 +378,32 @@
                 "defaultSamplingRatio": 10,
                 "enableSampling": false
             },
-            "visualization": "categoricalBarChart"
-        },
-        "18": {
-            "type": "data",
-            "title": "IO Requested Bytes Write",
-            "query": "timeseries req_bytes_write = avg(dt.process.io.req_bytes_write, scalar: true), by: { dt.entity.process_group_instance }\n| fieldsAdd entityName(dt.entity.process_group_instance)\n| sort req_bytes_write desc\n| limit 10",
             "davis": {
                 "enabled": false,
                 "davisVisualization": {
                     "isAvailable": true
                 }
-            },
+            }
+        },
+        "18": {
+            "title": "IO Requested Bytes Write",
+            "type": "data",
+            "query": "timeseries req_bytes_write = avg(dt.process.io.req_bytes_write, scalar: true), by: { dt.entity.process_group_instance }\n| fieldsAdd entityName(dt.entity.process_group_instance)\n| sort req_bytes_write desc\n| limit 10",
+            "visualization": "categoricalBarChart",
             "visualizationSettings": {
                 "chartSettings": {
                     "categoricalBarChartSettings": {
+                        "isCategoryLabelVisible": false,
+                        "categoryAxis": [
+                            "dt.entity.process_group_instance.name"
+                        ],
                         "valueAxis": [
                             "req_bytes_write"
                         ],
-                        "valueAxisLabel": "req_bytes_write",
-                        "categoryAxis": [
-                            "dt.entity.process_group_instance.name"
-                        ]
+                        "valueAxisLabel": "req_bytes_write"
                     }
                 },
                 "autoSelectVisualization": false,
-                "thresholds": [
-                    {
-                        "id": "0",
-                        "title": "",
-                        "field": "req_bytes_write",
-                        "rules": [
-                            {
-                                "id": "0",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#7dc540"
-                            },
-                            {
-                                "id": "1",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "id": "2",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#dc172a"
-                            }
-                        ],
-                        "isEnabled": true
-                    }
-                ],
                 "unitsOverrides": []
             },
             "querySettings": {
@@ -802,48 +413,20 @@
                 "defaultSamplingRatio": 10,
                 "enableSampling": false
             },
-            "visualization": "categoricalBarChart"
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
         },
         "19": {
-            "type": "data",
             "title": "IO Requested Bytes Read",
+            "type": "data",
             "query": "timeseries req_bytes_read = avg(dt.process.io.req_bytes_read), by: { dt.entity.process_group_instance }\n| fieldsAdd entityName(dt.entity.process_group_instance)\n| sort arrayAvg(req_bytes_read) desc\n| limit 10",
-            "davis": {
-                "enabled": false,
-                "davisVisualization": {
-                    "isAvailable": true
-                }
-            },
+            "visualization": "lineChart",
             "visualizationSettings": {
                 "autoSelectVisualization": false,
-                "thresholds": [
-                    {
-                        "id": "0",
-                        "title": "",
-                        "field": "req_bytes_read",
-                        "rules": [
-                            {
-                                "id": "0",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#7dc540"
-                            },
-                            {
-                                "id": "1",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "id": "2",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#dc172a"
-                            }
-                        ],
-                        "isEnabled": true
-                    }
-                ],
                 "unitsOverrides": []
             },
             "querySettings": {
@@ -853,48 +436,20 @@
                 "defaultSamplingRatio": 10,
                 "enableSampling": false
             },
-            "visualization": "lineChart"
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
         },
         "20": {
-            "type": "data",
             "title": "IO Requested Bytes Write",
+            "type": "data",
             "query": "timeseries req_bytes_write = avg(dt.process.io.req_bytes_write), by: { dt.entity.process_group_instance }\n| fieldsAdd entityName(dt.entity.process_group_instance)\n| sort arrayAvg(req_bytes_write) desc\n| limit 10",
-            "davis": {
-                "enabled": false,
-                "davisVisualization": {
-                    "isAvailable": true
-                }
-            },
+            "visualization": "lineChart",
             "visualizationSettings": {
                 "autoSelectVisualization": false,
-                "thresholds": [
-                    {
-                        "id": "0",
-                        "title": "",
-                        "field": "req_bytes_write",
-                        "rules": [
-                            {
-                                "id": "0",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#7dc540"
-                            },
-                            {
-                                "id": "1",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "id": "2",
-                                "label": "",
-                                "comparator": "\u2265",
-                                "color": "#dc172a"
-                            }
-                        ],
-                        "isEnabled": true
-                    }
-                ],
                 "unitsOverrides": []
             },
             "querySettings": {
@@ -904,7 +459,12 @@
                 "defaultSamplingRatio": 10,
                 "enableSampling": false
             },
-            "visualization": "lineChart"
+            "davis": {
+                "enabled": false,
+                "davisVisualization": {
+                    "isAvailable": true
+                }
+            }
         }
     },
     "layouts": {
@@ -1008,8 +568,9 @@
     "importedWithCode": false,
     "settings": {
         "gridLayout": {
-            "mode": "canvas",
-            "columnsCount": 40
+            "mode": "responsive",
+            "columnsCount": 36
         }
-    }
+    },
+    "annotations": []
 }
