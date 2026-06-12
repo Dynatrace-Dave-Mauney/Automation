@@ -7,8 +7,56 @@ import json
 
 env_name = 'Prod'
 
-# These will work with any (full stack) customer, and are in the templates directory
-main_dashboards = [
+selected_dashboards = [
+    '.NET',
+    'AWS Home',
+    'Administration',
+    'Application Overview - Home',
+    'Backend Overview',
+    'Calls To Databases',
+    'Cloud Foundry',
+    'Containers',
+    'Detailed Drilldowns Menu',
+    'Dynatrace Self-Monitoring: Home',
+    'Dynatrace-owned Dashboards',
+    'F5 - Home',
+    'Full Stack Overview',
+    'Go',
+    'Hosts (Detailed)',
+    'Hosts: AIX',
+    'Hosts: Linux',
+    'Hosts: Windows',
+    'IBM MQ Home',
+    'IBM WebSphere Home',
+    'Java Memory',
+    'Java',
+    'Kafka',
+    'Key Requests',
+    'Key User Actions',
+    'Kubernetes - Home',
+    'Microsoft Exchange',
+    'Monitoring Overview',
+    'Netscaler 1',
+    'Netscaler 2',
+    'Network (Host-Level Details)',
+    'Network (Process-Level Details)',
+    'Node.js',
+    'Oracle Database - Home',
+    'Queues',
+    'Service Errors',
+    'Service HTTP Errors',
+    'Suspicious Activity Audit',
+    'Synthetics: Browser Monitor Events',
+    'Third Party Services',
+    'Tomcat',
+    'VMware',
+    'Web Application Insights',
+    'Web Servers',
+]
+
+
+# OBSOLETE: These will work with any (full stack) customer, and are in the templates directory
+obsolete_main_dashboards = [
     'Administration',
     'Application Overview - Home',
     'Backend Overview',
@@ -76,8 +124,8 @@ main_dashboards = [
 #     'VMware VM',
 # ]
 
-# These differ by customer, and are in the templates directory
-tech_dashboards = [
+# OBSOLETE: These differ by customer, and are in the templates directory
+obsolete_tech_dashboards = [
     '.NET',
     'AWS Home',
     'Go',
@@ -86,7 +134,7 @@ tech_dashboards = [
     'Java',
     'Java Memory',
     # 'Jetty',
-    # 'Kafka - Home',
+    'Kafka - Home',
     'Kubernetes - Home',
     # 'Microsoft SQL Server - Home',
     'Netscaler 1',
@@ -132,6 +180,7 @@ def load_dashboard_lookup():
     path = 'Templates/Overview/????????-????-????-????-????????????.json'
     for filename in glob.glob(path):
         with codecs.open(filename, encoding='utf-8') as f:
+            print(filename)
             dashboard = json.loads(f.read())
             dashboard_id = dashboard['id']
             dashboard_name = dashboard.get('dashboardMetadata').get('name').replace('TEMPLATE: ', '')
@@ -162,7 +211,8 @@ def write_markdown_menus(dashboard_lookup):
     markdown_menu = '			"markdown": "More Details\\n\\n'
 
     # Combine the dashboards that have templates
-    template_dashboards = sorted(main_dashboards + tech_dashboards)
+    # template_dashboards = sorted(main_dashboards + tech_dashboards)
+    template_dashboards = sorted(selected_dashboards)
 
     for menu_item in template_dashboards:
         markdown_item_id = dashboard_lookup.get(menu_item)

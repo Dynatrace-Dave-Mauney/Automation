@@ -23,27 +23,31 @@ def run():
     # Override it here or in the put_dashboard call, if needed.
     # prefix = ''
 
+    # Modify the customize include list rather than excluding here...
     current_customer_skip_list = [
-        # ': AWS',
-        ': CICS',
-        ': Cloud Foundry',
-        ': Control M',
-        ': Custom PMI',
-        ': DB2',
-        ': Executor',
-        ': F5',
-        ': Hikari',
-        # ': IBM MQ',
-        # ': IBM Websphere',
-        # ': Kafka',
-        ': Microsoft Exchange',
-        # ': Microsoft SQL Server',
-        ': R2DBC',
-        ': Resilence',
-        ': Snowflake',
-        ': Spark',
-        ': Spring',
     ]
+
+    # prior_customer_skip_list = [
+    #     # ': AWS',
+    #     ': CICS',
+    #     ': Cloud Foundry',
+    #     ': Control M',
+    #     ': Custom PMI',
+    #     ': DB2',
+    #     ': Executor',
+    #     ': F5',
+    #     ': Hikari',
+    #     # ': IBM MQ',
+    #     # ': IBM Websphere',
+    #     # ': Kafka',
+    #     ': Microsoft Exchange',
+    #     # ': Microsoft SQL Server',
+    #     ': R2DBC',
+    #     ': Resilence',
+    #     ': Snowflake',
+    #     ': Spark',
+    #     ': Spring',
+    # ]
 
     # prior_customer_skip_list = [
     #     ': AWS',
@@ -125,14 +129,20 @@ def run():
     # '../$Output/Dashboards/Downloads/Prod/*.json'
 
     # env_name = 'UNSET'
-    # env_name = 'Sandbox'
-    # env_name = 'PreProd'
     env_name = 'Prod'
+    # env_name = 'NonProd'
+    # env_name = 'Int'
     # env_name = 'Personal'
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/*.json', owner=owner, skip_list=current_customer_skip_list)
+    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000001.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000050.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000001-v5.json', owner=owner, skip_list=current_customer_skip_list)
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000001-v4.json', owner=owner, skip_list=current_customer_skip_list)
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000001000.json', owner=owner, skip_list=current_customer_skip_list)
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000002000.json', owner=owner, skip_list=current_customer_skip_list)
+
+    # One time check of dashboard versions
+    # put_dashboards(env_name, f'/Temp/CURRENTCUSTOMER/Classic/Dashboards/VersionSelection/*.json', owner=owner, skip_list=current_customer_skip_list)
 
     # Generated Dashboards
     # All

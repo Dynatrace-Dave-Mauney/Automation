@@ -6,6 +6,11 @@ GENERATED_PATH = '../DynatraceDashboardGenerator'
 GENERATED_ID = 'aaaaaaaa-bbbb-cccc-dddd-000000000000'
 GENERATED_NAME = 'Generated Dashboards Menu'
 
+# path = '/Temp/CURRENTCUSTOMER/Classic/Dashboards/VersionSelection/0*.json'
+# GENERATED_PATH = '/Temp/FifthThird/Classic/Dashboards/VersionSelection'
+# GENERATED_ID = '10000000-dddd-bbbb-ffff-000000000000'
+# GENERATED_NAME = 'Dashboard Version Selection Menu'
+
 # path = '../$Output/Dashboards/AWSSupportingServices/Final/*.json'
 # GENERATED_PATH = '../$Output/Dashboards/AWSSupportingServices/Final'
 # GENERATED_ID = 'aaaaaaaa-bbbb-cccc-eeee-f00000000000'

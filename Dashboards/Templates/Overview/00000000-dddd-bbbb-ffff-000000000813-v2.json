@@ -5,50 +5,51 @@
         ],
         "clusterVersion": "1.261.134.20230302-084304"
     },
-    "id": "00000000-dddd-bbbb-ffff-000000000132",
+    "id": "00000000-dddd-bbbb-ffff-000000000813",
     "dashboardMetadata": {
-        "name": "TEMPLATE: Cloud Foundry",
+        "name": "TEMPLATE: Management Zone Coverage",
         "shared": true,
-        "owner": "nobody@example.com",
         "preset": false,
         "tilesNameSize": "small",
-        "hasConsistentColors": true
+        "hasConsistentColors": true,
+        "owner": "nobody@example.com"
     },
     "tiles": [
         {
-            "name": "CF: Total requests",
+            "name": "Hosts",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 38,
+                "top": 0,
                 "left": 0,
-                "width": 608,
-                "height": 418
+                "width": 1482,
+                "height": 532
             },
             "tileFilter": {},
             "isAutoRefreshDisabled": false,
-            "customName": "CF: Total requests",
+            "customName": "Data explorer results",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.cloudfoundry.http.totalRequests",
-                    "spaceAggregation": "AVG",
+                    "metric": "builtin:host.cpu.usage",
+                    "spaceAggregation": "AUTO",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.host"
                     ],
+                    "sortBy": "ASC",
+                    "sortByDimension": "dt.entity.host",
                     "filterBy": {
-                        "filterOperator": "AND",
                         "nestedFilters": [],
                         "criteria": []
                     },
+                    "limit": -1,
                     "rate": "NONE",
-                    "enabled": true,
-                    "histogram": false
+                    "enabled": true
                 }
             ],
             "visualConfig": {
-                "type": "GRAPH_CHART",
+                "type": "TABLE",
                 "global": {},
                 "rules": [
                     {
@@ -61,22 +62,9 @@
                 ],
                 "axes": {
                     "xAxis": {
-                        "displayName": "",
                         "visible": true
                     },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
+                    "yAxes": []
                 },
                 "heatmapSettings": {
                     "yAxis": "VALUE"
@@ -84,6 +72,7 @@
                 "thresholds": [
                     {
                         "axisTarget": "LEFT",
+                        "columnId": "CPU usage %",
                         "rules": [
                             {
                                 "color": "#7dc540"
@@ -95,111 +84,16 @@
                                 "color": "#dc172a"
                             }
                         ],
+                        "queryId": "A",
                         "visible": true
                     }
                 ],
                 "tableSettings": {
-                    "hiddenColumns": []
-                },
-                "graphChartSettings": {
-                    "connectNulls": false
-                },
-                "honeycombSettings": {
-                    "showHive": true,
-                    "showLegend": true,
-                    "showLabels": false
-                }
-            },
-            "metricExpressions": [
-                "resolution=null&(builtin:cloud.cloudfoundry.http.totalRequests:splitBy(\"dt.entity.process_group_instance\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
-            ]
-        },
-        {
-            "name": "CF: Response latency",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 38,
-                "left": 608,
-                "width": 608,
-                "height": 418
-            },
-            "tileFilter": {},
-            "isAutoRefreshDisabled": false,
-            "customName": "CF: Response latency",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "builtin:cloud.cloudfoundry.http.latency",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.process_group_instance"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "rate": "NONE",
-                    "enabled": true,
-                    "histogram": false
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {},
-                "rules": [
-                    {
-                        "matcher": "A:",
-                        "properties": {
-                            "color": "DEFAULT"
-                        },
-                        "seriesOverrides": []
-                    }
-                ],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
+                    "hiddenColumns": [
+                        "A:dt.entity.application.name",
+                        "A:dt.entity.host.name"
                     ]
                 },
-                "heatmapSettings": {
-                    "yAxis": "VALUE"
-                },
-                "thresholds": [
-                    {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ],
-                        "visible": true
-                    }
-                ],
-                "tableSettings": {
-                    "hiddenColumns": []
-                },
                 "graphChartSettings": {
                     "connectNulls": false
                 },
@@ -209,8 +103,11 @@
                     "showLabels": false
                 }
             },
+            "queriesSettings": {
+                "resolution": ""
+            },
             "metricExpressions": [
-                "resolution=null&(builtin:cloud.cloudfoundry.http.latency:splitBy(\"dt.entity.process_group_instance\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+                "resolution=Inf&(builtin:host.cpu.usage:splitBy(\"dt.entity.host\"):names:sort(dimension(\"dt.entity.host.name\",ascending))):names"
             ]
         },
         {
@@ -218,9 +115,9 @@
             "tileType": "MARKDOWN",
             "configured": true,
             "bounds": {
-                "top": 38,
-                "left": 1216,
-                "width": 304,
+                "top": 0,
+                "left": 2204,
+                "width": 152,
                 "height": 38
             },
             "tileFilter": {},
@@ -228,39 +125,40 @@
             "markdown": "#### [\u21e6 Overview](#dashboard;id=00000000-dddd-bbbb-ffff-000000000001)\n![BackButton]()"
         },
         {
-            "name": "CF: 5xx responses",
+            "name": "Process Groups",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 456,
+                "top": 532,
                 "left": 0,
-                "width": 608,
-                "height": 418
+                "width": 1482,
+                "height": 532
             },
             "tileFilter": {},
             "isAutoRefreshDisabled": false,
-            "customName": "CF: 5xx responses",
+            "customName": "Data explorer results",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.cloudfoundry.http.responses5xx",
-                    "spaceAggregation": "AVG",
+                    "metric": "builtin:tech.generic.cpu.usage",
+                    "spaceAggregation": "AUTO",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
                         "dt.entity.process_group_instance"
                     ],
+                    "sortBy": "ASC",
+                    "sortByDimension": "dt.entity.process_group_instance",
                     "filterBy": {
-                        "filterOperator": "AND",
                         "nestedFilters": [],
                         "criteria": []
                     },
+                    "limit": -1,
                     "rate": "NONE",
-                    "enabled": true,
-                    "histogram": false
+                    "enabled": true
                 }
             ],
             "visualConfig": {
-                "type": "GRAPH_CHART",
+                "type": "TABLE",
                 "global": {},
                 "rules": [
                     {
@@ -273,22 +171,9 @@
                 ],
                 "axes": {
                     "xAxis": {
-                        "displayName": "",
                         "visible": true
                     },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
+                    "yAxes": []
                 },
                 "heatmapSettings": {
                     "yAxis": "VALUE"
@@ -296,6 +181,7 @@
                 "thresholds": [
                     {
                         "axisTarget": "LEFT",
+                        "columnId": "Process CPU usage",
                         "rules": [
                             {
                                 "color": "#7dc540"
@@ -307,11 +193,15 @@
                                 "color": "#dc172a"
                             }
                         ],
+                        "queryId": "A",
                         "visible": true
                     }
                 ],
                 "tableSettings": {
-                    "hiddenColumns": []
+                    "hiddenColumns": [
+                        "A:dt.entity.application.name",
+                        "A:dt.entity.process_group_instance.name"
+                    ]
                 },
                 "graphChartSettings": {
                     "connectNulls": false
@@ -322,44 +212,42 @@
                     "showLabels": false
                 }
             },
+            "queriesSettings": {
+                "resolution": ""
+            },
             "metricExpressions": [
-                "resolution=null&(builtin:cloud.cloudfoundry.http.responses5xx:splitBy(\"dt.entity.process_group_instance\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+                "resolution=Inf&(builtin:tech.generic.cpu.usage:splitBy(\"dt.entity.process_group_instance\"):names:sort(dimension(\"dt.entity.process_group_instance.name\",ascending))):names"
             ]
         },
         {
-            "name": "CF: 502 responses",
+            "name": "Services",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
-                "top": 456,
-                "left": 608,
-                "width": 608,
-                "height": 418
+                "top": 1064,
+                "left": 0,
+                "width": 1482,
+                "height": 532
             },
             "tileFilter": {},
             "isAutoRefreshDisabled": false,
-            "customName": "CF: 502 responses",
+            "customName": "Data explorer results",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.cloudfoundry.http.badGateways",
-                    "spaceAggregation": "AVG",
+                    "spaceAggregation": "AUTO",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.service.name",
+                        "dt.entity.service"
                     ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
+                    "metricSelector": "builtin:service.requestCount.total:filter(and(or(in(\"dt.entity.service\",entitySelector(\"type(service),not(serviceType(~\"DATABASE_SERVICE~\"))\"))))):splitBy(\"dt.entity.service\"):names:sort(dimension(\"dt.entity.service.name\",ascending))",
                     "rate": "NONE",
-                    "enabled": true,
-                    "histogram": false
+                    "enabled": true
                 }
             ],
             "visualConfig": {
-                "type": "GRAPH_CHART",
+                "type": "TABLE",
                 "global": {},
                 "rules": [
                     {
@@ -372,22 +260,9 @@
                 ],
                 "axes": {
                     "xAxis": {
-                        "displayName": "",
                         "visible": true
                     },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
+                    "yAxes": []
                 },
                 "heatmapSettings": {
                     "yAxis": "VALUE"
@@ -395,6 +270,7 @@
                 "thresholds": [
                     {
                         "axisTarget": "LEFT",
+                        "columnId": "Request count",
                         "rules": [
                             {
                                 "color": "#7dc540"
@@ -406,11 +282,16 @@
                                 "color": "#dc172a"
                             }
                         ],
+                        "queryId": "A",
                         "visible": true
                     }
                 ],
                 "tableSettings": {
-                    "hiddenColumns": []
+                    "hiddenColumns": [
+                        "A:dt.entity.application.name",
+                        "A:dt.entity.process_group_instance.name",
+                        "A:dt.entity.service.name"
+                    ]
                 },
                 "graphChartSettings": {
                     "connectNulls": false
@@ -421,8 +302,216 @@
                     "showLabels": false
                 }
             },
+            "queriesSettings": {
+                "resolution": ""
+            },
             "metricExpressions": [
-                "resolution=null&(builtin:cloud.cloudfoundry.http.badGateways:splitBy(\"dt.entity.process_group_instance\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+                "resolution=Inf&(builtin:service.requestCount.total:filter(and(or(in(\"dt.entity.service\",entitySelector(\"type(service),not(serviceType(~\"DATABASE_SERVICE~\"))\"))))):splitBy(\"dt.entity.service\"):names:sort(dimension(\"dt.entity.service.name\",ascending))):names"
+            ]
+        },
+        {
+            "name": "Database Services",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1596,
+                "left": 0,
+                "width": 1482,
+                "height": 532
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:service.requestCount.total",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.service"
+                    ],
+                    "sortBy": "ASC",
+                    "sortByDimension": "dt.entity.service",
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [
+                            {
+                                "filter": "dt.entity.service",
+                                "filterType": "ENTITY_ATTRIBUTE",
+                                "filterOperator": "OR",
+                                "entityAttribute": "serviceType",
+                                "nestedFilters": [],
+                                "criteria": [
+                                    {
+                                        "value": "DATABASE_SERVICE",
+                                        "evaluator": "IN"
+                                    }
+                                ]
+                            }
+                        ],
+                        "criteria": []
+                    },
+                    "limit": -1,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TABLE",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "columnId": "Request count",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "queryId": "A",
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": [
+                        "A:dt.entity.application.name",
+                        "A:dt.entity.process_group_instance.name",
+                        "A:dt.entity.service.name"
+                    ]
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:service.requestCount.total:filter(and(or(in(\"dt.entity.service\",entitySelector(\"type(service),serviceType(~\"DATABASE_SERVICE~\")\"))))):splitBy(\"dt.entity.service\"):names:sort(dimension(\"dt.entity.service.name\",ascending))):names"
+            ]
+        },
+        {
+            "name": "Web Applications",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2128,
+                "left": 0,
+                "width": 1482,
+                "height": 532
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:apps.web.actionCount.category",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.application"
+                    ],
+                    "sortBy": "ASC",
+                    "sortByDimension": "dt.entity.application",
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "limit": -1,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TABLE",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "columnId": "Action count (by Apdex category) [web]",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "queryId": "A",
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": [
+                        "A:dt.entity.application.name"
+                    ]
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:apps.web.actionCount.category:splitBy(\"dt.entity.application\"):names:sort(dimension(\"dt.entity.application.name\",ascending))):names"
             ]
         }
     ]
