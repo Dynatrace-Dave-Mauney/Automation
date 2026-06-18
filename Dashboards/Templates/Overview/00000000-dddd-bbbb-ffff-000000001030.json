@@ -5,38 +5,36 @@
         ],
         "clusterVersion": "1.261.134.20230302-084304"
     },
-    "id": "00000000-dddd-bbbb-ffff-000000001011",
+    "id": "00000000-dddd-bbbb-ffff-000000001030",
     "dashboardMetadata": {
-        "name": "TEMPLATE: AWS Connect",
+        "name": "TEMPLATE: AWS Usage",
         "shared": true,
         "owner": "nobody@example.com",
-        "dashboardFilter": null,
-        "preset": false,
         "tilesNameSize": "small",
         "hasConsistentColors": true
     },
     "tiles": [
         {
-            "name": "ContactFlowErrors Sum (by ContactFlowName and MetricGroup)",
+            "name": "CallCount Sum (by Class and Resource and Type)",
             "nameSize": null,
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
                 "top": 0,
                 "left": 0,
-                "width": 304,
-                "height": 304
+                "width": 684,
+                "height": 456
             },
             "tileFilter": {
                 "timeframe": null,
                 "managementZone": null
             },
             "isAutoRefreshDisabled": false,
-            "customName": "ContactFlowErrors Sum (by ContactFlowName and MetricGroup)",
+            "customName": "CallCount Sum (by Class and Resource and Type)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.connect.contactFlowErrorsSumByContactFlowNameMetricGroup",
+                    "metric": "ext:cloud.aws.usage.callCountSumByClassResourceType",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
@@ -150,30 +148,30 @@
             },
             "queriesSettings": null,
             "metricExpressions": [
-                "resolution=null&(ext:cloud.aws.connect.contactFlowErrorsSumByContactFlowNameMetricGroup:splitBy(\"dt.entity.custom_device\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+                "resolution=null&(ext:cloud.aws.usage.callCountSumByClassResourceType:splitBy(\"dt.entity.custom_device\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
             ]
         },
         {
-            "name": "QueueSize (by MetricGroup and QueueName)",
+            "name": "ResourceCount Average (by Class and Resource and Type)",
             "nameSize": null,
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
                 "top": 0,
-                "left": 304,
-                "width": 304,
-                "height": 304
+                "left": 684,
+                "width": 684,
+                "height": 456
             },
             "tileFilter": {
                 "timeframe": null,
                 "managementZone": null
             },
             "isAutoRefreshDisabled": false,
-            "customName": "QueueSize (by MetricGroup and QueueName)",
+            "customName": "ResourceCount Average (by Class and Resource and Type)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.connect.queueSizeByMetricGroupQueueName",
+                    "metric": "ext:cloud.aws.usage.resourceCountAverageByClassResourceType",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
@@ -287,144 +285,7 @@
             },
             "queriesSettings": null,
             "metricExpressions": [
-                "resolution=null&(ext:cloud.aws.connect.queueSizeByMetricGroupQueueName:splitBy(\"dt.entity.custom_device\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
-            ]
-        },
-        {
-            "name": "LongestQueueWaitTime (by MetricGroup and QueueName)",
-            "nameSize": null,
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 0,
-                "left": 608,
-                "width": 304,
-                "height": 304
-            },
-            "tileFilter": {
-                "timeframe": null,
-                "managementZone": null
-            },
-            "isAutoRefreshDisabled": false,
-            "customName": "LongestQueueWaitTime (by MetricGroup and QueueName)",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "ext:cloud.aws.connect.longestQueueWaitTimeByMetricGroupQueueName",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.custom_device"
-                    ],
-                    "sortBy": null,
-                    "sortByDimension": null,
-                    "filterBy": {
-                        "filter": null,
-                        "globalEntity": null,
-                        "filterType": null,
-                        "filterOperator": "AND",
-                        "entityAttribute": null,
-                        "relationship": null,
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "limit": null,
-                    "metricSelector": null,
-                    "foldTransformation": null,
-                    "defaultValue": null,
-                    "rate": "NONE",
-                    "enabled": true,
-                    "generatedMetricSelector": null,
-                    "timeShift": null,
-                    "histogram": false
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "theme": null,
-                    "threshold": null,
-                    "seriesType": null,
-                    "hasTrendline": null,
-                    "hideLegend": null
-                },
-                "rules": [
-                    {
-                        "matcher": "A:",
-                        "unitTransform": null,
-                        "valueFormat": null,
-                        "properties": {
-                            "color": "DEFAULT",
-                            "seriesType": null,
-                            "alias": null
-                        },
-                        "seriesOverrides": []
-                    }
-                ],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                },
-                "heatmapSettings": {
-                    "yAxis": "VALUE",
-                    "yAxisBuckets": null,
-                    "xAxisBuckets": null,
-                    "showLabels": null
-                },
-                "singleValueSettings": null,
-                "thresholds": [
-                    {
-                        "axisTarget": "LEFT",
-                        "columnId": null,
-                        "rules": [
-                            {
-                                "value": null,
-                                "color": "#7dc540"
-                            },
-                            {
-                                "value": null,
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "value": null,
-                                "color": "#dc172a"
-                            }
-                        ],
-                        "queryId": null,
-                        "visible": true
-                    }
-                ],
-                "tableSettings": {
-                    "isThresholdBackgroundAppliedToCell": null,
-                    "hiddenColumns": []
-                },
-                "graphChartSettings": {
-                    "connectNulls": false
-                },
-                "honeycombSettings": {
-                    "showHive": true,
-                    "showLegend": true,
-                    "showLabels": false
-                }
-            },
-            "queriesSettings": null,
-            "metricExpressions": [
-                "resolution=null&(ext:cloud.aws.connect.longestQueueWaitTimeByMetricGroupQueueName:splitBy(\"dt.entity.custom_device\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+                "resolution=null&(ext:cloud.aws.usage.resourceCountAverageByClassResourceType:splitBy(\"dt.entity.custom_device\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
             ]
         },
         {
@@ -434,9 +295,9 @@
             "configured": true,
             "bounds": {
                 "top": 0,
-                "left": 912,
-                "width": 304,
-                "height": 152
+                "left": 1368,
+                "width": 152,
+                "height": 38
             },
             "tileFilter": {
                 "timeframe": null,

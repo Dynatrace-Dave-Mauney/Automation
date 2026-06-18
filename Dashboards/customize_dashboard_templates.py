@@ -262,6 +262,37 @@ include_file_name_list = [
     '00000000-dddd-bbbb-ffff-000000001124.json',  # AWS States
     '00000000-dddd-bbbb-ffff-000000001125.json',  # AWS WAF
     '00000000-dddd-bbbb-ffff-000000002000.json',  # Dynatrace-owned Dashboards
+
+    '00000000-dddd-bbbb-ffff-000000000180.json',  # Palo Alto Generic Device Extension
+    '00000000-dddd-bbbb-ffff-000000000181.json',  # Disk Extension
+    '00000000-dddd-bbbb-ffff-000000000182.json',  # SAN Storage
+    '00000000-dddd-bbbb-ffff-000000000183.json',  # IIS
+    '00000000-dddd-bbbb-ffff-000000000184.json',  # Github
+    '00000000-dddd-bbbb-ffff-000000000185.json',  # Active Directory
+    '00000000-dddd-bbbb-ffff-000000000186.json',  # Custom Devices
+    '00000000-dddd-bbbb-ffff-000000000187.json',  # Netracer
+    '00000000-dddd-bbbb-ffff-000000000188.json',  # F5 Extension 2
+    '00000000-dddd-bbbb-ffff-000000000189.json',  # F5 Extension 1
+    '00000000-dddd-bbbb-ffff-000000000190.json',  # F5 Extension 3
+    '00000000-dddd-bbbb-ffff-000000000191.json',  # Log Metrics
+    '00000000-dddd-bbbb-ffff-000000000192.json',  # Scrape
+    '00000000-dddd-bbbb-ffff-000000000193.json',  # JFrog
+    '00000000-dddd-bbbb-ffff-000000000194.json',  # Airflow Dividend
+    '00000000-dddd-bbbb-ffff-000000000195.json',  # Cohesity Backup
+    '00000000-dddd-bbbb-ffff-000000000196.json',  # NAS Storage
+    '00000000-dddd-bbbb-ffff-000000000197.json',  # Splunk Cloud
+    '00000000-dddd-bbbb-ffff-000000000198.json',  # OS Service
+    '00000000-dddd-bbbb-ffff-000000000199.json',  # PostgreSQL
+    '00000000-dddd-bbbb-ffff-000000000200.json',  # Network Device Extension
+    '00000000-dddd-bbbb-ffff-000000000201.json',  # Raft Proxy 1
+    '00000000-dddd-bbbb-ffff-000000000202.json',  # Raft Proxy 2
+    '00000000-dddd-bbbb-ffff-000000001026.json',  # AWS Sagemaker
+    '00000000-dddd-bbbb-ffff-000000001027.json',  # AWS Textract
+    '00000000-dddd-bbbb-ffff-000000001028.json',  # AWS Logs
+    '00000000-dddd-bbbb-ffff-000000001029.json',  # AWS Amazon MQ
+    '00000000-dddd-bbbb-ffff-000000001030.json',  # AWS Usage
+    '00000000-dddd-bbbb-ffff-000000001031.json',  # AWS Kinesis Data Firehose
+    '00000000-dddd-bbbb-ffff-000000001032.json',  # AWS RDS 2
 ]
 
 
@@ -797,7 +828,23 @@ def convert_mz_id_to_db_id(mz_id):
     return dashboard_id
 
 
+def print_skipped_dashboard_list():
+    print('Dashboards not in the include_file_name_list that will be skipped: ')
+    for filename in glob.glob(DASHBOARD_TEMPLATE_PATH + '/00000000-*'):
+        base_name = os.path.basename(filename)
+        # print(filename)
+        if base_name not in include_file_name_list:
+            with open(filename, 'r', encoding='utf-8') as f:
+                dashboard = f.read()
+                dashboard_json = json.loads(dashboard)
+                dashboard_id = dashboard_json.get('id')
+                dashboard_name = dashboard_json.get('dashboardMetadata').get('name')
+                if f'{dashboard_id}.json' not in include_file_name_list:
+                    print(f"\t'{dashboard_id}.json',  # {dashboard_name.replace('TEMPLATE: ', '')}")
+
+
 def main():
+    print_skipped_dashboard_list()
     customize_dashboards()
 
 

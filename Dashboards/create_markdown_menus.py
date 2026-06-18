@@ -9,18 +9,24 @@ env_name = 'Prod'
 
 selected_dashboards = [
     '.NET',
-    'AWS Home',
+    'Active Directory',
     'Administration',
+    'Airflow Dividend',
     'Application Overview - Home',
+    'AWS Home',
     'Backend Overview',
     'Calls To Databases',
     'Cloud Foundry',
+    'Cohesity Backup',
     'Containers',
+    'Custom Devices',
     'Detailed Drilldowns Menu',
+    'Disk Extension',
     'Dynatrace Self-Monitoring: Home',
     'Dynatrace-owned Dashboards',
     'F5 - Home',
     'Full Stack Overview',
+    'Github',
     'Go',
     'Hosts (Detailed)',
     'Hosts: AIX',
@@ -28,23 +34,37 @@ selected_dashboards = [
     'Hosts: Windows',
     'IBM MQ Home',
     'IBM WebSphere Home',
+    'IIS',
     'Java Memory',
     'Java',
+    'JFrog',
     'Kafka',
     'Key Requests',
     'Key User Actions',
     'Kubernetes - Home',
+    'Log Metrics',
     'Microsoft Exchange',
     'Monitoring Overview',
+    'NAS Storage',
+    'Netracer',
     'Netscaler 1',
     'Netscaler 2',
     'Network (Host-Level Details)',
     'Network (Process-Level Details)',
+    'Network Device Extension',
     'Node.js',
     'Oracle Database - Home',
+    'OS Service',
+    'Palo Alto Generic Device Extension',
+    'PostgreSQL',
     'Queues',
+    'Raft Proxy 1',
+    'Raft Proxy 2',
+    'SAN Storage',
+    'Scrape',
     'Service Errors',
     'Service HTTP Errors',
+    'Splunk Cloud',
     'Suspicious Activity Audit',
     'Synthetics: Browser Monitor Events',
     'Third Party Services',
@@ -158,6 +178,12 @@ ootb_dashboards = [
     # ('Palo Alto', 'ab163c60-07f5-7e82-40d5-35cd6a8be991')
 ]
 
+# These differ by customer, and are not in the templates directory
+# Dynatrace-owned Dashboards may cover this use case (and does for the current customer)
+customer_dashboards = [
+    ('Custom Metrics', '00000000-dddd-bbbb-ffff-000000009000')
+]
+
 # Generated Dashboards that vary by customer
 generated_dashboards = [
     # ('Engineer', '00000001-0000-0000-0001-000000000000'),
@@ -180,7 +206,7 @@ def load_dashboard_lookup():
     path = 'Templates/Overview/????????-????-????-????-????????????.json'
     for filename in glob.glob(path):
         with codecs.open(filename, encoding='utf-8') as f:
-            print(filename)
+            # print(filename)
             dashboard = json.loads(f.read())
             dashboard_id = dashboard['id']
             dashboard_name = dashboard.get('dashboardMetadata').get('name').replace('TEMPLATE: ', '')
@@ -190,6 +216,11 @@ def load_dashboard_lookup():
     for ootb_dashboard in ootb_dashboards:
         dashboard_name = ootb_dashboard[0]
         dashboard_id = ootb_dashboard[1]
+        dashboard_lookup[dashboard_name] = dashboard_id
+
+    for customer_dashboard in customer_dashboards:
+        dashboard_name = customer_dashboard[0]
+        dashboard_id = customer_dashboard[1]
         dashboard_lookup[dashboard_name] = dashboard_id
 
     for generated_dashboard in generated_dashboards:
@@ -221,8 +252,11 @@ def write_markdown_menus(dashboard_lookup):
             exit(1)
         links.append((menu_item, f'#dashboard;id={markdown_item_id}'))
 
-    for ootb_item in ootb_dashboards:
+    for customer_item in ootb_dashboards:
         links.append((ootb_item[0], f'#dashboard;id={ootb_item[1]}'))
+
+    for customer_item in customer_dashboards:
+        links.append((customer_item[0], f'#dashboard;id={customer_item[1]}'))
 
     for generated_item in generated_dashboards:
         links.append((generated_item[0], f'#dashboard;id={generated_item[1]}'))

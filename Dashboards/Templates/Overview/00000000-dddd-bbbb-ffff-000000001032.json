@@ -5,51 +5,50 @@
         ],
         "clusterVersion": "1.261.134.20230302-084304"
     },
-    "id": "00000000-dddd-bbbb-ffff-000000001002",
+    "id": "00000000-dddd-bbbb-ffff-000000001032",
     "dashboardMetadata": {
-        "name": "TEMPLATE: AWS DynamoDB",
+        "name": "TEMPLATE: AWS RDS 2",
         "shared": true,
         "owner": "nobody@example.com",
-        "dashboardFilter": null,
-        "preset": false,
         "tilesNameSize": "small",
         "hasConsistentColors": true
     },
     "tiles": [
         {
-            "name": "Read capacity units",
+            "name": "CPUUtilization",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
                 "top": 0,
                 "left": 0,
-                "width": 342,
+                "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "DynamoDB read capacity units",
+            "isAutoRefreshDisabled": false,
+            "customName": "CPUUtilization",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.aws.dynamo.capacityUnits.consumed.read",
+                    "metric": "ext:cloud.aws.rds.cpuUtilization",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.dynamo_db_table"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
                         "criteria": []
                     },
-                    "enabled": true
+                    "rate": "NONE",
+                    "enabled": true,
+                    "histogram": false
                 }
             ],
             "visualConfig": {
                 "type": "GRAPH_CHART",
-                "global": {
-                    "hideLegend": false
-                },
+                "global": {},
                 "rules": [
                     {
                         "matcher": "A:",
@@ -95,12 +94,11 @@
                                 "color": "#dc172a"
                             }
                         ],
-                        "queryId": "",
                         "visible": true
                     }
                 ],
                 "tableSettings": {
-                    "isThresholdBackgroundAppliedToCell": false
+                    "hiddenColumns": []
                 },
                 "graphChartSettings": {
                     "connectNulls": false
@@ -111,47 +109,45 @@
                     "showLabels": false
                 }
             },
-            "queriesSettings": {
-                "resolution": ""
-            },
             "metricExpressions": [
-                "resolution=null&(builtin:cloud.aws.dynamo.capacityUnits.consumed.read:splitBy(\"dt.entity.dynamo_db_table\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+                "resolution=null&(ext:cloud.aws.rds.cpuUtilization:splitBy(\"dt.entity.custom_device\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
             ]
         },
         {
-            "name": "Provisioned read capacity units",
+            "name": "CPUUtilization (by Region and EngineName)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
                 "top": 0,
-                "left": 342,
-                "width": 342,
+                "left": 304,
+                "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "DynamoDB provisioned read capacity units",
+            "isAutoRefreshDisabled": false,
+            "customName": "CPUUtilization (by Region and EngineName)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.aws.dynamo.capacityUnits.provisioned.read",
+                    "metric": "ext:cloud.aws.rds.cpuUtilizationByRegionEngineName",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.dynamo_db_table"
+                        "dt.entity.custom_device_group"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
                         "criteria": []
                     },
-                    "enabled": true
+                    "rate": "NONE",
+                    "enabled": true,
+                    "histogram": false
                 }
             ],
             "visualConfig": {
                 "type": "GRAPH_CHART",
-                "global": {
-                    "hideLegend": false
-                },
+                "global": {},
                 "rules": [
                     {
                         "matcher": "A:",
@@ -197,114 +193,11 @@
                                 "color": "#dc172a"
                             }
                         ],
-                        "queryId": "",
                         "visible": true
                     }
                 ],
                 "tableSettings": {
-                    "isThresholdBackgroundAppliedToCell": false
-                },
-                "graphChartSettings": {
-                    "connectNulls": true
-                },
-                "honeycombSettings": {
-                    "showHive": true,
-                    "showLegend": true,
-                    "showLabels": false
-                }
-            },
-            "queriesSettings": {
-                "resolution": ""
-            },
-            "metricExpressions": [
-                "resolution=null&(builtin:cloud.aws.dynamo.capacityUnits.provisioned.read:splitBy(\"dt.entity.dynamo_db_table\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
-            ]
-        },
-        {
-            "name": "Read capacity units %",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 0,
-                "left": 684,
-                "width": 342,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "DynamoDB read capacity units %",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "builtin:cloud.aws.dynamo.capacityUnits.read",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.dynamo_db_table"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "hideLegend": false
-                },
-                "rules": [
-                    {
-                        "matcher": "A:",
-                        "properties": {
-                            "color": "DEFAULT"
-                        },
-                        "seriesOverrides": []
-                    }
-                ],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                },
-                "heatmapSettings": {
-                    "yAxis": "VALUE"
-                },
-                "thresholds": [
-                    {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ],
-                        "queryId": "",
-                        "visible": true
-                    }
-                ],
-                "tableSettings": {
-                    "isThresholdBackgroundAppliedToCell": false
+                    "hiddenColumns": []
                 },
                 "graphChartSettings": {
                     "connectNulls": false
@@ -315,47 +208,45 @@
                     "showLabels": false
                 }
             },
-            "queriesSettings": {
-                "resolution": ""
-            },
             "metricExpressions": [
-                "resolution=null&(builtin:cloud.aws.dynamo.capacityUnits.read:splitBy(\"dt.entity.dynamo_db_table\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+                "resolution=null&(ext:cloud.aws.rds.cpuUtilizationByRegionEngineName:splitBy(\"dt.entity.custom_device_group\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
             ]
         },
         {
-            "name": "Read throttled events",
+            "name": "DatabaseConnections Sum",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
                 "top": 0,
-                "left": 1026,
-                "width": 342,
+                "left": 608,
+                "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "DynamoDB number of read throttled events",
+            "isAutoRefreshDisabled": false,
+            "customName": "DatabaseConnections Sum",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.aws.dynamo.throttledEvents.read",
+                    "metric": "ext:cloud.aws.rds.databaseConnectionsSum",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.dynamo_db_table"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
                         "criteria": []
                     },
-                    "enabled": true
+                    "rate": "NONE",
+                    "enabled": true,
+                    "histogram": false
                 }
             ],
             "visualConfig": {
                 "type": "GRAPH_CHART",
-                "global": {
-                    "hideLegend": false
-                },
+                "global": {},
                 "rules": [
                     {
                         "matcher": "A:",
@@ -401,12 +292,11 @@
                                 "color": "#dc172a"
                             }
                         ],
-                        "queryId": "",
                         "visible": true
                     }
                 ],
                 "tableSettings": {
-                    "isThresholdBackgroundAppliedToCell": false
+                    "hiddenColumns": []
                 },
                 "graphChartSettings": {
                     "connectNulls": false
@@ -417,11 +307,107 @@
                     "showLabels": false
                 }
             },
-            "queriesSettings": {
-                "resolution": ""
+            "metricExpressions": [
+                "resolution=null&(ext:cloud.aws.rds.databaseConnectionsSum:splitBy(\"dt.entity.custom_device\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "DatabaseConnections Sum (by Region and EngineName)",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 912,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "DatabaseConnections Sum (by Region and EngineName)",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.aws.rds.databaseConnectionsSumByRegionEngineName",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true,
+                    "histogram": false
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
             },
             "metricExpressions": [
-                "resolution=null&(builtin:cloud.aws.dynamo.throttledEvents.read:splitBy(\"dt.entity.dynamo_db_table\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+                "resolution=null&(ext:cloud.aws.rds.databaseConnectionsSumByRegionEngineName:splitBy(\"dt.entity.custom_device_group\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
             ]
         },
         {
@@ -430,47 +416,49 @@
             "configured": true,
             "bounds": {
                 "top": 0,
-                "left": 1368,
-                "width": 152,
-                "height": 38
+                "left": 1216,
+                "width": 304,
+                "height": 152
             },
             "tileFilter": {},
+            "isAutoRefreshDisabled": false,
             "markdown": "#### [\u21e6 Overview](#dashboard;id=00000000-dddd-bbbb-ffff-000000000001)\n![BackButton]()"
         },
         {
-            "name": "Write capacity units",
+            "name": "DiskQueueDepth Sum",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
                 "top": 304,
                 "left": 0,
-                "width": 342,
+                "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "DynamoDB write capacity units",
+            "isAutoRefreshDisabled": false,
+            "customName": "DiskQueueDepth Sum",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.aws.dynamo.capacityUnits.consumed.write",
+                    "metric": "ext:cloud.aws.rds.diskQueueDepthSum",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.dynamo_db_table"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
                         "criteria": []
                     },
-                    "enabled": true
+                    "rate": "NONE",
+                    "enabled": true,
+                    "histogram": false
                 }
             ],
             "visualConfig": {
                 "type": "GRAPH_CHART",
-                "global": {
-                    "hideLegend": false
-                },
+                "global": {},
                 "rules": [
                     {
                         "matcher": "A:",
@@ -516,12 +504,11 @@
                                 "color": "#dc172a"
                             }
                         ],
-                        "queryId": "",
                         "visible": true
                     }
                 ],
                 "tableSettings": {
-                    "isThresholdBackgroundAppliedToCell": false
+                    "hiddenColumns": []
                 },
                 "graphChartSettings": {
                     "connectNulls": false
@@ -532,47 +519,45 @@
                     "showLabels": false
                 }
             },
-            "queriesSettings": {
-                "resolution": ""
-            },
             "metricExpressions": [
-                "resolution=null&(builtin:cloud.aws.dynamo.capacityUnits.consumed.write:splitBy(\"dt.entity.dynamo_db_table\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+                "resolution=null&(ext:cloud.aws.rds.diskQueueDepthSum:splitBy(\"dt.entity.custom_device\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
             ]
         },
         {
-            "name": "Provisioned write capacity units",
+            "name": "DiskQueueDepth Sum (by Region and EngineName)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
                 "top": 304,
-                "left": 342,
-                "width": 342,
+                "left": 304,
+                "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "DynamoDB provisioned write capacity units",
+            "isAutoRefreshDisabled": false,
+            "customName": "DiskQueueDepth Sum (by Region and EngineName)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.aws.dynamo.capacityUnits.provisioned.write",
+                    "metric": "ext:cloud.aws.rds.diskQueueDepthSumByRegionEngineName",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.dynamo_db_table"
+                        "dt.entity.custom_device_group"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
                         "criteria": []
                     },
-                    "enabled": true
+                    "rate": "NONE",
+                    "enabled": true,
+                    "histogram": false
                 }
             ],
             "visualConfig": {
                 "type": "GRAPH_CHART",
-                "global": {
-                    "hideLegend": false
-                },
+                "global": {},
                 "rules": [
                     {
                         "matcher": "A:",
@@ -618,114 +603,11 @@
                                 "color": "#dc172a"
                             }
                         ],
-                        "queryId": "",
                         "visible": true
                     }
                 ],
                 "tableSettings": {
-                    "isThresholdBackgroundAppliedToCell": false
-                },
-                "graphChartSettings": {
-                    "connectNulls": true
-                },
-                "honeycombSettings": {
-                    "showHive": true,
-                    "showLegend": true,
-                    "showLabels": false
-                }
-            },
-            "queriesSettings": {
-                "resolution": ""
-            },
-            "metricExpressions": [
-                "resolution=null&(builtin:cloud.aws.dynamo.capacityUnits.provisioned.write:splitBy(\"dt.entity.dynamo_db_table\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
-            ]
-        },
-        {
-            "name": "Write capacity units %",
-            "tileType": "DATA_EXPLORER",
-            "configured": true,
-            "bounds": {
-                "top": 304,
-                "left": 684,
-                "width": 342,
-                "height": 304
-            },
-            "tileFilter": {},
-            "customName": "DynamoDB write capacity units %",
-            "queries": [
-                {
-                    "id": "A",
-                    "metric": "builtin:cloud.aws.dynamo.capacityUnits.write",
-                    "spaceAggregation": "AVG",
-                    "timeAggregation": "DEFAULT",
-                    "splitBy": [
-                        "dt.entity.dynamo_db_table"
-                    ],
-                    "filterBy": {
-                        "filterOperator": "AND",
-                        "nestedFilters": [],
-                        "criteria": []
-                    },
-                    "enabled": true
-                }
-            ],
-            "visualConfig": {
-                "type": "GRAPH_CHART",
-                "global": {
-                    "hideLegend": false
-                },
-                "rules": [
-                    {
-                        "matcher": "A:",
-                        "properties": {
-                            "color": "DEFAULT"
-                        },
-                        "seriesOverrides": []
-                    }
-                ],
-                "axes": {
-                    "xAxis": {
-                        "displayName": "",
-                        "visible": true
-                    },
-                    "yAxes": [
-                        {
-                            "displayName": "",
-                            "visible": true,
-                            "min": "AUTO",
-                            "max": "AUTO",
-                            "position": "LEFT",
-                            "queryIds": [
-                                "A"
-                            ],
-                            "defaultAxis": true
-                        }
-                    ]
-                },
-                "heatmapSettings": {
-                    "yAxis": "VALUE"
-                },
-                "thresholds": [
-                    {
-                        "axisTarget": "LEFT",
-                        "rules": [
-                            {
-                                "color": "#7dc540"
-                            },
-                            {
-                                "color": "#f5d30f"
-                            },
-                            {
-                                "color": "#dc172a"
-                            }
-                        ],
-                        "queryId": "",
-                        "visible": true
-                    }
-                ],
-                "tableSettings": {
-                    "isThresholdBackgroundAppliedToCell": false
+                    "hiddenColumns": []
                 },
                 "graphChartSettings": {
                     "connectNulls": false
@@ -736,47 +618,45 @@
                     "showLabels": false
                 }
             },
-            "queriesSettings": {
-                "resolution": ""
-            },
             "metricExpressions": [
-                "resolution=null&(builtin:cloud.aws.dynamo.capacityUnits.write:splitBy(\"dt.entity.dynamo_db_table\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+                "resolution=null&(ext:cloud.aws.rds.diskQueueDepthSumByRegionEngineName:splitBy(\"dt.entity.custom_device_group\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
             ]
         },
         {
-            "name": "Write throttled events",
+            "name": "EBSByteBalance%",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
                 "top": 304,
-                "left": 1026,
-                "width": 342,
+                "left": 608,
+                "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "DynamoDB number of write throttled events",
+            "isAutoRefreshDisabled": false,
+            "customName": "EBSByteBalance%",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.aws.dynamo.throttledEvents.write",
+                    "metric": "ext:cloud.aws.rds.ebsByteBalance",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.dynamo_db_table"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
                         "criteria": []
                     },
-                    "enabled": true
+                    "rate": "NONE",
+                    "enabled": true,
+                    "histogram": false
                 }
             ],
             "visualConfig": {
                 "type": "GRAPH_CHART",
-                "global": {
-                    "hideLegend": false
-                },
+                "global": {},
                 "rules": [
                     {
                         "matcher": "A:",
@@ -822,12 +702,11 @@
                                 "color": "#dc172a"
                             }
                         ],
-                        "queryId": "",
                         "visible": true
                     }
                 ],
                 "tableSettings": {
-                    "isThresholdBackgroundAppliedToCell": false
+                    "hiddenColumns": []
                 },
                 "graphChartSettings": {
                     "connectNulls": false
@@ -838,48 +717,144 @@
                     "showLabels": false
                 }
             },
-            "queriesSettings": {
-                "resolution": ""
-            },
             "metricExpressions": [
-                "resolution=null&(builtin:cloud.aws.dynamo.throttledEvents.write:splitBy(\"dt.entity.dynamo_db_table\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+                "resolution=null&(ext:cloud.aws.rds.ebsByteBalance:splitBy(\"dt.entity.custom_device\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
             ]
         },
         {
-            "name": "Items returned by operation",
+            "name": "EBSByteBalance% (by Region and EngineName)",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 304,
+                "left": 912,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "EBSByteBalance% (by Region and EngineName)",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.aws.rds.ebsByteBalanceByRegionEngineName",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device_group"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true,
+                    "histogram": false
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&(ext:cloud.aws.rds.ebsByteBalanceByRegionEngineName:splitBy(\"dt.entity.custom_device_group\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "EBSIOBalance%",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
                 "top": 608,
                 "left": 0,
-                "width": 456,
+                "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "DynamoDB number of items returned by operation",
+            "isAutoRefreshDisabled": false,
+            "customName": "EBSIOBalance%",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.aws.dynamo.requests.returnedItems",
+                    "metric": "ext:cloud.aws.rds.ebsioBalance",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.dynamo_db_table",
-                        "Operation"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
                         "criteria": []
                     },
-                    "enabled": true
+                    "rate": "NONE",
+                    "enabled": true,
+                    "histogram": false
                 }
             ],
             "visualConfig": {
                 "type": "GRAPH_CHART",
-                "global": {
-                    "hideLegend": false
-                },
+                "global": {},
                 "rules": [
                     {
                         "matcher": "A:",
@@ -925,12 +900,11 @@
                                 "color": "#dc172a"
                             }
                         ],
-                        "queryId": "",
                         "visible": true
                     }
                 ],
                 "tableSettings": {
-                    "isThresholdBackgroundAppliedToCell": false
+                    "hiddenColumns": []
                 },
                 "graphChartSettings": {
                     "connectNulls": false
@@ -941,48 +915,45 @@
                     "showLabels": false
                 }
             },
-            "queriesSettings": {
-                "resolution": ""
-            },
             "metricExpressions": [
-                "resolution=null&(builtin:cloud.aws.dynamo.requests.returnedItems:splitBy(\"dt.entity.dynamo_db_table\",Operation):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+                "resolution=null&(ext:cloud.aws.rds.ebsioBalance:splitBy(\"dt.entity.custom_device\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
             ]
         },
         {
-            "name": "Successful request latency for operation",
+            "name": "EBSIOBalance% (by Region and EngineName)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
                 "top": 608,
-                "left": 456,
-                "width": 456,
+                "left": 304,
+                "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "DynamoDB number of successful request latency for operation",
+            "isAutoRefreshDisabled": false,
+            "customName": "EBSIOBalance% (by Region and EngineName)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.aws.dynamo.requests.latency",
+                    "metric": "ext:cloud.aws.rds.ebsioBalanceByRegionEngineName",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.dynamo_db_table",
-                        "Operation"
+                        "dt.entity.custom_device_group"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
                         "criteria": []
                     },
-                    "enabled": true
+                    "rate": "NONE",
+                    "enabled": true,
+                    "histogram": false
                 }
             ],
             "visualConfig": {
                 "type": "GRAPH_CHART",
-                "global": {
-                    "hideLegend": false
-                },
+                "global": {},
                 "rules": [
                     {
                         "matcher": "A:",
@@ -1028,12 +999,11 @@
                                 "color": "#dc172a"
                             }
                         ],
-                        "queryId": "",
                         "visible": true
                     }
                 ],
                 "tableSettings": {
-                    "isThresholdBackgroundAppliedToCell": false
+                    "hiddenColumns": []
                 },
                 "graphChartSettings": {
                     "connectNulls": false
@@ -1044,48 +1014,144 @@
                     "showLabels": false
                 }
             },
-            "queriesSettings": {
-                "resolution": ""
-            },
             "metricExpressions": [
-                "resolution=null&(builtin:cloud.aws.dynamo.requests.latency:splitBy(\"dt.entity.dynamo_db_table\",Operation):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+                "resolution=null&(ext:cloud.aws.rds.ebsioBalanceByRegionEngineName:splitBy(\"dt.entity.custom_device_group\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
             ]
         },
         {
-            "name": "Throttled requests for operation",
+            "name": "FreeableMemory",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 608,
+                "left": 608,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "FreeableMemory",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.aws.rds.freeableMemory",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true,
+                    "histogram": false
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&(ext:cloud.aws.rds.freeableMemory:splitBy(\"dt.entity.custom_device\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "FreeableMemory (by Region and EngineName)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
                 "top": 608,
                 "left": 912,
-                "width": 456,
+                "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "DynamoDB number of throttled requests for operation",
+            "isAutoRefreshDisabled": false,
+            "customName": "FreeableMemory (by Region and EngineName)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.aws.dynamo.requests.throttled",
+                    "metric": "ext:cloud.aws.rds.freeableMemoryByRegionEngineName",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.dynamo_db_table",
-                        "Operation"
+                        "dt.entity.custom_device_group"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
                         "criteria": []
                     },
-                    "enabled": true
+                    "rate": "NONE",
+                    "enabled": true,
+                    "histogram": false
                 }
             ],
             "visualConfig": {
                 "type": "GRAPH_CHART",
-                "global": {
-                    "hideLegend": false
-                },
+                "global": {},
                 "rules": [
                     {
                         "matcher": "A:",
@@ -1131,12 +1197,11 @@
                                 "color": "#dc172a"
                             }
                         ],
-                        "queryId": "",
                         "visible": true
                     }
                 ],
                 "tableSettings": {
-                    "isThresholdBackgroundAppliedToCell": false
+                    "hiddenColumns": []
                 },
                 "graphChartSettings": {
                     "connectNulls": false
@@ -1147,47 +1212,45 @@
                     "showLabels": false
                 }
             },
-            "queriesSettings": {
-                "resolution": ""
-            },
             "metricExpressions": [
-                "resolution=null&(builtin:cloud.aws.dynamo.requests.throttled:splitBy(\"dt.entity.dynamo_db_table\",Operation):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+                "resolution=null&(ext:cloud.aws.rds.freeableMemoryByRegionEngineName:splitBy(\"dt.entity.custom_device_group\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
             ]
         },
         {
-            "name": "Requests with HTTP 500 status code",
+            "name": "ReadLatency",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
                 "top": 912,
                 "left": 0,
-                "width": 342,
+                "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "DynamoDB number of requests with HTTP 500 status code",
+            "isAutoRefreshDisabled": false,
+            "customName": "ReadLatency",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.aws.dynamo.errors.system",
+                    "metric": "ext:cloud.aws.rds.readLatency",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.dynamo_db_table"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
                         "criteria": []
                     },
-                    "enabled": true
+                    "rate": "NONE",
+                    "enabled": true,
+                    "histogram": false
                 }
             ],
             "visualConfig": {
                 "type": "GRAPH_CHART",
-                "global": {
-                    "hideLegend": false
-                },
+                "global": {},
                 "rules": [
                     {
                         "matcher": "A:",
@@ -1233,12 +1296,11 @@
                                 "color": "#dc172a"
                             }
                         ],
-                        "queryId": "",
                         "visible": true
                     }
                 ],
                 "tableSettings": {
-                    "isThresholdBackgroundAppliedToCell": false
+                    "hiddenColumns": []
                 },
                 "graphChartSettings": {
                     "connectNulls": false
@@ -1249,47 +1311,45 @@
                     "showLabels": false
                 }
             },
-            "queriesSettings": {
-                "resolution": ""
-            },
             "metricExpressions": [
-                "resolution=null&(builtin:cloud.aws.dynamo.errors.system:splitBy(\"dt.entity.dynamo_db_table\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+                "resolution=null&(ext:cloud.aws.rds.readLatency:splitBy(\"dt.entity.custom_device\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
             ]
         },
         {
-            "name": "Requests with HTTP 400 status code",
+            "name": "WriteLatency",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
                 "top": 912,
-                "left": 342,
-                "width": 342,
+                "left": 304,
+                "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "DynamoDB number of requests with HTTP 400 status code",
+            "isAutoRefreshDisabled": false,
+            "customName": "WriteLatency",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.aws.dynamo.errors.user",
+                    "metric": "ext:cloud.aws.rds.writeLatency",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.dynamo_db_table"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
                         "criteria": []
                     },
-                    "enabled": true
+                    "rate": "NONE",
+                    "enabled": true,
+                    "histogram": false
                 }
             ],
             "visualConfig": {
                 "type": "GRAPH_CHART",
-                "global": {
-                    "hideLegend": false
-                },
+                "global": {},
                 "rules": [
                     {
                         "matcher": "A:",
@@ -1335,12 +1395,11 @@
                                 "color": "#dc172a"
                             }
                         ],
-                        "queryId": "",
                         "visible": true
                     }
                 ],
                 "tableSettings": {
-                    "isThresholdBackgroundAppliedToCell": false
+                    "hiddenColumns": []
                 },
                 "graphChartSettings": {
                     "connectNulls": false
@@ -1351,55 +1410,50 @@
                     "showLabels": false
                 }
             },
-            "queriesSettings": {
-                "resolution": ""
-            },
             "metricExpressions": [
-                "resolution=null&(builtin:cloud.aws.dynamo.errors.user:splitBy(\"dt.entity.dynamo_db_table\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+                "resolution=null&(ext:cloud.aws.rds.writeLatency:splitBy(\"dt.entity.custom_device\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
             ]
         },
         {
-            "name": "Tables for AvailabilityZone",
+            "name": "NetworkReceiveThroughput",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
                 "top": 912,
-                "left": 684,
-                "width": 342,
+                "left": 608,
+                "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Number of tables for AvailabilityZone",
+            "isAutoRefreshDisabled": false,
+            "customName": "NetworkReceiveThroughput",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.aws.dynamo.tables",
+                    "metric": "ext:cloud.aws.rds.networkReceiveThroughput",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.aws_availability_zone"
+                        "dt.entity.custom_device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
                         "criteria": []
                     },
-                    "enabled": true
+                    "rate": "NONE",
+                    "enabled": true,
+                    "histogram": false
                 }
             ],
             "visualConfig": {
-                "type": "STACKED_COLUMN",
-                "global": {
-                    "hideLegend": false
-                },
+                "type": "GRAPH_CHART",
+                "global": {},
                 "rules": [
                     {
                         "matcher": "A:",
-                        "unitTransform": "auto",
-                        "valueFormat": "auto",
                         "properties": {
-                            "color": "PURPLE",
-                            "seriesType": "STACKED_COLUMN"
+                            "color": "DEFAULT"
                         },
                         "seriesOverrides": []
                     }
@@ -1440,12 +1494,11 @@
                                 "color": "#dc172a"
                             }
                         ],
-                        "queryId": "",
                         "visible": true
                     }
                 ],
                 "tableSettings": {
-                    "isThresholdBackgroundAppliedToCell": false
+                    "hiddenColumns": []
                 },
                 "graphChartSettings": {
                     "connectNulls": false
@@ -1456,55 +1509,50 @@
                     "showLabels": false
                 }
             },
-            "queriesSettings": {
-                "resolution": ""
-            },
             "metricExpressions": [
-                "resolution=null&(builtin:cloud.aws.dynamo.tables:splitBy(\"dt.entity.aws_availability_zone\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+                "resolution=null&(ext:cloud.aws.rds.networkReceiveThroughput:splitBy(\"dt.entity.custom_device\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
             ]
         },
         {
-            "name": "Tables for Credential",
+            "name": "NetworkReceiveThroughput (by Region and EngineName)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
                 "top": 912,
-                "left": 1026,
-                "width": 342,
+                "left": 912,
+                "width": 304,
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Number of tables for AvailabilityZone",
+            "isAutoRefreshDisabled": false,
+            "customName": "NetworkReceiveThroughput (by Region and EngineName)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:cloud.aws.dynamo.tables",
+                    "metric": "ext:cloud.aws.rds.networkReceiveThroughputByRegionEngineName",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.aws_credentials"
+                        "dt.entity.custom_device_group"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
                         "criteria": []
                     },
-                    "enabled": true
+                    "rate": "NONE",
+                    "enabled": true,
+                    "histogram": false
                 }
             ],
             "visualConfig": {
-                "type": "STACKED_COLUMN",
-                "global": {
-                    "hideLegend": false
-                },
+                "type": "GRAPH_CHART",
+                "global": {},
                 "rules": [
                     {
                         "matcher": "A:",
-                        "unitTransform": "auto",
-                        "valueFormat": "auto",
                         "properties": {
-                            "color": "BLUE",
-                            "seriesType": "STACKED_COLUMN"
+                            "color": "DEFAULT"
                         },
                         "seriesOverrides": []
                     }
@@ -1545,12 +1593,11 @@
                                 "color": "#dc172a"
                             }
                         ],
-                        "queryId": "",
                         "visible": true
                     }
                 ],
                 "tableSettings": {
-                    "isThresholdBackgroundAppliedToCell": false
+                    "hiddenColumns": []
                 },
                 "graphChartSettings": {
                     "connectNulls": false
@@ -1561,11 +1608,8 @@
                     "showLabels": false
                 }
             },
-            "queriesSettings": {
-                "resolution": ""
-            },
             "metricExpressions": [
-                "resolution=null&(builtin:cloud.aws.dynamo.tables:splitBy(\"dt.entity.aws_credentials\"):avg:auto:sort(value(avg,descending)):limit(10)):limit(100):names"
+                "resolution=null&(ext:cloud.aws.rds.networkReceiveThroughputByRegionEngineName:splitBy(\"dt.entity.custom_device_group\"):avg:sort(value(avg,descending)):limit(20)):limit(100):names"
             ]
         }
     ]

@@ -134,12 +134,22 @@ def run():
     # env_name = 'Int'
     # env_name = 'Personal'
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/*.json', owner=owner, skip_list=current_customer_skip_list)
-    put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000001.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000001.json', owner=owner, skip_list=current_customer_skip_list)
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000050.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000192.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000193.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000201.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000202.json', owner=owner, skip_list=current_customer_skip_list)
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000001-v5.json', owner=owner, skip_list=current_customer_skip_list)
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000000001-v4.json', owner=owner, skip_list=current_customer_skip_list)
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000001000.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-0000000011??.json', owner=owner, skip_list=current_customer_skip_list)
     # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000002000.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'Custom/Overview-{env_name}/00000000-dddd-bbbb-ffff-000000001???.json', owner=owner, skip_list=current_customer_skip_list)
+
+    # Custom Metrics
+    # put_dashboards(env_name, f'../$Private/Customers/$Current/Classic/Dashboards/Templates/00000000-dddd-bbbb-ffff-00000000????.json', owner=owner, skip_list=current_customer_skip_list)
+    # put_dashboards(env_name, f'../$Private/Customers/$Current/Classic/Dashboards/Templates/00000000-dddd-bbbb-ffff-000000009000.json', owner=owner, skip_list=current_customer_skip_list)
 
     # One time check of dashboard versions
     # put_dashboards(env_name, f'/Temp/CURRENTCUSTOMER/Classic/Dashboards/VersionSelection/*.json', owner=owner, skip_list=current_customer_skip_list)
@@ -439,6 +449,12 @@ def put_dashboards(env_name, path, **kwargs):
             dashboard = f.read()
             dashboard_json = json.loads(dashboard)
             dashboard_id = dashboard_json.get('id')
+
+            # FILTERING
+            # if dashboard_id < '00000000-dddd-bbbb-ffff-000000001000':
+            #     print(f'SKIPPING ALREADY PUT ID: {dashboard_id}')
+            #     continue
+            #
             dashboard_name = dashboard_json.get('dashboardMetadata').get('name')
 
             print(dashboard_name)

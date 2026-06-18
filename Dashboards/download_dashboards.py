@@ -66,6 +66,7 @@ def save_dashboards(env, token, path):
 				# aaaaaaaa-bbbb-cccc-eeee-f
 				# if dashboard_preset:
 				# if dashboard_preset and (dashboard_id.startswith('aaaaaaaa-bbbb-cccc-abcd-0000000000') or dashboard_id.startswith('aaaaaaaa-bbbb-cccc-eeee-f')):
+				# if 'Prod New ' in dashboard_name:
 				if True:
 					clean_filename = re.sub(r"[/\\?%*:|\"<>\x7F\x00-\x1F]", "-", f'{dashboard_id}.json')
 					print(f'Saving {dashboard_name} ({dashboard_id}) owned by {dashboard_owner} to {clean_filename}')
@@ -107,7 +108,8 @@ def main(arguments):
 	# env_name_supplied = 'Demo'
 	env_name, env, token = environment.get_environment_for_function(env_name_supplied, friendly_function_name)
 
-	path = f'../$Output/Dashboards/Downloads/{env_name}_BACKUP'
+	# path = f'../$Output/Dashboards/Downloads/{env_name}_BACKUP'
+	path = f'downloads/{env_name}'
 
 	print(f'Downloading dashboards for {env_name} to {path}')
 
