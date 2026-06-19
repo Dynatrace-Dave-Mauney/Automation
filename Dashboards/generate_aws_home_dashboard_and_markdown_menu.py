@@ -68,7 +68,7 @@ def main():
 		('AWS SageMaker', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001026'),
 		('AWS Textract', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001027'),
 		('AWS Usage', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001030'),
-		('AWS WAFv2', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001125'),
+		('AWS WAF', '#dashboard;id=00000000-dddd-bbbb-ffff-000000001125'),
 	]
 
 	dashboard_links_ootb_only = [
