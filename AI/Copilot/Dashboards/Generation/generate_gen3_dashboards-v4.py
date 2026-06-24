@@ -4,8 +4,10 @@ generate_gen3_dashboards.py
 
 Classic Dynatrace dashboard JSON -> uploadable Gen3 dashboard JSON.
 
-This module intentionally emits the dashboard CONTENT shape, not a broader
-Document API wrapper. The generated JSON is model-like and upload-friendly:
+This version intentionally emits the dashboard CONTENT shape, not the broader
+Document API wrapper. In practice, uploading a file with extra top-level document
+fields can result in a dashboard that imports but has no usable tiles. The output
+is therefore kept close to the model dashboard export:
 
 {
   "version": 21,
@@ -20,25 +22,16 @@ Document API wrapper. The generated JSON is model-like and upload-friendly:
   }
 }
 
-Key behavior:
-- Uses ordinal tile/layout keys starting with "1".
-- Removes extraneous fields.
-- Converts classic metric keys to Grail metric keys using classic_metric_to_grail_metric.yaml.
-- Converts classic TOP_LIST tiles to categoricalBarChart.
-- Uses fieldsAdd to aggregate timeseries arrays into scalar values for categoricalBarChart.
-- Sets TOP_LIST categoricalBarChart label visibility off and legend hidden.
-- Builds section-aware, balanced layouts:
-  - Headers/markdown tiles start new logical sections and occupy full-width rows.
-  - Data tile height is tuned by visualization type.
-  - Rows are auto-balanced for symmetry.
-  - Layout respects 24-column grid, min w=6, min h=4, max w=24, max h=16.
-
-Important layout note:
-With a 24-column grid and minimum tile width of 6, the maximum feasible number
-of tiles per row is 4. Although the high-level target allows 1-6 tiles per row,
-choosing 5 or 6 would require width below 6 or overflow beyond 24. This module
-therefore enforces the mathematically valid maximum of 4 under the supplied
-width constraints.
+Design goals:
+- Use ordinal tile/layout keys starting with "1".
+- Remove extraneous fields.
+- Keep per-tile fields minimal and model-like.
+- Convert classic metrics to Grail metrics using classic_metric_to_grail_metric.yaml.
+- Convert classic TOP_LIST tiles to categoricalBarChart.
+- Use fieldsAdd to create a scalar aggregation from the timeseries array.
+- Set isValueLabelVisible = false.
+- Set isCategoryLabelVisible = false.
+- Set legend.hidden = true.
 
 Typical usage from AI/Copilot/Dashboards/Generation:
 
@@ -54,28 +47,15 @@ import argparse
 import json
 import re
 import sys
-from collections import OrderedDict
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Mapping, MutableMapping, Optional, Sequence, Tuple
+from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence
 
 import yaml
 
 
-# =============================================================================
-# Constants
-# =============================================================================
-
 MODEL_DASHBOARD_VERSION = 21
-
-GRID_WIDTH = 24
-REQUESTED_MAX_TILES_PER_ROW = 6
-MIN_TILE_WIDTH = 6
-MAX_TILE_WIDTH = 24
-MIN_TILE_HEIGHT = 4
-MAX_TILE_HEIGHT = 16
-
-# Given GRID_WIDTH=24 and MIN_TILE_WIDTH=6, 4 is the largest possible non-overflowing row.
-EFFECTIVE_MAX_TILES_PER_ROW = min(REQUESTED_MAX_TILES_PER_ROW, GRID_WIDTH // MIN_TILE_WIDTH)
+CLASSIC_GRID_PIXEL_SIZE = 38
+GEN3_GRID_WIDTH = 24
 
 DEFAULT_INPUT = Path("input_json")
 DEFAULT_OUTPUT_DIR = Path("generated_gen3")
@@ -113,7 +93,6 @@ def iter_json_files(input_path: Path) -> Iterable[Path]:
     if input_path.is_file():
         yield input_path
         return
-
     for path in sorted(input_path.glob("*.json")):
         if not path.name.startswith("."):
             yield path
@@ -126,11 +105,10 @@ def iter_json_files(input_path: Path) -> Iterable[Path]:
 
 def build_metric_map(raw_mapping: Any) -> Dict[str, str]:
     """
-    Normalize multiple likely YAML mapping shapes into:
-        {classic_metric: grail_metric}
+    Normalize multiple plausible YAML mapping shapes into:
+      {classic_metric: grail_metric}
 
-    Supported examples:
-
+    Supported shapes include:
       builtin:host.cpu.usage: dt.host.cpu.usage
 
       metrics:
@@ -242,7 +220,7 @@ def to_grail_metric(classic_metric_or_selector: str, metric_map: Mapping[str, st
 
 
 # =============================================================================
-# Classic dashboard / tile extraction
+# Classic tile extraction
 # =============================================================================
 
 
@@ -327,8 +305,8 @@ def limit_for(query: Mapping[str, Any], default: int = 20) -> int:
 
 def aggregation_for(query: Mapping[str, Any]) -> str:
     """
-    Return a DQL aggregation. Classic values AUTO/DEFAULT do not map directly,
-    so default to avg unless a specific aggregation is present.
+    Return a DQL aggregation. The common classic values AUTO/DEFAULT do not map
+    directly, so default to avg unless a specific aggregation is present.
     """
     for key in ("aggregation", "timeAggregation", "spaceAggregation"):
         value = query.get(key)
@@ -341,7 +319,6 @@ def normalize_aggregation(value: str) -> str:
     aliases = {
         "average": "avg",
         "avg": "avg",
-        "mean": "avg",
         "sum": "sum",
         "total": "sum",
         "min": "min",
@@ -358,6 +335,8 @@ def normalize_aggregation(value: str) -> str:
 
 
 def dql_metric(metric: str) -> str:
+    # Metric names with dt.* are valid dotted identifiers; extension/custom names
+    # can contain characters that require escaping.
     if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_.]*", metric):
         return metric
     return "`" + metric.replace("`", "\\`") + "`"
@@ -407,7 +386,7 @@ def make_dql(
 
 
 # =============================================================================
-# Gen3 tile payloads
+# Model-like Gen3 output
 # =============================================================================
 
 
@@ -416,6 +395,7 @@ def markdown_tile_from_classic(tile: Mapping[str, Any]) -> Dict[str, Any]:
     content = tile.get("markdown") or tile.get("content") or title
     if title and not str(content).lstrip().startswith("#"):
         content = f"## {title}"
+    # Keep only model-essential fields.
     return {
         "type": "markdown",
         "content": str(content or ""),
@@ -423,6 +403,7 @@ def markdown_tile_from_classic(tile: Mapping[str, Any]) -> Dict[str, Any]:
 
 
 def categorical_bar_chart_settings() -> Dict[str, Any]:
+    # Deliberately minimal and directly aligned with the requested model behavior.
     return {
         "legend": {
             "hidden": True
@@ -433,6 +414,8 @@ def categorical_bar_chart_settings() -> Dict[str, Any]:
 
 
 def line_chart_settings() -> Dict[str, Any]:
+    # Keep minimal. If the model omits visualizationSettings for line charts,
+    # pass --omit-line-chart-settings to remove this entirely.
     return {
         "legend": {
             "hidden": True
@@ -477,168 +460,19 @@ def data_tile_from_classic(
     return out
 
 
-# =============================================================================
-# Section-aware, type-aware, balanced layout engine
-# =============================================================================
+def classic_layout(tile: Mapping[str, Any], fallback_y: int) -> Dict[str, int]:
+    bounds = tile.get("bounds") or {}
+    if not bounds:
+        return {"x": 0, "y": fallback_y, "w": 12, "h": 8}
 
+    x = int(round(float(bounds.get("left", 0)) / CLASSIC_GRID_PIXEL_SIZE))
+    y = int(round(float(bounds.get("top", fallback_y * CLASSIC_GRID_PIXEL_SIZE)) / CLASSIC_GRID_PIXEL_SIZE))
+    w = int(round(float(bounds.get("width", 12 * CLASSIC_GRID_PIXEL_SIZE)) / CLASSIC_GRID_PIXEL_SIZE))
+    h = int(round(float(bounds.get("height", 8 * CLASSIC_GRID_PIXEL_SIZE)) / CLASSIC_GRID_PIXEL_SIZE))
 
-def clamp(value: int, minimum: int, maximum: int) -> int:
-    return max(minimum, min(maximum, value))
-
-
-def is_header_payload(tile_payload: Mapping[str, Any]) -> bool:
-    return str(tile_payload.get("type") or "").lower() == "markdown"
-
-
-def is_top_list_payload(tile_payload: Mapping[str, Any]) -> bool:
-    return str(tile_payload.get("visualization") or "").lower() == "categoricalbarchart"
-
-
-def tile_height(tile_payload: Mapping[str, Any]) -> int:
-    """
-    Type-tuned tile height within user constraints.
-
-    - markdown/header: 4
-    - categoricalBarChart/TOP_LIST: 6
-    - lineChart/default data: 8
-    - singleValue, if introduced later: 4
-    """
-    tile_kind = str(tile_payload.get("type") or "").lower()
-    visualization = str(tile_payload.get("visualization") or "").lower()
-
-    if tile_kind == "markdown":
-        return MIN_TILE_HEIGHT
-    if visualization == "singlevalue":
-        return MIN_TILE_HEIGHT
-    if visualization == "categoricalbarchart":
-        return clamp(6, MIN_TILE_HEIGHT, MAX_TILE_HEIGHT)
-    if visualization == "linechart":
-        return clamp(8, MIN_TILE_HEIGHT, MAX_TILE_HEIGHT)
-    return clamp(8, MIN_TILE_HEIGHT, MAX_TILE_HEIGHT)
-
-
-def balanced_row_counts(item_count: int, max_per_row: int = EFFECTIVE_MAX_TILES_PER_ROW) -> List[int]:
-    """
-    Return visually balanced row counts.
-
-    Examples with effective max 4:
-      1 -> [1]
-      2 -> [2]
-      3 -> [3]
-      4 -> [4]
-      5 -> [3, 2]
-      6 -> [3, 3]
-      7 -> [4, 3]
-      8 -> [4, 4]
-      9 -> [3, 3, 3]
-     10 -> [4, 3, 3]
-     11 -> [4, 4, 3]
-     12 -> [4, 4, 4]
-    """
-    if item_count <= 0:
-        return []
-
-    max_per_row = max(1, max_per_row)
-    row_count = (item_count + max_per_row - 1) // max_per_row
-    base = item_count // row_count
-    remainder = item_count % row_count
-
-    counts = []
-    for row_index in range(row_count):
-        counts.append(base + (1 if row_index < remainder else 0))
-
-    # Defensive: ensure no row exceeds max_per_row.
-    if any(count > max_per_row for count in counts):
-        counts = []
-        remaining = item_count
-        while remaining:
-            current = min(max_per_row, remaining)
-            counts.append(current)
-            remaining -= current
-
-    return counts
-
-
-def row_width_for_count(count: int) -> int:
-    """
-    Determine tile width for a row count while honoring min/max width.
-    """
-    if count <= 0:
-        return GRID_WIDTH
-    width = GRID_WIDTH // count
-    return clamp(width, MIN_TILE_WIDTH, MAX_TILE_WIDTH)
-
-
-def build_section_aware_balanced_layouts(tiles: Mapping[str, Mapping[str, Any]]) -> Dict[str, Dict[str, int]]:
-    """
-    Build layouts after all tile payloads are known.
-
-    Rules:
-    - Ordinal tile order is preserved.
-    - Markdown/header tiles start a new section and get a full-width row.
-    - Data tiles after a header belong to that section until the next header.
-    - Rows inside each section are auto-balanced for symmetry.
-    - Tile height is tuned by visualization type.
-    """
-    layouts: Dict[str, Dict[str, int]] = {}
-    ordered_items = list(tiles.items())
-    y = 0
-    pending_data: List[Tuple[str, Mapping[str, Any]]] = []
-
-    def flush_data_rows() -> None:
-        nonlocal y, pending_data
-        if not pending_data:
-            return
-
-        counts = balanced_row_counts(len(pending_data))
-        cursor = 0
-
-        for count in counts:
-            row_items = pending_data[cursor: cursor + count]
-            cursor += count
-
-            w = row_width_for_count(count)
-            used_width = count * w
-            # Center the row if exact division ever leaves room.
-            x = max(0, (GRID_WIDTH - used_width) // 2)
-            h = max(tile_height(tile_payload) for _, tile_payload in row_items)
-            h = clamp(h, MIN_TILE_HEIGHT, MAX_TILE_HEIGHT)
-
-            for key, _tile_payload in row_items:
-                layouts[key] = {
-                    "x": x,
-                    "y": y,
-                    "w": w,
-                    "h": h,
-                }
-                x += w
-
-            y += h
-
-        pending_data = []
-
-    for key, tile_payload in ordered_items:
-        if is_header_payload(tile_payload):
-            # Headers start on a new row after any pending data in prior section.
-            flush_data_rows()
-            h = tile_height(tile_payload)
-            layouts[key] = {
-                "x": 0,
-                "y": y,
-                "w": GRID_WIDTH,
-                "h": h,
-            }
-            y += h
-        else:
-            pending_data.append((key, tile_payload))
-
-    flush_data_rows()
-    return layouts
-
-
-# =============================================================================
-# Dashboard conversion
-# =============================================================================
+    x = max(0, min(x, GEN3_GRID_WIDTH - 1))
+    w = max(1, min(max(1, w), GEN3_GRID_WIDTH - x))
+    return {"x": x, "y": max(0, y), "w": w, "h": max(1, h)}
 
 
 def convert_dashboard(
@@ -650,17 +484,20 @@ def convert_dashboard(
     """
     Return model-like dashboard CONTENT JSON.
 
-    Important:
-    - Tile/layout keys are ordinal strings starting with "1".
-    - Layouts are computed after all tiles are created, so row packing can be
-      section-aware and type-aware.
+    Important: keys are ordinal strings starting with "1" for both tiles and layouts.
     """
-    tiles: "OrderedDict[str, Dict[str, Any]]" = OrderedDict()
-    next_key = 1
+    tiles: Dict[str, Dict[str, Any]] = {}
+    layouts: Dict[str, Dict[str, int]] = {}
 
-    def add_tile(tile_payload: Dict[str, Any]) -> None:
-        nonlocal next_key
-        tiles[str(next_key)] = tile_payload
+    next_key = 1
+    fallback_y = 0
+
+    def add_tile(tile_payload: Dict[str, Any], layout_payload: Dict[str, int]) -> None:
+        nonlocal next_key, fallback_y
+        key = str(next_key)
+        tiles[key] = tile_payload
+        layouts[key] = layout_payload
+        fallback_y = max(fallback_y, layout_payload["y"] + layout_payload["h"])
         next_key += 1
 
     for classic_tile in classic_dashboard.get("tiles", []):
@@ -669,7 +506,7 @@ def convert_dashboard(
 
         if is_markdown_like(classic_tile):
             if not omit_markdown:
-                add_tile(markdown_tile_from_classic(classic_tile))
+                add_tile(markdown_tile_from_classic(classic_tile), classic_layout(classic_tile, fallback_y))
             continue
 
         queries = extract_classic_queries(classic_tile)
@@ -677,6 +514,10 @@ def convert_dashboard(
             continue
 
         for index, query in enumerate(queries):
+            layout = classic_layout(classic_tile, fallback_y)
+            if index:
+                layout = dict(layout)
+                layout["y"] += index * layout["h"]
             add_tile(
                 data_tile_from_classic(
                     classic_tile=classic_tile,
@@ -684,15 +525,15 @@ def convert_dashboard(
                     metric_map=metric_map,
                     index=index,
                     omit_line_chart_settings=omit_line_chart_settings,
-                )
+                ),
+                layout,
             )
 
-    layouts = build_section_aware_balanced_layouts(tiles)
-
+    # Keep top level sparse and model-like. No name/type/description/content wrapper.
     return {
         "version": MODEL_DASHBOARD_VERSION,
         "variables": [],
-        "tiles": dict(tiles),
+        "tiles": tiles,
         "layouts": layouts,
     }
 
