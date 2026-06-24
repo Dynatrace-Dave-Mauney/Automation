@@ -29,10 +29,15 @@ def run():
     #   'Sandbox/00000000-dddd-bbbb-aaaa-????????????.json' # Strict reference
     #   'Sandbox/*.json' # Lenient reference
 
+    env='Prod'
+    # env='Int'
+    # env='NonProd'
+
     # CURRENT CUSTOMER
     # put_documents('Prod', '../$Private/Customers/$Current/NewPlatform/Dashboards/Prod *.json')
     # put_documents('Prod', '../$Private/Customers/$Current/NewPlatform/Launchpads/Dynatrace User Launchpad.json')
 
+    put_documents(env, f'../$Private/$Output/Dashboards/ClassicConversion/TEMPLATE .NET Monitoring.json')
 
     # REFERENCE
 

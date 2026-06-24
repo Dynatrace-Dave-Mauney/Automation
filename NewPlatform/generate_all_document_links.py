@@ -1,6 +1,3 @@
-# First, share the documents using
-# add_environment_shares.py
-
 import json
 
 from Reuse import environment
@@ -33,8 +30,13 @@ def generate_dashboard_links(env_name, env, dashboards):
     for dashboard_id in dashboard_ids:
         dashboard_name = dashboards.get(dashboard_id)
 
-        dashbooard_name_prefix = dashboard_name.split(' ')[0]
-        dashboard_name = dashboard_name.replace(dashbooard_name_prefix, '{tenant_name}')
+        # TEMP 1
+        # dashbooard_name_prefix = dashboard_name.split(' ')[0]
+        # dashboard_name = dashboard_name.replace(dashbooard_name_prefix, '{tenant_name}')
+
+        # TEMP 2
+        if not dashboard_name.startswith('TEMPLATE'):
+            continue
 
         if filter in dashboard_name:
             # links.append(f'{dashboard_name} Dashboard ({env_name}): {env}/ui/document/v0/#share={environment_share_id}')

@@ -30,7 +30,39 @@ def process(env, client_id, client_secret):
 			# if 'Management Zone' not in document_name:
 			# 	continue
 
-			if 'Veritas' in document_name:
+			dashboards_names_to_delete = [
+				'TEMPLATE 3rd Party XHR Detection',
+				'TEMPLATE AWS Home',
+				'TEMPLATE Administration',
+				'TEMPLATE Application Overview - Home',
+				'TEMPLATE Azure - Home',
+				'TEMPLATE Custom Devices',
+				'TEMPLATE DB2 - Home',
+				'TEMPLATE Detailed Drilldowns Menu',
+				'TEMPLATE Dynatrace Self-Monitoring Home',
+				'TEMPLATE Dynatrace-owned Dashboards',
+				'TEMPLATE F5 - Home',
+				'TEMPLATE Google Cloud - Home',
+				'TEMPLATE Host Units Overview',
+				'TEMPLATE IBM MQ Home',
+				'TEMPLATE IBM WebSphere Home',
+				'TEMPLATE Jetty',
+				'TEMPLATE Kubernetes - Home',
+				'TEMPLATE Microsoft SQL Server - Home',
+				'TEMPLATE Microsoft SQL Server',
+				'TEMPLATE Microsoft SQL Server',
+				'TEMPLATE Oracle Database - Home',
+				'TEMPLATE Redis - Home',
+				'TEMPLATE SOLR',
+				'TEMPLATE Suspicious Activity Audit',
+				'TEMPLATE Tomcat Monitoring',
+				'TEMPLATE WebLogic by Name',
+				'TEMPLATE WebLogic by Process',
+			]
+
+			# if 'Veritas' in document_name:
+			# if document_name.startswith('TEMPLATE'):
+			if document_name in dashboards_names_to_delete:
 				delete_list.append(f'{document_name}:{document_id}:{document_version}')
 
 	delete_list = sorted(delete_list)

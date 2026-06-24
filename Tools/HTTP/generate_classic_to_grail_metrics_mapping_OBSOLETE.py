@@ -22,7 +22,14 @@ def process():
 
     # list all the cells in the rows.
     # listing all rows did not work for some reason.
-    divs = soup.find_all("div", class_="strato-table-custom-cell-wrapper")
+
+    divs = soup.find_all("div", class_="_16khqog1 _16khqog2")
+    for div in divs:
+        print(div)
+        exit(9999)
+
+    # divs = soup.find_all("div", class_="strato-table-custom-cell-wrapper")
+    divs = soup.find_all("div", class_="_16khqog1 _16khqog2")
 
     for div in divs:
         if div.text.startswith('dt.'):

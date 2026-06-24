@@ -12,26 +12,36 @@ import re
 
 from Reuse import environment
 
-# DASHBOARD_INPUT_PATH = '../../$Private/Input/Dashboards/ClassicConversion/*'
+DASHBOARD_INPUT_PATH = '../../Dashboards/Templates/Overview/00000000-dddd-bbbb-ffff-00000000????.json'
 # DASHBOARD_INPUT_PATH = '../../Dashboards/Templates/Overview/00000000-dddd-bbbb-ffff-000000000008.json'
-# DASHBOARD_INPUT_PATH = '../../Dashboards/Templates/Overview/00000000-dddd-bbbb-ffff-00000000????.json'
-DASHBOARD_INPUT_PATH = '../../Dashboards/Custom/Overview-Tenant1/00000000-dddd-bbbb-ffff-00000000????*.json'
+# DASHBOARD_INPUT_PATH = '../../Dashboards/Templates/Overview/00000000-dddd-bbbb-ffff-000000000009.json'
+# DASHBOARD_INPUT_PATH = '../../Dashboards/Templates/Overview/00000000-dddd-bbbb-ffff-000000000011.json'
+# DASHBOARD_INPUT_PATH = '../../Dashboards/Templates/Overview/00000000-dddd-bbbb-ffff-000000000808.json'
+# DASHBOARD_INPUT_PATH = '../../Dashboards/Templates/Overview/00000000-dddd-bbbb-ffff-000000001102.json'
+# DASHBOARD_INPUT_PATH = '../../Dashboards/Templates/Overview/00000000-dddd-bbbb-ffff-000000000192.json'
+# DASHBOARD_INPUT_PATH = '../../Dashboards/Templates/Overview/00000000-dddd-bbbb-ffff-000000000008.json'
+# DASHBOARD_INPUT_PATH = '../../Dashboards/Custom/Overview-Tenant1/00000000-dddd-bbbb-ffff-00000000????*.json'
+# DASHBOARD_INPUT_PATH = '../../$Private/Input/Dashboards/ClassicConversion/*'
 DASHBOARD_OUTPUT_PATH = '../../$Private/$Output/Dashboards/ClassicConversion'
 
 DASHBOARD_TEMPLATE_FILE_NAME = 'dashboard_template_dql.json'
 
 # Global Variable read from YAML
-classic_metic_to_grail_metric_dict = {}
+classic_metric_to_grail_metric_dict = {}
 
 
 def convert_dashboards():
     dashboard_template = get_dashboard_template()
 
     for filename in glob.glob(DASHBOARD_INPUT_PATH):
+        # print(filename)
         with open(filename, 'r', encoding='utf-8') as f:
             dashboard = json.loads(f.read())
             new_dashboard = convert_dashboard(dashboard, dashboard_template)
             dashboard_id = dashboard.get('id')
+
+            # if dashboard_id == '00000000-dddd-bbbb-ffff-000000000025.json':
+            #     continue
 
             # cherry pick the most important dashboards
             # if dashboard_id not in [
@@ -46,47 +56,58 @@ def convert_dashboards():
 
             dashboard_name = dashboard.get('dashboardMetadata').get('name')
 
-            if dashboard_name not in [
-                'Tenant1: Application Overview (HTTP Monitors and Services)',
-                'Tenant1: Application Overview (Services)',
-                'Tenant1: Application Overview (Synthetics and Services)',
-                'Tenant1: Application Overview (Web, HTTP Monitors, and Services)',
-                'Tenant1: Application Overview (Web, Synthetics, and Services)',
-                'Tenant1: Backend Overview',
-                'Tenant1: Containers',
-                'Tenant1: DPS Usage Details',
-                'Tenant1: Full Stack Overview',
-                'Tenant1: Go',
-                'Tenant1: Host Health Breakdown',
-                'Tenant1: Hosts (Detailed)',
-                'Tenant1: Hosts',
-                'Tenant1: Java Memory',
-                'Tenant1: Java Monitoring',
-                'Tenant1: Kubernetes Overview',
-                'Tenant1: Monitoring Overview',
-                'Tenant1: Network (Host-Level Details)',
-                'Tenant1: Network (Process-Level Details)',
-                'Tenant1: Node.js',
-                'Tenant1: Overview',
-                'Tenant1: Service Errors',
-                'Tenant1: Service HTTP Errors',
-                'Tenant1: Services',
-                'Tenant1: Synthetics HTTP Monitors',
-                'Tenant1: VMware',
-                'Tenant1: Web Servers',
-            ]:
-                print(f'Skipping dashboard: "{dashboard_name}"')
-                continue
+            # if dashboard_name not in [
+            #     'Tenant1: Application Overview (HTTP Monitors and Services)',
+            #     'Tenant1: Application Overview (Services)',
+            #     'Tenant1: Application Overview (Synthetics and Services)',
+            #     'Tenant1: Application Overview (Web, HTTP Monitors, and Services)',
+            #     'Tenant1: Application Overview (Web, Synthetics, and Services)',
+            #     'Tenant1: Backend Overview',
+            #     'Tenant1: Containers',
+            #     'Tenant1: DPS Usage Details',
+            #     'Tenant1: Full Stack Overview',
+            #     'Tenant1: Go',
+            #     'Tenant1: Host Health Breakdown',
+            #     'Tenant1: Hosts (Detailed)',
+            #     'Tenant1: Hosts',
+            #     'Tenant1: Java Memory',
+            #     'Tenant1: Java Monitoring',
+            #     'Tenant1: Kubernetes Overview',
+            #     'Tenant1: Monitoring Overview',
+            #     'Tenant1: Network (Host-Level Details)',
+            #     'Tenant1: Network (Process-Level Details)',
+            #     'Tenant1: Node.js',
+            #     'Tenant1: Overview',
+            #     'Tenant1: Service Errors',
+            #     'Tenant1: Service HTTP Errors',
+            #     'Tenant1: Services',
+            #     'Tenant1: Synthetics HTTP Monitors',
+            #     'Tenant1: VMware',
+            #     'Tenant1: Web Servers',
+            # ]:
+            #     print(f'Skipping dashboard: "{dashboard_name}"')
+            #     continue
 
-            clean_dashboard_name = re.sub(r"[/\\?%*:|\"<>\x7F\x00-\x1F]", "", dashboard_name)
-            output_filename = DASHBOARD_OUTPUT_PATH + '/' + clean_dashboard_name + '.json'
-            print(f'Converting {filename} to {output_filename}')
-            with open(output_filename, 'w') as outfile:
-                outfile.write(json.dumps(new_dashboard, indent=4, sort_keys=False))
+            # if dashboard_name not in [
+            #     'TEMPLATE: Hosts',
+            # ]:
+            #     print(f'Skipping dashboard: "{dashboard_name}"')
+            #     continue
 
+            # Write new dashboard if there are tiles
+            if new_dashboard.get('tiles'):
+                clean_dashboard_name = re.sub(r"[/\\?%*:|\"<>\x7F\x00-\x1F]", "", dashboard_name)
+                output_filename = DASHBOARD_OUTPUT_PATH + '/' + clean_dashboard_name + '.json'
+                print(f'Converting {filename} to {output_filename}')
+                with open(output_filename, 'w') as outfile:
+                    outfile.write(json.dumps(new_dashboard, indent=4, sort_keys=False))
+            else:
+                clean_dashboard_name = re.sub(r"[/\\?%*:|\"<>\x7F\x00-\x1F]", "", dashboard_name)
+                output_filename = DASHBOARD_OUTPUT_PATH + '/' + clean_dashboard_name + '.json'
+                print(f'DELETE {output_filename}')
 
 def convert_dashboard(dashboard, dashboard_template):
-    classic_metic_to_grail_metric_dict = get_classic_metic_to_grail_metric_dict()
+    classic_metric_to_grail_metric_dict = get_classic_metric_to_grail_metric_dict()
 
     new_dashboard_json = copy.deepcopy(json.loads(dashboard_template))
     new_dashboard_tile_template = copy.deepcopy(new_dashboard_json.get('tiles').get('DATA_EXPLORER'))
@@ -160,20 +181,26 @@ def convert_dashboard_tiles(classic_dashboard_tiles, new_dashboard_tile_template
         new_dashboard_tile_string = new_dashboard_tile_string.replace('{{dimension_name}}', classic_dashboard_query_split_by)
         new_dashboard_tile_string = new_dashboard_tile_string.replace('{{aggregation_name}}', new_dashboard_aggregation)
         new_dashboard_function = get_aggregation_function(new_dashboard_aggregation)
-        new_dashboard_tile_string = new_dashboard_tile_string.replace('{{function_name}}', new_dashboard_function)
-        new_dashboard_tile_string = new_dashboard_tile_string.replace('{{sort_order}}', extracted_sort_order)
-        new_dashboard_tile_string = new_dashboard_tile_string.replace('{{limit}}', str(extracted_limit))
-        visualization = classic_dashboard_tile.get('visualConfig').get('type')
-        if visualization:
-            new_dashboard_tile_string = new_dashboard_tile_string.replace('{{visualization}}', convert_visualization(visualization))
-        new_dashboard_tile_string = new_dashboard_tile_string.replace('{{field_name}}', grail_dashboard_metric_key.replace('dt.', ''))
-        new_dashboard_tile_string = new_dashboard_tile_string.replace('{{metric_name}}', grail_dashboard_metric_key.replace('dt.', ''))
-        new_dashboard_tile = json.loads(new_dashboard_tile_string)
-        new_dashboard_tiles[str(index)] = new_dashboard_tile
-
-        print('DEBUG FINAL:', classic_dashboard_tile_name, extracted_metric, extracted_aggregation, new_dashboard_aggregation, new_dashboard_function, extracted_limit, extracted_sort_order)
-
-        index += 1
+        if not new_dashboard_function == 'INVALID':
+            new_dashboard_tile_string = new_dashboard_tile_string.replace('{{function_name}}', new_dashboard_function)
+            new_dashboard_tile_string = new_dashboard_tile_string.replace('{{sort_order}}', extracted_sort_order)
+            new_dashboard_tile_string = new_dashboard_tile_string.replace('{{limit}}', str(extracted_limit))
+            visualization = classic_dashboard_tile.get('visualConfig').get('type')
+            if visualization:
+                new_dashboard_tile_string = new_dashboard_tile_string.replace('{{visualization}}', convert_visualization(visualization))
+            new_dashboard_tile_string = new_dashboard_tile_string.replace('{{field_name}}', grail_dashboard_metric_key.replace('dt.', ''))
+            new_dashboard_tile_string = new_dashboard_tile_string.replace('{{metric_name}}', grail_dashboard_metric_key.replace('dt.', ''))
+            # print(new_dashboard_tile_string)
+            if not 'COMPLEX METRIC EXPRESSION' in new_dashboard_tile_string:
+                new_dashboard_tile_string = new_dashboard_tile_string.replace('"Gives ', 'Gives ')
+                new_dashboard_tile_string = new_dashboard_tile_string.replace('multi-session machines"', 'multi-session machines')
+                new_dashboard_tile_string = new_dashboard_tile_string.replace('"4xx_error_sum"', '4xx_error_sum')
+                new_dashboard_tile_string = new_dashboard_tile_string.replace('"5xx_error_sum"', '5xx_error_sum')
+                # print(new_dashboard_tile_string)
+                new_dashboard_tile = json.loads(new_dashboard_tile_string)
+                new_dashboard_tiles[str(index)] = new_dashboard_tile
+                # print('DEBUG FINAL:', classic_dashboard_tile_name, extracted_metric, extracted_aggregation, new_dashboard_aggregation, new_dashboard_function, extracted_limit, extracted_sort_order)
+                index += 1
 
     return new_dashboard_tiles
 
@@ -212,11 +239,15 @@ def extract_query_parameters(classic_dashboard_query):
         else:
             extracted_sort_order = 'desc'
     else:
+        # print('Extracting metric from a metric selector...')
         classic_dashboard_query_metric_selector = classic_dashboard_query.get('metricSelector')
         classic_dashboard_query_metric_selector_split = classic_dashboard_query_metric_selector.split(':')
+        # print('ms len:', len(classic_dashboard_query_metric_selector_split))
+        # print('ms:', classic_dashboard_query_metric_selector_split)
         if len(classic_dashboard_query_metric_selector_split) >= 2:
             if classic_dashboard_query_metric_selector_split[0] == 'builtin':
-                    extracted_metric = classic_dashboard_query_metric_selector_split[0] + classic_dashboard_query_metric_selector_split[1]
+                    # print('It is a builtin metric...')
+                    extracted_metric = classic_dashboard_query_metric_selector_split[0] + ':' + classic_dashboard_query_metric_selector_split[1]
             else:
                 extracted_metric = classic_dashboard_query_metric_selector_split[0]
         else:
@@ -293,8 +324,10 @@ def get_aggregation_function(new_dashboard_aggregation):
         new_function = 'Array' + new_dashboard_aggregation.capitalize()
         return new_function
 
-    print(f'Invalid agg: {new_dashboard_aggregation}')
-    exit(1)
+    # print(f'Invalid agg: {new_dashboard_aggregation}')
+    # exit(1)
+
+    return 'INVALID'
 
 
 def get_dashboard_template():
@@ -304,14 +337,52 @@ def get_dashboard_template():
 
 
 def get_grail_metric_key(classic_metric_key):
-    global classic_metic_to_grail_metric_dict
-    return classic_metic_to_grail_metric_dict.get(classic_metric_key, 'N/A')
+    global classic_metric_to_grail_metric_dict
+    grail_metric_key = classic_metric_to_grail_metric_dict.get(classic_metric_key, 'N/A')
+    if grail_metric_key == 'N/A':
+        if classic_metric_key.startswith('builtin:tech'):
+            if not classic_metric_key.startswith('builtin:tech.generic') and not classic_metric_key.startswith('builtin:tech.websphere'):
+
+                # This affects too many non-extension process-level metrics, so assume few old extensions
+                # and do it selectively if/when needed instead
+                # grail_metric_key = classic_metric_key.replace('builtin:tech', 'legacy')
+
+                grail_metric_key = 'N/A'
+        else:
+            if classic_metric_key.startswith('ext:'):
+                grail_metric_key = convert_camel_to_snake(classic_metric_key.replace('ext:', ''))
+            else:
+                grail_metric_key = classic_metric_key
+
+    print(classic_metric_key, grail_metric_key)
+
+    return grail_metric_key
 
 
-def get_classic_metic_to_grail_metric_dict():
-    global classic_metic_to_grail_metric_dict
-    classic_metic_to_grail_metric_dict = environment.get_configuration_object('classic_metic_to_grail_metric.yaml')
-    return classic_metic_to_grail_metric_dict
+def get_classic_metric_to_grail_metric_dict():
+    global classic_metric_to_grail_metric_dict
+    classic_metric_to_grail_metric_dict = environment.get_configuration_object('classic_metric_to_grail_metric.yaml')
+    return classic_metric_to_grail_metric_dict
+
+
+def convert_camel_to_snake(key: str) -> str:
+    """
+    Convert CamelCase or camelCase string to snake_case.
+
+    Examples:
+        CamelCase -> camel_case
+        camelCase -> camel_case
+        getHTTPResponse -> get_http_response
+    """
+    if not key:
+        return key
+
+    # Handle standard camelCase / PascalCase transitions
+    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', key)
+    # Handle transitions like lower->upper or digit->upper
+    s2 = re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1)
+
+    return s2.lower()
 
 
 def main():

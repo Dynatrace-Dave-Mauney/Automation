@@ -57,6 +57,7 @@ selected_dashboards = [
     'OS Service',
     'Palo Alto Generic Device Extension',
     'PostgreSQL',
+    'Processes',
     'Queues',
     'Raft Proxy 1',
     'Raft Proxy 2',
@@ -252,7 +253,7 @@ def write_markdown_menus(dashboard_lookup):
             exit(1)
         links.append((menu_item, f'#dashboard;id={markdown_item_id}'))
 
-    for customer_item in ootb_dashboards:
+    for ootb_item in ootb_dashboards:
         links.append((ootb_item[0], f'#dashboard;id={ootb_item[1]}'))
 
     for customer_item in customer_dashboards:

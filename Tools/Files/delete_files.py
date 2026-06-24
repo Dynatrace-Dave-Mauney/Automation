@@ -9,9 +9,10 @@ import glob
 def main():
     count = 0
     delete_list = []
-    input_glob_pattern = "../../Reporting/**"
+    # input_glob_pattern = "../../Reporting/**"
+    input_glob_pattern = "../../$Private/$Output/Dashboards/ClassicConversionMetaData/*.json"
     for file_name in glob.glob(input_glob_pattern, recursive=True):
-        if os.path.isfile(file_name) and file_name.endswith('.bak'):
+        if os.path.isfile(file_name) and not file_name.endswith('.metadata.json'):
             delete_list.append(file_name)
 
     if len(delete_list) > 0:

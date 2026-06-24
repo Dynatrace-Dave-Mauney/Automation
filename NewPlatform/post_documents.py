@@ -7,6 +7,7 @@ import os
 from Reuse import environment
 from Reuse import new_platform_api
 
+replace_template_prefix = False
 
 def run():
     """ Used when running directly from an IDE (or from a command line without using command line arguments) """
@@ -48,6 +49,7 @@ def run():
     # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE Oracle.json')
     # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE * By Management Zone.json')
 
+    post_dashboards(env, f'../$Private/$Output/Dashboards/ClassicConversion/*.json')
 
 
 
@@ -112,8 +114,9 @@ def post_documents(env_name, path, document_type):
 
 
 def post_document(env_name, env, oauth_bearer_token, document_name, document_type, document_file_name, payload):
-    if document_name.startswith('TEMPLATE'):
-        document_name = document_name.replace('TEMPLATE', env_name.capitalize())
+    if replace_template_prefix:
+        if document_name.startswith('TEMPLATE'):
+            document_name = document_name.replace('TEMPLATE', env_name.capitalize())
     print(f'Posting {document_type} "{document_name}" ({document_file_name}) to {env}')
     api_url = f'{env}/platform/document/v1/documents'
     headers = {'name': document_name, 'type': 'document', 'accept': 'application/json', 'Authorization': f'Bearer {str(oauth_bearer_token)}'}

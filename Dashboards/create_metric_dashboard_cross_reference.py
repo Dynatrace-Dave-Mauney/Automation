@@ -9,6 +9,7 @@ DASHBOARD_GEN3_INPUT_PATH = '../NewPlatform/Dashboards/Assets'
 
 cross_reference_list = []
 
+
 def create_metric_dashboard_cross_reference(path):
     for filename in glob.glob(path + '/*'):
         if os.path.isfile(filename):
@@ -49,11 +50,10 @@ def process_dashboard(filename):
                         # print(dashboard_tile_queries_metric, dashboard_name, dashboard_id)
                         cross_reference_list.append([dashboard_tile_queries_metric, dashboard_tile_name, dashboard_name, dashboard_id])
 
+
 if __name__ == '__main__':
     # create_metric_dashboard_cross_reference(DASHBOARD_CLASSIC_INPUT_PATH)
     create_metric_dashboard_cross_reference(DASHBOARD_GEN3_INPUT_PATH)
 
     for cross_reference_list_item in sorted(cross_reference_list):
         print(cross_reference_list_item)
-
-
