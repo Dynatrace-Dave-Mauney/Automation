@@ -668,6 +668,9 @@ def convert_dashboard(
             continue
 
         if is_markdown_like(classic_tile):
+            if 'Overview' in str(classic_tile):
+                continue
+
             if not omit_markdown:
                 add_tile(markdown_tile_from_classic(classic_tile))
             continue
@@ -699,6 +702,7 @@ def convert_dashboard(
 
 def output_file_name(classic_dashboard: Mapping[str, Any], source_path: Path) -> str:
     name = dashboard_name(classic_dashboard, source_path.stem)
+    name = name.replace(':', ' - ')
     name = re.sub(r"[\\/:*?\"<>|]+", "_", name).strip() or source_path.stem
     return f"{name}.json"
 

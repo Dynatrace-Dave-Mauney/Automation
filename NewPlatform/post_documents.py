@@ -31,9 +31,9 @@ def run():
     # post_dashboards(env, f'../$Private/$Output/Dashboards/ClassicConversion/*.json')
     # post_notebooks(env, f'../$Private/Customers/$Current/Assets/NewPlatform/Notebooks/{env}/*.json')
 
-    env='Prod'
+    # env='Prod'
     # env='Int'
-    # env='NonProd'
+    env='NonProd'
 
     # CURRENT CUSTOMER (5/21/2026)
     # post_launchpads(env, 'Launchpads/Assets/Dynatrace Architecture and Standards.json')
@@ -49,7 +49,8 @@ def run():
     # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE Oracle.json')
     # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE * By Management Zone.json')
 
-    post_dashboards(env, f'../$Private/$Output/Dashboards/ClassicConversion/*.json')
+    # post_dashboards(env, f'../$Private/$Output/Dashboards/ClassicConversion/*.json')
+    post_dashboards(env, f'../AI/Copilot/Dashboards/Generation/generated_gen3/TEMPLATE - *.json')
 
 
 
