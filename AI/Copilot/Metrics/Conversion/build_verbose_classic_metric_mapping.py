@@ -18,17 +18,19 @@ Outputs:
   - verbose_classic_metric_to_grail_metric.yaml
   - verbose_classic_metric_to_grail_metric.json
   - metric_mapping_summary.json
+  - passed_gen3_metric_keys.txt
+  - failed_gen3_metric_keys.txt
+  - failed_gen3_metric_attempts_by_classic_metric.yaml
+  - failed_gen3_metric_attempts_by_classic_metric.json
 
 Notes:
   - This script uses ONLY the `metricId` key from current_classic_metrics.json
-    to identify Classic metrics. It intentionally does not scrape arbitrary strings,
-    descriptions, display names, names, IDs, or object keys.
-  - Prefix-less custom metrics are included because whatever appears in metricId
-    is treated as the authoritative Classic metric key.
+    to identify Classic metrics.
+  - Prefix-less custom metrics are included because every non-empty metricId value
+    is treated as an authoritative Classic metric key.
   - This script validates candidates by running a low-cost DQL `timeseries` query.
   - Successful validation means the DQL Query API accepted the metric key and returned
-    result metadata according to the checks below. It does not guarantee useful/non-empty
-    data beyond the selected timeframe and response checks.
+    result metadata according to the checks below. It does not guarantee broadly useful data.
   - It intentionally records every attempted Gen3 metric key for auditability.
 """
 
@@ -69,7 +71,7 @@ DEFAULT_MAPPING_YAML_URL = "https://raw.githubusercontent.com/Dynatrace-Dave-Mau
 DEFAULT_GENERATOR_URL = "https://raw.githubusercontent.com/Dynatrace-Dave-Mauney/Automation/refs/heads/main/AI/Copilot/Dashboards/Generation/generate_gen3_dashboards.py"
 DEFAULT_SET_ENVIRONMENT_URL = "https://raw.githubusercontent.com/Dynatrace-Dave-Mauney/Automation/refs/heads/main/AI/Examples/set_environment.py"
 
-# Keep the field name exactly as requested.
+# Correct source field in current_classic_metrics.json.
 CLASSIC_METRIC_ID_FIELD = "metricId"
 
 
@@ -95,9 +97,9 @@ class MetricResult:
 def fetch_text(location: str, timeout: int = 60) -> str:
     """Fetch a URL or read a local file path."""
     if re.match(r"^https?://", location, re.I):
-        resp = requests.get(location, timeout=timeout)
-        resp.raise_for_status()
-        return resp.text
+        response = requests.get(location, timeout=timeout)
+        response.raise_for_status()
+        return response.text
     return Path(location).read_text(encoding="utf-8")
 
 
@@ -111,14 +113,24 @@ def load_yaml(location: str) -> Any:
     return data if data is not None else {}
 
 
-def load_current_classic_metricIds(data: Any) -> List[str]:
+def dedupe(seq: Iterable[str]) -> List[str]:
+    out: List[str] = []
+    seen = set()
+    for item in seq:
+        if item and item not in seen:
+            seen.add(item)
+            out.append(item)
+    return out
+
+
+def load_current_classic_metric_ids(data: Any) -> List[str]:
     """Load Classic metric keys using ONLY the `metricId` key.
 
-    This function is intentionally strict. It does not infer metric keys from:
-      - metricId / metricKey / key / id / metric / name
+    This function intentionally does not infer metric keys from:
+      - metric_id / metricKey / key / id / metric / name
       - displayName / description
       - object keys
-      - any arbitrary string values
+      - arbitrary string values
 
     Supported shapes:
       1. [{"metricId": "..."}, ...]
@@ -128,24 +140,24 @@ def load_current_classic_metricIds(data: Any) -> List[str]:
       5. {"result": [{"metricId": "..."}, ...]}
       6. nested combinations of the above containers
 
-    Every non-empty string found in `metricId` is included, including prefix-less
-    custom metrics such as `orders.total.count` or even `latency`.
+    Every non-empty metricId string is included, including prefix-less custom metrics
+    such as `orders.total.count` or `latency`.
     """
     metrics: List[str] = []
 
-    def add_metricId(value: Any) -> None:
+    def add_metric_id(value: Any) -> None:
         if isinstance(value, str):
-            metric = value.strip()
-            if metric:
-                metrics.append(metric)
+            metric_id = value.strip()
+            if metric_id:
+                metrics.append(metric_id)
 
     def walk(value: Any) -> None:
         if isinstance(value, Mapping):
             if CLASSIC_METRIC_ID_FIELD in value:
-                add_metricId(value[CLASSIC_METRIC_ID_FIELD])
+                add_metric_id(value[CLASSIC_METRIC_ID_FIELD])
 
-            # Recurse only into known containers to avoid accidental scraping of
-            # metadata/details while still supporting common wrapper shapes.
+            # Recurse only into known containers. This preserves nested wrapper support
+            # without scraping descriptive metadata.
             for container in ("metrics", "items", "data", "result"):
                 nested = value.get(container)
                 if isinstance(nested, (list, tuple, Mapping)):
@@ -162,7 +174,7 @@ def load_current_classic_metricIds(data: Any) -> List[str]:
 # Backward-compatible name used by the rest of the script.
 def flatten_metric_keys(data: Any) -> List[str]:
     """Return every Classic metric from current_classic_metrics.json using metricId only."""
-    return load_current_classic_metricIds(data)
+    return load_current_classic_metric_ids(data)
 
 
 def normalize_mapping_yaml(data: Any) -> Dict[str, List[str]]:
@@ -189,7 +201,10 @@ def normalize_mapping_yaml(data: Any) -> Dict[str, List[str]]:
                         vals.extend(str(x) for x in candidate if x)
                     elif candidate:
                         vals.append(str(candidate))
-            classic2 = grail.get("classic") or grail.get("classic_metric") or grail.get("from") or grail.get("Metric key (Classic)") or grail.get("metricId")
+            classic2 = (
+                grail.get("classic") or grail.get("classic_metric") or grail.get("from")
+                or grail.get("Metric key (Classic)") or grail.get("metricId")
+            )
             grail2 = grail.get("grail") or grail.get("grail_metric") or grail.get("Metric key (Grail)")
             if classic2 and grail2:
                 classic_s = str(classic2).strip()
@@ -246,16 +261,6 @@ def camel_to_snake_segment(segment: str) -> str:
 
 def snake_metric_key(key: str) -> str:
     return ".".join(camel_to_snake_segment(part) for part in key.split("."))
-
-
-def dedupe(seq: Iterable[str]) -> List[str]:
-    out: List[str] = []
-    seen = set()
-    for item in seq:
-        if item and item not in seen:
-            seen.add(item)
-            out.append(item)
-    return out
 
 
 def quote_metric_for_dql(metric: str) -> str:
@@ -356,7 +361,7 @@ def try_load_remote_set_environment(url: str, enabled: bool = True) -> Dict[str,
             spec = importlib.util.spec_from_file_location("remote_set_environment", str(p))
             if spec and spec.loader:
                 mod = importlib.util.module_from_spec(spec)
-                spec.loader.exec_module(mod)
+                spec.loader.exec_module(mod)  # user-requested trusted repo utility
                 fn = getattr(mod, "set_environment", None)
                 if callable(fn):
                     try:
@@ -409,6 +414,8 @@ def get_auth_config(args: argparse.Namespace) -> Tuple[str, Dict[str, str]]:
     base_url = normalize_base_url(base_url)
     scheme = args.auth_scheme
     if scheme == "auto":
+        # Platform OAuth tokens are Bearer. Classic API tokens usually use Api-Token.
+        # Prefer Bearer for /platform/storage/query unless user overrides.
         scheme = "Bearer"
     headers = {
         "Authorization": f"{scheme} {token}",
@@ -466,6 +473,7 @@ def execute_dql(
 
     request_token = data.get("requestToken") or data.get("request-token") or data.get("token")
     if not request_token:
+        # If the service didn't return a failure and gave no async token, treat as accepted.
         return True, status_code, None, status or "ACCEPTED"
 
     poll_url = base_url.rstrip("/") + "/platform/storage/query/v1/query:poll"
@@ -582,24 +590,64 @@ def write_verbose_yaml(path: Path, passed: List[MetricResult], failed: List[Metr
     path.with_suffix(".json").write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
 
+def write_key_files(output_dir: Path, passed: List[MetricResult], failed: List[MetricResult]) -> None:
+    """Write simple Gen3 key lists and failure attempt map files.
+
+    Files:
+      - passed_gen3_metric_keys.txt
+          Final selected Gen3 key for each passed Classic metric.
+      - failed_gen3_metric_keys.txt
+          Unique attempted Gen3 keys from failed Classic metrics, preserving first-seen order.
+      - failed_gen3_metric_attempts_by_classic_metric.yaml/.json
+          Mapping of classic metric -> list of Gen3 attempts and validation details.
+    """
+    passed_keys = dedupe([r.gen3_metric for r in passed if r.gen3_metric])
+    failed_attempted_keys = dedupe(
+        [attempt.gen3_metric for r in failed for attempt in r.attempts if attempt.gen3_metric]
+    )
+
+    (output_dir / "passed_gen3_metric_keys.txt").write_text(
+        "\n".join(passed_keys) + ("\n" if passed_keys else ""),
+        encoding="utf-8",
+    )
+    (output_dir / "failed_gen3_metric_keys.txt").write_text(
+        "\n".join(failed_attempted_keys) + ("\n" if failed_attempted_keys else ""),
+        encoding="utf-8",
+    )
+
+    failed_attempts_by_classic_metric = {
+        r.classic_metric: [asdict(attempt) for attempt in r.attempts]
+        for r in failed
+    }
+
+    (output_dir / "failed_gen3_metric_attempts_by_classic_metric.yaml").write_text(
+        yaml.safe_dump(failed_attempts_by_classic_metric, sort_keys=False, allow_unicode=True, width=180),
+        encoding="utf-8",
+    )
+    (output_dir / "failed_gen3_metric_attempts_by_classic_metric.json").write_text(
+        json.dumps(failed_attempts_by_classic_metric, indent=2),
+        encoding="utf-8",
+    )
+
+
 def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
-    p = argparse.ArgumentParser(description="Build/validate classic metric -> Grail/Gen3 metric mappings.")
-    p.add_argument("--classic-metrics", default=DEFAULT_CURRENT_CLASSIC_METRICS_URL, help="URL or path to current_classic_metrics.json")
-    p.add_argument("--mapping-yaml", default=DEFAULT_MAPPING_YAML_URL, help="URL or path to classic_metric_to_grail_metric.yaml")
-    p.add_argument("--generate-gen3-dashboards-url", default=DEFAULT_GENERATOR_URL, help="Reference URL for generate_gen3_dashboards.py; kept for traceability")
-    p.add_argument("--set-environment-url", default=DEFAULT_SET_ENVIRONMENT_URL, help="URL/path to set_environment.py")
-    p.add_argument("--no-remote-set-environment", action="store_true", help="Do not import/call remote set_environment.py")
-    p.add_argument("--dt-platform-url", dest="dt_platform_url", default=None, help="https://<tenant>.apps.dynatrace.com or environment URL")
-    p.add_argument("--dt-token", dest="dt_token", default=None, help="Dynatrace Platform/OAuth token. Prefer env vars over CLI for security.")
-    p.add_argument("--auth-scheme", choices=["auto", "Bearer", "Api-Token"], default="auto")
-    p.add_argument("--from", dest="from_expr", default="now() - 30m", help="DQL from expression")
-    p.add_argument("--to", dest="to_expr", default="now()", help="DQL to expression")
-    p.add_argument("--query-timeout", type=int, default=45)
-    p.add_argument("--poll-sleep", type=float, default=1.5)
-    p.add_argument("--limit", type=int, default=0, help="Limit number of metrics, useful for shakeout. 0 means all.")
-    p.add_argument("--dry-run", action="store_true", help="Create candidate attempts without calling Dynatrace")
-    p.add_argument("--output-dir", default=".")
-    return p.parse_args(argv)
+    parser = argparse.ArgumentParser(description="Build/validate classic metric -> Grail/Gen3 metric mappings.")
+    parser.add_argument("--classic-metrics", default=DEFAULT_CURRENT_CLASSIC_METRICS_URL, help="URL or path to current_classic_metrics.json")
+    parser.add_argument("--mapping-yaml", default=DEFAULT_MAPPING_YAML_URL, help="URL or path to classic_metric_to_grail_metric.yaml")
+    parser.add_argument("--generate-gen3-dashboards-url", default=DEFAULT_GENERATOR_URL, help="Reference URL for generate_gen3_dashboards.py; kept for traceability")
+    parser.add_argument("--set-environment-url", default=DEFAULT_SET_ENVIRONMENT_URL, help="URL/path to set_environment.py")
+    parser.add_argument("--no-remote-set-environment", action="store_true", help="Do not import/call remote set_environment.py")
+    parser.add_argument("--dt-platform-url", dest="dt_platform_url", default=None, help="https://<tenant>.apps.dynatrace.com or environment URL")
+    parser.add_argument("--dt-token", dest="dt_token", default=None, help="Dynatrace Platform/OAuth token. Prefer env vars over CLI for security.")
+    parser.add_argument("--auth-scheme", choices=["auto", "Bearer", "Api-Token"], default="auto")
+    parser.add_argument("--from", dest="from_expr", default="now() - 24h", help="DQL from expression")
+    parser.add_argument("--to", dest="to_expr", default="now()", help="DQL to expression")
+    parser.add_argument("--query-timeout", type=int, default=45)
+    parser.add_argument("--poll-sleep", type=float, default=1.5)
+    parser.add_argument("--limit", type=int, default=0, help="Limit number of metrics, useful for shakeout. 0 means all.")
+    parser.add_argument("--dry-run", action="store_true", help="Create candidate attempts without calling Dynatrace")
+    parser.add_argument("--output-dir", default=".")
+    return parser.parse_args(argv)
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
@@ -626,6 +674,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     print(f"Loaded {len(classic_metrics)} classic metrics from `{CLASSIC_METRIC_ID_FIELD}`")
     print(f"Loaded {len(explicit_mapping)} explicit mapping entries")
     print(f"DQL endpoint base: {base_url}")
+    print(f"DQL timeframe: from {args.from_expr} to {args.to_expr}")
     print(f"Traceability: generate_gen3_dashboards.py = {args.generate_gen3_dashboards_url}")
 
     passed: List[MetricResult] = []
@@ -642,12 +691,15 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     write_markdown(output_dir / "passed_metric_mapping_report.md", "Passed classic metric to Grail metric mappings", passed)
     write_markdown(output_dir / "failed_metric_mapping_report.md", "Failed classic metric to Grail metric mappings", failed)
     write_verbose_yaml(output_dir / "verbose_classic_metric_to_grail_metric.yaml", passed, failed)
+    write_key_files(output_dir, passed, failed)
 
     summary = {
-        "classic_metricId_field": CLASSIC_METRIC_ID_FIELD,
+        "classic_metric_id_field": CLASSIC_METRIC_ID_FIELD,
         "classic_metrics": len(classic_metrics),
         "passed": len(passed),
         "failed": len(failed),
+        "from_expr": args.from_expr,
+        "to_expr": args.to_expr,
         "outputs": [
             "passed_metric_mapping_report.csv",
             "passed_metric_mapping_report.md",
@@ -656,6 +708,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             "verbose_classic_metric_to_grail_metric.yaml",
             "verbose_classic_metric_to_grail_metric.json",
             "metric_mapping_summary.json",
+            "passed_gen3_metric_keys.txt",
+            "failed_gen3_metric_keys.txt",
+            "failed_gen3_metric_attempts_by_classic_metric.yaml",
+            "failed_gen3_metric_attempts_by_classic_metric.json",
         ],
     }
     (output_dir / "metric_mapping_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
