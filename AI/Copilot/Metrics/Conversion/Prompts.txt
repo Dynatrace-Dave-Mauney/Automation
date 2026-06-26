@@ -1,0 +1,22 @@
+The goal is to create a classic metric to gen3 metric mapping for every metric in "metrics.json" (https://raw.githubusercontent.com/Dynatrace-Dave-Mauney/Automation/refs/heads/main/AI/Copilot/Metrics/Conversion/classic_metrics.json).
+"classic_metric_to_grail_metric.yaml" (https://raw.githubusercontent.com/Dynatrace-Dave-Mauney/Automation/refs/heads/main/AI/Copilot/Metrics/Conversion/classic_metric_to_grail_metric.yaml) contains mappings derived from "Built-in Metrics on Grail page" (https://docs.dynatrace.com/docs/shortlink/built-in-metrics-on-grail).
+For each metric in the "metrics.json" file, use a copy of the "to_grail_metric" function in "generate_gen3_dashboards.py" (https://raw.githubusercontent.com/Dynatrace-Dave-Mauney/Automation/refs/heads/main/AI/Copilot/Dashboards/Generation/generate_gen3_dashboards.py) logic as a base to convert the metric from the classic name to the gen3 name.
+For each gen3 metric converted, run a test using a timeseries DQL to validate the gen3 name.
+Use code from "set_environment" function in "set_environment.py" (https://raw.githubusercontent.com/Dynatrace-Dave-Mauney/Automation/refs/heads/main/AI/Examples/set_environment.py) to get environment variables to use for API authentication and authorization.
+If the gen3 name fails the test, try to correct the gen3 name using any rules you can deduce from "Built-in Metrics on Grail page".
+Example: if the name ends in ".count", remove ".count" from the name.
+Create one report of the metrics that passed and one report with the metrics that have failed.
+The reports should have the classic metric name, and each iteration of gen3 name attempted along the way to ultimate success or failure.
+Create "verbose_classic_metric_to_grail_metric.yaml" with all the successful metric mappings, followed by the failed mappings.
+For all the failed mappings, use "UNKNOWN:" + the original classic metric name for the gen3 metric name.
+[Created: build_verbose_classic_metric_mapping.py]
+
+Write a Python module that uses the writtenSince parameter of the "Metrics API - GET metrics" (https://docs.dynatrace.com/docs/shortlink/api-metrics-v2-get-all) to list all the "current" classic metrics in a Dynatrace tenant.
+Store the output such that it can be read by the next step of the process, which will use this list to drive the creation of a classic to gen3 metric mapping.
+[Created: list_current_classic_metrics.py]
+
+Modify "build_verbose_classic_metric_mapping.py" to be driven by "current_classic_metrics.json".
+Add logic to convert classic metrics with "dsfm:" prefix to use "dt.sfm" prefix.
+Read "fetch_metric_series.csv" (a list of current gen3 metrics from "fetch metric.series" DQL) to determine pattern matches that will improve mapping coverage.
+Use "https://github.com/Dynatrace-Dave-Mauney/Automation/tree/main/AI/Copilot" for any inputs needed.
+
