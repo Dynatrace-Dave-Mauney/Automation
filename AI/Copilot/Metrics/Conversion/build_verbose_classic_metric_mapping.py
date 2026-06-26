@@ -2,10 +2,10 @@
 """
 build_verbose_classic_metric_mapping.py
 
-Build a classic metric -> Grail/Gen3 metric mapping for every metric in classic_metrics.json.
+Build a classic metric -> Grail/Gen3 metric mapping for every metric in current_classic_metrics.json.
 
 Inputs default to Dave Mauney's Automation repo raw URLs:
-  - classic_metrics.json
+  - current_classic_metrics.json
   - classic_metric_to_grail_metric.yaml
   - generate_gen3_dashboards.py
   - set_environment.py
@@ -17,16 +17,22 @@ Outputs:
   - failed_metric_mapping_report.md
   - verbose_classic_metric_to_grail_metric.yaml
   - verbose_classic_metric_to_grail_metric.json
+  - metric_mapping_summary.json
 
 Notes:
+  - This script uses ONLY the `metricId` key from current_classic_metrics.json
+    to identify Classic metrics. It intentionally does not scrape arbitrary strings,
+    descriptions, display names, names, IDs, or object keys.
+  - Prefix-less custom metrics are included because whatever appears in metricId
+    is treated as the authoritative Classic metric key.
   - This script validates candidates by running a low-cost DQL `timeseries` query.
-  - Successful validation means the DQL Query API accepted the metric key. It does not
-    guarantee useful/non-empty data in the selected timeframe.
+  - Successful validation means the DQL Query API accepted the metric key and returned
+    result metadata according to the checks below. It does not guarantee useful/non-empty
+    data beyond the selected timeframe and response checks.
   - It intentionally records every attempted Gen3 metric key for auditability.
 """
 
 from __future__ import annotations
-from Reuse import environment
 
 import argparse
 import csv
@@ -41,7 +47,11 @@ import traceback
 from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
-from urllib.parse import urljoin
+
+try:
+    from Reuse import environment  # noqa: F401 - retained for compatibility when run inside the repo
+except ImportError:
+    environment = None  # type: ignore[assignment]
 
 try:
     import requests
@@ -54,11 +64,13 @@ except ImportError as e:
     raise SystemExit("Missing dependency: PyYAML. Install with: pip install pyyaml") from e
 
 
-DEFAULT_CLASSIC_METRICS_URL = "https://raw.githubusercontent.com/Dynatrace-Dave-Mauney/Automation/refs/heads/main/AI/Copilot/Metrics/Conversion/classic_metrics.json"
-# DEFAULT_CLASSIC_METRICS_URL = "/Users/dave.mauney/PycharmProjects/Automation/AI/Copilot/Metrics/Conversion/classic_metrics.json"
+DEFAULT_CURRENT_CLASSIC_METRICS_URL = "https://raw.githubusercontent.com/Dynatrace-Dave-Mauney/Automation/refs/heads/main/AI/Copilot/Metrics/Conversion/current_classic_metrics.json"
 DEFAULT_MAPPING_YAML_URL = "https://raw.githubusercontent.com/Dynatrace-Dave-Mauney/Automation/refs/heads/main/AI/Copilot/Metrics/Conversion/classic_metric_to_grail_metric.yaml"
 DEFAULT_GENERATOR_URL = "https://raw.githubusercontent.com/Dynatrace-Dave-Mauney/Automation/refs/heads/main/AI/Copilot/Dashboards/Generation/generate_gen3_dashboards.py"
 DEFAULT_SET_ENVIRONMENT_URL = "https://raw.githubusercontent.com/Dynatrace-Dave-Mauney/Automation/refs/heads/main/AI/Examples/set_environment.py"
+
+# Keep the field name exactly as requested.
+CLASSIC_METRIC_ID_FIELD = "metricId"
 
 
 @dataclass
@@ -99,40 +111,58 @@ def load_yaml(location: str) -> Any:
     return data if data is not None else {}
 
 
+def load_current_classic_metricIds(data: Any) -> List[str]:
+    """Load Classic metric keys using ONLY the `metricId` key.
+
+    This function is intentionally strict. It does not infer metric keys from:
+      - metricId / metricKey / key / id / metric / name
+      - displayName / description
+      - object keys
+      - any arbitrary string values
+
+    Supported shapes:
+      1. [{"metricId": "..."}, ...]
+      2. {"metrics": [{"metricId": "..."}, ...]}
+      3. {"items": [{"metricId": "..."}, ...]}
+      4. {"data": [{"metricId": "..."}, ...]}
+      5. {"result": [{"metricId": "..."}, ...]}
+      6. nested combinations of the above containers
+
+    Every non-empty string found in `metricId` is included, including prefix-less
+    custom metrics such as `orders.total.count` or even `latency`.
+    """
+    metrics: List[str] = []
+
+    def add_metricId(value: Any) -> None:
+        if isinstance(value, str):
+            metric = value.strip()
+            if metric:
+                metrics.append(metric)
+
+    def walk(value: Any) -> None:
+        if isinstance(value, Mapping):
+            if CLASSIC_METRIC_ID_FIELD in value:
+                add_metricId(value[CLASSIC_METRIC_ID_FIELD])
+
+            # Recurse only into known containers to avoid accidental scraping of
+            # metadata/details while still supporting common wrapper shapes.
+            for container in ("metrics", "items", "data", "result"):
+                nested = value.get(container)
+                if isinstance(nested, (list, tuple, Mapping)):
+                    walk(nested)
+
+        elif isinstance(value, (list, tuple)):
+            for item in value:
+                walk(item)
+
+    walk(data)
+    return dedupe(metrics)
+
+
+# Backward-compatible name used by the rest of the script.
 def flatten_metric_keys(data: Any) -> List[str]:
-    """Extract metric keys from common Dynatrace metric-list shapes."""
-    keys: List[str] = []
-
-    def add(value: Any) -> None:
-        if isinstance(value, str) and value and value not in keys:
-            keys.append(value)
-
-    if isinstance(data, list):
-        for item in data:
-            if isinstance(item, str):
-                add(item)
-            elif isinstance(item, Mapping):
-                for field in ("metricId", "metricKey", "key", "id", "metric", "metric_name", "classic_metric"):
-                    if field in item:
-                        add(item[field])
-                        break
-    elif isinstance(data, Mapping):
-        # Common shapes: {"metrics": [...]}, {"items": [...]}, or {"builtin:...": {...}}
-        for container in ("metrics", "items", "data", "result"):
-            if container in data:
-                keys.extend(flatten_metric_keys(data[container]))
-                return list(dict.fromkeys(keys))
-        for k, v in data.items():
-            if isinstance(k, str) and (":" in k or "." in k):
-                add(k)
-            elif isinstance(v, str) and (":" in v or "." in v):
-                add(v)
-            elif isinstance(v, Mapping):
-                for field in ("metricId", "metricKey", "key", "id", "metric", "metric_name", "classic_metric"):
-                    if field in v:
-                        add(v[field])
-                        break
-    return list(dict.fromkeys(keys))
+    """Return every Classic metric from current_classic_metrics.json using metricId only."""
+    return load_current_classic_metricIds(data)
 
 
 def normalize_mapping_yaml(data: Any) -> Dict[str, List[str]]:
@@ -149,15 +179,17 @@ def normalize_mapping_yaml(data: Any) -> Dict[str, List[str]]:
         elif isinstance(grail, Sequence) and not isinstance(grail, (bytes, bytearray, str)):
             vals = [str(x) for x in grail if x]
         elif isinstance(grail, Mapping):
-            for key in ("grail", "grail_metric", "gen3", "gen3_metric", "to", "to_grail", "to_grail_metric", "metric_key_grail", "Metric key (Grail)"):
+            for key in (
+                "grail", "grail_metric", "gen3", "gen3_metric", "to", "to_grail",
+                "to_grail_metric", "metric_key_grail", "Metric key (Grail)",
+            ):
                 if key in grail:
                     candidate = grail[key]
                     if isinstance(candidate, list):
                         vals.extend(str(x) for x in candidate if x)
                     elif candidate:
                         vals.append(str(candidate))
-            # Also support docs-table-ish rows.
-            classic2 = grail.get("classic") or grail.get("classic_metric") or grail.get("from") or grail.get("Metric key (Classic)")
+            classic2 = grail.get("classic") or grail.get("classic_metric") or grail.get("from") or grail.get("Metric key (Classic)") or grail.get("metricId")
             grail2 = grail.get("grail") or grail.get("grail_metric") or grail.get("Metric key (Grail)")
             if classic2 and grail2:
                 classic_s = str(classic2).strip()
@@ -170,23 +202,35 @@ def normalize_mapping_yaml(data: Any) -> Dict[str, List[str]]:
                     mapping[classic_s].append(v)
 
     if isinstance(data, Mapping):
-        # If top-level contains a list of mapping rows.
         for list_key in ("mappings", "metrics", "items"):
             if isinstance(data.get(list_key), list):
                 for row in data[list_key]:
                     if isinstance(row, Mapping):
-                        classic = row.get("classic") or row.get("classic_metric") or row.get("from") or row.get("Metric key (Classic)")
-                        grail = row.get("grail") or row.get("grail_metric") or row.get("gen3") or row.get("gen3_metric") or row.get("to") or row.get("to_grail_metric") or row.get("Metric key (Grail)")
+                        classic = (
+                            row.get("classic") or row.get("classic_metric") or row.get("from")
+                            or row.get("Metric key (Classic)") or row.get("metricId")
+                        )
+                        grail = (
+                            row.get("grail") or row.get("grail_metric") or row.get("gen3")
+                            or row.get("gen3_metric") or row.get("to") or row.get("to_grail_metric")
+                            or row.get("Metric key (Grail)")
+                        )
                         put(classic, grail or row)
                 return mapping
-        # Simple dictionary classic -> grail/dict/list.
         for classic, grail in data.items():
             put(classic, grail)
     elif isinstance(data, list):
         for row in data:
             if isinstance(row, Mapping):
-                classic = row.get("classic") or row.get("classic_metric") or row.get("from") or row.get("Metric key (Classic)")
-                grail = row.get("grail") or row.get("grail_metric") or row.get("gen3") or row.get("gen3_metric") or row.get("to") or row.get("to_grail_metric") or row.get("Metric key (Grail)")
+                classic = (
+                    row.get("classic") or row.get("classic_metric") or row.get("from")
+                    or row.get("Metric key (Classic)") or row.get("metricId")
+                )
+                grail = (
+                    row.get("grail") or row.get("grail_metric") or row.get("gen3")
+                    or row.get("gen3_metric") or row.get("to") or row.get("to_grail_metric")
+                    or row.get("Metric key (Grail)")
+                )
                 put(classic, grail or row)
     return mapping
 
@@ -195,7 +239,6 @@ def camel_to_snake_segment(segment: str) -> str:
     """Convert camelCase/PascalCase inside one metric-key segment to snake_case."""
     if not segment or segment.startswith("{"):
         return segment
-    # Keep already-snake segments stable; handle acronyms more gracefully than a naive regex.
     s = re.sub(r"([A-Z]+)([A-Z][a-z])", r"\1_\2", segment)
     s = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", s)
     return s.replace("-", "_").lower()
@@ -207,22 +250,23 @@ def snake_metric_key(key: str) -> str:
 
 def dedupe(seq: Iterable[str]) -> List[str]:
     out: List[str] = []
+    seen = set()
     for item in seq:
-        if item and item not in out:
+        if item and item not in seen:
+            seen.add(item)
             out.append(item)
     return out
 
 
 def quote_metric_for_dql(metric: str) -> str:
     """Backtick metric keys if needed for DQL."""
-    # DQL examples commonly use unquoted dt.host.cpu.usage. Hyphens and colons require quoting.
     if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*", metric):
         return metric
     return "`" + metric.replace("`", "\\`") + "`"
 
 
 def heuristic_candidates(classic_metric: str) -> List[Tuple[str, str]]:
-    """Candidates deduced from public Dynatrace Grail metric naming rules."""
+    """Candidates deduced from observed Classic -> Grail/Gen3 naming patterns."""
     c = classic_metric.strip()
     candidates: List[Tuple[str, str]] = []
 
@@ -235,15 +279,19 @@ def heuristic_candidates(classic_metric: str) -> List[Tuple[str, str]]:
             if metric.endswith(".gauge"):
                 candidates.append((metric[:-6], source + " + strip .gauge"))
 
+    # Requested legacy SFM conversion.
+    if c.startswith("dsfm:"):
+        tail = c[len("dsfm:"):].lstrip(".:")
+        add("dt.sfm." + snake_metric_key(tail), "dsfm: -> dt.sfm. + snake_case")
+        add("dt.sfm." + tail, "dsfm: -> dt.sfm. only")
+
     if c.startswith("builtin:tech."):
-        # Some classic extension metrics with builtin:tech appear with a legacy prefix.
         tail = c[len("builtin:"):]
         add("legacy." + snake_metric_key(tail), "builtin:tech -> legacy + snake_case")
 
     if c.startswith("builtin:"):
         tail = c[len("builtin:"):]
         add("dt." + snake_metric_key(tail), "builtin: -> dt. + snake_case")
-        # Sometimes only the prefix changes and the mapping table carries exact casing exceptions.
         add("dt." + tail, "builtin: -> dt. only")
 
     if c.startswith("ext:"):
@@ -260,14 +308,20 @@ def heuristic_candidates(classic_metric: str) -> List[Tuple[str, str]]:
         tail = c[len("calc:"):]
         add(snake_metric_key(tail), "calc: removed + snake_case")
 
-    # Custom/OpenTelemetry/Prometheus-style keys are commonly unchanged, except auto suffixes.
-    if not c.startswith(("builtin:", "ext:", "calc:")):
+    # Prefix-less custom/OpenTelemetry/Prometheus-style keys are commonly unchanged.
+    if not c.startswith(("builtin:", "ext:", "calc:", "dsfm:")):
         add(c, "unchanged")
         add(snake_metric_key(c), "snake_case")
 
-    # Last-ditch prefix replacement for any classic metric not caught above.
     add(c.replace(":", "."), "colon -> dot fallback")
-    return [(m, s) for m, s in zip(dedupe(m for m, _ in candidates), [next(src for mm, src in candidates if mm == m) for m in dedupe(m for m, _ in candidates)])]
+
+    out: List[Tuple[str, str]] = []
+    seen = set()
+    for metric, source in candidates:
+        if metric not in seen:
+            seen.add(metric)
+            out.append((metric, source))
+    return out
 
 
 def build_candidates(classic_metric: str, explicit_mapping: Mapping[str, List[str]]) -> List[Tuple[str, str]]:
@@ -290,12 +344,7 @@ def build_candidates(classic_metric: str, explicit_mapping: Mapping[str, List[st
 
 
 def try_load_remote_set_environment(url: str, enabled: bool = True) -> Dict[str, Any]:
-    """
-    Try to reuse Dave's set_environment.py if available.
-
-    The remote function shape may change, so this is intentionally tolerant.
-    It calls set_environment() if present and merges any returned dict and os.environ.
-    """
+    """Try to reuse Dave's set_environment.py if available."""
     if not enabled:
         return {}
     env: Dict[str, Any] = {}
@@ -307,7 +356,7 @@ def try_load_remote_set_environment(url: str, enabled: bool = True) -> Dict[str,
             spec = importlib.util.spec_from_file_location("remote_set_environment", str(p))
             if spec and spec.loader:
                 mod = importlib.util.module_from_spec(spec)
-                spec.loader.exec_module(mod)  # user-requested trusted repo utility
+                spec.loader.exec_module(mod)
                 fn = getattr(mod, "set_environment", None)
                 if callable(fn):
                     try:
@@ -323,7 +372,6 @@ def try_load_remote_set_environment(url: str, enabled: bool = True) -> Dict[str,
 
 def normalize_base_url(value: str) -> str:
     v = value.strip().rstrip("/")
-    # Convert classic API URL to apps URL if needed.
     if v.endswith("/api"):
         v = v[:-4]
     v = re.sub(r"\.live\.dynatrace\.com/?$", ".apps.dynatrace.com", v)
@@ -335,8 +383,9 @@ def get_auth_config(args: argparse.Namespace) -> Tuple[str, Dict[str, str]]:
 
     def pick(*names: str) -> Optional[str]:
         for name in names:
-            if getattr(args, name.lower(), None):
-                return getattr(args, name.lower())
+            arg_name = name.lower()
+            if getattr(args, arg_name, None):
+                return getattr(args, arg_name)
             if name in remote_env and remote_env[name]:
                 return str(remote_env[name])
             if name in os.environ and os.environ[name]:
@@ -345,11 +394,11 @@ def get_auth_config(args: argparse.Namespace) -> Tuple[str, Dict[str, str]]:
 
     base_url = pick(
         "DT_PLATFORM_URL", "DYNATRACE_PLATFORM_URL", "DYNATRACE_APPS_URL",
-        "DT_ENVIRONMENT_URL", "DYNATRACE_ENVIRONMENT_URL", "TENANT_URL", "ENVIRONMENT_URL"
+        "DT_ENVIRONMENT_URL", "DYNATRACE_ENVIRONMENT_URL", "TENANT_URL", "ENVIRONMENT_URL",
     )
     token = pick(
         "DT_PLATFORM_TOKEN", "DYNATRACE_PLATFORM_TOKEN", "DT_OAUTH_TOKEN", "DYNATRACE_OAUTH_TOKEN",
-        "DT_TOKEN", "DYNATRACE_TOKEN", "DYNATRACE_API_TOKEN", "API_TOKEN"
+        "DT_TOKEN", "DYNATRACE_TOKEN", "DYNATRACE_API_TOKEN", "API_TOKEN",
     )
 
     if not base_url:
@@ -360,10 +409,12 @@ def get_auth_config(args: argparse.Namespace) -> Tuple[str, Dict[str, str]]:
     base_url = normalize_base_url(base_url)
     scheme = args.auth_scheme
     if scheme == "auto":
-        # Platform OAuth tokens are Bearer. Classic API tokens usually use Api-Token.
-        # Prefer Bearer for /platform/storage/query unless user overrides.
         scheme = "Bearer"
-    headers = {"Authorization": f"{scheme} {token}", "Content-Type": "application/json", "Accept": "application/json"}
+    headers = {
+        "Authorization": f"{scheme} {token}",
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+    }
     return base_url, headers
 
 
@@ -372,7 +423,13 @@ def dql_query_for_metric(metric: str, from_expr: str, to_expr: str) -> str:
     return f"timeseries value = avg({q}), from: {from_expr}, to: {to_expr} | limit 1"
 
 
-def execute_dql(base_url: str, headers: Dict[str, str], dql: str, timeout: int = 45, poll_sleep: float = 1.5) -> Tuple[bool, Optional[int], Optional[str], Optional[str]]:
+def execute_dql(
+    base_url: str,
+    headers: Dict[str, str],
+    dql: str,
+    timeout: int = 45,
+    poll_sleep: float = 1.5,
+) -> Tuple[bool, Optional[int], Optional[str], Optional[str]]:
     """Run a DQL query using Grail Query API. Returns (passed, status_code, error, query_status)."""
     execute_url = base_url.rstrip("/") + "/platform/storage/query/v1/query:execute"
     payload = {"query": dql, "requestTimeoutMilliseconds": min(timeout * 1000, 60000)}
@@ -386,22 +443,22 @@ def execute_dql(base_url: str, headers: Dict[str, str], dql: str, timeout: int =
     if status_code >= 400:
         return False, status_code, text, None
 
-    if status_code == 200:
-        result = json.loads(resp.text).get('result')
-        if result:
-            records = result.get('records')
-            if not records:
-                return False, status_code, text, "NO_RECORDS"
-            types = result.get('types')
-            if not types:
-                return False, status_code, text, "NO_TYPES"
-        else:
-            return False, status_code, text, "NO_RESULT"
-
     try:
         data = resp.json()
     except Exception:
         return True, status_code, None, "UNKNOWN_JSON"
+
+    if status_code == 200:
+        result = data.get("result")
+        if result:
+            records = result.get("records")
+            if not records:
+                return False, status_code, text, "NO_RECORDS"
+            types = result.get("types")
+            if not types:
+                return False, status_code, text, "NO_TYPES"
+        else:
+            return False, status_code, text, "NO_RESULT"
 
     status = str(data.get("state") or data.get("status") or data.get("queryStatus") or "").upper()
     if status in ("SUCCEEDED", "SUCCESS", "FINAL", "DONE", "COMPLETED") or "result" in data or "records" in data:
@@ -409,7 +466,6 @@ def execute_dql(base_url: str, headers: Dict[str, str], dql: str, timeout: int =
 
     request_token = data.get("requestToken") or data.get("request-token") or data.get("token")
     if not request_token:
-        # If the service didn't return a failure and gave no async token, treat as accepted.
         return True, status_code, None, status or "ACCEPTED"
 
     poll_url = base_url.rstrip("/") + "/platform/storage/query/v1/query:poll"
@@ -435,16 +491,37 @@ def execute_dql(base_url: str, headers: Dict[str, str], dql: str, timeout: int =
     return False, status_code, f"Timed out; last query status={last_status}", last_status
 
 
-def validate_metric(classic_metric: str, candidates: List[Tuple[str, str]], base_url: str, headers: Dict[str, str], args: argparse.Namespace) -> MetricResult:
+def validate_metric(
+    classic_metric: str,
+    candidates: List[Tuple[str, str]],
+    base_url: str,
+    headers: Dict[str, str],
+    args: argparse.Namespace,
+) -> MetricResult:
     attempts: List[Attempt] = []
     for gen3, source in candidates:
         dql = dql_query_for_metric(gen3, args.from_expr, args.to_expr)
         if args.dry_run:
             passed, status_code, error, qstatus = False, None, "DRY_RUN: not executed", None
         else:
-            passed, status_code, error, qstatus = execute_dql(base_url, headers, dql, timeout=args.query_timeout, poll_sleep=args.poll_sleep)
-        # print('DEBUG:', passed, status_code, error, qstatus)
-        attempts.append(Attempt(gen3_metric=gen3, source=source, dql=dql, passed=passed, status_code=status_code, error=error, query_status=qstatus))
+            passed, status_code, error, qstatus = execute_dql(
+                base_url,
+                headers,
+                dql,
+                timeout=args.query_timeout,
+                poll_sleep=args.poll_sleep,
+            )
+        attempts.append(
+            Attempt(
+                gen3_metric=gen3,
+                source=source,
+                dql=dql,
+                passed=passed,
+                status_code=status_code,
+                error=error,
+                query_status=qstatus,
+            )
+        )
         if passed:
             return MetricResult(classic_metric=classic_metric, status="PASSED", gen3_metric=gen3, attempts=attempts)
     return MetricResult(classic_metric=classic_metric, status="FAILED", gen3_metric="UNKNOWN:" + classic_metric, attempts=attempts)
@@ -453,10 +530,25 @@ def validate_metric(classic_metric: str, candidates: List[Tuple[str, str]], base
 def write_csv(path: Path, rows: List[MetricResult]) -> None:
     with path.open("w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
-        writer.writerow(["classic_metric", "status", "final_gen3_metric", "attempt_number", "attempted_gen3_metric", "attempt_source", "passed", "query_status", "http_status", "error", "dql"])
+        writer.writerow([
+            "classic_metric", "status", "final_gen3_metric", "attempt_number", "attempted_gen3_metric",
+            "attempt_source", "passed", "query_status", "http_status", "error", "dql",
+        ])
         for r in rows:
             for i, a in enumerate(r.attempts, 1):
-                writer.writerow([r.classic_metric, r.status, r.gen3_metric, i, a.gen3_metric, a.source, a.passed, a.query_status or "", a.status_code or "", a.error or "", a.dql])
+                writer.writerow([
+                    r.classic_metric,
+                    r.status,
+                    r.gen3_metric,
+                    i,
+                    a.gen3_metric,
+                    a.source,
+                    a.passed,
+                    a.query_status or "",
+                    a.status_code or "",
+                    a.error or "",
+                    a.dql,
+                ])
 
 
 def write_markdown(path: Path, title: str, rows: List[MetricResult]) -> None:
@@ -481,6 +573,7 @@ def write_verbose_yaml(path: Path, passed: List[MetricResult], failed: List[Metr
             "status": r.status,
             "attempts": [asdict(a) for a in r.attempts],
         }
+
     payload = {
         "successful_mappings": [convert(r) for r in passed],
         "failed_mappings": [convert(r) for r in failed],
@@ -491,7 +584,7 @@ def write_verbose_yaml(path: Path, passed: List[MetricResult], failed: List[Metr
 
 def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Build/validate classic metric -> Grail/Gen3 metric mappings.")
-    p.add_argument("--classic-metrics", default=DEFAULT_CLASSIC_METRICS_URL, help="URL or path to classic_metrics.json")
+    p.add_argument("--classic-metrics", default=DEFAULT_CURRENT_CLASSIC_METRICS_URL, help="URL or path to current_classic_metrics.json")
     p.add_argument("--mapping-yaml", default=DEFAULT_MAPPING_YAML_URL, help="URL or path to classic_metric_to_grail_metric.yaml")
     p.add_argument("--generate-gen3-dashboards-url", default=DEFAULT_GENERATOR_URL, help="Reference URL for generate_gen3_dashboards.py; kept for traceability")
     p.add_argument("--set-environment-url", default=DEFAULT_SET_ENVIRONMENT_URL, help="URL/path to set_environment.py")
@@ -511,8 +604,6 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
     args = parse_args(argv)
-    # print('Args:', args)
-    # exit(9999)
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -525,14 +616,14 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         classic_metrics = classic_metrics[: args.limit]
 
     if not classic_metrics:
-        raise SystemExit("No metric keys found in classic metrics input.")
+        raise SystemExit(f"No metric keys found in classic metrics input using key '{CLASSIC_METRIC_ID_FIELD}'.")
 
     if args.dry_run:
         base_url, headers = "https://dry-run.apps.dynatrace.com", {}
     else:
         base_url, headers = get_auth_config(args)
 
-    print(f"Loaded {len(classic_metrics)} classic metrics")
+    print(f"Loaded {len(classic_metrics)} classic metrics from `{CLASSIC_METRIC_ID_FIELD}`")
     print(f"Loaded {len(explicit_mapping)} explicit mapping entries")
     print(f"DQL endpoint base: {base_url}")
     print(f"Traceability: generate_gen3_dashboards.py = {args.generate_gen3_dashboards_url}")
@@ -546,7 +637,6 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         (passed if result.status == "PASSED" else failed).append(result)
         print(f"[{idx}/{len(classic_metrics)}] {result.status}: {classic_metric} -> {result.gen3_metric} ({len(result.attempts)} attempts)")
 
-    all_results = passed + failed
     write_csv(output_dir / "passed_metric_mapping_report.csv", passed)
     write_csv(output_dir / "failed_metric_mapping_report.csv", failed)
     write_markdown(output_dir / "passed_metric_mapping_report.md", "Passed classic metric to Grail metric mappings", passed)
@@ -554,6 +644,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     write_verbose_yaml(output_dir / "verbose_classic_metric_to_grail_metric.yaml", passed, failed)
 
     summary = {
+        "classic_metricId_field": CLASSIC_METRIC_ID_FIELD,
         "classic_metrics": len(classic_metrics),
         "passed": len(passed),
         "failed": len(failed),
@@ -564,6 +655,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             "failed_metric_mapping_report.md",
             "verbose_classic_metric_to_grail_metric.yaml",
             "verbose_classic_metric_to_grail_metric.json",
+            "metric_mapping_summary.json",
         ],
     }
     (output_dir / "metric_mapping_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
@@ -574,8 +666,6 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 if __name__ == "__main__":
     try:
         raise SystemExit(main())
-        # raise SystemExit(main(["--limit", "10", "--auth-scheme", "Api-Token", "--dt-platform-url", env, "--dt-token", token]))
-        # raise SystemExit(main(["--limit", "10"]))
     except KeyboardInterrupt:
         raise SystemExit(130)
     except SystemExit:
