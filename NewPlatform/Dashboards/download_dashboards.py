@@ -45,6 +45,11 @@ def process(env, env_name, client_id, client_secret):
 
             document_id = document.get('id')
             document_name = document.get('name')
+
+            if not document_name.startswith('TEMPLATE - '):
+                print(f'Skipping {document_name}')
+                continue
+
             # print(document_type, document_id, document_name)
             # dashboard_results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents/{document_id}/content', None)
             dashboard_results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents/{document_id}/content', None)
@@ -71,9 +76,9 @@ def main():
     friendly_function_name = 'Dynatrace Automation'
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
-    # env_name_supplied = 'Prod'
-    # env_name_supplied = 'PreProd'
-    # env_name_supplied = 'Sandbox'
+    env_name_supplied = 'Prod'
+    # env_name_supplied = 'NonProd'
+    # env_name_supplied = 'Int'
     # env_name_supplied = 'Personal'
     env_name, env, client_id, client_secret = environment.get_client_environment_for_function(env_name_supplied, friendly_function_name)
     process(env, env_name, client_id, client_secret)

@@ -51,12 +51,14 @@ python generate_gen3_dashboards.py \
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 import re
 import sys
 from collections import OrderedDict
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Mapping, MutableMapping, Optional, Sequence, Tuple
+# from typing import Any, Dict, Iterable, List, Mapping, MutableMapping, Optional, Sequence, Tuple
+from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
 
 import yaml
 
@@ -74,12 +76,17 @@ MAX_TILE_WIDTH = 24
 MIN_TILE_HEIGHT = 4
 MAX_TILE_HEIGHT = 16
 
+MARKDOWN_TILE_HEIGHT = 1
+
 # Given GRID_WIDTH=24 and MIN_TILE_WIDTH=6, 4 is the largest possible non-overflowing row.
 EFFECTIVE_MAX_TILES_PER_ROW = min(REQUESTED_MAX_TILES_PER_ROW, GRID_WIDTH // MIN_TILE_WIDTH)
 
+# DEBUG:
 DEFAULT_INPUT = Path("input_json")
+# DEFAULT_INPUT = Path("input_json_testing-v1")
+# DEFAULT_INPUT = Path("input_json_testing-v4")
 DEFAULT_OUTPUT_DIR = Path("generated_gen3")
-DEFAULT_MAPPING_FILE = Path("../../../../NewPlatform/Dashboards/classic_metric_to_grail_metric.yaml")
+DEFAULT_MAPPING_FILE = Path("../../Metrics/Conversion/classic_metric_to_grail_metric.yaml")
 
 
 # =============================================================================
@@ -235,10 +242,13 @@ def to_grail_metric(classic_metric_or_selector: str, metric_map: Mapping[str, st
     if base_metric in metric_map:
         return metric_map[base_metric]
 
-    if base_metric.startswith("builtin:"):
-        return "dt." + camel_to_snake_metric_path(base_metric.removeprefix("builtin:"))
+    # No fallback.  If the mapping is not covered in the yaml, we will skip the tile later
+    return None
 
-    return base_metric
+    # if base_metric.startswith("builtin:"):
+    #     return "dt." + camel_to_snake_metric_path(base_metric.removeprefix("builtin:"))
+
+    # return base_metric
 
 
 # =============================================================================
@@ -282,9 +292,22 @@ def is_top_list(tile: Mapping[str, Any]) -> bool:
 
 
 def extract_classic_queries(tile: Mapping[str, Any]) -> List[Dict[str, Any]]:
+    # print('DEBUG:', 'extract_classic_queries: starting...')
+    #
+    # print('DEBUG:', 'extract_classic_queries: tile:', tile)
+
     queries = tile.get("queries")
+    # print('DEBUG:', 'extract_classic_queries: queries1:', queries)
+    # queries = queries or []
+    # print('DEBUG:', 'extract_classic_queries: queries1a:', queries)
     if isinstance(queries, list) and queries:
-        return [dict(q) for q in queries if isinstance(q, Mapping) and q.get("metric")]
+        result = [dict(q) for q in queries if isinstance(q, Mapping) and q.get("metric")]
+        if not result:
+            result = [dict(q) for q in queries if isinstance(q, Mapping) and q.get("metricSelector")]
+        # print('DEBUG:', 'extract_classic_queries: returning result:', result)
+        return result
+
+    print('DEBUG:', 'extract_classic_queries: queries2:', queries)
 
     filter_config = tile.get("filterConfig") or {}
     chart_config = filter_config.get("chartConfig") or {}
@@ -304,6 +327,8 @@ def extract_classic_queries(tile: Mapping[str, Any]) -> List[Dict[str, Any]]:
             if metric:
                 extracted.append({"metric": metric})
         return extracted
+
+    # print('DEBUG: Nada!')
 
     return []
 
@@ -395,6 +420,7 @@ def make_dql(
 
     if top_list:
         scalar_field = f"{array_field}_value"
+        # print('DEBUG: top list fields add...')
         query += f"\n| fieldsAdd {scalar_field} = arrayAvg({array_field})"
         if dimensions:
             query += "\n| fields " + ", ".join(dql_field(d) for d in dimensions) + f", {scalar_field}"
@@ -402,6 +428,13 @@ def make_dql(
             query += f"\n| fields {scalar_field}"
         query += f"\n| sort {scalar_field} desc"
         query += f"\n| limit {limit}"
+    else:
+        if dimensions:
+            if len(dimensions) == 1 and dimensions[0].startswith('dt.entity.'):
+                query += f"\n| fieldsAdd name = entityName({dimensions[0]})"
+            # query += "\n| fieldsAdd " + " ".join(dql_field(d) for d in dimensions)
+
+    # print('DEBUG: query', query)
 
     return query
 
@@ -414,8 +447,16 @@ def make_dql(
 def markdown_tile_from_classic(tile: Mapping[str, Any]) -> Dict[str, Any]:
     title = tile_title(tile)
     content = tile.get("markdown") or tile.get("content") or title
-    if title and not str(content).lstrip().startswith("#"):
-        content = f"## {title}"
+
+    # Convert classic dashboard links to text
+    if "#dashboard;id=00000000" in content:
+        # print("DEBUG: content before", content)
+        content = re.sub("\(.*\)", "", content).replace("[", "").replace("]", "")
+        # print("DEBUG: content after", content)
+
+    # markdown is the best source, so skip this:
+    # if title and not str(content).lstrip().startswith("#"):
+    #     content = f"## {title}"
     return {
         "type": "markdown",
         "content": str(content or ""),
@@ -440,15 +481,435 @@ def line_chart_settings() -> Dict[str, Any]:
     }
 
 
+# DEBUG START
 def data_tile_from_classic(
-    classic_tile: Mapping[str, Any],
-    query: Mapping[str, Any],
-    metric_map: Mapping[str, str],
-    index: int,
-    omit_line_chart_settings: bool,
+        classic_tile: Mapping[str, Any],
+        query: Mapping[str, Any],
+        metric_map: Mapping[str, str],
+        index: int,
+        omit_line_chart_settings: bool,
 ) -> Dict[str, Any]:
+    import html
+    import re
+
+    def split_selector(selector):
+        parts = []
+        buf = []
+        depth = 0
+        quote = None
+        escaped = False
+
+        for ch in selector.strip():
+            if escaped:
+                buf.append(ch)
+                escaped = False
+                continue
+
+            if ch == "\\":
+                buf.append(ch)
+                escaped = True
+                continue
+
+            if quote:
+                buf.append(ch)
+                if ch == quote:
+                    quote = None
+                continue
+
+            if ch in ("'", '"'):
+                buf.append(ch)
+                quote = ch
+                continue
+
+            if ch == "(":
+                depth += 1
+                buf.append(ch)
+                continue
+
+            if ch == ")":
+                if depth > 0:
+                    depth -= 1
+                buf.append(ch)
+                continue
+
+            if ch == ":" and depth == 0:
+                part = "".join(buf).strip()
+                if part:
+                    parts.append(part)
+                buf = []
+                continue
+
+            buf.append(ch)
+
+        part = "".join(buf).strip()
+        if part:
+            parts.append(part)
+
+        return parts
+
+    def is_selector_transform(part):
+        lower = part.strip().lower()
+        return (
+                lower in {
+            "avg",
+            "sum",
+            "min",
+            "max",
+            "count",
+            "auto",
+            "parents",
+            "names",
+        }
+                or lower.startswith("splitby(")
+                or lower.startswith("sort(")
+                or lower.startswith("limit(")
+                or lower.startswith("filter(")
+                or lower.startswith("merge(")
+                or lower.startswith("partition(")
+                or lower.startswith("fold(")
+        )
+
+    def unquote(value):
+        value = value.strip()
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in ("'", '"'):
+            return value[1:-1].replace(r"\'", "'").replace(r"\"", '"')
+        return value
+
+    def split_csv_like(value):
+        values = []
+        buf = []
+        depth = 0
+        quote = None
+        escaped = False
+
+        for ch in value:
+            if escaped:
+                buf.append(ch)
+                escaped = False
+                continue
+
+            if ch == "\\":
+                buf.append(ch)
+                escaped = True
+                continue
+
+            if quote:
+                buf.append(ch)
+                if ch == quote:
+                    quote = None
+                continue
+
+            if ch in ("'", '"'):
+                buf.append(ch)
+                quote = ch
+                continue
+
+            if ch == "(":
+                depth += 1
+                buf.append(ch)
+                continue
+
+            if ch == ")":
+                if depth > 0:
+                    depth -= 1
+                buf.append(ch)
+                continue
+
+            if ch == "," and depth == 0:
+                item = "".join(buf).strip()
+                if item:
+                    values.append(unquote(item))
+                buf = []
+                continue
+
+            buf.append(ch)
+
+        item = "".join(buf).strip()
+        if item:
+            values.append(unquote(item))
+
+        return values
+
+    def extract_selector_from_metric_expression(expression):
+        print('DEBUG: extract_selector_from_metric_expression:', expression)
+        """
+        Handles classic metricExpressions like:
+
+            resolution=Inf&(builtin:metric.key:splitBy("x"):avg):limit(100):names
+
+        The selector is the balanced parenthesized expression immediately after '&('.
+        """
+        if not expression:
+            return ""
+
+        text = html.unescape(str(expression)).strip()
+
+        start = text.find("&(")
+        if start < 0:
+            return ""
+
+        pos = start + 1  # points at '('
+        depth = 0
+        quote = None
+        escaped = False
+        buf = []
+
+        for ch in text[pos:]:
+            if escaped:
+                buf.append(ch)
+                escaped = False
+                continue
+
+            if ch == "\\":
+                buf.append(ch)
+                escaped = True
+                continue
+
+            if quote:
+                buf.append(ch)
+                if ch == quote:
+                    quote = None
+                continue
+
+            if ch in ("'", '"'):
+                buf.append(ch)
+                quote = ch
+                continue
+
+            if ch == "(":
+                depth += 1
+                if depth > 1:
+                    buf.append(ch)
+                continue
+
+            if ch == ")":
+                depth -= 1
+                if depth == 0:
+                    return "".join(buf).strip()
+                buf.append(ch)
+                continue
+
+            if depth > 0:
+                buf.append(ch)
+
+        return ""
+
+    def metric_selector_for_tile():
+        """
+        Prefer query.metricSelector. If absent, fall back to classic_tile.metricExpressions.
+        This is important because some classic dashboard paths carry the selector only
+        in metricExpressions.
+        """
+        selector = str(query.get("metricSelector") or "").strip()
+        if selector:
+            return selector
+
+        for expression in classic_tile.get("metricExpressions") or []:
+            selector = extract_selector_from_metric_expression(expression)
+            if selector:
+                return selector
+
+        return ""
+
+    def parse_metric_selector(selector):
+        raw_parts = split_selector(selector)
+
+        metric_parts = []
+        transform_parts = []
+
+        found_transform = False
+        for part in raw_parts:
+            if not found_transform and is_selector_transform(part):
+                found_transform = True
+
+            if found_transform:
+                transform_parts.append(part)
+            else:
+                metric_parts.append(part)
+
+        classic_metric = ":".join(metric_parts).strip()
+
+        parsed = {
+            "metric": classic_metric,
+            "aggregation": "avg",
+            "dimensions": [],
+            "limit": None,
+            "sort_aggregation": None,
+            "sort_direction": "desc",
+            "rollup": None,
+        }
+
+        for part in transform_parts:
+            text = part.strip()
+            lower = text.lower()
+
+            if lower in {"avg", "sum", "min", "max", "count"}:
+                parsed["aggregation"] = lower
+                continue
+
+            if lower == "auto":
+                parsed["rollup"] = "avg"
+                continue
+
+            if lower in {"parents", "names"}:
+                continue
+
+            split_match = re.match(
+                r"^splitBy\((?P<body>.*)\)$",
+                text,
+                flags=re.IGNORECASE | re.DOTALL,
+            )
+            if split_match:
+                parsed["dimensions"].extend(split_csv_like(split_match.group("body")))
+                continue
+
+            sort_match = re.match(
+                r"^sort\(\s*value\(\s*(?P<agg>[A-Za-z_][\w]*)\s*,\s*(?P<direction>ascending|descending|asc|desc)\s*\)\s*\)$",
+                text,
+                flags=re.IGNORECASE,
+            )
+            if sort_match:
+                parsed["sort_aggregation"] = sort_match.group("agg").lower()
+                direction = sort_match.group("direction").lower()
+                parsed["sort_direction"] = (
+                    "asc" if direction in {"ascending", "asc"} else "desc"
+                )
+                continue
+
+            limit_match = re.match(
+                r"^limit\(\s*(?P<limit>\d+)\s*\)$",
+                text,
+                flags=re.IGNORECASE,
+            )
+            if limit_match:
+                parsed["limit"] = int(limit_match.group("limit"))
+                continue
+
+        return parsed
+
+    def alias_for_metric(grail_metric):
+        # For CPU usage, make the alias stable and readable.
+        if grail_metric.endswith(".cpu.usage"):
+            return "usage"
+
+        alias = re.sub(
+            r"[^A-Za-z0-9_]+",
+            "_",
+            str(grail_metric).split(".")[-1],
+        ).strip("_")
+
+        return alias or f"value_{index}"
+
+    def make_dql_from_metric_selector(selector):
+        # print('DEBUG: make_dql_from_metric_selector: selector:', selector)
+        parsed = parse_metric_selector(selector)
+
+        classic_metric = str(parsed["metric"] or "").strip()
+        grail_metric = to_grail_metric(classic_metric, metric_map)
+
+        if not grail_metric:
+            # print('DEBUG: no grail metric for classic_metric:', classic_metric)
+            return None, None, None
+
+        aggregation = parsed["aggregation"] or "avg"
+        dimensions = parsed["dimensions"] or []
+        rollup = parsed["rollup"]
+        limit = parsed["limit"]
+        sort_aggregation = parsed["sort_aggregation"] or aggregation
+        sort_direction = parsed["sort_direction"] or "desc"
+
+        alias = alias_for_metric(grail_metric)
+
+        metric_args = [grail_metric]
+        if rollup:
+            metric_args.append(f"rollup: {rollup}")
+
+        timeseries_parts = [
+            f"{alias} = {aggregation}({', '.join(metric_args)})"
+        ]
+
+        if dimensions:
+            timeseries_parts.append("by: { " + ", ".join(dimensions) + " }")
+
+        lines = [
+            "timeseries " + ",\n  ".join(timeseries_parts)
+        ]
+
+        for dimension in dimensions:
+            if dimension.startswith("dt.entity."):
+                name_field = (
+                        dimension
+                        .replace("dt.entity.", "")
+                        .replace(".", "_")
+                        + "_name"
+                )
+                print('DEBUG: make_dql_from_metric_selector fields add...')
+                lines.append(f"| fieldsAdd {name_field} = entityName({dimension})")
+
+        if sort_aggregation or limit is not None:
+            sort_function = {
+                "avg": "arrayAvg",
+                "sum": "arraySum",
+                "min": "arrayMin",
+                "max": "arrayMax",
+                "count": "arraySum",
+            }.get(str(sort_aggregation).lower(), "arrayAvg")
+
+            lines.append(f"| sort {sort_function}({alias}) {sort_direction}")
+
+        if limit is not None:
+            lines.append(f"| limit {limit}")
+
+        return grail_metric, "\n".join(lines), limit is not None
+
+    # ------------------------------------------------------------------
+    # IMPORTANT:
+    # Handle metricSelector before classic metric handling.
+    # If this does not run, query["metric"] == None can fall into other
+    # caller/default behavior and produce bad keys like:
+    # dt.tech.generic.cpu.usage:split_by
+    # ------------------------------------------------------------------
+    # print('DEBUG:', 'data_tile_from_classic')
+
+    metric_selector = metric_selector_for_tile()
+    print('DEBUG: metric_selector:', metric_selector)
+
+    if metric_selector:
+        grail_metric, dql, selector_is_top_list = make_dql_from_metric_selector(
+            metric_selector
+        )
+
+        # print('DEBUG: dql:', dql)
+        if not dql:
+            # print('DEBUG: No dql!')
+            return None
+
+        # top_list = selector_is_top_list or is_top_list(classic_tile)
+        top_list = is_top_list(classic_tile)
+        visualization = "categoricalBarChart" if top_list else "lineChart"
+
+        out: Dict[str, Any] = {
+            "type": "data",
+            "title": tile_title(classic_tile, grail_metric),
+            "query": dql,
+            "visualization": visualization,
+        }
+
+        if top_list:
+            out["visualizationSettings"] = categorical_bar_chart_settings()
+        elif not omit_line_chart_settings:
+            out["visualizationSettings"] = line_chart_settings()
+
+        # print('DEBUG: returning out:', out)
+        return out
+
     classic_metric = str(query.get("metric") or "").strip()
     grail_metric = to_grail_metric(classic_metric, metric_map)
+
+    if not grail_metric:
+        # print('DEBUG: Not a grail metric!')
+        return None
+
     top_list = is_top_list(classic_tile)
     aggregation = aggregation_for(query)
     dimensions = split_by(query)
@@ -476,6 +937,8 @@ def data_tile_from_classic(
 
     return out
 
+
+# DEBUG END
 
 # =============================================================================
 # Section-aware, type-aware, balanced layout engine
@@ -507,7 +970,7 @@ def tile_height(tile_payload: Mapping[str, Any]) -> int:
     visualization = str(tile_payload.get("visualization") or "").lower()
 
     if tile_kind == "markdown":
-        return MIN_TILE_HEIGHT
+        return MARKDOWN_TILE_HEIGHT
     if visualization == "singlevalue":
         return MIN_TILE_HEIGHT
     if visualization == "categoricalbarchart":
@@ -618,6 +1081,9 @@ def build_section_aware_balanced_layouts(tiles: Mapping[str, Mapping[str, Any]])
         pending_data = []
 
     for key, tile_payload in ordered_items:
+        if not tile_payload:
+            continue
+
         if is_header_payload(tile_payload):
             # Headers start on a new row after any pending data in prior section.
             flush_data_rows()
@@ -660,26 +1126,50 @@ def convert_dashboard(
 
     def add_tile(tile_payload: Dict[str, Any]) -> None:
         nonlocal next_key
-        tiles[str(next_key)] = tile_payload
-        next_key += 1
+
+        if tile_payload:
+            tiles[str(next_key)] = tile_payload
+            next_key += 1
 
     for classic_tile in classic_dashboard.get("tiles", []):
         if not isinstance(classic_tile, Mapping):
             continue
 
+        tile_type = classic_tile.get('tileType')
+        print('DEBUG: tile_type:', tile_type)
+        if tile_type not in ['DATA_EXPLORER', 'HEADER', 'MARKDOWN']:
+            print('DEBUG: Skipping unsupported tile type:', tile_type)
+            continue
+
+        if tile_type == 'DATA_EXPLORER':
+            visual_config_type = classic_tile.get('visualConfig', {}).get('type')
+            if visual_config_type not in ['GRAPH_CHART', 'TOP_LIST']:
+                print('DEBUG: Skipping unsupported tile visual config type:', visual_config_type)
+                continue
+
         if is_markdown_like(classic_tile):
-            if 'Overview' in str(classic_tile):
+            # " Overview]"
+            # " Administration]"
+            # " Dynatrace Self-Monitoring: Home]"
+            # " Settings - Problem Notifications]"
+            if " Overview]" in str(classic_tile) or " Administration]" in str(classic_tile) or " Dynatrace Self-Monitoring: Home]" in str(classic_tile) or " Settings - Problem Notifications]" in str(classic_tile):
+                # print('Skipping Markdown Navigation Tile!')
                 continue
 
             if not omit_markdown:
                 add_tile(markdown_tile_from_classic(classic_tile))
             continue
 
+        # DEBUG:
         queries = extract_classic_queries(classic_tile)
-        if not queries:
-            continue
+        # if not queries:
+            # print('DEBUG:', 'no queries...')
+            # continue
+
+        # print('DEBUG:', queries)
 
         for index, query in enumerate(queries):
+            # print('DEBUG:', 'add tile/data_tile_from_classic being called', query)
             add_tile(
                 data_tile_from_classic(
                     classic_tile=classic_tile,
@@ -702,7 +1192,7 @@ def convert_dashboard(
 
 def output_file_name(classic_dashboard: Mapping[str, Any], source_path: Path) -> str:
     name = dashboard_name(classic_dashboard, source_path.stem)
-    name = name.replace(':', ' - ')
+    name = name.replace(':', ' -')
     name = re.sub(r"[\\/:*?\"<>|]+", "_", name).strip() or source_path.stem
     return f"{name}.json"
 
@@ -745,14 +1235,72 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
+def count_non_markdown_tiles(tiles):
+    non_markdown_tiles_count = 0
+    if tiles:
+        for tile_key in tiles.keys():
+            tile_type = tiles[tile_key].get('type')
+            if tile_type != 'markdown':
+                non_markdown_tiles_count += 1
+    return non_markdown_tiles_count
+
+def finalize_generated_dashboard(generated):
+    # print('DEBUG: finalize_generated_dashboard(generated) starting...' )
+    # print('DEBUG: generated:', generated)
+    finalized_generated_dashboard = copy.deepcopy(generated)
+
+    field_name = None
+    tiles = generated.get('tiles')
+    for tile_key in tiles.keys():
+        # print(tiles[tile_key])
+        visualization = tiles[tile_key].get('visualization', {})
+        # print('DEBUG: visualization:', visualization)
+        query = tiles[tile_key].get('query')
+        if query:
+            # print('DEBUG: query:', query)
+            match = re.search(r"fieldsAdd\s+(\w+)\s+=", query)
+            if match:
+                field_name = match.group(1)
+                # print('DEBUG: field_name:', field_name)
+
+        visualization_settings = tiles[tile_key].get('visualizationSettings', {})
+        # print('DEBUG: visualization_settings:', visualization_settings)
+        chart_settings = visualization_settings.get('chartSettings', {})
+        # print('DEBUG: chart_settings1:', chart_settings)
+        data_mapping = visualization_settings.get('dataMapping', {})
+        # print('DEBUG: data_mapping1:', data_mapping)
+
+        if field_name and visualization == 'categoricalBarChart' and not chart_settings:
+            chart_settings["categoricalBarChartSettings"] = {}
+            chart_settings["categoricalBarChartSettings"]["categoryAxis"] = [field_name]
+            visualization_settings["chartSettings"] = chart_settings
+            # print('DEBUG: visualization_settings2:', visualization_settings)
+            finalized_generated_dashboard["tiles"][tile_key]["visualizationSettings"] = visualization_settings
+        else:
+            if field_name and visualization == 'lineChart' and not data_mapping:
+                data_mapping["displayedFields"] = [field_name]
+                visualization_settings["dataMapping"] = data_mapping
+                # print('DEBUG: visualization_settings2:', visualization_settings)
+                finalized_generated_dashboard["tiles"][tile_key]["visualizationSettings"] = visualization_settings
+
+    # print('DEBUG: finalize_generated_dashboard(generated) ending...' )
+    return finalized_generated_dashboard
+
+
 def main(argv: Optional[Sequence[str]] = None) -> int:
     args = parse_args(argv)
     metric_map = build_metric_map(load_yaml(args.metric_map))
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
     count = 0
+    wrote_count = 0
     for source_path in iter_json_files(args.input):
         classic_dashboard = load_json(source_path)
+
+        classic_dashboard_id = classic_dashboard['id']
+        classic_dashboard_name = classic_dashboard['dashboardMetadata']['name']
+
+        print('DEBUG: main: dashboard id:', classic_dashboard_id)
 
         if args.fail_on_unmapped:
             missing = find_unmapped_metrics(classic_dashboard, metric_map)
@@ -766,12 +1314,23 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             omit_line_chart_settings=args.omit_line_chart_settings,
         )
 
-        output_path = args.output_dir / output_file_name(classic_dashboard, source_path)
-        write_json(output_path, generated)
-        print(f"Wrote {output_path} ({len(generated['tiles'])} tiles)")
+        tiles = generated.get("tiles")
+        print('DEBUG: tiles', tiles)
+        if count_non_markdown_tiles(tiles) == 0:
+            print(f'Skipping dashboard "{classic_dashboard_name}" ({classic_dashboard_id}) with no non-markdown tiles')
+        else:
+            finalized_generated = finalize_generated_dashboard(generated)
+            output_path = args.output_dir / output_file_name(classic_dashboard, source_path)
+            # write_json(output_path, generated)
+            write_json(output_path, finalized_generated)
+            # print(f"Wrote {output_path} ({len(generated['tiles'])} tiles)")
+            print(f"Wrote {output_path} ({len(finalized_generated['tiles'])} tiles)")
+            wrote_count += 1
+
         count += 1
 
     print(f"Processed {count} dashboard file(s)")
+    print(f"Wrote {wrote_count} dashboard file(s)")
     return 0
 
 

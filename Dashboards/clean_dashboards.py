@@ -124,6 +124,18 @@ def clean_dashboard(filename):
                 fixes.append('ConsistentColors')
                 dashboard_json['dashboardMetadata']['hasConsistentColors'] = True
 
+            dashboard_tile_index = 0
+            dashboard_tiles = dashboard_json.get('tiles')
+            for dashboard_tile in dashboard_tiles:
+                dashboard_tile_custom_name = dashboard_tile.get('customName')
+                if dashboard_tile_custom_name and dashboard_tile_custom_name == 'Data explorer results':
+                    dashboard_tile_name = dashboard_tile.get('name')
+                    if dashboard_tile_name:
+                        # print(dashboard_tile_custom_name, dashboard_tile_name)
+                        fixes.append('customName')
+                        dashboard_json['tiles'][dashboard_tile_index]['customName'] = dashboard_tile_name
+                dashboard_tile_index += 1
+
             if fixes:
                 print(f'{dashboard_name}|{dashboard_id}|{dashboard_owner}| has bad {fixes}')
 

@@ -1,0 +1,25 @@
+diff --git a/AI/Copilot/Dashboards/Generation/generate_gen3_dashboards.py b/AI/Copilot/Dashboards/Generation/generate_gen3_dashboards.py
+--- a/AI/Copilot/Dashboards/Generation/generate_gen3_dashboards.py
++++ b/AI/Copilot/Dashboards/Generation/generate_gen3_dashboards.py
+@@
++from metric_selector_support import metric_selector_to_dql, find_metric_selectors
++
+@@
++    # Add this near the start of the classic-tile -> Gen3 query conversion path,
++    # before the existing metric/DQL fallback logic.
++    metric_selectors = find_metric_selectors(classic_tile)
++    if metric_selectors:
++        dql_queries = [
++            metric_selector_to_dql(
++                selector,
++                metric_mapping=classic_metric_to_grail_metric,
++                add_entity_names=True,
++            )
++            for selector in metric_selectors
++        ]
++        return create_dql_tile_from_query(
++            title=title,
++            query=dql_queries[0],
++            visualization=visualization,
++            bounds=bounds,
++        )

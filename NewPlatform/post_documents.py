@@ -31,9 +31,9 @@ def run():
     # post_dashboards(env, f'../$Private/$Output/Dashboards/ClassicConversion/*.json')
     # post_notebooks(env, f'../$Private/Customers/$Current/Assets/NewPlatform/Notebooks/{env}/*.json')
 
-    # env='Prod'
+    env='Prod'
     # env='Int'
-    env='NonProd'
+    # env='NonProd'
 
     # CURRENT CUSTOMER (5/21/2026)
     # post_launchpads(env, 'Launchpads/Assets/Dynatrace Architecture and Standards.json')

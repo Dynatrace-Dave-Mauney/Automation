@@ -115,8 +115,8 @@ def get_notebooks(env, client_id, client_secret):
 def main():
     friendly_function_name = 'Dynatrace Automation'
 
-    # env_name_supplied = 'Prod'
-    env_name_supplied = 'NonProd'
+    env_name_supplied = 'Prod'
+    # env_name_supplied = 'NonProd'
     # env_name_supplied = 'Int'
     env_name, env, client_id, client_secret = environment.get_client_environment_for_function(env_name_supplied, friendly_function_name)
     process(env_name, env, client_id, client_secret)
