@@ -1,0 +1,684 @@
+{
+  "version": 21,
+  "variables": [],
+  "tiles": {
+    "1": {
+      "type": "markdown",
+      "content": "Key Requests  "
+    },
+    "2": {
+      "type": "data",
+      "title": "Number of server side errors",
+      "query": "timeseries count = avg(dt.service.request.count, rollup: avg),\n  by: { dt.entity.service_method }\n| fieldsAdd service_method_name = entityName(dt.entity.service_method)\n| sort arrayAvg(count) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "service_method_name"
+          ]
+        }
+      }
+    },
+    "3": {
+      "type": "data",
+      "title": "Number of client side errors",
+      "query": "timeseries failure_count = avg(dt.service.request.failure_count, rollup: avg),\n  by: { dt.entity.service_method }\n| fieldsAdd service_method_name = entityName(dt.entity.service_method)\n| sort arrayAvg(failure_count) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "service_method_name"
+          ]
+        }
+      }
+    },
+    "4": {
+      "type": "data",
+      "title": "Number of HTTP 5xx errors",
+      "query": "timeseries count = avg(dt.service.request.count, rollup: avg),\n  by: { dt.entity.service_method }\n| fieldsAdd service_method_name = entityName(dt.entity.service_method)\n| sort arrayAvg(count) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "service_method_name"
+          ]
+        }
+      }
+    },
+    "5": {
+      "type": "data",
+      "title": "Number of HTTP 4xx errors",
+      "query": "timeseries count = avg(dt.service.request.count, rollup: avg),\n  by: { dt.entity.service_method }\n| fieldsAdd service_method_name = entityName(dt.entity.service_method)\n| sort arrayAvg(count) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "service_method_name"
+          ]
+        }
+      }
+    },
+    "6": {
+      "type": "data",
+      "title": "Server side response time",
+      "query": "timeseries response_time = avg(dt.service.request.response_time, rollup: avg),\n  by: { dt.entity.service_method }\n| fieldsAdd service_method_name = entityName(dt.entity.service_method)\n| sort arrayAvg(response_time) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "service_method_name"
+          ]
+        }
+      }
+    },
+    "7": {
+      "type": "data",
+      "title": "Client side response time",
+      "query": "timeseries response_time = avg(dt.service.request.response_time, rollup: avg),\n  by: { dt.entity.service_method }\n| fieldsAdd service_method_name = entityName(dt.entity.service_method)\n| sort arrayAvg(response_time) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "service_method_name"
+          ]
+        }
+      }
+    },
+    "8": {
+      "type": "markdown",
+      "content": "Services"
+    },
+    "9": {
+      "type": "data",
+      "title": "Failure rate",
+      "query": "timeseries count = avg(dt.service.request.count, rollup: avg),\n  by: { dt.entity.service }\n| fieldsAdd service_name = entityName(dt.entity.service)\n| sort arrayAvg(count) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "service_name"
+          ]
+        }
+      }
+    },
+    "10": {
+      "type": "data",
+      "title": "HTTP 5xx errors",
+      "query": "timeseries count = avg(dt.service.request.count, rollup: avg),\n  by: { dt.entity.service }\n| fieldsAdd service_name = entityName(dt.entity.service)\n| sort arrayAvg(count) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "service_name"
+          ]
+        }
+      }
+    },
+    "11": {
+      "type": "data",
+      "title": "HTTP 4xx errors",
+      "query": "timeseries count = avg(dt.service.request.count, rollup: avg),\n  by: { dt.entity.service }\n| fieldsAdd service_name = entityName(dt.entity.service)\n| sort arrayAvg(count) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "service_name"
+          ]
+        }
+      }
+    },
+    "12": {
+      "type": "data",
+      "title": "Response time",
+      "query": "timeseries response_time = avg(dt.service.request.response_time, rollup: avg),\n  by: { dt.entity.service }\n| fieldsAdd service_name = entityName(dt.entity.service)\n| sort arrayAvg(response_time) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "service_name"
+          ]
+        }
+      }
+    },
+    "13": {
+      "type": "data",
+      "title": "Requests",
+      "query": "timeseries count = avg(dt.service.request.count, rollup: avg),\n  by: { dt.entity.service }\n| fieldsAdd service_name = entityName(dt.entity.service)\n| sort arrayAvg(count) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "service_name"
+          ]
+        }
+      }
+    },
+    "14": {
+      "type": "markdown",
+      "content": "Databases"
+    },
+    "15": {
+      "type": "data",
+      "title": "Failure rate",
+      "query": "timeseries count = avg(dt.service.request.count, rollup: avg),\n  by: { dt.entity.service }\n| fieldsAdd service_name = entityName(dt.entity.service)\n| sort arrayAvg(count) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "service_name"
+          ]
+        }
+      }
+    },
+    "16": {
+      "type": "data",
+      "title": "Requests",
+      "query": "timeseries count = avg(dt.service.request.count, rollup: avg),\n  by: { dt.entity.service }\n| fieldsAdd service_name = entityName(dt.entity.service)\n| sort arrayAvg(count) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "service_name"
+          ]
+        }
+      }
+    },
+    "17": {
+      "type": "data",
+      "title": "Response time - Median",
+      "query": "timeseries response_time = avg(dt.service.request.response_time, rollup: avg),\n  by: { dt.entity.service }\n| fieldsAdd service_name = entityName(dt.entity.service)\n| sort arrayAvg(response_time) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "service_name"
+          ]
+        }
+      }
+    },
+    "18": {
+      "type": "data",
+      "title": "Response time - Slowest 10%",
+      "query": "timeseries response_time = avg(dt.service.request.response_time, rollup: avg),\n  by: { dt.entity.service }\n| fieldsAdd service_name = entityName(dt.entity.service)\n| sort arrayAvg(response_time) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "service_name"
+          ]
+        }
+      }
+    },
+    "19": {
+      "type": "markdown",
+      "content": "Hosts"
+    },
+    "20": {
+      "type": "data",
+      "title": "CPU Usage",
+      "query": "timeseries usage = avg(dt.host.cpu.usage, rollup: avg),\n  by: { dt.entity.host }\n| fieldsAdd host_name = entityName(dt.entity.host)\n| sort arrayAvg(usage) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "host_name"
+          ]
+        }
+      }
+    },
+    "21": {
+      "type": "data",
+      "title": "Memory usage",
+      "query": "timeseries usage = avg(dt.host.memory.usage, rollup: avg),\n  by: { dt.entity.host }\n| fieldsAdd host_name = entityName(dt.entity.host)\n| sort arrayAvg(usage) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "host_name"
+          ]
+        }
+      }
+    },
+    "22": {
+      "type": "data",
+      "title": "Disk usage",
+      "query": "timeseries percent = avg(dt.host.disk.used.percent, rollup: avg),\n  by: { dt.entity.host }\n| fieldsAdd host_name = entityName(dt.entity.host)\n| sort arrayAvg(percent) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "host_name"
+          ]
+        }
+      }
+    },
+    "23": {
+      "type": "markdown",
+      "content": "Processes  "
+    },
+    "24": {
+      "type": "data",
+      "title": "Process CPU Usage",
+      "query": "timeseries usage = avg(dt.process.cpu.usage, rollup: avg),\n  by: { dt.entity.process_group_instance }\n| fieldsAdd process_group_instance_name = entityName(dt.entity.process_group_instance)\n| sort arrayAvg(usage) desc\n| limit 10",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "process_group_instance_name"
+          ]
+        }
+      }
+    },
+    "25": {
+      "type": "data",
+      "title": "Process Memory Working Set Size",
+      "query": "timeseries working_set_size = avg(dt.process.memory.working_set_size, rollup: avg),\n  by: { dt.entity.process_group_instance }\n| fieldsAdd process_group_instance_name = entityName(dt.entity.process_group_instance)\n| sort arrayAvg(working_set_size) desc\n| limit 10",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "process_group_instance_name"
+          ]
+        }
+      }
+    },
+    "26": {
+      "type": "data",
+      "title": "Process IO Bytes Read",
+      "query": "timeseries bytes_read = avg(dt.process.io.bytes_read, rollup: avg),\n  by: { dt.entity.process_group_instance }\n| fieldsAdd process_group_instance_name = entityName(dt.entity.process_group_instance)\n| sort arrayAvg(bytes_read) desc\n| limit 10",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "process_group_instance_name"
+          ]
+        }
+      }
+    },
+    "27": {
+      "type": "data",
+      "title": "Process IO Bytes Written",
+      "query": "timeseries bytes_written = avg(dt.process.io.bytes_written, rollup: avg),\n  by: { dt.entity.process_group_instance }\n| fieldsAdd process_group_instance_name = entityName(dt.entity.process_group_instance)\n| sort arrayAvg(bytes_written) desc\n| limit 10",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "process_group_instance_name"
+          ]
+        }
+      }
+    },
+    "28": {
+      "type": "markdown",
+      "content": "Java  "
+    },
+    "29": {
+      "type": "data",
+      "title": "JVM memory (used)",
+      "query": "timeseries used = avg(dt.runtime.jvm.memory_pool.used, rollup: avg),\n  by: { dt.entity.process_group_instance, poolname, rx_pid }\n| fieldsAdd process_group_instance_name = entityName(dt.entity.process_group_instance)\n| sort arrayAvg(used) desc\n| limit 10",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "process_group_instance_name"
+          ]
+        }
+      }
+    },
+    "30": {
+      "type": "data",
+      "title": "JVM thread count",
+      "query": "timeseries count = avg(dt.runtime.jvm.threads.count, rollup: avg),\n  by: { dt.entity.process_group_instance }\n| fieldsAdd process_group_instance_name = entityName(dt.entity.process_group_instance)\n| sort arrayAvg(count) desc\n| limit 10",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "process_group_instance_name"
+          ]
+        }
+      }
+    },
+    "31": {
+      "type": "data",
+      "title": "JVM memory (committed)",
+      "query": "timeseries committed = avg(dt.runtime.jvm.memory_pool.committed, rollup: avg),\n  by: { dt.entity.process_group_instance, poolname, rx_pid }\n| fieldsAdd process_group_instance_name = entityName(dt.entity.process_group_instance)\n| sort arrayAvg(committed) desc\n| limit 10",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "process_group_instance_name"
+          ]
+        }
+      }
+    },
+    "32": {
+      "type": "data",
+      "title": "JVM GC suspension time",
+      "query": "timeseries suspension_time = avg(dt.runtime.nodejs.gc.suspension_time, rollup: avg),\n  by: { dt.entity.process_group_instance }\n| fieldsAdd process_group_instance_name = entityName(dt.entity.process_group_instance)\n| sort arrayAvg(suspension_time) desc\n| limit 10",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "process_group_instance_name"
+          ]
+        }
+      }
+    },
+    "33": {
+      "type": "data",
+      "title": "JVM GC invocations",
+      "query": "timeseries collection_count = avg(dt.runtime.jvm.gc.collection_count, rollup: avg),\n  by: { dt.entity.process_group_instance }\n| fieldsAdd process_group_instance_name = entityName(dt.entity.process_group_instance)\n| sort arrayAvg(collection_count) desc\n| limit 10",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "process_group_instance_name"
+          ]
+        }
+      }
+    },
+    "34": {
+      "type": "data",
+      "title": "JVM GC time",
+      "query": "timeseries collection_time = avg(dt.runtime.nodejs.gc.collection_time, rollup: avg),\n  by: { dt.entity.process_group_instance, poolname, rx_pid, gcname }\n| fieldsAdd process_group_instance_name = entityName(dt.entity.process_group_instance)\n| sort arrayAvg(collection_time) desc\n| limit 10",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "process_group_instance_name"
+          ]
+        }
+      }
+    }
+  },
+  "layouts": {
+    "1": {
+      "x": 0,
+      "y": 0,
+      "w": 24,
+      "h": 1
+    },
+    "2": {
+      "x": 0,
+      "y": 1,
+      "w": 8,
+      "h": 8
+    },
+    "3": {
+      "x": 8,
+      "y": 1,
+      "w": 8,
+      "h": 8
+    },
+    "4": {
+      "x": 16,
+      "y": 1,
+      "w": 8,
+      "h": 8
+    },
+    "5": {
+      "x": 0,
+      "y": 9,
+      "w": 8,
+      "h": 8
+    },
+    "6": {
+      "x": 8,
+      "y": 9,
+      "w": 8,
+      "h": 8
+    },
+    "7": {
+      "x": 16,
+      "y": 9,
+      "w": 8,
+      "h": 8
+    },
+    "8": {
+      "x": 0,
+      "y": 17,
+      "w": 24,
+      "h": 1
+    },
+    "9": {
+      "x": 0,
+      "y": 18,
+      "w": 8,
+      "h": 8
+    },
+    "10": {
+      "x": 8,
+      "y": 18,
+      "w": 8,
+      "h": 8
+    },
+    "11": {
+      "x": 16,
+      "y": 18,
+      "w": 8,
+      "h": 8
+    },
+    "12": {
+      "x": 0,
+      "y": 26,
+      "w": 12,
+      "h": 8
+    },
+    "13": {
+      "x": 12,
+      "y": 26,
+      "w": 12,
+      "h": 8
+    },
+    "14": {
+      "x": 0,
+      "y": 34,
+      "w": 24,
+      "h": 1
+    },
+    "15": {
+      "x": 0,
+      "y": 35,
+      "w": 6,
+      "h": 8
+    },
+    "16": {
+      "x": 6,
+      "y": 35,
+      "w": 6,
+      "h": 8
+    },
+    "17": {
+      "x": 12,
+      "y": 35,
+      "w": 6,
+      "h": 8
+    },
+    "18": {
+      "x": 18,
+      "y": 35,
+      "w": 6,
+      "h": 8
+    },
+    "19": {
+      "x": 0,
+      "y": 43,
+      "w": 24,
+      "h": 1
+    },
+    "20": {
+      "x": 0,
+      "y": 44,
+      "w": 8,
+      "h": 8
+    },
+    "21": {
+      "x": 8,
+      "y": 44,
+      "w": 8,
+      "h": 8
+    },
+    "22": {
+      "x": 16,
+      "y": 44,
+      "w": 8,
+      "h": 8
+    },
+    "23": {
+      "x": 0,
+      "y": 52,
+      "w": 24,
+      "h": 1
+    },
+    "24": {
+      "x": 0,
+      "y": 53,
+      "w": 6,
+      "h": 8
+    },
+    "25": {
+      "x": 6,
+      "y": 53,
+      "w": 6,
+      "h": 8
+    },
+    "26": {
+      "x": 12,
+      "y": 53,
+      "w": 6,
+      "h": 8
+    },
+    "27": {
+      "x": 18,
+      "y": 53,
+      "w": 6,
+      "h": 8
+    },
+    "28": {
+      "x": 0,
+      "y": 61,
+      "w": 24,
+      "h": 1
+    },
+    "29": {
+      "x": 0,
+      "y": 62,
+      "w": 8,
+      "h": 8
+    },
+    "30": {
+      "x": 8,
+      "y": 62,
+      "w": 8,
+      "h": 8
+    },
+    "31": {
+      "x": 16,
+      "y": 62,
+      "w": 8,
+      "h": 8
+    },
+    "32": {
+      "x": 0,
+      "y": 70,
+      "w": 8,
+      "h": 8
+    },
+    "33": {
+      "x": 8,
+      "y": 70,
+      "w": 8,
+      "h": 8
+    },
+    "34": {
+      "x": 16,
+      "y": 70,
+      "w": 8,
+      "h": 8
+    }
+  }
+}

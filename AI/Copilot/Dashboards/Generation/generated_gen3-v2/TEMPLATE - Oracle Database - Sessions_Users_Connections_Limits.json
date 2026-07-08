@@ -1,0 +1,86 @@
+{
+  "version": 21,
+  "variables": [],
+  "tiles": {
+    "1": {
+      "type": "markdown",
+      "content": "Sessions/Users/Connections/Limits"
+    },
+    "2": {
+      "type": "data",
+      "title": "Total sessions",
+      "query": "timeseries all = avg(com.dynatrace.extension.sql-oracle.sessions.all),\n  by: { dt.entity.sql:com_dynatrace_extension_sql-oracle_instance }\n| fieldsAdd sql:com_dynatrace_extension_sql-oracle_instance_name = entityName(dt.entity.sql:com_dynatrace_extension_sql-oracle_instance)\n| sort arrayAvg(all) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    },
+    "3": {
+      "type": "data",
+      "title": "Active Sessions",
+      "query": "timeseries active = avg(com.dynatrace.extension.sql-oracle.sessions.active),\n  by: { dt.entity.sql:com_dynatrace_extension_sql-oracle_instance }\n| fieldsAdd sql:com_dynatrace_extension_sql-oracle_instance_name = entityName(dt.entity.sql:com_dynatrace_extension_sql-oracle_instance)\n| sort arrayAvg(active) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    },
+    "4": {
+      "type": "data",
+      "title": "User calls",
+      "query": "timeseries count = avg(com.dynatrace.extension.sql-oracle.sessions.userCalls.count),\n  by: { dt.entity.sql:com_dynatrace_extension_sql-oracle_instance }\n| fieldsAdd sql:com_dynatrace_extension_sql-oracle_instance_name = entityName(dt.entity.sql:com_dynatrace_extension_sql-oracle_instance)\n| sort arrayAvg(count) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    },
+    "5": {
+      "type": "data",
+      "title": "Connection management time",
+      "query": "timeseries count = avg(com.dynatrace.extension.sql-oracle.queries.connectionManagement.count),\n  by: { dt.entity.sql:com_dynatrace_extension_sql-oracle_instance }\n| fieldsAdd sql:com_dynatrace_extension_sql-oracle_instance_name = entityName(dt.entity.sql:com_dynatrace_extension_sql-oracle_instance)\n| sort arrayAvg(count) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    }
+  },
+  "layouts": {
+    "1": {
+      "x": 0,
+      "y": 0,
+      "w": 24,
+      "h": 1
+    },
+    "2": {
+      "x": 0,
+      "y": 1,
+      "w": 6,
+      "h": 8
+    },
+    "3": {
+      "x": 6,
+      "y": 1,
+      "w": 6,
+      "h": 8
+    },
+    "4": {
+      "x": 12,
+      "y": 1,
+      "w": 6,
+      "h": 8
+    },
+    "5": {
+      "x": 18,
+      "y": 1,
+      "w": 6,
+      "h": 8
+    }
+  }
+}

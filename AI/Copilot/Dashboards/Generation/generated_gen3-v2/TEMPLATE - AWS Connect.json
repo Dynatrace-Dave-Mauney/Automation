@@ -1,0 +1,74 @@
+{
+  "version": 21,
+  "variables": [],
+  "tiles": {
+    "1": {
+      "type": "data",
+      "title": "ContactFlowErrors Sum (by ContactFlowName and MetricGroup)",
+      "query": "timeseries contact_flow_errors_sum_by_contact_flow_name_metric_group = avg(cloud.aws.connect.contact_flow_errors_sum_by_contact_flow_name_metric_group),\n  by: { dt.entity.custom_device }\n| fieldsAdd custom_device_name = entityName(dt.entity.custom_device)\n| sort arrayAvg(contact_flow_errors_sum_by_contact_flow_name_metric_group) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "custom_device_name"
+          ]
+        }
+      }
+    },
+    "2": {
+      "type": "data",
+      "title": "QueueSize (by MetricGroup and QueueName)",
+      "query": "timeseries queue_size_by_metric_group_queue_name = avg(cloud.aws.connect.queue_size_by_metric_group_queue_name),\n  by: { dt.entity.custom_device }\n| fieldsAdd custom_device_name = entityName(dt.entity.custom_device)\n| sort arrayAvg(queue_size_by_metric_group_queue_name) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "custom_device_name"
+          ]
+        }
+      }
+    },
+    "3": {
+      "type": "data",
+      "title": "LongestQueueWaitTime (by MetricGroup and QueueName)",
+      "query": "timeseries longest_queue_wait_time_by_metric_group_queue_name = avg(cloud.aws.connect.longest_queue_wait_time_by_metric_group_queue_name),\n  by: { dt.entity.custom_device }\n| fieldsAdd custom_device_name = entityName(dt.entity.custom_device)\n| sort arrayAvg(longest_queue_wait_time_by_metric_group_queue_name) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "custom_device_name"
+          ]
+        }
+      }
+    }
+  },
+  "layouts": {
+    "1": {
+      "x": 0,
+      "y": 0,
+      "w": 8,
+      "h": 8
+    },
+    "2": {
+      "x": 8,
+      "y": 0,
+      "w": 8,
+      "h": 8
+    },
+    "3": {
+      "x": 16,
+      "y": 0,
+      "w": 8,
+      "h": 8
+    }
+  }
+}

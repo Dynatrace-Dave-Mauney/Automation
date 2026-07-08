@@ -1,0 +1,554 @@
+{
+  "version": 21,
+  "variables": [],
+  "tiles": {
+    "1": {
+      "type": "markdown",
+      "content": "Cluster/Container"
+    },
+    "2": {
+      "type": "data",
+      "title": "Kubernetes: Cluster readyz status",
+      "query": "timeseries readyz = avg(dt.kubernetes.cluster.readyz),\n  by: { dt.entity.kubernetes_cluster }\n| fieldsAdd kubernetes_cluster_name = entityName(dt.entity.kubernetes_cluster)\n| sort arrayAvg(readyz) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "kubernetes_cluster_name"
+          ]
+        }
+      }
+    },
+    "3": {
+      "type": "data",
+      "title": "Kubernetes: Container count",
+      "query": "timeseries containers = avg(dt.kubernetes.containers),\n  by: { dt.entity.cloud_application }\n| fieldsAdd cloud_application_name = entityName(dt.entity.cloud_application)\n| sort arrayAvg(containers) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "cloud_application_name"
+          ]
+        }
+      }
+    },
+    "4": {
+      "type": "data",
+      "title": "Kubernetes: Container - restart count",
+      "query": "timeseries restarts = avg(dt.kubernetes.container.restarts),\n  by: { dt.entity.cloud_application_instance }\n| fieldsAdd cloud_application_instance_name = entityName(dt.entity.cloud_application_instance)\n| sort arrayAvg(restarts) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "cloud_application_instance_name"
+          ]
+        }
+      }
+    },
+    "5": {
+      "type": "markdown",
+      "content": "Node"
+    },
+    "6": {
+      "type": "data",
+      "title": "Kubernetes: Node count",
+      "query": "timeseries nodes = avg(dt.kubernetes.nodes),\n  by: { dt.entity.kubernetes_cluster }\n| fieldsAdd kubernetes_cluster_name = entityName(dt.entity.kubernetes_cluster)\n| sort arrayAvg(nodes) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "kubernetes_cluster_name"
+          ]
+        }
+      }
+    },
+    "7": {
+      "type": "data",
+      "title": "Kubernetes: Node - CPU allocatable",
+      "query": "timeseries cpu_allocatable = avg(dt.kubernetes.node.cpu_allocatable),\n  by: { dt.entity.kubernetes_node }\n| fieldsAdd kubernetes_node_name = entityName(dt.entity.kubernetes_node)\n| sort arrayAvg(cpu_allocatable) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "kubernetes_node_name"
+          ]
+        }
+      }
+    },
+    "8": {
+      "type": "data",
+      "title": "Kubernetes: Node - memory allocatable",
+      "query": "timeseries memory_allocatable = avg(dt.kubernetes.node.memory_allocatable),\n  by: { dt.entity.kubernetes_node }\n| fieldsAdd kubernetes_node_name = entityName(dt.entity.kubernetes_node)\n| sort arrayAvg(memory_allocatable) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "kubernetes_node_name"
+          ]
+        }
+      }
+    },
+    "9": {
+      "type": "data",
+      "title": "Kubernetes: Node - pod allocatable count",
+      "query": "timeseries pods_allocatable = avg(dt.kubernetes.node.pods_allocatable),\n  by: { dt.entity.kubernetes_node }\n| fieldsAdd kubernetes_node_name = entityName(dt.entity.kubernetes_node)\n| sort arrayAvg(pods_allocatable) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "kubernetes_node_name"
+          ]
+        }
+      }
+    },
+    "10": {
+      "type": "data",
+      "title": "Kubernetes: Node conditions",
+      "query": "timeseries conditions = avg(dt.kubernetes.node.conditions),\n  by: { dt.entity.kubernetes_node }\n| fieldsAdd kubernetes_node_name = entityName(dt.entity.kubernetes_node)\n| sort arrayAvg(conditions) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "kubernetes_node_name"
+          ]
+        }
+      }
+    },
+    "11": {
+      "type": "markdown",
+      "content": "Pod"
+    },
+    "12": {
+      "type": "data",
+      "title": "Kubernetes: Pod count (by node)",
+      "query": "timeseries pods = avg(dt.kubernetes.pods),\n  by: { dt.entity.kubernetes_node }\n| fieldsAdd kubernetes_node_name = entityName(dt.entity.kubernetes_node)\n| sort arrayAvg(pods) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "kubernetes_node_name"
+          ]
+        }
+      }
+    },
+    "13": {
+      "type": "data",
+      "title": "Kubernetes: Pod count (by workload)",
+      "query": "timeseries pods = avg(dt.kubernetes.pods),\n  by: { dt.entity.cloud_application }\n| fieldsAdd cloud_application_name = entityName(dt.entity.cloud_application)\n| sort arrayAvg(pods) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "cloud_application_name"
+          ]
+        }
+      }
+    },
+    "14": {
+      "type": "data",
+      "title": "Kubernetes: Pod - CPU requests (by node)",
+      "query": "timeseries requests_cpu = avg(dt.kubernetes.container.requests_cpu),\n  by: { dt.entity.kubernetes_node }\n| fieldsAdd kubernetes_node_name = entityName(dt.entity.kubernetes_node)\n| sort arrayAvg(requests_cpu) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "kubernetes_node_name"
+          ]
+        }
+      }
+    },
+    "15": {
+      "type": "data",
+      "title": "Kubernetes: Pod - CPU limits (by node)",
+      "query": "timeseries limits_cpu = avg(dt.kubernetes.container.limits_cpu),\n  by: { dt.entity.kubernetes_node }\n| fieldsAdd kubernetes_node_name = entityName(dt.entity.kubernetes_node)\n| sort arrayAvg(limits_cpu) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "kubernetes_node_name"
+          ]
+        }
+      }
+    },
+    "16": {
+      "type": "data",
+      "title": "Kubernetes: Pod - memory requests (by node)",
+      "query": "timeseries requests_memory = avg(dt.kubernetes.container.requests_memory),\n  by: { dt.entity.kubernetes_node }\n| fieldsAdd kubernetes_node_name = entityName(dt.entity.kubernetes_node)\n| sort arrayAvg(requests_memory) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "kubernetes_node_name"
+          ]
+        }
+      }
+    },
+    "17": {
+      "type": "data",
+      "title": "Kubernetes: Pod - memory limits (by node)",
+      "query": "timeseries limits_memory = avg(dt.kubernetes.container.limits_memory),\n  by: { dt.entity.kubernetes_node }\n| fieldsAdd kubernetes_node_name = entityName(dt.entity.kubernetes_node)\n| sort arrayAvg(limits_memory) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "kubernetes_node_name"
+          ]
+        }
+      }
+    },
+    "18": {
+      "type": "data",
+      "title": "Kubernetes: Pod - desired container count",
+      "query": "timeseries containers_desired = avg(dt.kubernetes.pod.containers_desired),\n  by: { dt.entity.cloud_application }\n| fieldsAdd cloud_application_name = entityName(dt.entity.cloud_application)\n| sort arrayAvg(containers_desired) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "cloud_application_name"
+          ]
+        }
+      }
+    },
+    "19": {
+      "type": "data",
+      "title": "Kubernetes: Pod - CPU requests (by workload)",
+      "query": "timeseries requests_cpu = avg(dt.kubernetes.container.requests_cpu),\n  by: { dt.entity.cloud_application }\n| fieldsAdd cloud_application_name = entityName(dt.entity.cloud_application)\n| sort arrayAvg(requests_cpu) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "cloud_application_name"
+          ]
+        }
+      }
+    },
+    "20": {
+      "type": "data",
+      "title": "Kubernetes: Pod - CPU limits (by workload)",
+      "query": "timeseries limits_cpu = avg(dt.kubernetes.container.limits_cpu),\n  by: { dt.entity.cloud_application }\n| fieldsAdd cloud_application_name = entityName(dt.entity.cloud_application)\n| sort arrayAvg(limits_cpu) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "cloud_application_name"
+          ]
+        }
+      }
+    },
+    "21": {
+      "type": "data",
+      "title": "Kubernetes: Pod - memory requests (by workload)",
+      "query": "timeseries requests_memory = avg(dt.kubernetes.container.requests_memory),\n  by: { dt.entity.cloud_application }\n| fieldsAdd cloud_application_name = entityName(dt.entity.cloud_application)\n| sort arrayAvg(requests_memory) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "cloud_application_name"
+          ]
+        }
+      }
+    },
+    "22": {
+      "type": "data",
+      "title": "Kubernetes: Pod - memory limits (by workload)",
+      "query": "timeseries limits_memory = avg(dt.kubernetes.container.limits_memory),\n  by: { dt.entity.cloud_application }\n| fieldsAdd cloud_application_name = entityName(dt.entity.cloud_application)\n| sort arrayAvg(limits_memory) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "cloud_application_name"
+          ]
+        }
+      }
+    },
+    "23": {
+      "type": "markdown",
+      "content": "Workload/Resource Quota"
+    },
+    "24": {
+      "type": "data",
+      "title": "Kubernetes: Workload count",
+      "query": "timeseries workloads = avg(dt.kubernetes.workloads),\n  by: { dt.entity.cloud_application_namespace }\n| fieldsAdd cloud_application_namespace_name = entityName(dt.entity.cloud_application_namespace)\n| sort arrayAvg(workloads) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "cloud_application_namespace_name"
+          ]
+        }
+      }
+    },
+    "25": {
+      "type": "data",
+      "title": "Kubernetes: Workload - desired pod count",
+      "query": "timeseries pods_desired = avg(dt.kubernetes.workload.pods_desired),\n  by: { dt.entity.cloud_application }\n| fieldsAdd cloud_application_name = entityName(dt.entity.cloud_application)\n| sort arrayAvg(pods_desired) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "cloud_application_name"
+          ]
+        }
+      }
+    },
+    "26": {
+      "type": "data",
+      "title": "Kubernetes: Resource quota - pod count",
+      "query": "timeseries pods = avg(dt.kubernetes.resourcequota.pods),\n  by: { dt.entity.cloud_application_namespace }\n| fieldsAdd cloud_application_namespace_name = entityName(dt.entity.cloud_application_namespace)\n| sort arrayAvg(pods) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "cloud_application_namespace_name"
+          ]
+        }
+      }
+    },
+    "27": {
+      "type": "data",
+      "title": "Kubernetes: Resource quota - pod used count",
+      "query": "timeseries pods_used = avg(dt.kubernetes.resourcequota.pods_used),\n  by: { dt.entity.cloud_application_namespace }\n| fieldsAdd cloud_application_namespace_name = entityName(dt.entity.cloud_application_namespace)\n| sort arrayAvg(pods_used) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "cloud_application_namespace_name"
+          ]
+        }
+      }
+    }
+  },
+  "layouts": {
+    "1": {
+      "x": 0,
+      "y": 0,
+      "w": 24,
+      "h": 1
+    },
+    "2": {
+      "x": 0,
+      "y": 1,
+      "w": 8,
+      "h": 8
+    },
+    "3": {
+      "x": 8,
+      "y": 1,
+      "w": 8,
+      "h": 8
+    },
+    "4": {
+      "x": 16,
+      "y": 1,
+      "w": 8,
+      "h": 8
+    },
+    "5": {
+      "x": 0,
+      "y": 9,
+      "w": 24,
+      "h": 1
+    },
+    "6": {
+      "x": 0,
+      "y": 10,
+      "w": 8,
+      "h": 8
+    },
+    "7": {
+      "x": 8,
+      "y": 10,
+      "w": 8,
+      "h": 8
+    },
+    "8": {
+      "x": 16,
+      "y": 10,
+      "w": 8,
+      "h": 8
+    },
+    "9": {
+      "x": 0,
+      "y": 18,
+      "w": 12,
+      "h": 8
+    },
+    "10": {
+      "x": 12,
+      "y": 18,
+      "w": 12,
+      "h": 8
+    },
+    "11": {
+      "x": 0,
+      "y": 26,
+      "w": 24,
+      "h": 1
+    },
+    "12": {
+      "x": 0,
+      "y": 27,
+      "w": 6,
+      "h": 8
+    },
+    "13": {
+      "x": 6,
+      "y": 27,
+      "w": 6,
+      "h": 8
+    },
+    "14": {
+      "x": 12,
+      "y": 27,
+      "w": 6,
+      "h": 8
+    },
+    "15": {
+      "x": 18,
+      "y": 27,
+      "w": 6,
+      "h": 8
+    },
+    "16": {
+      "x": 0,
+      "y": 35,
+      "w": 6,
+      "h": 8
+    },
+    "17": {
+      "x": 6,
+      "y": 35,
+      "w": 6,
+      "h": 8
+    },
+    "18": {
+      "x": 12,
+      "y": 35,
+      "w": 6,
+      "h": 8
+    },
+    "19": {
+      "x": 18,
+      "y": 35,
+      "w": 6,
+      "h": 8
+    },
+    "20": {
+      "x": 0,
+      "y": 43,
+      "w": 8,
+      "h": 8
+    },
+    "21": {
+      "x": 8,
+      "y": 43,
+      "w": 8,
+      "h": 8
+    },
+    "22": {
+      "x": 16,
+      "y": 43,
+      "w": 8,
+      "h": 8
+    },
+    "23": {
+      "x": 0,
+      "y": 51,
+      "w": 24,
+      "h": 1
+    },
+    "24": {
+      "x": 0,
+      "y": 52,
+      "w": 6,
+      "h": 8
+    },
+    "25": {
+      "x": 6,
+      "y": 52,
+      "w": 6,
+      "h": 8
+    },
+    "26": {
+      "x": 12,
+      "y": 52,
+      "w": 6,
+      "h": 8
+    },
+    "27": {
+      "x": 18,
+      "y": 52,
+      "w": 6,
+      "h": 8
+    }
+  }
+}

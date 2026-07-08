@@ -3,11 +3,11 @@
         "configurationVersions": [
             3
         ],
-        "clusterVersion": "1.339.49.20260528-000137"
+        "clusterVersion": "1.341.52.20260625-194749"
     },
     "id": "aaaaaaaa-bbbb-cccc-dddd-000000000119",
     "dashboardMetadata": {
-        "name": "PingFedV2",
+        "name": "Palo Alto Generic Device Extension 2",
         "shared": false,
         "owner": "nobody@example.com",
         "sharingDetails": {
@@ -27,7 +27,7 @@
     },
     "tiles": [
         {
-            "name": "FailedTransactions",
+            "name": "Interface Incoming Data",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -37,15 +37,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "FailedTransactions",
+            "customName": "Interface Incoming Data",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:custom.jmx.PingFedV2.metric_Count_1748984960731",
+                    "metric": "func:com.dynatrace.extension.palo-alto.generic.if.in.octets.bitpersec",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.palo-alto:interface"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -98,7 +98,7 @@
             }
         },
         {
-            "name": "TotalTransactions",
+            "name": "Interface Outgoing Data",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -108,15 +108,86 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "TotalTransactions",
+            "customName": "Interface Outgoing Data",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:custom.jmx.PingFedV2.metric_Count_1748984986087",
+                    "metric": "func:com.dynatrace.extension.palo-alto.generic.if.out.octets.bitpersec",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.palo-alto:interface"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Memory Utilization",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 608,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Memory Utilization",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "func:com.dynatrace.extension.palo-alto.generic.mem.utilization",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.palo-alto:device"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",

@@ -3,11 +3,11 @@
         "configurationVersions": [
             3
         ],
-        "clusterVersion": "1.339.49.20260528-000137"
+        "clusterVersion": "1.341.52.20260625-194749"
     },
     "id": "aaaaaaaa-bbbb-cccc-dddd-000000000121",
     "dashboardMetadata": {
-        "name": "Processes 1",
+        "name": "PostgreSQL",
         "shared": false,
         "owner": "nobody@example.com",
         "sharingDetails": {
@@ -27,7 +27,7 @@
     },
     "tiles": [
         {
-            "name": "Process group total CPU time during GC suspensions",
+            "name": "Time spent executing SQL statements",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -37,15 +37,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Process group total CPU time during GC suspensions",
+            "customName": "Time spent executing SQL statements",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.cpu.groupSuspensionTime",
+                    "metric": "postgres.active_time.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group"
+                        "dt.entity.sql:postgres_database"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -98,7 +98,7 @@
             }
         },
         {
-            "name": "Process group total CPU time",
+            "name": "Active backend processes",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -108,15 +108,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Process group total CPU time",
+            "customName": "Active backend processes",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.cpu.groupTotalTime",
+                    "metric": "postgres.activity.active",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group"
+                        "dt.entity.sql:postgres_database"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -169,7 +169,7 @@
             }
         },
         {
-            "name": "Process total CPU time during GC suspensions",
+            "name": "Active waiting backend processes",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -179,15 +179,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Process total CPU time during GC suspensions",
+            "customName": "Active waiting backend processes",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.cpu.suspensionTime",
+                    "metric": "postgres.activity.active_waiting",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_database"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -240,7 +240,7 @@
             }
         },
         {
-            "name": "Process total CPU time",
+            "name": "Fast-path function backend processes",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -250,15 +250,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Process total CPU time",
+            "customName": "Fast-path function backend processes",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.cpu.totalTime",
+                    "metric": "postgres.activity.fastpath_function_call",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_database"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -311,7 +311,7 @@
             }
         },
         {
-            "name": "Process CPU usage",
+            "name": "Idle backend processes",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -321,15 +321,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Process CPU usage",
+            "customName": "Idle backend processes",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.cpu.usage",
+                    "metric": "postgres.activity.idle",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_database"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -382,7 +382,7 @@
             }
         },
         {
-            "name": "z/OS General CPU time",
+            "name": "Idle in transaction backends processes",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -392,15 +392,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "z/OS General CPU time",
+            "customName": "Idle in transaction backends processes",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.gcpu.time",
+                    "metric": "postgres.activity.idle_in_transaction",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_database"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -453,7 +453,7 @@
             }
         },
         {
-            "name": "z/OS General CPU usage",
+            "name": "Idle in transaction aborted backends processes",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -463,15 +463,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "z/OS General CPU usage",
+            "customName": "Idle in transaction aborted backends processes",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.gcpu.usage",
+                    "metric": "postgres.activity.idle_in_transaction_aborted",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_database"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -524,7 +524,7 @@
             }
         },
         {
-            "name": "Process file descriptors used per PID",
+            "name": "Data file blocks reading time",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -534,15 +534,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Process file descriptors used per PID",
+            "customName": "Data file blocks reading time",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.handles.fileDescriptorsPercentUsed",
+                    "metric": "postgres.blk_read_time.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_database"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -595,7 +595,7 @@
             }
         },
         {
-            "name": "builtin:tech.generic.handles.fileDescriptorsPercentUsed.new",
+            "name": "Data file blocks writing time",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -605,14 +605,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "builtin:tech.generic.handles.fileDescriptorsPercentUsed.new",
+            "customName": "Data file blocks writing time",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.handles.fileDescriptorsPercentUsed.new",
+                    "metric": "postgres.blk_write_time.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.sql:postgres_database"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -664,7 +666,7 @@
             }
         },
         {
-            "name": "Process file descriptors max",
+            "name": "Blocks found in buffer cache",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -674,15 +676,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Process file descriptors max",
+            "customName": "Blocks found in buffer cache",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.handles.fileDescriptorsMax",
+                    "metric": "postgres.blks_hit.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_database"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -735,7 +737,7 @@
             }
         },
         {
-            "name": "Process file descriptors used",
+            "name": "Block read from disk",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -745,15 +747,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Process file descriptors used",
+            "customName": "Block read from disk",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.handles.fileDescriptorsUsed",
+                    "metric": "postgres.blks_read.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_database"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -806,7 +808,7 @@
             }
         },
         {
-            "name": "Process I/O read bytes",
+            "name": "Buffers allocated",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -816,15 +818,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Process I/O read bytes",
+            "customName": "Buffers allocated",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.io.bytesRead",
+                    "metric": "postgres.buffers_alloc.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -877,7 +879,7 @@
             }
         },
         {
-            "name": "Process I/O bytes total",
+            "name": "Buffers written by backend",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -887,15 +889,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Process I/O bytes total",
+            "customName": "Buffers written by backend",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.io.bytesTotal",
+                    "metric": "postgres.buffers_backend.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -948,7 +950,7 @@
             }
         },
         {
-            "name": "Process I/O write bytes",
+            "name": "Backend fsync executions",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -958,15 +960,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Process I/O write bytes",
+            "customName": "Backend fsync executions",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.io.bytesWritten",
+                    "metric": "postgres.buffers_backend_fsync.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1019,7 +1021,7 @@
             }
         },
         {
-            "name": "Process I/O requested read bytes",
+            "name": "Buffers written during checkpoints",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1029,15 +1031,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Process I/O requested read bytes",
+            "customName": "Buffers written during checkpoints",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.io.reqBytesRead",
+                    "metric": "postgres.buffers_checkpoint.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1090,7 +1092,7 @@
             }
         },
         {
-            "name": "Process I/O requested write bytes",
+            "name": "Buffers written by background writer",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1100,15 +1102,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Process I/O requested write bytes",
+            "customName": "Buffers written by background writer",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.io.reqBytesWrite",
+                    "metric": "postgres.buffers_clean.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1161,7 +1163,7 @@
             }
         },
         {
-            "name": "Process memory usage",
+            "name": "Checkpoint sync time",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1171,15 +1173,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Process memory usage",
+            "customName": "Checkpoint sync time",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.mem.usage",
+                    "metric": "postgres.checkpoint_sync_time.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1232,7 +1234,7 @@
             }
         },
         {
-            "name": "Process memory usage",
+            "name": "Checkpoints write time",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1242,14 +1244,16 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Process memory usage",
+            "customName": "Checkpoints write time",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.mem.usage.new",
+                    "metric": "postgres.checkpoint_write_time.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
-                    "splitBy": [],
+                    "splitBy": [
+                        "dt.entity.sql:postgres_instance"
+                    ],
                     "filterBy": {
                         "filterOperator": "AND",
                         "nestedFilters": [],
@@ -1301,7 +1305,7 @@
             }
         },
         {
-            "name": "Process resource exhausted memory counter",
+            "name": "Requested checkpoints performed",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1311,15 +1315,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Process resource exhausted memory counter",
+            "customName": "Requested checkpoints performed",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.mem.exhaustedMem",
+                    "metric": "postgres.checkpoints_req.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1372,7 +1376,7 @@
             }
         },
         {
-            "name": "Process page faults counter",
+            "name": "Scheduled checkpoints performed",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1382,15 +1386,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Process page faults counter",
+            "customName": "Scheduled checkpoints performed",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.mem.pageFaults",
+                    "metric": "postgres.checkpoints_timed.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1443,7 +1447,7 @@
             }
         },
         {
-            "name": "Process memory",
+            "name": "Queries canceled due to conflict",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1453,15 +1457,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Process memory",
+            "customName": "Queries canceled due to conflict",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.mem.workingSetSize",
+                    "metric": "postgres.conflicts.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_database"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1514,7 +1518,7 @@
             }
         },
         {
-            "name": "Retransmission base received",
+            "name": "Database conflicts buffer pin",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1524,15 +1528,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Retransmission base received",
+            "customName": "Database conflicts buffer pin",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.packets.baseReRx",
+                    "metric": "postgres.database_conflicts.bufferpin.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.host"
+                        "dt.entity.sql:postgres_database"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1585,7 +1589,7 @@
             }
         },
         {
-            "name": "Retransmission base received",
+            "name": "Database conflicts deadlock",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1595,15 +1599,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Retransmission base received",
+            "customName": "Database conflicts deadlock",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.packets.baseReRxAggr",
+                    "metric": "postgres.database_conflicts.deadlock.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_database"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1656,7 +1660,7 @@
             }
         },
         {
-            "name": "Retransmission base sent",
+            "name": "Database conflicts lock",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1666,15 +1670,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Retransmission base sent",
+            "customName": "Database conflicts lock",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.packets.baseReTx",
+                    "metric": "postgres.database_conflicts.lock.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.host"
+                        "dt.entity.sql:postgres_database"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1727,7 +1731,7 @@
             }
         },
         {
-            "name": "Retransmission base sent",
+            "name": "Database conflicts snapshot",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1737,15 +1741,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Retransmission base sent",
+            "customName": "Database conflicts snapshot",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.packets.baseReTxAggr",
+                    "metric": "postgres.database_conflicts.snapshot.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_database"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1798,7 +1802,7 @@
             }
         },
         {
-            "name": "Retransmitted packets received",
+            "name": "Database conflicts tablespace",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1808,15 +1812,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Retransmitted packets received",
+            "customName": "Database conflicts tablespace",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.packets.reRx",
+                    "metric": "postgres.database_conflicts.tablespace.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.host"
+                        "dt.entity.sql:postgres_database"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1869,7 +1873,7 @@
             }
         },
         {
-            "name": "Retransmitted packets received",
+            "name": "Deadlocks",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1879,15 +1883,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Retransmitted packets received",
+            "customName": "Deadlocks",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.packets.reRxAggr",
+                    "metric": "postgres.deadlocks.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_database"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -1940,7 +1944,7 @@
             }
         },
         {
-            "name": "Retransmitted packets sent",
+            "name": "Time spent idling",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -1950,15 +1954,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Retransmitted packets sent",
+            "customName": "Time spent idling",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.packets.reTx",
+                    "metric": "postgres.idle_in_transaction_time.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.host"
+                        "dt.entity.sql:postgres_database"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -2011,7 +2015,7 @@
             }
         },
         {
-            "name": "Retransmitted packets",
+            "name": "I/O evictions",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -2021,15 +2025,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Retransmitted packets",
+            "customName": "I/O evictions",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.packets.reTxAggr",
+                    "metric": "postgres.io.evictions.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -2082,7 +2086,7 @@
             }
         },
         {
-            "name": "Packet retransmissions",
+            "name": "I/O extend time",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -2092,15 +2096,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Packet retransmissions",
+            "customName": "I/O extend time",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.packets.retransmission",
+                    "metric": "postgres.io.extend_time.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -2153,7 +2157,7 @@
             }
         },
         {
-            "name": "Incoming packet retransmissions",
+            "name": "I/O extends",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -2163,15 +2167,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Incoming packet retransmissions",
+            "customName": "I/O extends",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.packets.retransmissionIn",
+                    "metric": "postgres.io.extends.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -2224,7 +2228,7 @@
             }
         },
         {
-            "name": "Outgoing packet retransmissions",
+            "name": "I/O fsync time",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -2234,15 +2238,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Outgoing packet retransmissions",
+            "customName": "I/O fsync time",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.packets.retransmissionOut",
+                    "metric": "postgres.io.fsync_time.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -2295,7 +2299,7 @@
             }
         },
         {
-            "name": "Packets received",
+            "name": "I/O fsyncs",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -2305,15 +2309,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Packets received",
+            "customName": "I/O fsyncs",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.packets.rx",
+                    "metric": "postgres.io.fsyncs.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -2366,7 +2370,7 @@
             }
         },
         {
-            "name": "Packets sent",
+            "name": "I/O hits",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -2376,15 +2380,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Packets sent",
+            "customName": "I/O hits",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.packets.tx",
+                    "metric": "postgres.io.hits.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -2437,7 +2441,7 @@
             }
         },
         {
-            "name": "TCP connectivity",
+            "name": "I/O read time",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -2447,15 +2451,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "TCP connectivity",
+            "customName": "I/O read time",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.sessions.connectivity",
+                    "metric": "postgres.io.read_time.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -2508,7 +2512,7 @@
             }
         },
         {
-            "name": "New session received",
+            "name": "I/O reads",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -2518,15 +2522,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "New session received",
+            "customName": "I/O reads",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.sessions.new",
+                    "metric": "postgres.io.reads.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.host"
+                        "dt.entity.sql:postgres_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -2579,7 +2583,7 @@
             }
         },
         {
-            "name": "New session received",
+            "name": "I/O reuses",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -2589,15 +2593,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "New session received",
+            "customName": "I/O reuses",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.sessions.newAggr",
+                    "metric": "postgres.io.reuses.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -2650,7 +2654,7 @@
             }
         },
         {
-            "name": "New session received",
+            "name": "I/O write time",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -2660,15 +2664,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "New session received",
+            "customName": "I/O write time",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.sessions.newLocal",
+                    "metric": "postgres.io.write_time.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -2721,7 +2725,7 @@
             }
         },
         {
-            "name": "Session reset received",
+            "name": "I/O writeback time",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -2731,15 +2735,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Session reset received",
+            "customName": "I/O writeback time",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.sessions.reset",
+                    "metric": "postgres.io.writeback_time.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.host"
+                        "dt.entity.sql:postgres_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -2792,7 +2796,7 @@
             }
         },
         {
-            "name": "Session reset received",
+            "name": "I/O writebacks",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -2802,15 +2806,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Session reset received",
+            "customName": "I/O writebacks",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.sessions.resetAggr",
+                    "metric": "postgres.io.writebacks.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -2863,7 +2867,7 @@
             }
         },
         {
-            "name": "Session reset received",
+            "name": "I/O writes",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -2873,15 +2877,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Session reset received",
+            "customName": "I/O writes",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.sessions.resetLocal",
+                    "metric": "postgres.io.writes.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -2934,7 +2938,7 @@
             }
         },
         {
-            "name": "Session timeout received",
+            "name": "Cleaning scan stops",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -2944,15 +2948,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Session timeout received",
+            "customName": "Cleaning scan stops",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.sessions.timeout",
+                    "metric": "postgres.maxwritten_clean.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.host"
+                        "dt.entity.sql:postgres_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -3005,7 +3009,7 @@
             }
         },
         {
-            "name": "Session timeout received",
+            "name": "Instance recovery mode",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -3015,15 +3019,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Session timeout received",
+            "customName": "Instance recovery mode",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.sessions.timeoutAggr",
+                    "metric": "postgres.recovery.state",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -3076,7 +3080,7 @@
             }
         },
         {
-            "name": "Session timeout received",
+            "name": "Replication WAL confirmed flush lag",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -3086,15 +3090,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Session timeout received",
+            "customName": "Replication WAL confirmed flush lag",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.sessions.timeoutLocal",
+                    "metric": "postgres.replication.confirmed_flush_lag",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_database"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -3147,7 +3151,7 @@
             }
         },
         {
-            "name": "Traffic",
+            "name": "Replication WAL flush lag",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -3157,15 +3161,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Traffic",
+            "customName": "Replication WAL flush lag",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.traffic.traffic",
+                    "metric": "postgres.replication.flush_lag",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -3218,7 +3222,7 @@
             }
         },
         {
-            "name": "Traffic in",
+            "name": "Replication replay delay",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -3228,15 +3232,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Traffic in",
+            "customName": "Replication replay delay",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.traffic.trafficIn",
+                    "metric": "postgres.replication.replay_delay",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -3289,7 +3293,7 @@
             }
         },
         {
-            "name": "Traffic out",
+            "name": "Replication WAL replay lag",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -3299,15 +3303,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Traffic out",
+            "customName": "Replication WAL replay lag",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.traffic.trafficOut",
+                    "metric": "postgres.replication.replay_lag",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -3360,7 +3364,7 @@
             }
         },
         {
-            "name": "Bytes received",
+            "name": "Replication WAL restart delay",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -3370,15 +3374,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Bytes received",
+            "customName": "Replication WAL restart delay",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.bytesRx",
+                    "metric": "postgres.replication.restart_delay",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_database"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -3431,7 +3435,7 @@
             }
         },
         {
-            "name": "Bytes sent",
+            "name": "Replication WAL write lag",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -3441,15 +3445,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Bytes sent",
+            "customName": "Replication WAL write lag",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.bytesTx",
+                    "metric": "postgres.replication.write_lag",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -3502,7 +3506,7 @@
             }
         },
         {
-            "name": "Ack-round-trip time",
+            "name": "Time spent by sessions",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -3512,15 +3516,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Ack-round-trip time",
+            "customName": "Time spent by sessions",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.latency",
+                    "metric": "postgres.session_time.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_database"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -3573,7 +3577,7 @@
             }
         },
         {
-            "name": "Requests",
+            "name": "Established sessions",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -3583,15 +3587,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Requests",
+            "customName": "Established sessions",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.load",
+                    "metric": "postgres.sessions.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_database"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -3644,7 +3648,7 @@
             }
         },
         {
-            "name": "Server responsiveness",
+            "name": "Abandoned sessions",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -3654,15 +3658,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Server responsiveness",
+            "customName": "Abandoned sessions",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.responsiveness",
+                    "metric": "postgres.sessions_abandoned.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_database"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -3715,7 +3719,7 @@
             }
         },
         {
-            "name": "Round-trip time",
+            "name": "Fatal error terminated sessions",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -3725,15 +3729,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Round-trip time",
+            "customName": "Fatal error terminated sessions",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.roundTrip",
+                    "metric": "postgres.sessions_fatal.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_database"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -3786,7 +3790,7 @@
             }
         },
         {
-            "name": "Throughput",
+            "name": "Killed sessions",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -3796,15 +3800,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Throughput",
+            "customName": "Killed sessions",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.network.throughput",
+                    "metric": "postgres.sessions_killed.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_database"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -3857,7 +3861,7 @@
             }
         },
         {
-            "name": "Process count per process group",
+            "name": "SLRU blocks exists",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -3867,15 +3871,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Process count per process group",
+            "customName": "SLRU blocks exists",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.count",
+                    "metric": "postgres.slru.blks_exists.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group"
+                        "dt.entity.sql:postgres_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -3928,7 +3932,7 @@
             }
         },
         {
-            "name": "Worker processes",
+            "name": "SLRU blocks hit",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -3938,15 +3942,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Worker processes",
+            "customName": "SLRU blocks hit",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.processCount",
+                    "metric": "postgres.slru.blks_hit.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -3999,7 +4003,7 @@
             }
         },
         {
-            "name": "Process resource exhausted threads counter",
+            "name": "SLRU blocks read",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -4009,15 +4013,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "Process resource exhausted threads counter",
+            "customName": "SLRU blocks read",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.threadsExhausted",
+                    "metric": "postgres.slru.blks_read.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -4070,7 +4074,7 @@
             }
         },
         {
-            "name": "z/OS zIIP time",
+            "name": "SLRU blocks written",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -4080,15 +4084,15 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "z/OS zIIP time",
+            "customName": "SLRU blocks written",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.ziip",
+                    "metric": "postgres.slru.blks_written.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_instance"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",
@@ -4141,7 +4145,7 @@
             }
         },
         {
-            "name": "z/OS zIIP eligible time",
+            "name": "SLRU blocks zeroed",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -4151,15 +4155,2358 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "z/OS zIIP eligible time",
+            "customName": "SLRU blocks zeroed",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "builtin:tech.generic.ziipEligible",
+                    "metric": "postgres.slru.blks_zeroed.count",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
-                        "dt.entity.process_group_instance"
+                        "dt.entity.sql:postgres_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "SLRU flushes",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2736,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "SLRU flushes",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.slru.flushes.count",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "SLRU truncates",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3040,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "SLRU truncates",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.slru.truncates.count",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Tablespace size",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3040,
+                "left": 304,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Tablespace size",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.tablespace.size",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_tablespace"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Data written to temporary files",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3040,
+                "left": 608,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Data written to temporary files",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.temp_bytes.count",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_database"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Temporary files created",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3040,
+                "left": 912,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Temporary files created",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.temp_files.count",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_database"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Rows deleted",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3040,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Rows deleted",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.tup_deleted.count",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_database"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Live rows fetched by index scans",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3040,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Live rows fetched by index scans",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.tup_fetched.count",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_database"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Rows inserted",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3344,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Rows inserted",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.tup_inserted.count",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_database"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Live rows returned",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3344,
+                "left": 304,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Live rows returned",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.tup_returned.count",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_database"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Rows updated",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3344,
+                "left": 608,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Rows updated",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.tup_updated.count",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_database"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "WAL buffers full",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3344,
+                "left": 912,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "WAL buffers full",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.wal_buffers_full.count",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "WAL bytes",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3344,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "WAL bytes",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.wal_bytes.count",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "WAL fpi per minute",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3344,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "WAL fpi per minute",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.wal_fpi.count",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "WAL receiver last message receipt age",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3648,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "WAL receiver last message receipt age",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.wal_receiver.last_msg_receipt_age",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "WAL receiver last message send age",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3648,
+                "left": 304,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "WAL receiver last message send age",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.wal_receiver.last_msg_send_age",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "WAL receiver latest end age",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3648,
+                "left": 608,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "WAL receiver latest end age",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.wal_receiver.latest_end_age",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "WAL receiver received timeline ID",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3648,
+                "left": 912,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "WAL receiver received timeline ID",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.wal_receiver.received_tli",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "WAL records per minute",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3648,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "WAL records per minute",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.wal_records.count",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "WAL sync",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3648,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "WAL sync",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.wal_sync.count",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "WAL sync time",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3952,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "WAL sync time",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.wal_sync_time.count",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "WAL write",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3952,
+                "left": 304,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "WAL write",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.wal_write.count",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "WAL write time",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3952,
+                "left": 608,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "WAL write time",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.wal_write_time.count",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Committed transactions",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3952,
+                "left": 912,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Committed transactions",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.xact_commit.count",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_database"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Rolled back transactions",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3952,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Rolled back transactions",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.xact_rollback.count",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_database"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Database Size",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 3952,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Database Size",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.db_size",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_database"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Number of locks",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 4256,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Number of locks",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.locks",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Number of backends",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 4256,
+                "left": 304,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Number of backends",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.numbackends",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_database"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Instance uptime",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 4256,
+                "left": 608,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Instance uptime",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.uptime",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "WAL diff size",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 4256,
+                "left": 912,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "WAL diff size",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.wal_diff_size",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "WAL files count",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 4256,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "WAL files count",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.wal_files",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "WAL files age",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 4256,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "WAL files age",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.wal_files_age",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "WAL files size",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 4560,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "WAL files size",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.wal_files_size",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_instance"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Latest transaction XID age",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 4560,
+                "left": 304,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "Latest transaction XID age",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "postgres.xid_age",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.sql:postgres_database"
                     ],
                     "filterBy": {
                         "filterOperator": "AND",

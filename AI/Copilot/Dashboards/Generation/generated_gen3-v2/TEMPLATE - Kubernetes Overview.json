@@ -1,0 +1,262 @@
+{
+  "version": 21,
+  "variables": [],
+  "tiles": {
+    "1": {
+      "type": "markdown",
+      "content": "#### [ View:  [Clusters](/ui/kubernetes/) | [Namespaces](/ui/entity/list/CLOUD_APPLICATION_NAMESPACE) | [Workloads](/ui/entity/list/CLOUD_APPLICATION) | [Kubernetes Services](/ui/entity/list/KUBERNETES_SERVICE) | [Releases ](/ui/releases?filter=PROCESS_GROUP_INSTANCE-RELEASE_TAG%3D%5BKubernetes%5Dnamespace )| [PODs](/ui/entity/list/CLOUD_APPLICATION_INSTANCE) | [Logs](/ui/log-monitoring?query=event.type%3D\"k8s\") | [Traces](/ui/diagnostictools/purepaths?gtf=-2h&gf=all&servicefilter=0%1E48%11%5BKubernetes%5Dnamespace) | [Dashboards](/ui/dashboards?gtf=-2h&gf=all&filters=tag%3DKubernetes)] ☉ [ Anomaly Detection: [Cluster](/ui/settings/builtin:anomaly-detection.kubernetes.cluster) | [Node](/ui/settings/builtin:anomaly-detection.kubernetes.node) | [Namespace](/ui/settings/builtin:anomaly-detection.kubernetes.namespace) | [Workload](/ui/settings/builtin:anomaly-detection.kubernetes.workload) | [PVC](/ui/settings/builtin:anomaly-detection.kubernetes.pvc) ]  ☉ [ [Alerting profiles](/ui/settings/builtin:alerting.profile) | [Management zones](/ui/settings/builtin:management-zones)][ Deployment: [connect new cluster ](/ui/deployment/oneagent/kubernetes) ]"
+    },
+    "2": {
+      "type": "markdown",
+      "content": "Kubernetes Clusters"
+    },
+    "3": {
+      "type": "markdown",
+      "content": "Cluster Request saturation"
+    },
+    "4": {
+      "type": "markdown",
+      "content": "Workloads"
+    },
+    "5": {
+      "type": "markdown",
+      "content": "Namespaces"
+    },
+    "6": {
+      "type": "markdown",
+      "content": "Pods status "
+    },
+    "7": {
+      "type": "markdown",
+      "content": "Running vs. desired pods"
+    },
+    "8": {
+      "type": "data",
+      "title": "Nodes / Cluster",
+      "query": "timeseries nodes = sum(dt.kubernetes.nodes),\n  by: { dt.entity.kubernetes_cluster }\n| fieldsAdd kubernetes_cluster_name = entityName(dt.entity.kubernetes_cluster)\n| sort arraySum(nodes) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "kubernetes_cluster_name"
+          ]
+        }
+      }
+    },
+    "9": {
+      "type": "data",
+      "title": "Workloads",
+      "query": "timeseries workloads = sum(dt.kubernetes.workloads),\n  by: { k8s.workload.kind }\n| sort arraySum(workloads) desc\n| limit 20",
+      "visualization": "categoricalBarChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "isValueLabelVisible": false,
+        "isCategoryLabelVisible": false,
+        "chartSettings": {
+          "categoricalBarChartSettings": {
+            "categoryAxis": [
+              "kubernetes_cluster_name"
+            ]
+          }
+        }
+      }
+    },
+    "10": {
+      "type": "data",
+      "title": "Pods by namespace",
+      "query": "timeseries workloads = sum(dt.kubernetes.workloads),\n  by: { k8s.namespace.name }\n| sort arraySum(workloads) desc\n| limit 20",
+      "visualization": "categoricalBarChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "isValueLabelVisible": false,
+        "isCategoryLabelVisible": false,
+        "chartSettings": {
+          "categoricalBarChartSettings": {
+            "categoryAxis": [
+              "kubernetes_cluster_name"
+            ]
+          }
+        }
+      }
+    },
+    "11": {
+      "type": "data",
+      "title": "🚦Pods phases",
+      "query": "timeseries pods = sum(dt.kubernetes.pods),\n  by: { pod_status }\n| sort arraySum(pods) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "kubernetes_cluster_name"
+          ]
+        }
+      }
+    },
+    "12": {
+      "type": "data",
+      "title": "desired pods",
+      "query": "timeseries pods_desired = sum(dt.kubernetes.workload.pods_desired)\n| sort arraySum(pods_desired) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "kubernetes_cluster_name"
+          ]
+        }
+      }
+    },
+    "13": {
+      "type": "data",
+      "title": "running pods",
+      "query": "timeseries pods = sum(dt.kubernetes.pods)\n| sort arraySum(pods) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "kubernetes_cluster_name"
+          ]
+        }
+      }
+    },
+    "14": {
+      "type": "data",
+      "title": "Desired vs Running pods",
+      "query": "timeseries pods_desired = sum(dt.kubernetes.workload.pods_desired)\n| sort arraySum(pods_desired) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "kubernetes_cluster_name"
+          ]
+        }
+      }
+    },
+    "15": {
+      "type": "data",
+      "title": "Desired vs Running pods",
+      "query": "timeseries pods_desired = sum(dt.kubernetes.workload.pods_desired)\n| sort arraySum(pods_desired) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "kubernetes_cluster_name"
+          ]
+        }
+      }
+    }
+  },
+  "layouts": {
+    "1": {
+      "x": 0,
+      "y": 0,
+      "w": 24,
+      "h": 1
+    },
+    "2": {
+      "x": 0,
+      "y": 1,
+      "w": 24,
+      "h": 1
+    },
+    "3": {
+      "x": 0,
+      "y": 2,
+      "w": 24,
+      "h": 1
+    },
+    "4": {
+      "x": 0,
+      "y": 3,
+      "w": 24,
+      "h": 1
+    },
+    "5": {
+      "x": 0,
+      "y": 4,
+      "w": 24,
+      "h": 1
+    },
+    "6": {
+      "x": 0,
+      "y": 5,
+      "w": 24,
+      "h": 1
+    },
+    "7": {
+      "x": 0,
+      "y": 6,
+      "w": 24,
+      "h": 1
+    },
+    "8": {
+      "x": 0,
+      "y": 7,
+      "w": 6,
+      "h": 8
+    },
+    "9": {
+      "x": 6,
+      "y": 7,
+      "w": 6,
+      "h": 8
+    },
+    "10": {
+      "x": 12,
+      "y": 7,
+      "w": 6,
+      "h": 8
+    },
+    "11": {
+      "x": 18,
+      "y": 7,
+      "w": 6,
+      "h": 8
+    },
+    "12": {
+      "x": 0,
+      "y": 15,
+      "w": 6,
+      "h": 8
+    },
+    "13": {
+      "x": 6,
+      "y": 15,
+      "w": 6,
+      "h": 8
+    },
+    "14": {
+      "x": 12,
+      "y": 15,
+      "w": 6,
+      "h": 8
+    },
+    "15": {
+      "x": 18,
+      "y": 15,
+      "w": 6,
+      "h": 8
+    }
+  }
+}

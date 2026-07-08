@@ -1,0 +1,296 @@
+{
+  "version": 21,
+  "variables": [],
+  "tiles": {
+    "1": {
+      "type": "data",
+      "title": "JVM GC suspension time",
+      "query": "timeseries suspension_time = avg(dt.runtime.nodejs.gc.suspension_time, rollup: avg),\n  by: { dt.entity.process_group_instance }\n| fieldsAdd process_group_instance_name = entityName(dt.entity.process_group_instance)\n| sort arrayAvg(suspension_time) desc\n| limit 10",
+      "visualization": "categoricalBarChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "isValueLabelVisible": false,
+        "isCategoryLabelVisible": false,
+        "chartSettings": {
+          "categoricalBarChartSettings": {
+            "categoryAxis": [
+              "process_group_instance_name"
+            ]
+          }
+        }
+      }
+    },
+    "2": {
+      "type": "data",
+      "title": "JVM GC invocations",
+      "query": "timeseries collection_count = avg(dt.runtime.jvm.gc.collection_count, rollup: avg),\n  by: { dt.entity.process_group_instance }\n| fieldsAdd process_group_instance_name = entityName(dt.entity.process_group_instance)\n| sort arrayAvg(collection_count) desc\n| limit 10",
+      "visualization": "categoricalBarChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "isValueLabelVisible": false,
+        "isCategoryLabelVisible": false,
+        "chartSettings": {
+          "categoricalBarChartSettings": {
+            "categoryAxis": [
+              "process_group_instance_name"
+            ]
+          }
+        }
+      }
+    },
+    "3": {
+      "type": "data",
+      "title": "JVM GC time",
+      "query": "timeseries collection_time = avg(dt.runtime.nodejs.gc.collection_time, rollup: avg),\n  by: { dt.entity.process_group_instance, poolname, rx_pid, gcname }\n| fieldsAdd process_group_instance_name = entityName(dt.entity.process_group_instance)\n| sort arrayAvg(collection_time) desc\n| limit 10",
+      "visualization": "categoricalBarChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "isValueLabelVisible": false,
+        "isCategoryLabelVisible": false,
+        "chartSettings": {
+          "categoricalBarChartSettings": {
+            "categoryAxis": [
+              "process_group_instance_name"
+            ]
+          }
+        }
+      }
+    },
+    "4": {
+      "type": "data",
+      "title": "JVM GC suspension time",
+      "query": "timeseries suspension_time = avg(dt.runtime.nodejs.gc.suspension_time, rollup: avg),\n  by: { dt.entity.process_group_instance }\n| fieldsAdd process_group_instance_name = entityName(dt.entity.process_group_instance)\n| sort arrayAvg(suspension_time) desc\n| limit 10",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "process_group_instance_name"
+          ]
+        }
+      }
+    },
+    "5": {
+      "type": "data",
+      "title": "JVM GC invocations",
+      "query": "timeseries collection_count = avg(dt.runtime.jvm.gc.collection_count, rollup: avg),\n  by: { dt.entity.process_group_instance }\n| fieldsAdd process_group_instance_name = entityName(dt.entity.process_group_instance)\n| sort arrayAvg(collection_count) desc\n| limit 10",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "process_group_instance_name"
+          ]
+        }
+      }
+    },
+    "6": {
+      "type": "data",
+      "title": "JVM GC time",
+      "query": "timeseries collection_time = avg(dt.runtime.nodejs.gc.collection_time, rollup: avg),\n  by: { dt.entity.process_group_instance, poolname, rx_pid, gcname }\n| fieldsAdd process_group_instance_name = entityName(dt.entity.process_group_instance)\n| sort arrayAvg(collection_time) desc\n| limit 10",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "process_group_instance_name"
+          ]
+        }
+      }
+    },
+    "7": {
+      "type": "data",
+      "title": "JVM memory (committed)",
+      "query": "timeseries committed = avg(dt.runtime.jvm.memory_pool.committed, rollup: avg),\n  by: { dt.entity.process_group_instance, poolname, rx_pid }\n| fieldsAdd process_group_instance_name = entityName(dt.entity.process_group_instance)\n| sort arrayAvg(committed) desc\n| limit 10",
+      "visualization": "categoricalBarChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "isValueLabelVisible": false,
+        "isCategoryLabelVisible": false,
+        "chartSettings": {
+          "categoricalBarChartSettings": {
+            "categoryAxis": [
+              "process_group_instance_name"
+            ]
+          }
+        }
+      }
+    },
+    "8": {
+      "type": "data",
+      "title": "JVM memory (used)",
+      "query": "timeseries used = avg(dt.runtime.jvm.memory_pool.used, rollup: avg),\n  by: { dt.entity.process_group_instance, poolname, rx_pid }\n| fieldsAdd process_group_instance_name = entityName(dt.entity.process_group_instance)\n| sort arrayAvg(used) desc\n| limit 10",
+      "visualization": "categoricalBarChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "isValueLabelVisible": false,
+        "isCategoryLabelVisible": false,
+        "chartSettings": {
+          "categoricalBarChartSettings": {
+            "categoryAxis": [
+              "process_group_instance_name"
+            ]
+          }
+        }
+      }
+    },
+    "9": {
+      "type": "data",
+      "title": "JVM thread count",
+      "query": "timeseries count = avg(dt.runtime.jvm.threads.count, rollup: avg),\n  by: { dt.entity.process_group_instance }\n| fieldsAdd process_group_instance_name = entityName(dt.entity.process_group_instance)\n| sort arrayAvg(count) desc\n| limit 10",
+      "visualization": "categoricalBarChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "isValueLabelVisible": false,
+        "isCategoryLabelVisible": false,
+        "chartSettings": {
+          "categoricalBarChartSettings": {
+            "categoryAxis": [
+              "process_group_instance_name"
+            ]
+          }
+        }
+      }
+    },
+    "10": {
+      "type": "data",
+      "title": "JVM memory (committed)",
+      "query": "timeseries committed = avg(dt.runtime.jvm.memory_pool.committed, rollup: avg),\n  by: { dt.entity.process_group_instance, poolname, rx_pid }\n| fieldsAdd process_group_instance_name = entityName(dt.entity.process_group_instance)\n| sort arrayAvg(committed) desc\n| limit 10",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "process_group_instance_name"
+          ]
+        }
+      }
+    },
+    "11": {
+      "type": "data",
+      "title": "JVM memory (used)",
+      "query": "timeseries used = avg(dt.runtime.jvm.memory_pool.used, rollup: avg),\n  by: { dt.entity.process_group_instance, poolname, rx_pid }\n| fieldsAdd process_group_instance_name = entityName(dt.entity.process_group_instance)\n| sort arrayAvg(used) desc\n| limit 10",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "process_group_instance_name"
+          ]
+        }
+      }
+    },
+    "12": {
+      "type": "data",
+      "title": "JVM thread count",
+      "query": "timeseries count = avg(dt.runtime.jvm.threads.count, rollup: avg),\n  by: { dt.entity.process_group_instance }\n| fieldsAdd process_group_instance_name = entityName(dt.entity.process_group_instance)\n| sort arrayAvg(count) desc\n| limit 10",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "process_group_instance_name"
+          ]
+        }
+      }
+    }
+  },
+  "layouts": {
+    "1": {
+      "x": 0,
+      "y": 0,
+      "w": 6,
+      "h": 8
+    },
+    "2": {
+      "x": 6,
+      "y": 0,
+      "w": 6,
+      "h": 8
+    },
+    "3": {
+      "x": 12,
+      "y": 0,
+      "w": 6,
+      "h": 8
+    },
+    "4": {
+      "x": 18,
+      "y": 0,
+      "w": 6,
+      "h": 8
+    },
+    "5": {
+      "x": 0,
+      "y": 8,
+      "w": 6,
+      "h": 8
+    },
+    "6": {
+      "x": 6,
+      "y": 8,
+      "w": 6,
+      "h": 8
+    },
+    "7": {
+      "x": 12,
+      "y": 8,
+      "w": 6,
+      "h": 8
+    },
+    "8": {
+      "x": 18,
+      "y": 8,
+      "w": 6,
+      "h": 8
+    },
+    "9": {
+      "x": 0,
+      "y": 16,
+      "w": 6,
+      "h": 8
+    },
+    "10": {
+      "x": 6,
+      "y": 16,
+      "w": 6,
+      "h": 8
+    },
+    "11": {
+      "x": 12,
+      "y": 16,
+      "w": 6,
+      "h": 8
+    },
+    "12": {
+      "x": 18,
+      "y": 16,
+      "w": 6,
+      "h": 8
+    }
+  }
+}

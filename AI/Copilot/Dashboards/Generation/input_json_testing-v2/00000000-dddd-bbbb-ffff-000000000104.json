@@ -1,0 +1,549 @@
+{
+    "metadata": {
+        "configurationVersions": [
+            6
+        ],
+        "clusterVersion": "1.261.134.20230302-084304"
+    },
+    "id": "00000000-dddd-bbbb-ffff-000000000104",
+    "dashboardMetadata": {
+        "name": "TEMPLATE: Kubernetes Monitoring Statistics",
+        "shared": true,
+        "owner": "nobody@example.com",
+        "preset": false,
+        "tilesNameSize": "small",
+        "hasConsistentColors": true
+    },
+    "tiles": [
+        {
+            "name": "Successful queries per minute",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 0,
+                "width": 418,
+                "height": 380
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "metricSelector": "dsfm:active_gate.kubernetes.api.query_count:filter(prefix(\"status_code\",\"2\")):splitBy(\"dt.entity.kubernetes_cluster\"):sum:rate(1m):sort(dimension(\"dt.entity.kubernetes_cluster\",descending))",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "hideLegend": false
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "columnId": "Active Gate - Kubernetes - Api - Query Count",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "queryId": "",
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "isThresholdBackgroundAppliedToCell": false,
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&(dsfm:active_gate.kubernetes.api.query_count:filter(prefix(status_code,\"2\")):splitBy(\"dt.entity.kubernetes_cluster\"):sum:rate(1m):sort(dimension(\"dt.entity.kubernetes_cluster\",descending))):limit(100):names"
+            ]
+        },
+        {
+            "name": "Top endpoints average queries per minute",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 418,
+                "width": 874,
+                "height": 380
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.kubernetes_cluster",
+                        "path"
+                    ],
+                    "metricSelector": "dsfm:active_gate.kubernetes.api.query_count:splitBy(\"dt.entity.kubernetes_cluster\",path):sum:rate(1m):auto:sort(value(sum,descending)):limit(10)",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "columnId": "Active Gate - Kubernetes - Api - Query Count",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=null&(dsfm:active_gate.kubernetes.api.query_count:splitBy(\"dt.entity.kubernetes_cluster\",path):sum:rate(1m):auto:sort(value(sum,descending)):limit(10)):limit(100):names:fold(auto)"
+            ]
+        },
+        {
+            "name": "Average latency successful queries",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 1292,
+                "width": 418,
+                "height": 380
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "metricSelector": "dsfm:active_gate.kubernetes.api.query_duration:filter(prefix(\"status_code\", \"2\")):splitBy(\"dt.entity.kubernetes_cluster\"):avg:rate(1m):auto:sort(dimension(\"dt.entity.kubernetes_cluster\",descending))\n",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&(dsfm:active_gate.kubernetes.api.query_duration:filter(prefix(status_code,\"2\")):splitBy(\"dt.entity.kubernetes_cluster\"):avg:rate(1m):auto:sort(dimension(\"dt.entity.kubernetes_cluster\",descending))):limit(100):names"
+            ]
+        },
+        {
+            "name": "Markdown",
+            "tileType": "MARKDOWN",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 1710,
+                "width": 152,
+                "height": 38
+            },
+            "tileFilter": {},
+            "markdown": "#### [\u21e6 Overview](#dashboard;id=00000000-dddd-bbbb-ffff-000000000001)\n![BackButton]()"
+        },
+        {
+            "name": "Failing queries per minute",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 380,
+                "left": 0,
+                "width": 418,
+                "height": 494
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "metricSelector": "dsfm:active_gate.kubernetes.api.query_count:filter(not(prefix(\"status_code\", \"2\"))):splitBy(\"dt.entity.kubernetes_cluster\"):sum:rate(1m):sort(dimension(\"dt.entity.kubernetes_cluster\",descending))",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "hideLegend": false
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "columnId": "Active Gate - Kubernetes - Api - Query Count",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "queryId": "",
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "isThresholdBackgroundAppliedToCell": false,
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "metricExpressions": [
+                "resolution=null&(dsfm:active_gate.kubernetes.api.query_count:filter(not(prefix(status_code,\"2\"))):splitBy(\"dt.entity.kubernetes_cluster\"):sum:rate(1m):sort(dimension(\"dt.entity.kubernetes_cluster\",descending))):limit(100):names"
+            ]
+        },
+        {
+            "name": "Failing queries",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 380,
+                "left": 418,
+                "width": 874,
+                "height": 494
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "metricSelector": "dsfm:active_gate.kubernetes.api.query_count:splitBy(\"dt.entity.kubernetes_cluster\", access_type,path, status_code):filter(ne(\"status_code\",\"200\")):sum:auto:sort(value(sum,descending))",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TABLE",
+                "global": {
+                    "hideLegend": false
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "seriesType": "LINE",
+                            "alias": "Top failing queries in total"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "columnId": "Active Gate - Kubernetes - Api - Query Count",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "queryId": "",
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "isThresholdBackgroundAppliedToCell": false,
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(dsfm:active_gate.kubernetes.api.query_count:splitBy(\"dt.entity.kubernetes_cluster\",access_type,path,status_code):filter(ne(status_code,\"200\")):sum:auto:sort(value(sum,descending))):names"
+            ]
+        },
+        {
+            "name": "Markdown",
+            "tileType": "MARKDOWN",
+            "configured": true,
+            "bounds": {
+                "top": 380,
+                "left": 1292,
+                "width": 418,
+                "height": 836
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "markdown": "## Access Type\n\n- **ApiServer:** This access type indicates that a call used the Kubernetes API Server. This could be a normal API resource request but also a call via kube-proxy.\n\n- **DirectIp:** The internal IP address of the requested resource was used for the call. This can either be a pod or a node. This access type can only be applied if you run the ActiveGate inside the kubernetes cluster.\n***\n## Status Codes\nThe following list gives you some hints for investigation based on the most common status codes.\n\n\n- **-1: Internal error.** Dynatrace could not construct the URL. **Prometheus:** The [pod annotations](https://dt-url.net/y942vsf#annotate-prometheus-exporter-pods) might be incorrect.\n\n- **401: Unauthorized.** If you connect via URL and Token, please doublecheck that the values are correct.\n\n- **403: Forbidden.** The service account might lack [required permissions](https://dt-url.net/un02v1h).\n\n- **404: Not Found.** The resource does not exist. This can happen when resources were deleted. **Prometheus:** It is likely that the [`metrics.dynatrace.com/path`](https://dt-url.net/y942vsf#path-to-metrics-endpoint) annotation points to a non-existent endpoint.\n\n- **503: Service Unavailable.** The Kubernetes API experiences an outage.\n  **Prometheus:** The [`metrics.dynatrace.com/port`](https://dt-url.net/y942vsf#metrics-port) annotation might contain a wrong value. Another common reason for this status code are wrong tls settings.\n***\n## Further Resources\n1. [General overview about HTTP Status Codes: RFC7231](https://dt-url.net/pp62vxa)\n\n2. [Monitor Prometheus metrics](https://dt-url.net/y942vsf)"
+        },
+        {
+            "name": "Availability of in-cluster ActiveGates",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 874,
+                "left": 0,
+                "width": 1292,
+                "height": 342
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Incluster ActiveGates",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.kubernetes_cluster",
+                        "dt.entity.cloud_application_namespace",
+                        "dt.entity.cloud_application"
+                    ],
+                    "metricSelector": "((((builtin:cloud.kubernetes.pod.containers:timeshift(-2m)):filter(and(in(\"dt.entity.cloud_application\",entitySelector(\"type(CLOUD_APPLICATION),cloudApplicationLabels(dynatrace.com/component:activegate,component:activegate,app.kubernetes.io/component:activegate)\")),eq(\"k8s.container.state\",running))):splitBy(dt.entity.kubernetes_cluster,dt.entity.cloud_application_namespace,\"dt.entity.cloud_application\"):sum:rate(1m))/((builtin:cloud.kubernetes.pod.containers:timeshift(-2m)):filter(and(in(\"dt.entity.cloud_application\",entitySelector(\"type(CLOUD_APPLICATION),cloudApplicationLabels(dynatrace.com/component:activegate,component:activegate,app.kubernetes.io/component:activegate)\")),eq(\"k8s.container.state\",running))):splitBy(dt.entity.kubernetes_cluster,dt.entity.cloud_application_namespace,\"dt.entity.cloud_application\")):max)*100):fold(avg):sort(value(sum, ascending))",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TABLE",
+                "global": {
+                    "hideLegend": false
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT",
+                            "alias": "Availability (%)"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "queryId": "",
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "isThresholdBackgroundAppliedToCell": false,
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=null&(((((builtin:cloud.kubernetes.pod.containers:timeshift(-2m)):filter(and(in(\"dt.entity.cloud_application\",entitySelector(\"type(CLOUD_APPLICATION),cloudApplicationLabels(dynatrace.com/component:activegate,component:activegate,app.kubernetes.io/component:activegate)\")),eq(\"k8s.container.state\",running))):splitBy(\"dt.entity.kubernetes_cluster\",\"dt.entity.cloud_application_namespace\",\"dt.entity.cloud_application\"):sum:rate(1m))/((builtin:cloud.kubernetes.pod.containers:timeshift(-2m)):filter(and(in(\"dt.entity.cloud_application\",entitySelector(\"type(CLOUD_APPLICATION),cloudApplicationLabels(dynatrace.com/component:activegate,component:activegate,app.kubernetes.io/component:activegate)\")),eq(\"k8s.container.state\",running))):splitBy(\"dt.entity.kubernetes_cluster\",\"dt.entity.cloud_application_namespace\",\"dt.entity.cloud_application\")):max)*100):fold(avg):sort(value(sum,ascending))):names:fold(auto)"
+            ]
+        }
+    ]
+}

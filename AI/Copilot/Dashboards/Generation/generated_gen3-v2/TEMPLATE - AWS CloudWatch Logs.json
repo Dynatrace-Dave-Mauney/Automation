@@ -1,0 +1,350 @@
+{
+  "version": 21,
+  "variables": [],
+  "tiles": {
+    "1": {
+      "type": "markdown",
+      "content": "Events count"
+    },
+    "2": {
+      "type": "markdown",
+      "content": "Events volume"
+    },
+    "3": {
+      "type": "markdown",
+      "content": "Errors"
+    },
+    "4": {
+      "type": "markdown",
+      "content": "  \nAWS ALB  \nAWS API Gateway  \nAWS CloudWatch Logs  \nAWS Cloudfront  \nAWS Connect  \nAWS Connect Details  \nAWS DynamoDB  \nAWS DynamoDB Accelerator   \nAWS EBS  \nAWS EC2  \nAWS EC2 Auto Scaling  \nAWS ECS ContainerInsights  \nAWS ECS  \nAWS ES  \nAWS Kinesis Data Streams  \nAWS Lambda Functions  \nAWS Lex  \nAWS NAT Gateways  \nAWS NLB  \nAWS RDS  \nAWS Route 53  \nAWS Route 53 Resolver  \nAWS Site-to-Site VPN  \nAWS SQS"
+    },
+    "5": {
+      "type": "data",
+      "title": "Incoming log events",
+      "query": "timeseries incoming_log_events_sum = avg(cloud.aws.logs.incoming_log_events_sum), by: {dt.entity.custom_device}",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    },
+    "6": {
+      "type": "data",
+      "title": "Forwarded log events",
+      "query": "timeseries forwarded_log_events_sum_by_destination_type_filter_name = avg(cloud.aws.logs.forwarded_log_events_sum_by_destination_type_filter_name), by: {dt.entity.custom_device}",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    },
+    "7": {
+      "type": "data",
+      "title": "Incoming bytes",
+      "query": "timeseries incoming_bytes_sum = avg(cloud.aws.logs.incoming_bytes_sum), by: {dt.entity.custom_device}",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    },
+    "8": {
+      "type": "data",
+      "title": "Forwarded bytes",
+      "query": "timeseries forwarded_bytes_sum_by_destination_type_filter_name = avg(cloud.aws.logs.forwarded_bytes_sum_by_destination_type_filter_name), by: {dt.entity.custom_device}",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    },
+    "9": {
+      "type": "data",
+      "title": "Delivery throttling",
+      "query": "timeseries delivery_throttling_sum_by_destination_type_filter_name = avg(cloud.aws.logs.delivery_throttling_sum_by_destination_type_filter_name), by: {dt.entity.custom_device}",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    },
+    "10": {
+      "type": "data",
+      "title": "Delivery errors",
+      "query": "timeseries delivery_errors_sum_by_destination_type_filter_name = avg(cloud.aws.logs.delivery_errors_sum_by_destination_type_filter_name), by: {dt.entity.custom_device}",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    },
+    "11": {
+      "type": "data",
+      "title": "Incoming log events",
+      "query": "timeseries incoming_log_events_sum = avg(cloud.aws.logs.incoming_log_events_sum), by: {dt.entity.custom_device}\n| fieldsAdd incoming_log_events_sum_value = arrayAvg(incoming_log_events_sum)\n| fields dt.entity.custom_device, incoming_log_events_sum_value\n| sort incoming_log_events_sum_value desc\n| limit 20",
+      "visualization": "categoricalBarChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "isValueLabelVisible": false,
+        "isCategoryLabelVisible": false,
+        "chartSettings": {
+          "categoricalBarChartSettings": {
+            "categoryAxis": [
+              "incoming_log_events_sum_value"
+            ]
+          }
+        }
+      }
+    },
+    "12": {
+      "type": "data",
+      "title": "Forwarded log events",
+      "query": "timeseries forwarded_log_events_sum_by_destination_type_filter_name = avg(cloud.aws.logs.forwarded_log_events_sum_by_destination_type_filter_name), by: {dt.entity.custom_device, DestinationType, FilterName}\n| fieldsAdd forwarded_log_events_sum_by_destination_type_filter_name_value = arrayAvg(forwarded_log_events_sum_by_destination_type_filter_name)\n| fields dt.entity.custom_device, DestinationType, FilterName, forwarded_log_events_sum_by_destination_type_filter_name_value\n| sort forwarded_log_events_sum_by_destination_type_filter_name_value desc\n| limit 20",
+      "visualization": "categoricalBarChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "isValueLabelVisible": false,
+        "isCategoryLabelVisible": false,
+        "chartSettings": {
+          "categoricalBarChartSettings": {
+            "categoryAxis": [
+              "forwarded_log_events_sum_by_destination_type_filter_name_value"
+            ]
+          }
+        }
+      }
+    },
+    "13": {
+      "type": "data",
+      "title": "Incoming bytes",
+      "query": "timeseries incoming_bytes_sum = avg(cloud.aws.logs.incoming_bytes_sum), by: {dt.entity.custom_device}\n| fieldsAdd incoming_bytes_sum_value = arrayAvg(incoming_bytes_sum)\n| fields dt.entity.custom_device, incoming_bytes_sum_value\n| sort incoming_bytes_sum_value desc\n| limit 20",
+      "visualization": "categoricalBarChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "isValueLabelVisible": false,
+        "isCategoryLabelVisible": false,
+        "chartSettings": {
+          "categoricalBarChartSettings": {
+            "categoryAxis": [
+              "incoming_bytes_sum_value"
+            ]
+          }
+        }
+      }
+    },
+    "14": {
+      "type": "data",
+      "title": "Forwarded bytes",
+      "query": "timeseries forwarded_bytes_sum_by_destination_type_filter_name = avg(cloud.aws.logs.forwarded_bytes_sum_by_destination_type_filter_name), by: {dt.entity.custom_device, DestinationType, FilterName}\n| fieldsAdd forwarded_bytes_sum_by_destination_type_filter_name_value = arrayAvg(forwarded_bytes_sum_by_destination_type_filter_name)\n| fields dt.entity.custom_device, DestinationType, FilterName, forwarded_bytes_sum_by_destination_type_filter_name_value\n| sort forwarded_bytes_sum_by_destination_type_filter_name_value desc\n| limit 20",
+      "visualization": "categoricalBarChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "isValueLabelVisible": false,
+        "isCategoryLabelVisible": false,
+        "chartSettings": {
+          "categoricalBarChartSettings": {
+            "categoryAxis": [
+              "forwarded_bytes_sum_by_destination_type_filter_name_value"
+            ]
+          }
+        }
+      }
+    },
+    "15": {
+      "type": "data",
+      "title": "Delivery throttling",
+      "query": "timeseries delivery_throttling_sum_by_destination_type_filter_name = avg(cloud.aws.logs.delivery_throttling_sum_by_destination_type_filter_name), by: {dt.entity.custom_device, DestinationType, FilterName}\n| fieldsAdd delivery_throttling_sum_by_destination_type_filter_name_value = arrayAvg(delivery_throttling_sum_by_destination_type_filter_name)\n| fields dt.entity.custom_device, DestinationType, FilterName, delivery_throttling_sum_by_destination_type_filter_name_value\n| sort delivery_throttling_sum_by_destination_type_filter_name_value desc\n| limit 20",
+      "visualization": "categoricalBarChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "isValueLabelVisible": false,
+        "isCategoryLabelVisible": false,
+        "chartSettings": {
+          "categoricalBarChartSettings": {
+            "categoryAxis": [
+              "delivery_throttling_sum_by_destination_type_filter_name_value"
+            ]
+          }
+        }
+      }
+    },
+    "16": {
+      "type": "data",
+      "title": "Delivery errors",
+      "query": "timeseries delivery_errors_sum_by_destination_type_filter_name = avg(cloud.aws.logs.delivery_errors_sum_by_destination_type_filter_name), by: {dt.entity.custom_device, DestinationType, FilterName}\n| fieldsAdd delivery_errors_sum_by_destination_type_filter_name_value = arrayAvg(delivery_errors_sum_by_destination_type_filter_name)\n| fields dt.entity.custom_device, DestinationType, FilterName, delivery_errors_sum_by_destination_type_filter_name_value\n| sort delivery_errors_sum_by_destination_type_filter_name_value desc\n| limit 20",
+      "visualization": "categoricalBarChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "isValueLabelVisible": false,
+        "isCategoryLabelVisible": false,
+        "chartSettings": {
+          "categoricalBarChartSettings": {
+            "categoryAxis": [
+              "delivery_errors_sum_by_destination_type_filter_name_value"
+            ]
+          }
+        }
+      }
+    },
+    "17": {
+      "type": "data",
+      "title": "Incoming log events per region",
+      "query": "timeseries incoming_log_events_sum_by_region = avg(cloud.aws.logs.incoming_log_events_sum_by_region), by: {Region}",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "delivery_errors_sum_by_destination_type_filter_name_value"
+          ]
+        }
+      }
+    },
+    "18": {
+      "type": "data",
+      "title": "Incoming bytes per region",
+      "query": "timeseries incoming_bytes_sum_by_region = avg(cloud.aws.logs.incoming_bytes_sum_by_region), by: {Region}",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "delivery_errors_sum_by_destination_type_filter_name_value"
+          ]
+        }
+      }
+    }
+  },
+  "layouts": {
+    "1": {
+      "x": 0,
+      "y": 0,
+      "w": 24,
+      "h": 1
+    },
+    "2": {
+      "x": 0,
+      "y": 1,
+      "w": 24,
+      "h": 1
+    },
+    "3": {
+      "x": 0,
+      "y": 2,
+      "w": 24,
+      "h": 1
+    },
+    "4": {
+      "x": 0,
+      "y": 3,
+      "w": 24,
+      "h": 1
+    },
+    "5": {
+      "x": 0,
+      "y": 4,
+      "w": 6,
+      "h": 8
+    },
+    "6": {
+      "x": 6,
+      "y": 4,
+      "w": 6,
+      "h": 8
+    },
+    "7": {
+      "x": 12,
+      "y": 4,
+      "w": 6,
+      "h": 8
+    },
+    "8": {
+      "x": 18,
+      "y": 4,
+      "w": 6,
+      "h": 8
+    },
+    "9": {
+      "x": 0,
+      "y": 12,
+      "w": 6,
+      "h": 8
+    },
+    "10": {
+      "x": 6,
+      "y": 12,
+      "w": 6,
+      "h": 8
+    },
+    "11": {
+      "x": 12,
+      "y": 12,
+      "w": 6,
+      "h": 8
+    },
+    "12": {
+      "x": 18,
+      "y": 12,
+      "w": 6,
+      "h": 8
+    },
+    "13": {
+      "x": 0,
+      "y": 20,
+      "w": 8,
+      "h": 6
+    },
+    "14": {
+      "x": 8,
+      "y": 20,
+      "w": 8,
+      "h": 6
+    },
+    "15": {
+      "x": 16,
+      "y": 20,
+      "w": 8,
+      "h": 6
+    },
+    "16": {
+      "x": 0,
+      "y": 26,
+      "w": 8,
+      "h": 8
+    },
+    "17": {
+      "x": 8,
+      "y": 26,
+      "w": 8,
+      "h": 8
+    },
+    "18": {
+      "x": 16,
+      "y": 26,
+      "w": 8,
+      "h": 8
+    }
+  }
+}

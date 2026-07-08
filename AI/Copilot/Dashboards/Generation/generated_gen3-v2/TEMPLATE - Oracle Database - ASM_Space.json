@@ -1,0 +1,52 @@
+{
+  "version": 21,
+  "variables": [],
+  "tiles": {
+    "1": {
+      "type": "markdown",
+      "content": "ASM/Space"
+    },
+    "2": {
+      "type": "data",
+      "title": "Total space",
+      "query": "timeseries totalSpace = avg(com.dynatrace.extension.sql-oracle.tablespaces.totalSpace),\n  by: { dt.entity.sql:com_dynatrace_extension_sql-oracle_instance }\n| fieldsAdd sql:com_dynatrace_extension_sql-oracle_instance_name = entityName(dt.entity.sql:com_dynatrace_extension_sql-oracle_instance)\n| sort arrayAvg(totalSpace) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    },
+    "3": {
+      "type": "data",
+      "title": "Free space",
+      "query": "timeseries freeSpace = avg(com.dynatrace.extension.sql-oracle.tablespaces.freeSpace),\n  by: { dt.entity.sql:com_dynatrace_extension_sql-oracle_instance }\n| fieldsAdd sql:com_dynatrace_extension_sql-oracle_instance_name = entityName(dt.entity.sql:com_dynatrace_extension_sql-oracle_instance)\n| sort arrayAvg(freeSpace) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    }
+  },
+  "layouts": {
+    "1": {
+      "x": 0,
+      "y": 0,
+      "w": 24,
+      "h": 1
+    },
+    "2": {
+      "x": 0,
+      "y": 1,
+      "w": 12,
+      "h": 8
+    },
+    "3": {
+      "x": 12,
+      "y": 1,
+      "w": 12,
+      "h": 8
+    }
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "version": 21,
+  "variables": [],
+  "tiles": {
+    "1": {
+      "type": "data",
+      "title": "Data explorer results",
+      "query": "timeseries query_count = sum(dt.sfm.active_gate.kubernetes.api.query_count),\n  by: { dt.entity.kubernetes_cluster }\n| fieldsAdd kubernetes_cluster_name = entityName(dt.entity.kubernetes_cluster)\n| sort arraySum(query_count) desc",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "kubernetes_cluster_name"
+          ]
+        }
+      }
+    },
+    "2": {
+      "type": "data",
+      "title": "Data explorer results",
+      "query": "timeseries query_count = sum(dt.sfm.active_gate.kubernetes.api.query_count, rollup: avg),\n  by: { dt.entity.kubernetes_cluster, path }\n| fieldsAdd kubernetes_cluster_name = entityName(dt.entity.kubernetes_cluster)\n| sort arraySum(query_count) desc\n| limit 10",
+      "visualization": "categoricalBarChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "isValueLabelVisible": false,
+        "isCategoryLabelVisible": false,
+        "chartSettings": {
+          "categoricalBarChartSettings": {
+            "categoryAxis": [
+              "kubernetes_cluster_name"
+            ]
+          }
+        }
+      }
+    },
+    "3": {
+      "type": "data",
+      "title": "Data explorer results",
+      "query": "timeseries query_duration = avg(dt.sfm.active_gate.kubernetes.api.query_duration, rollup: avg),\n  by: { dt.entity.kubernetes_cluster }\n| fieldsAdd kubernetes_cluster_name = entityName(dt.entity.kubernetes_cluster)\n| sort arrayAvg(query_duration) desc",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "kubernetes_cluster_name"
+          ]
+        }
+      }
+    },
+    "4": {
+      "type": "data",
+      "title": "Data explorer results",
+      "query": "timeseries query_count = sum(dt.sfm.active_gate.kubernetes.api.query_count),\n  by: { dt.entity.kubernetes_cluster }\n| fieldsAdd kubernetes_cluster_name = entityName(dt.entity.kubernetes_cluster)\n| sort arraySum(query_count) desc",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "kubernetes_cluster_name"
+          ]
+        }
+      }
+    },
+    "5": {
+      "type": "data",
+      "title": "Data explorer results",
+      "query": "timeseries query_count = sum(dt.sfm.active_gate.kubernetes.api.query_count, rollup: avg),\n  by: { dt.entity.kubernetes_cluster, access_type, path, status_code }\n| fieldsAdd kubernetes_cluster_name = entityName(dt.entity.kubernetes_cluster)\n| sort arraySum(query_count) desc",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "kubernetes_cluster_name"
+          ]
+        }
+      }
+    },
+    "6": {
+      "type": "markdown",
+      "content": "## Access Type\n\n- **ApiServer:** This access type indicates that a call used the Kubernetes API Server. This could be a normal API resource request but also a call via kube-proxy.\n\n- **DirectIp:** The internal IP address of the requested resource was used for the call. This can either be a pod or a node. This access type can only be applied if you run the ActiveGate inside the kubernetes cluster.\n***\n## Status Codes\nThe following list gives you some hints for investigation based on the most common status codes.\n\n\n- **-1: Internal error.** Dynatrace could not construct the URL. **Prometheus:** The [pod annotations](https://dt-url.net/y942vsf#annotate-prometheus-exporter-pods) might be incorrect.\n\n- **401: Unauthorized.** If you connect via URL and Token, please doublecheck that the values are correct.\n\n- **403: Forbidden.** The service account might lack [required permissions](https://dt-url.net/un02v1h).\n\n- **404: Not Found.** The resource does not exist. This can happen when resources were deleted. **Prometheus:** It is likely that the [`metrics.dynatrace.com/path`](https://dt-url.net/y942vsf#path-to-metrics-endpoint) annotation points to a non-existent endpoint.\n\n- **503: Service Unavailable.** The Kubernetes API experiences an outage.\n  **Prometheus:** The [`metrics.dynatrace.com/port`](https://dt-url.net/y942vsf#metrics-port) annotation might contain a wrong value. Another common reason for this status code are wrong tls settings.\n***\n## Further Resources\n1. [General overview about HTTP Status Codes: RFC7231](https://dt-url.net/pp62vxa)\n\n2. [Monitor Prometheus metrics](https://dt-url.net/y942vsf)"
+    }
+  },
+  "layouts": {
+    "1": {
+      "x": 0,
+      "y": 0,
+      "w": 8,
+      "h": 8
+    },
+    "2": {
+      "x": 8,
+      "y": 0,
+      "w": 8,
+      "h": 8
+    },
+    "3": {
+      "x": 16,
+      "y": 0,
+      "w": 8,
+      "h": 8
+    },
+    "4": {
+      "x": 0,
+      "y": 8,
+      "w": 12,
+      "h": 8
+    },
+    "5": {
+      "x": 12,
+      "y": 8,
+      "w": 12,
+      "h": 8
+    },
+    "6": {
+      "x": 0,
+      "y": 16,
+      "w": 24,
+      "h": 1
+    }
+  }
+}

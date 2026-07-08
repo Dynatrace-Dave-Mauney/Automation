@@ -1,0 +1,304 @@
+{
+  "version": 21,
+  "variables": [],
+  "tiles": {
+    "1": {
+      "type": "data",
+      "title": "Number of running EC2 instances (ASG)",
+      "query": "timeseries running = avg(dt.cloud.aws.asg.running, rollup: avg),\n  by: { dt.entity.auto_scaling_group }\n| fieldsAdd auto_scaling_group_name = entityName(dt.entity.auto_scaling_group)\n| sort arrayAvg(running) desc\n| limit 10",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "auto_scaling_group_name"
+          ]
+        }
+      }
+    },
+    "2": {
+      "type": "data",
+      "title": "Number of stopped EC2 instances (ASG)",
+      "query": "timeseries stopped = avg(dt.cloud.aws.asg.stopped, rollup: avg),\n  by: { dt.entity.auto_scaling_group }\n| fieldsAdd auto_scaling_group_name = entityName(dt.entity.auto_scaling_group)\n| sort arrayAvg(stopped) desc\n| limit 10",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "auto_scaling_group_name"
+          ]
+        }
+      }
+    },
+    "3": {
+      "type": "data",
+      "title": "Number of terminated EC2 instances (ASG)",
+      "query": "timeseries terminated = avg(dt.cloud.aws.asg.terminated, rollup: avg)\n| sort arrayAvg(terminated) desc\n| limit 10",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "auto_scaling_group_name"
+          ]
+        }
+      }
+    },
+    "4": {
+      "type": "markdown",
+      "content": "  \nAWS ALB  \nAWS API Gateway  \nAWS CloudWatch Logs  \nAWS Cloudfront  \nAWS Connect  \nAWS Connect Details  \nAWS DynamoDB  \nAWS DynamoDB Accelerator   \nAWS EBS  \nAWS EC2  \nAWS EC2 Auto Scaling  \nAWS ECS ContainerInsights  \nAWS ECS  \nAWS ES  \nAWS Kinesis Data Streams  \nAWS Lambda Functions  \nAWS Lex  \nAWS NAT Gateways  \nAWS NLB  \nAWS RDS  \nAWS Route 53  \nAWS Route 53 Resolver  \nAWS Site-to-Site VPN  \nAWS SQS"
+    },
+    "5": {
+      "type": "data",
+      "title": "Number of running EC2 instances (AZ)",
+      "query": "timeseries running = avg(dt.cloud.aws.az.running, rollup: avg),\n  by: { dt.entity.aws_availability_zone }\n| fieldsAdd aws_availability_zone_name = entityName(dt.entity.aws_availability_zone)\n| sort arrayAvg(running) desc\n| limit 10",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "aws_availability_zone_name"
+          ]
+        }
+      }
+    },
+    "6": {
+      "type": "data",
+      "title": "Number of stopped EC2 instances (AZ)",
+      "query": "timeseries stopped = avg(dt.cloud.aws.az.stopped, rollup: avg),\n  by: { dt.entity.aws_availability_zone }\n| fieldsAdd aws_availability_zone_name = entityName(dt.entity.aws_availability_zone)\n| sort arrayAvg(stopped) desc\n| limit 10",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "aws_availability_zone_name"
+          ]
+        }
+      }
+    },
+    "7": {
+      "type": "data",
+      "title": "Number of terminated EC2 instances (AZ)",
+      "query": "timeseries terminated = avg(dt.cloud.aws.az.terminated, rollup: avg),\n  by: { dt.entity.aws_availability_zone }\n| fieldsAdd aws_availability_zone_name = entityName(dt.entity.aws_availability_zone)\n| sort arrayAvg(terminated) desc\n| limit 10",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "aws_availability_zone_name"
+          ]
+        }
+      }
+    },
+    "8": {
+      "type": "data",
+      "title": "EC2 CPU usage %",
+      "query": "timeseries usage = avg(dt.cloud.aws.ec2.cpu.usage, rollup: avg),\n  by: { dt.entity.ec2_instance }\n| fieldsAdd ec2_instance_name = entityName(dt.entity.ec2_instance)\n| sort arrayAvg(usage) desc\n| limit 10",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "ec2_instance_name"
+          ]
+        }
+      }
+    },
+    "9": {
+      "type": "data",
+      "title": "EC2 network data received rate",
+      "query": "timeseries rx = avg(dt.cloud.aws.ec2.net.rx, rollup: avg),\n  by: { dt.entity.ec2_instance }\n| fieldsAdd ec2_instance_name = entityName(dt.entity.ec2_instance)\n| sort arrayAvg(rx) desc\n| limit 10",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "ec2_instance_name"
+          ]
+        }
+      }
+    },
+    "10": {
+      "type": "data",
+      "title": "EC2 network data transmitted rate",
+      "query": "timeseries tx = avg(dt.cloud.aws.ec2.net.tx, rollup: avg),\n  by: { dt.entity.ec2_instance }\n| fieldsAdd ec2_instance_name = entityName(dt.entity.ec2_instance)\n| sort arrayAvg(tx) desc\n| limit 10",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "ec2_instance_name"
+          ]
+        }
+      }
+    },
+    "11": {
+      "type": "data",
+      "title": "EC2 instance storage read IOPS",
+      "query": "timeseries read_ops = avg(dt.cloud.aws.ec2.disk.read_ops, rollup: avg),\n  by: { dt.entity.ec2_instance }\n| fieldsAdd ec2_instance_name = entityName(dt.entity.ec2_instance)\n| sort arrayAvg(read_ops) desc\n| limit 10",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "ec2_instance_name"
+          ]
+        }
+      }
+    },
+    "12": {
+      "type": "data",
+      "title": "EC2 instance storage read rate",
+      "query": "timeseries read_rate = avg(dt.cloud.aws.ec2.disk.read_rate, rollup: avg),\n  by: { dt.entity.ec2_instance }\n| fieldsAdd ec2_instance_name = entityName(dt.entity.ec2_instance)\n| sort arrayAvg(read_rate) desc\n| limit 10",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "ec2_instance_name"
+          ]
+        }
+      }
+    },
+    "13": {
+      "type": "data",
+      "title": "EC2 instance storage write IOPS",
+      "query": "timeseries write_ops = avg(dt.cloud.aws.ec2.disk.write_ops, rollup: avg),\n  by: { dt.entity.ec2_instance }\n| fieldsAdd ec2_instance_name = entityName(dt.entity.ec2_instance)\n| sort arrayAvg(write_ops) desc\n| limit 10",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "ec2_instance_name"
+          ]
+        }
+      }
+    },
+    "14": {
+      "type": "data",
+      "title": "EC2 instance storage write rate",
+      "query": "timeseries write_rate = avg(dt.cloud.aws.ec2.disk.write_rate, rollup: avg),\n  by: { dt.entity.ec2_instance }\n| fieldsAdd ec2_instance_name = entityName(dt.entity.ec2_instance)\n| sort arrayAvg(write_rate) desc\n| limit 10",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "ec2_instance_name"
+          ]
+        }
+      }
+    }
+  },
+  "layouts": {
+    "1": {
+      "x": 0,
+      "y": 0,
+      "w": 8,
+      "h": 8
+    },
+    "2": {
+      "x": 8,
+      "y": 0,
+      "w": 8,
+      "h": 8
+    },
+    "3": {
+      "x": 16,
+      "y": 0,
+      "w": 8,
+      "h": 8
+    },
+    "4": {
+      "x": 0,
+      "y": 8,
+      "w": 24,
+      "h": 1
+    },
+    "5": {
+      "x": 0,
+      "y": 9,
+      "w": 6,
+      "h": 8
+    },
+    "6": {
+      "x": 6,
+      "y": 9,
+      "w": 6,
+      "h": 8
+    },
+    "7": {
+      "x": 12,
+      "y": 9,
+      "w": 6,
+      "h": 8
+    },
+    "8": {
+      "x": 18,
+      "y": 9,
+      "w": 6,
+      "h": 8
+    },
+    "9": {
+      "x": 0,
+      "y": 17,
+      "w": 8,
+      "h": 8
+    },
+    "10": {
+      "x": 8,
+      "y": 17,
+      "w": 8,
+      "h": 8
+    },
+    "11": {
+      "x": 16,
+      "y": 17,
+      "w": 8,
+      "h": 8
+    },
+    "12": {
+      "x": 0,
+      "y": 25,
+      "w": 8,
+      "h": 8
+    },
+    "13": {
+      "x": 8,
+      "y": 25,
+      "w": 8,
+      "h": 8
+    },
+    "14": {
+      "x": 16,
+      "y": 25,
+      "w": 8,
+      "h": 8
+    }
+  }
+}

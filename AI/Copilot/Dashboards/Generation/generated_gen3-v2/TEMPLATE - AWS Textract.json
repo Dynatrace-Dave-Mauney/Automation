@@ -1,0 +1,52 @@
+{
+  "version": 21,
+  "variables": [],
+  "tiles": {
+    "1": {
+      "type": "data",
+      "title": "ResponseTime Average (by Region and Operation)",
+      "query": "timeseries response_time_average_by_region_operation = avg(cloud.aws.textract.response_time_average_by_region_operation),\n  by: { dt.entity.custom_device_group }\n| fieldsAdd custom_device_group_name = entityName(dt.entity.custom_device_group)\n| sort arrayAvg(response_time_average_by_region_operation) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "custom_device_group_name"
+          ]
+        }
+      }
+    },
+    "2": {
+      "type": "data",
+      "title": "SuccessfulRequestCount Sum (by Region and Operation)",
+      "query": "timeseries successful_request_count_sum_by_region_operation = avg(cloud.aws.textract.successful_request_count_sum_by_region_operation),\n  by: { dt.entity.custom_device_group }\n| fieldsAdd custom_device_group_name = entityName(dt.entity.custom_device_group)\n| sort arrayAvg(successful_request_count_sum_by_region_operation) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "custom_device_group_name"
+          ]
+        }
+      }
+    }
+  },
+  "layouts": {
+    "1": {
+      "x": 0,
+      "y": 0,
+      "w": 12,
+      "h": 8
+    },
+    "2": {
+      "x": 12,
+      "y": 0,
+      "w": 12,
+      "h": 8
+    }
+  }
+}

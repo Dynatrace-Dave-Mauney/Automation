@@ -50,7 +50,7 @@ def run():
     # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE * By Management Zone.json')
 
     # post_dashboards(env, f'../$Private/$Output/Dashboards/ClassicConversion/*.json')
-    post_dashboards(env, f'../AI/Copilot/Dashboards/Generation/generated_gen3/TEMPLATE - *.json')
+    post_dashboards(env, f'../AI/Copilot/Dashboards/Generation/generated_gen3/TEMPLATE - VMw*.json')
 
 
 

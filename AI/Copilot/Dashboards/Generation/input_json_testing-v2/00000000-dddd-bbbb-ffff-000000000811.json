@@ -1,0 +1,2768 @@
+{
+    "metadata": {
+        "configurationVersions": [
+            6
+        ],
+        "clusterVersion": "1.261.134.20230302-084304"
+    },
+    "id": "00000000-dddd-bbbb-ffff-000000000811",
+    "dashboardMetadata": {
+        "name": "TEMPLATE: DPS Usage Details",
+        "shared": true,
+        "preset": false,
+        "tilesNameSize": "small",
+        "hasConsistentColors": true,
+        "owner": "nobody@example.com",
+        "tags": [
+            "Usage",
+            "DPS",
+            "Dynatrace Platform Subscription",
+            "Licensing"
+        ]
+    },
+    "tiles": [
+        {
+            "name": "Markdown",
+            "tileType": "MARKDOWN",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 1672,
+                "width": 152,
+                "height": 38
+            },
+            "tileFilter": {},
+            "markdown": "#### [\u21e6 Overview](#dashboard;id=00000000-dddd-bbbb-ffff-000000000001)\n![BackButton]()"
+        },
+        {
+            "name": "Host Monitoring",
+            "tileType": "HEADER",
+            "configured": true,
+            "bounds": {
+                "top": 38,
+                "left": 0,
+                "width": 1672,
+                "height": 38
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false
+        },
+        {
+            "name": "Markdown",
+            "tileType": "MARKDOWN",
+            "configured": true,
+            "bounds": {
+                "top": 76,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "markdown": "### Full-Stack Monitoring\n\n[Documentation](https://www.dynatrace.com/support/help/shortlink/dps-hosts#full-stack-monitoring-dps)"
+        },
+        {
+            "name": "GiB-hours",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 76,
+                "left": 304,
+                "width": 456,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:billing.full_stack_monitoring.usage",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "STACKED_COLUMN",
+                "global": {
+                    "hideLegend": true
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "GREEN",
+                            "seriesType": "STACKED_COLUMN"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE",
+                    "showLabels": false
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": "1h"
+            },
+            "metricExpressions": [
+                "resolution=1h&(builtin:billing.full_stack_monitoring.usage:splitBy():sort(value(auto,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Top Full-Stack hosts",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 76,
+                "left": 760,
+                "width": 456,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:billing.full_stack_monitoring.usage_per_host",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.host"
+                    ],
+                    "sortBy": "DESC",
+                    "sortByDimension": "",
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "limit": 20,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "GREEN",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE",
+                    "showLabels": false
+                },
+                "singleValueSettings": {
+                    "showTrend": true,
+                    "showSparkLine": true,
+                    "linkTileColorToThreshold": true
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:billing.full_stack_monitoring.usage_per_host:splitBy(\"dt.entity.host\"):sort(value(auto,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Included metric data points",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 76,
+                "left": 1216,
+                "width": 456,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "C",
+                    "metric": "builtin:billing.custom_metrics_classic.usage.fullstack_hosts",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "sortBy": "DESC",
+                    "sortByDimension": "",
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "limit": 20,
+                    "rate": "NONE",
+                    "enabled": true
+                },
+                {
+                    "id": "B",
+                    "metric": "builtin:billing.full_stack_monitoring.metric_data_points.included_used",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "sortBy": "DESC",
+                    "sortByDimension": "",
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "limit": 20,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "STACKED_COLUMN",
+                "global": {
+                    "hideLegend": false
+                },
+                "rules": [
+                    {
+                        "matcher": "C:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "GREEN",
+                            "seriesType": "STACKED_COLUMN"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "B:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "ROYALBLUE",
+                            "seriesType": "STACKED_COLUMN"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A",
+                                "B",
+                                "C"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE",
+                    "showLabels": false
+                },
+                "singleValueSettings": {
+                    "showTrend": true,
+                    "showSparkLine": true,
+                    "linkTileColorToThreshold": true
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": "1h"
+            },
+            "metricExpressions": [
+                "resolution=1h&(builtin:billing.custom_metrics_classic.usage.fullstack_hosts:splitBy():sort(value(auto,descending)):limit(20)):limit(100):names,(builtin:billing.full_stack_monitoring.metric_data_points.included_used:splitBy():sort(value(auto,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Markdown",
+            "tileType": "MARKDOWN",
+            "configured": true,
+            "bounds": {
+                "top": 380,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "markdown": "### Infrastructure Monitoring\n\n[Documentation](https://www.dynatrace.com/support/help/shortlink/dps-hosts#infrastructure-monitoring)"
+        },
+        {
+            "name": "Host-hours",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 380,
+                "left": 304,
+                "width": 456,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:billing.infrastructure_monitoring.usage",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "sortBy": "DESC",
+                    "sortByDimension": "",
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "limit": 20,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "STACKED_COLUMN",
+                "global": {
+                    "hideLegend": true
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "GREEN",
+                            "seriesType": "STACKED_COLUMN"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE",
+                    "showLabels": false
+                },
+                "singleValueSettings": {
+                    "showTrend": true,
+                    "showSparkLine": true,
+                    "linkTileColorToThreshold": true
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": "1h"
+            },
+            "metricExpressions": [
+                "resolution=1h&(builtin:billing.infrastructure_monitoring.usage:splitBy():sort(value(auto,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Top Infrastructure hosts",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 380,
+                "left": 760,
+                "width": 456,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:billing.infrastructure_monitoring.usage_per_host",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.host"
+                    ],
+                    "sortBy": "DESC",
+                    "sortByDimension": "",
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "limit": 20,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "GREEN",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE",
+                    "showLabels": false
+                },
+                "singleValueSettings": {
+                    "showTrend": true,
+                    "showSparkLine": true,
+                    "linkTileColorToThreshold": true
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:billing.infrastructure_monitoring.usage_per_host:splitBy(\"dt.entity.host\"):sort(value(auto,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Included metric data points",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 380,
+                "left": 1216,
+                "width": 456,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "C",
+                    "metric": "builtin:billing.custom_metrics_classic.usage.infrastructure_hosts",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "sortBy": "DESC",
+                    "sortByDimension": "",
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "limit": 20,
+                    "rate": "NONE",
+                    "enabled": true
+                },
+                {
+                    "id": "B",
+                    "metric": "builtin:billing.infrastructure_monitoring.metric_data_points.included_used",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "sortBy": "DESC",
+                    "sortByDimension": "",
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "limit": 20,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "STACKED_COLUMN",
+                "global": {
+                    "hideLegend": false
+                },
+                "rules": [
+                    {
+                        "matcher": "C:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "GREEN",
+                            "seriesType": "STACKED_COLUMN"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "B:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "ROYALBLUE",
+                            "seriesType": "STACKED_COLUMN"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "C",
+                                "B"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE",
+                    "showLabels": false
+                },
+                "singleValueSettings": {
+                    "showTrend": true,
+                    "showSparkLine": true,
+                    "linkTileColorToThreshold": true
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": "1h"
+            },
+            "metricExpressions": [
+                "resolution=1h&(builtin:billing.custom_metrics_classic.usage.infrastructure_hosts:splitBy():sort(value(auto,descending)):limit(20)):limit(100):names,(builtin:billing.infrastructure_monitoring.metric_data_points.included_used:splitBy():sort(value(auto,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Digital Experience Monitoring",
+            "tileType": "HEADER",
+            "configured": true,
+            "bounds": {
+                "top": 684,
+                "left": 0,
+                "width": 1672,
+                "height": 38
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false
+        },
+        {
+            "name": "Markdown",
+            "tileType": "MARKDOWN",
+            "configured": true,
+            "bounds": {
+                "top": 722,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "markdown": "### Real User Monitoring\n\n[Documentation](https://www.dynatrace.com/support/help/shortlink/dps-dem#real-user-monitoring-rum)"
+        },
+        {
+            "name": "Sessions",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 722,
+                "left": 304,
+                "width": 912,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:billing.real_user_monitoring.web.session.usage",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "STACKED_COLUMN",
+                "global": {
+                    "hideLegend": true
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "GREEN",
+                            "seriesType": "STACKED_COLUMN"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE",
+                    "showLabels": false
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": "1h"
+            },
+            "metricExpressions": [
+                "resolution=1h&(builtin:billing.real_user_monitoring.web.session.usage:splitBy():sort(value(auto,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Top applications",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 722,
+                "left": 1216,
+                "width": 456,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Top list",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:billing.real_user_monitoring.web.session.usage_by_app",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.application"
+                    ],
+                    "sortBy": "DESC",
+                    "sortByDimension": "",
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "limit": 20,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "GREEN",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:billing.real_user_monitoring.web.session.usage_by_app:splitBy(\"dt.entity.application\"):sort(value(auto,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Markdown",
+            "tileType": "MARKDOWN",
+            "configured": true,
+            "bounds": {
+                "top": 1026,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "markdown": "### Real User Monitoring with Session Replay\n\n[Documentation](https://www.dynatrace.com/support/help/shortlink/dps-dem#real-user-monitoring-with-session-replay)"
+        },
+        {
+            "name": "Sessions",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1026,
+                "left": 304,
+                "width": 912,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:billing.real_user_monitoring.web.session_with_replay.usage",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "STACKED_COLUMN",
+                "global": {
+                    "hideLegend": true
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "GREEN",
+                            "seriesType": "STACKED_COLUMN"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE",
+                    "showLabels": false
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": "1h"
+            },
+            "metricExpressions": [
+                "resolution=1h&(builtin:billing.real_user_monitoring.web.session_with_replay.usage:splitBy():sort(value(auto,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Top applications",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1026,
+                "left": 1216,
+                "width": 456,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Top list",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:billing.real_user_monitoring.web.session_with_replay.usage_by_app",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.application"
+                    ],
+                    "sortBy": "DESC",
+                    "sortByDimension": "",
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "limit": 20,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "GREEN",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:billing.real_user_monitoring.web.session_with_replay.usage_by_app:splitBy(\"dt.entity.application\"):sort(value(auto,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Markdown",
+            "tileType": "MARKDOWN",
+            "configured": true,
+            "bounds": {
+                "top": 1330,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "markdown": "### Real User Monitoring Property\n\n[Documentation](https://www.dynatrace.com/support/help/shortlink/dps-dem#real-user-monitoring-properties)"
+        },
+        {
+            "name": "Properties",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1330,
+                "left": 304,
+                "width": 456,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:billing.real_user_monitoring.web.property.usage",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "sortBy": "DESC",
+                    "sortByDimension": "",
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "limit": 20,
+                    "rate": "NONE",
+                    "enabled": true
+                },
+                {
+                    "id": "B",
+                    "metric": "builtin:billing.real_user_monitoring.mobile.property.usage",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "sortBy": "DESC",
+                    "sortByDimension": "",
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "limit": 20,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "STACKED_COLUMN",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "GREEN",
+                            "seriesType": "STACKED_COLUMN"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "B:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A",
+                                "B"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE",
+                    "showLabels": false
+                },
+                "singleValueSettings": {
+                    "showTrend": true,
+                    "showSparkLine": true,
+                    "linkTileColorToThreshold": true
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": "1h"
+            },
+            "metricExpressions": [
+                "resolution=1h&(builtin:billing.real_user_monitoring.web.property.usage:splitBy():sort(value(auto,descending)):limit(20)):limit(100):names,(builtin:billing.real_user_monitoring.mobile.property.usage:splitBy():sort(value(auto,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Top applications (web)",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1330,
+                "left": 760,
+                "width": 456,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Top list",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:billing.real_user_monitoring.web.property.usage_by_application",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.application"
+                    ],
+                    "sortBy": "DESC",
+                    "sortByDimension": "",
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "limit": 20,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "GREEN",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:billing.real_user_monitoring.web.property.usage_by_application:splitBy(\"dt.entity.application\"):sort(value(auto,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Top applications (mobile)",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1330,
+                "left": 1216,
+                "width": 456,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Top list",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:billing.real_user_monitoring.mobile.property.usage_by_application",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "sortBy": "DESC",
+                    "sortByDimension": "",
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "limit": 20,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "GREEN",
+                            "seriesType": "LINE"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:billing.real_user_monitoring.mobile.property.usage_by_application:splitBy():sort(value(auto,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Markdown",
+            "tileType": "MARKDOWN",
+            "configured": true,
+            "bounds": {
+                "top": 1634,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "markdown": "### Browser Monitor or Clickpath\n\n[Dcumentation](https://www.dynatrace.com/support/help/shortlink/dps-dem#browser-monitors-clickpaths)"
+        },
+        {
+            "name": "Synthetic actions",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1634,
+                "left": 304,
+                "width": 912,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:billing.synthetic.actions.usage_by_browser_monitor",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "STACKED_COLUMN",
+                "global": {
+                    "hideLegend": true
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "GREEN",
+                            "seriesType": "STACKED_COLUMN"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE",
+                    "showLabels": false
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": "1h"
+            },
+            "metricExpressions": [
+                "resolution=1h&(builtin:billing.synthetic.actions.usage_by_browser_monitor:splitBy():sort(value(auto,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Top monitors",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1634,
+                "left": 1216,
+                "width": 456,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:billing.synthetic.actions.usage_by_browser_monitor",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.synthetic_test"
+                    ],
+                    "sortBy": "DESC",
+                    "sortByDimension": "",
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "limit": 20,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TABLE",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "GREEN",
+                            "seriesType": "STACKED_COLUMN"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE",
+                    "showLabels": false
+                },
+                "singleValueSettings": {
+                    "showTrend": true,
+                    "showSparkLine": true,
+                    "linkTileColorToThreshold": true
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "columnId": "(DPS) Browser Monitor or Clickpath billing usage per synthetic browser monitor",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "queryId": "A",
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": [
+                        "A:dt.entity.synthetic_test.name"
+                    ]
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:billing.synthetic.actions.usage_by_browser_monitor:splitBy(\"dt.entity.synthetic_test\"):sort(value(auto,descending)):limit(20)):names"
+            ]
+        },
+        {
+            "name": "Markdown",
+            "tileType": "MARKDOWN",
+            "configured": true,
+            "bounds": {
+                "top": 1938,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "markdown": "### HTTP Monitor\n\n[Documentation](https://www.dynatrace.com/support/help/shortlink/dps-dem#http-monitors)"
+        },
+        {
+            "name": "Synthetic request",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1938,
+                "left": 304,
+                "width": 912,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:billing.synthetic.requests.usage_by_http_monitor",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "STACKED_COLUMN",
+                "global": {
+                    "hideLegend": true
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "GREEN",
+                            "seriesType": "STACKED_COLUMN"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE",
+                    "showLabels": false
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": "1h"
+            },
+            "metricExpressions": [
+                "resolution=1h&(builtin:billing.synthetic.requests.usage_by_http_monitor:splitBy():sort(value(auto,descending)):limit(20)):limit(100):names"
+            ]
+        },
+        {
+            "name": "Top monitors",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 1938,
+                "left": 1216,
+                "width": 456,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Table",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "builtin:billing.synthetic.requests.usage_by_http_monitor",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.http_check"
+                    ],
+                    "sortBy": "DESC",
+                    "sortByDimension": "",
+                    "filterBy": {
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "limit": 20,
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TABLE",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "properties": {
+                            "color": "DEFAULT"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE"
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "columnId": "(DPS) Third-Party Synthetic API Ingestion billing usage per external browser monitor",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "queryId": "A",
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": [
+                        "A:dt.entity.http_check.name"
+                    ]
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:billing.synthetic.requests.usage_by_http_monitor:splitBy(\"dt.entity.http_check\"):sort(value(auto,descending)):limit(20)):names"
+            ]
+        },
+        {
+            "name": "Platform Extensions",
+            "tileType": "HEADER",
+            "configured": true,
+            "bounds": {
+                "top": 2242,
+                "left": 0,
+                "width": 1672,
+                "height": 38
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false
+        },
+        {
+            "name": "Markdown",
+            "tileType": "MARKDOWN",
+            "configured": true,
+            "bounds": {
+                "top": 2280,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "markdown": "### Custom Metrics Classic\n\n[Documentation](https://www.dynatrace.com/support/help/shortlink/dps-platform-extensions#custom-metrics-classic-dps)"
+        },
+        {
+            "name": "Per 1000 metric data points",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2280,
+                "left": 304,
+                "width": 456,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "metricSelector": "builtin:billing.custom_metrics_classic.usage:splitBy():sort(value(auto,descending)):limit(20) / 1000",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "STACKED_COLUMN",
+                "global": {
+                    "hideLegend": true
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "GREEN",
+                            "seriesType": "STACKED_COLUMN"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE",
+                    "showLabels": false
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": "1h"
+            },
+            "metricExpressions": [
+                "resolution=1h&(builtin:billing.custom_metrics_classic.usage:splitBy():sort(value(auto,descending)):limit(20)/1000):limit(100):names"
+            ]
+        },
+        {
+            "name": "Per 1000 metric data points by entity",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2280,
+                "left": 760,
+                "width": 456,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.monitored_entity"
+                    ],
+                    "metricSelector": "builtin:billing.custom_metrics_classic.usage.other_by_entity:splitBy(\"dt.entity.monitored_entity\"):sort(value(auto,descending)):limit(20) / 1000\n",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "GREEN",
+                            "seriesType": "STACKED_COLUMN"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE",
+                    "showLabels": false
+                },
+                "singleValueSettings": {
+                    "showTrend": true,
+                    "showSparkLine": true,
+                    "linkTileColorToThreshold": true
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:billing.custom_metrics_classic.usage.other_by_entity:splitBy(\"dt.entity.monitored_entity\"):sort(value(auto,descending)):limit(20)/1000):limit(100):names"
+            ]
+        },
+        {
+            "name": "Per 1000 metric datapoints by origin",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2280,
+                "left": 1216,
+                "width": 456,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "metricSelector": "builtin:billing.custom_metrics_classic.usage.fullstack_hosts:splitBy():sort(value(auto,descending)):limit(100) / 1000",
+                    "rate": "NONE",
+                    "enabled": true
+                },
+                {
+                    "id": "B",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "metricSelector": "builtin:billing.custom_metrics_classic.usage.infrastructure_hosts:splitBy():sort(value(auto,descending)):limit(100) / 1000",
+                    "rate": "NONE",
+                    "enabled": true
+                },
+                {
+                    "id": "C",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "metricSelector": "builtin:billing.custom_metrics_classic.usage.other:splitBy():sort(value(auto,descending)):limit(100) / 1000",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "STACKED_COLUMN",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "GREEN",
+                            "seriesType": "STACKED_COLUMN",
+                            "alias": "full-stack"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "B:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "YELLOW",
+                            "seriesType": "STACKED_COLUMN",
+                            "alias": "infrastructure"
+                        },
+                        "seriesOverrides": []
+                    },
+                    {
+                        "matcher": "C:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "BLUE",
+                            "seriesType": "STACKED_COLUMN",
+                            "alias": "other"
+                        },
+                        "seriesOverrides": [
+                            {
+                                "name": "builtin:billing.custom_metrics_classic.usage.other:splitBy():sort(value(auto,descending)):limit(100)/1000",
+                                "color": "#048855"
+                            }
+                        ]
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A",
+                                "B",
+                                "C"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE",
+                    "showLabels": false
+                },
+                "singleValueSettings": {
+                    "showTrend": true,
+                    "showSparkLine": true,
+                    "linkTileColorToThreshold": true
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": "1h"
+            },
+            "metricExpressions": [
+                "resolution=1h&(builtin:billing.custom_metrics_classic.usage.fullstack_hosts:splitBy():sort(value(auto,descending)):limit(100)/1000):limit(100):names,(builtin:billing.custom_metrics_classic.usage.infrastructure_hosts:splitBy():sort(value(auto,descending)):limit(100)/1000):limit(100):names,(builtin:billing.custom_metrics_classic.usage.other:splitBy():sort(value(auto,descending)):limit(100)/1000):limit(100):names"
+            ]
+        },
+        {
+            "name": "Markdown",
+            "tileType": "MARKDOWN",
+            "configured": true,
+            "bounds": {
+                "top": 2584,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "markdown": "### Log Monitoring Classic\n\n[Documentation](https://www.dynatrace.com/support/help/shortlink/dps-platform-extensions#log-monitoring-classic)"
+        },
+        {
+            "name": "Per 1000 log records",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2584,
+                "left": 304,
+                "width": 456,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "metricSelector": "builtin:billing.log_monitoring_classic.usage:splitBy():sort(value(auto,descending)):limit(20) / 1000",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "STACKED_COLUMN",
+                "global": {
+                    "hideLegend": true
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "GREEN",
+                            "seriesType": "STACKED_COLUMN"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE",
+                    "showLabels": false
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": "1h"
+            },
+            "metricExpressions": [
+                "resolution=1h&(builtin:billing.log_monitoring_classic.usage:splitBy():sort(value(auto,descending)):limit(20)/1000):limit(100):names"
+            ]
+        },
+        {
+            "name": "Per 1000 log records by logpath",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2584,
+                "left": 760,
+                "width": 912,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "log_path"
+                    ],
+                    "metricSelector": "builtin:billing.log_monitoring_classic.usage_by_log_path:splitBy(\"log_path\"):sort(value(auto,descending)):limit(20) / 1000\n",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "GREEN",
+                            "seriesType": "STACKED_COLUMN"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE",
+                    "showLabels": false
+                },
+                "singleValueSettings": {
+                    "showTrend": true,
+                    "showSparkLine": true,
+                    "linkTileColorToThreshold": true
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:billing.log_monitoring_classic.usage_by_log_path:splitBy(log_path):sort(value(auto,descending)):limit(20)/1000):limit(100):names"
+            ]
+        },
+        {
+            "name": "Markdown",
+            "tileType": "MARKDOWN",
+            "configured": true,
+            "bounds": {
+                "top": 2888,
+                "left": 0,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "markdown": "### Custom Events Classic\n\n[Documentation](https://www.dynatrace.com/support/help/shortlink/dps-platform-extensions#custom-events-classic)"
+        },
+        {
+            "name": "Per 1000 custom events",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2888,
+                "left": 304,
+                "width": 456,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [],
+                    "metricSelector": "builtin:billing.custom_events_classic.usage:splitBy():sort(value(auto,descending)):limit(20) / 1000",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "STACKED_COLUMN",
+                "global": {
+                    "hideLegend": true
+                },
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "GREEN",
+                            "seriesType": "STACKED_COLUMN"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE",
+                    "showLabels": false
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": "1h"
+            },
+            "metricExpressions": [
+                "resolution=1h&(builtin:billing.custom_events_classic.usage:splitBy():sort(value(auto,descending)):limit(20)/1000):limit(100):names"
+            ]
+        },
+        {
+            "name": "Per 1000 custom events by entity",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 2888,
+                "left": 760,
+                "width": 912,
+                "height": 304
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "customName": "Data explorer results",
+            "queries": [
+                {
+                    "id": "A",
+                    "spaceAggregation": "AUTO",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.monitored_entity"
+                    ],
+                    "metricSelector": "builtin:billing.custom_events_classic.usage_by_entity:splitBy(\"dt.entity.monitored_entity\"):sort(value(auto,descending)):limit(20) / 1000\n",
+                    "rate": "NONE",
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "TOP_LIST",
+                "global": {},
+                "rules": [
+                    {
+                        "matcher": "A:",
+                        "unitTransform": "auto",
+                        "valueFormat": "auto",
+                        "properties": {
+                            "color": "GREEN",
+                            "seriesType": "STACKED_COLUMN"
+                        },
+                        "seriesOverrides": []
+                    }
+                ],
+                "axes": {
+                    "xAxis": {
+                        "visible": true
+                    },
+                    "yAxes": []
+                },
+                "heatmapSettings": {
+                    "yAxis": "VALUE",
+                    "showLabels": false
+                },
+                "singleValueSettings": {
+                    "showTrend": true,
+                    "showSparkLine": true,
+                    "linkTileColorToThreshold": true
+                },
+                "thresholds": [
+                    {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ],
+                        "visible": true
+                    }
+                ],
+                "tableSettings": {
+                    "hiddenColumns": []
+                },
+                "graphChartSettings": {
+                    "connectNulls": false
+                },
+                "honeycombSettings": {
+                    "showHive": true,
+                    "showLegend": true,
+                    "showLabels": false
+                }
+            },
+            "queriesSettings": {
+                "resolution": ""
+            },
+            "metricExpressions": [
+                "resolution=Inf&(builtin:billing.custom_events_classic.usage_by_entity:splitBy(\"dt.entity.monitored_entity\"):sort(value(auto,descending)):limit(20)/1000):limit(100):names"
+            ]
+        },
+        {
+            "name": "Markdown",
+            "tileType": "MARKDOWN",
+            "configured": true,
+            "bounds": {
+                "top": 3192,
+                "left": 0,
+                "width": 988,
+                "height": 228
+            },
+            "tileFilter": {},
+            "isAutoRefreshDisabled": false,
+            "markdown": "## Notes\nThe [Dynatrace Platform Subscription (DPS)](https://docs.dynatrace.com/docs/shortlink/dynatrace-platform-subscription) offers a range of built-in [billing metrics](https://docs.dynatrace.com/docs/shortlink/built-in-metrics#billing) to help understand and analyze the consumption of all Dynatrace (DPS) capabilities. The fastest way to find all available DPS billing metrics in  the Data explorer is to type \"DPS\" into the search field. \n\nThis dashboard shows some of the available metrics and included dimensions. It was cloned from the Dynatrace-owned \n\"[DPS Usage Details DEMO](#dashboard;id=c4644591-ee8d-4bc2-8e50-d921344fe255)\" dashboard.  \n\nPlease note, that these DPS billing metrics are also available, even if Dynatrace runs on [classic licensing](https://docs.dynatrace.com/docs/shortlink/monitoring-consumption-classic). In this case, these metrics provide insights to which usage the utilization of Dynatrace would have led in the DPS license model."
+        }
+    ]
+}

@@ -3,11 +3,11 @@
         "configurationVersions": [
             3
         ],
-        "clusterVersion": "1.339.49.20260528-000137"
+        "clusterVersion": "1.341.52.20260625-194749"
     },
     "id": "aaaaaaaa-bbbb-cccc-dddd-000000000024",
     "dashboardMetadata": {
-        "name": "AWS SNS",
+        "name": "AWS S3",
         "shared": false,
         "owner": "nobody@example.com",
         "sharingDetails": {
@@ -27,7 +27,7 @@
     },
     "tiles": [
         {
-            "name": "NumberOfMessagesPublished Sum",
+            "name": "4xxErrors (by FilterId)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -37,11 +37,11 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "NumberOfMessagesPublished Sum",
+            "customName": "4xxErrors (by FilterId)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.sns.numberOfMessagesPublishedSum",
+                    "metric": "ext:cloud.aws.s3.\"4xxErrorsByFilterId\"",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
@@ -98,7 +98,7 @@
             }
         },
         {
-            "name": "NumberOfNotificationsDelivered Sum",
+            "name": "5xxErrors (by FilterId)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -108,11 +108,11 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "NumberOfNotificationsDelivered Sum",
+            "customName": "5xxErrors (by FilterId)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.sns.numberOfNotificationsDeliveredSum",
+                    "metric": "ext:cloud.aws.s3.\"5xxErrorsByFilterId\"",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [
@@ -169,7 +169,7 @@
             }
         },
         {
-            "name": "NumberOfNotificationsFailed Sum",
+            "name": "AllRequests Sum (by FilterId)",
             "tileType": "DATA_EXPLORER",
             "configured": true,
             "bounds": {
@@ -179,11 +179,224 @@
                 "height": 304
             },
             "tileFilter": {},
-            "customName": "NumberOfNotificationsFailed Sum",
+            "customName": "AllRequests Sum (by FilterId)",
             "queries": [
                 {
                     "id": "A",
-                    "metric": "ext:cloud.aws.sns.numberOfNotificationsFailedSum",
+                    "metric": "ext:cloud.aws.s3.allRequestsSumByFilterId",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "BytesDownloaded (by FilterId)",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 912,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "BytesDownloaded (by FilterId)",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.aws.s3.bytesDownloadedByFilterId",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "BytesUploaded (by FilterId)",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 1216,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "BytesUploaded (by FilterId)",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.aws.s3.bytesUploadedByFilterId",
+                    "spaceAggregation": "AVG",
+                    "timeAggregation": "DEFAULT",
+                    "splitBy": [
+                        "dt.entity.custom_device"
+                    ],
+                    "filterBy": {
+                        "filterOperator": "AND",
+                        "nestedFilters": [],
+                        "criteria": []
+                    },
+                    "enabled": true
+                }
+            ],
+            "visualConfig": {
+                "type": "GRAPH_CHART",
+                "global": {
+                    "theme": "DEFAULT",
+                    "threshold": {
+                        "axisTarget": "LEFT",
+                        "rules": [
+                            {
+                                "color": "#7dc540"
+                            },
+                            {
+                                "color": "#f5d30f"
+                            },
+                            {
+                                "color": "#dc172a"
+                            }
+                        ]
+                    },
+                    "seriesType": "LINE"
+                },
+                "rules": [],
+                "axes": {
+                    "xAxis": {
+                        "displayName": "",
+                        "visible": true
+                    },
+                    "yAxes": [
+                        {
+                            "displayName": "",
+                            "visible": true,
+                            "min": "AUTO",
+                            "max": "AUTO",
+                            "position": "LEFT",
+                            "queryIds": [
+                                "A"
+                            ],
+                            "defaultAxis": true
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "TotalRequestLatency (by FilterId)",
+            "tileType": "DATA_EXPLORER",
+            "configured": true,
+            "bounds": {
+                "top": 0,
+                "left": 1520,
+                "width": 304,
+                "height": 304
+            },
+            "tileFilter": {},
+            "customName": "TotalRequestLatency (by FilterId)",
+            "queries": [
+                {
+                    "id": "A",
+                    "metric": "ext:cloud.aws.s3.totalRequestLatencyByFilterId",
                     "spaceAggregation": "AVG",
                     "timeAggregation": "DEFAULT",
                     "splitBy": [

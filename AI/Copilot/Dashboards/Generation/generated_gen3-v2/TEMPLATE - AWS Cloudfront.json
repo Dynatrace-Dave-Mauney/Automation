@@ -1,0 +1,52 @@
+{
+  "version": 21,
+  "variables": [],
+  "tiles": {
+    "1": {
+      "type": "data",
+      "title": "Requests Sum (by Region)",
+      "query": "timeseries requests_sum_by_region = avg(cloud.aws.cloudfront.requests_sum_by_region),\n  by: { dt.entity.custom_device }\n| fieldsAdd custom_device_name = entityName(dt.entity.custom_device)\n| sort arrayAvg(requests_sum_by_region) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "custom_device_name"
+          ]
+        }
+      }
+    },
+    "2": {
+      "type": "data",
+      "title": "TotalErrorRate Average (by Region)",
+      "query": "timeseries total_error_rate_average_by_region = avg(cloud.aws.cloudfront.total_error_rate_average_by_region),\n  by: { dt.entity.custom_device }\n| fieldsAdd custom_device_name = entityName(dt.entity.custom_device)\n| sort arrayAvg(total_error_rate_average_by_region) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        },
+        "dataMapping": {
+          "displayedFields": [
+            "custom_device_name"
+          ]
+        }
+      }
+    }
+  },
+  "layouts": {
+    "1": {
+      "x": 0,
+      "y": 0,
+      "w": 12,
+      "h": 8
+    },
+    "2": {
+      "x": 12,
+      "y": 0,
+      "w": 12,
+      "h": 8
+    }
+  }
+}

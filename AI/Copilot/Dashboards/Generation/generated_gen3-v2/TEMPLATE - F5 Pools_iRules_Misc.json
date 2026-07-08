@@ -1,0 +1,412 @@
+{
+  "version": 21,
+  "variables": [],
+  "tiles": {
+    "1": {
+      "type": "markdown",
+      "content": "Pools"
+    },
+    "2": {
+      "type": "data",
+      "title": "Current sessions",
+      "query": "timeseries sessions = avg(com.dynatrace.extension.f5.bigip.pool.stat.cur.sessions),\n  by: { dt.entity.f5:pool }\n| fieldsAdd f5:pool_name = entityName(dt.entity.f5:pool)\n| sort arrayAvg(sessions) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    },
+    "3": {
+      "type": "data",
+      "title": "Active members",
+      "query": "timeseries cnt = avg(com.dynatrace.extension.f5.bigip.pool.active.member.cnt),\n  by: { dt.entity.f5:pool }\n| fieldsAdd f5:pool_name = entityName(dt.entity.f5:pool)\n| sort arrayAvg(cnt) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    },
+    "4": {
+      "type": "data",
+      "title": "Members",
+      "query": "timeseries cnt = avg(com.dynatrace.extension.f5.bigip.pool.member.cnt),\n  by: { dt.entity.f5:pool }\n| fieldsAdd f5:pool_name = entityName(dt.entity.f5:pool)\n| sort arrayAvg(cnt) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    },
+    "5": {
+      "type": "markdown",
+      "content": "iRules"
+    },
+    "6": {
+      "type": "data",
+      "title": "Executions",
+      "query": "timeseries count = avg(com.dynatrace.extension.f5.bigip.rule.event.stat.total.executions.count),\n  by: { dt.entity.f5:rule }\n| fieldsAdd f5:rule_name = entityName(dt.entity.f5:rule)\n| sort arrayAvg(count) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    },
+    "7": {
+      "type": "data",
+      "title": "Failures",
+      "query": "timeseries count = avg(com.dynatrace.extension.f5.bigip.rule.event.stat.failures.count),\n  by: { dt.entity.f5:rule }\n| fieldsAdd f5:rule_name = entityName(dt.entity.f5:rule)\n| sort arrayAvg(count) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    },
+    "8": {
+      "type": "data",
+      "title": "Aborts",
+      "query": "timeseries count = avg(com.dynatrace.extension.f5.bigip.rule.event.stat.aborts.count),\n  by: { dt.entity.f5:rule }\n| fieldsAdd f5:rule_name = entityName(dt.entity.f5:rule)\n| sort arrayAvg(count) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    },
+    "9": {
+      "type": "markdown",
+      "content": "Miscellaneous"
+    },
+    "10": {
+      "type": "data",
+      "title": "Incoming errors",
+      "query": "timeseries count = avg(com.dynatrace.extension.f5.bigip.sys.interface.stat.errors.in.count),\n  by: { dt.entity.f5:interface }\n| fieldsAdd f5:interface_name = entityName(dt.entity.f5:interface)\n| sort arrayAvg(count) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    },
+    "11": {
+      "type": "data",
+      "title": "Outgoing errors",
+      "query": "timeseries count = avg(com.dynatrace.extension.f5.bigip.sys.interface.stat.errors.out.count),\n  by: { dt.entity.f5:interface }\n| fieldsAdd f5:interface_name = entityName(dt.entity.f5:interface)\n| sort arrayAvg(count) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    },
+    "12": {
+      "type": "data",
+      "title": "Fatal alerts",
+      "query": "timeseries count = avg(com.dynatrace.extension.f5.bigip.profile.server.ssl.stat.fatal.alerts.count),\n  by: { dt.entity.f5:profile }\n| fieldsAdd f5:profile_name = entityName(dt.entity.f5:profile)\n| sort arrayAvg(count) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    },
+    "13": {
+      "type": "data",
+      "title": "Fatal alerts",
+      "query": "timeseries count = avg(com.dynatrace.extension.f5.bigip.profile.client.ssl.stat.fatal.alerts.count),\n  by: { dt.entity.f5:profile }\n| fieldsAdd f5:profile_name = entityName(dt.entity.f5:profile)\n| sort arrayAvg(count) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    },
+    "14": {
+      "type": "data",
+      "title": "Pool state",
+      "query": "timeseries state = avg(com.dynatrace.extension.f5.bigip.pool.state),\n  by: { dt.entity.f5:pool }\n| fieldsAdd f5:pool_name = entityName(dt.entity.f5:pool)\n| sort arrayAvg(state) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    },
+    "15": {
+      "type": "data",
+      "title": "Pool Member state",
+      "query": "timeseries state = avg(com.dynatrace.extension.f5.bigip.pool_member.state),\n  by: { dt.entity.f5:pool:member }\n| fieldsAdd f5:pool:member_name = entityName(dt.entity.f5:pool:member)\n| sort arrayAvg(state) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    },
+    "16": {
+      "type": "data",
+      "title": "Virtual server state",
+      "query": "timeseries state = avg(com.dynatrace.extension.f5.bigip.virtualserver.state),\n  by: { dt.entity.f5:virtualserver }\n| fieldsAdd f5:virtualserver_name = entityName(dt.entity.f5:virtualserver)\n| sort arrayAvg(state) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    },
+    "17": {
+      "type": "data",
+      "title": "Status",
+      "query": "timeseries status = avg(com.dynatrace.extension.f5.bigip.sys.interface.status),\n  by: { dt.entity.f5:interface }\n| fieldsAdd f5:interface_name = entityName(dt.entity.f5:interface)\n| sort arrayAvg(status) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    },
+    "18": {
+      "type": "data",
+      "title": "Failover and Sync status",
+      "query": "timeseries state = avg(com.dynatrace.extension.f5.bigip.sys.cm.state),\n  by: { dt.entity.f5:instance }\n| fieldsAdd f5:instance_name = entityName(dt.entity.f5:instance)\n| sort arrayAvg(state) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    },
+    "19": {
+      "type": "data",
+      "title": "Monitor status",
+      "query": "timeseries status = avg(com.dynatrace.extension.f5.bigip.pool_member.monitor.status),\n  by: { dt.entity.f5:pool:member }\n| fieldsAdd f5:pool:member_name = entityName(dt.entity.f5:pool:member)\n| sort arrayAvg(status) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    },
+    "20": {
+      "type": "data",
+      "title": "Accepted syn cookies",
+      "query": "timeseries count = avg(com.dynatrace.extension.f5.bigip.virtualserver.stat.wl.syncookie.accepts.count),\n  by: { dt.entity.f5:virtualserver }\n| fieldsAdd f5:virtualserver_name = entityName(dt.entity.f5:virtualserver)\n| sort arrayAvg(count) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    },
+    "21": {
+      "type": "data",
+      "title": "Rejected syn cookies",
+      "query": "timeseries count = avg(com.dynatrace.extension.f5.bigip.virtualserver.stat.wl.syncookie.rejects.count),\n  by: { dt.entity.f5:virtualserver }\n| fieldsAdd f5:virtualserver_name = entityName(dt.entity.f5:virtualserver)\n| sort arrayAvg(count) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    },
+    "22": {
+      "type": "data",
+      "title": "Bytes received",
+      "query": "timeseries count = avg(com.dynatrace.extension.f5.bigip.pool_member.stat.server.bytes.in.count),\n  by: { dt.entity.f5:pool:member }\n| fieldsAdd f5:pool:member_name = entityName(dt.entity.f5:pool:member)\n| sort arrayAvg(count) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    },
+    "23": {
+      "type": "data",
+      "title": "Bytes transmitted",
+      "query": "timeseries count = avg(com.dynatrace.extension.f5.bigip.pool_member.stat.server.bytes.out.count),\n  by: { dt.entity.f5:pool:member }\n| fieldsAdd f5:pool:member_name = entityName(dt.entity.f5:pool:member)\n| sort arrayAvg(count) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    },
+    "24": {
+      "type": "data",
+      "title": "Packets received",
+      "query": "timeseries count = avg(com.dynatrace.extension.f5.bigip.pool_member.stat.server.pkts.in.count),\n  by: { dt.entity.f5:pool:member }\n| fieldsAdd f5:pool:member_name = entityName(dt.entity.f5:pool:member)\n| sort arrayAvg(count) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    },
+    "25": {
+      "type": "data",
+      "title": "Packets transmitted",
+      "query": "timeseries count = avg(com.dynatrace.extension.f5.bigip.pool_member.stat.server.pkts.out.count),\n  by: { dt.entity.f5:pool:member }\n| fieldsAdd f5:pool:member_name = entityName(dt.entity.f5:pool:member)\n| sort arrayAvg(count) desc\n| limit 20",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "legend": {
+          "hidden": true
+        }
+      }
+    }
+  },
+  "layouts": {
+    "1": {
+      "x": 0,
+      "y": 0,
+      "w": 24,
+      "h": 1
+    },
+    "2": {
+      "x": 0,
+      "y": 1,
+      "w": 8,
+      "h": 8
+    },
+    "3": {
+      "x": 8,
+      "y": 1,
+      "w": 8,
+      "h": 8
+    },
+    "4": {
+      "x": 16,
+      "y": 1,
+      "w": 8,
+      "h": 8
+    },
+    "5": {
+      "x": 0,
+      "y": 9,
+      "w": 24,
+      "h": 1
+    },
+    "6": {
+      "x": 0,
+      "y": 10,
+      "w": 8,
+      "h": 8
+    },
+    "7": {
+      "x": 8,
+      "y": 10,
+      "w": 8,
+      "h": 8
+    },
+    "8": {
+      "x": 16,
+      "y": 10,
+      "w": 8,
+      "h": 8
+    },
+    "9": {
+      "x": 0,
+      "y": 18,
+      "w": 24,
+      "h": 1
+    },
+    "10": {
+      "x": 0,
+      "y": 19,
+      "w": 6,
+      "h": 8
+    },
+    "11": {
+      "x": 6,
+      "y": 19,
+      "w": 6,
+      "h": 8
+    },
+    "12": {
+      "x": 12,
+      "y": 19,
+      "w": 6,
+      "h": 8
+    },
+    "13": {
+      "x": 18,
+      "y": 19,
+      "w": 6,
+      "h": 8
+    },
+    "14": {
+      "x": 0,
+      "y": 27,
+      "w": 6,
+      "h": 8
+    },
+    "15": {
+      "x": 6,
+      "y": 27,
+      "w": 6,
+      "h": 8
+    },
+    "16": {
+      "x": 12,
+      "y": 27,
+      "w": 6,
+      "h": 8
+    },
+    "17": {
+      "x": 18,
+      "y": 27,
+      "w": 6,
+      "h": 8
+    },
+    "18": {
+      "x": 0,
+      "y": 35,
+      "w": 6,
+      "h": 8
+    },
+    "19": {
+      "x": 6,
+      "y": 35,
+      "w": 6,
+      "h": 8
+    },
+    "20": {
+      "x": 12,
+      "y": 35,
+      "w": 6,
+      "h": 8
+    },
+    "21": {
+      "x": 18,
+      "y": 35,
+      "w": 6,
+      "h": 8
+    },
+    "22": {
+      "x": 0,
+      "y": 43,
+      "w": 6,
+      "h": 8
+    },
+    "23": {
+      "x": 6,
+      "y": 43,
+      "w": 6,
+      "h": 8
+    },
+    "24": {
+      "x": 12,
+      "y": 43,
+      "w": 6,
+      "h": 8
+    },
+    "25": {
+      "x": 18,
+      "y": 43,
+      "w": 6,
+      "h": 8
+    }
+  }
+}
