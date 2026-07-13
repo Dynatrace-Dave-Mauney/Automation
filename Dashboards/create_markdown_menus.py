@@ -22,7 +22,6 @@ selected_dashboards = [
     'Custom Devices',
     'Detailed Drilldowns Menu',
     'Disk Extension',
-    'Dynatrace Self-Monitoring: Home',
     'Dynatrace-owned Dashboards',
     'F5 - Home',
     'Full Stack Overview',

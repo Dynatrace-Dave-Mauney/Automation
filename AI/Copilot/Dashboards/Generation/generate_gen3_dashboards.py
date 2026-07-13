@@ -82,11 +82,16 @@ MARKDOWN_TILE_HEIGHT = 1
 EFFECTIVE_MAX_TILES_PER_ROW = min(REQUESTED_MAX_TILES_PER_ROW, GRID_WIDTH // MIN_TILE_WIDTH)
 
 # DEBUG:
-DEFAULT_INPUT = Path("input_json")
+# DEFAULT_INPUT = Path("input_json")
 # DEFAULT_INPUT = Path("input_json_testing-v1")
 # DEFAULT_INPUT = Path("input_json_testing-v4")
+DEFAULT_INPUT = Path("../../../../Dashboards/Templates/Overview")
 DEFAULT_OUTPUT_DIR = Path("generated_gen3")
 DEFAULT_MAPPING_FILE = Path("../../Metrics/Conversion/classic_metric_to_grail_metric.yaml")
+
+unsupported_tile_types_encountered = []
+unsupported_visual_config_types_encountered = []
+dashboard_names_encountered = []
 
 
 # =============================================================================
@@ -293,7 +298,6 @@ def is_top_list(tile: Mapping[str, Any]) -> bool:
 
 def extract_classic_queries(tile: Mapping[str, Any]) -> List[Dict[str, Any]]:
     # print('DEBUG:', 'extract_classic_queries: starting...')
-    #
     # print('DEBUG:', 'extract_classic_queries: tile:', tile)
 
     queries = tile.get("queries")
@@ -307,7 +311,7 @@ def extract_classic_queries(tile: Mapping[str, Any]) -> List[Dict[str, Any]]:
         # print('DEBUG:', 'extract_classic_queries: returning result:', result)
         return result
 
-    print('DEBUG:', 'extract_classic_queries: queries2:', queries)
+    # print('DEBUG:', 'extract_classic_queries: queries2:', queries)
 
     filter_config = tile.get("filterConfig") or {}
     chart_config = filter_config.get("chartConfig") or {}
@@ -472,6 +476,22 @@ def categorical_bar_chart_settings() -> Dict[str, Any]:
         "isCategoryLabelVisible": False
     }
 
+    return {
+        "chartSettings": {
+            "categoricalBarChartSettings": {
+                "isCategoryLabelVisible": false,
+                "categoryAxis": [
+                    "process_group_instance_name"
+                ],
+                "isValueLabelVisible": false
+            },
+            "legend": {
+                "hidden": true
+            }
+        }
+
+    }
+
 
 def line_chart_settings() -> Dict[str, Any]:
     return {
@@ -631,7 +651,7 @@ def data_tile_from_classic(
         return values
 
     def extract_selector_from_metric_expression(expression):
-        print('DEBUG: extract_selector_from_metric_expression:', expression)
+        # print('DEBUG: extract_selector_from_metric_expression:', expression)
         """
         Handles classic metricExpressions like:
 
@@ -843,7 +863,7 @@ def data_tile_from_classic(
                         .replace(".", "_")
                         + "_name"
                 )
-                print('DEBUG: make_dql_from_metric_selector fields add...')
+                # print('DEBUG: make_dql_from_metric_selector fields add...')
                 lines.append(f"| fieldsAdd {name_field} = entityName({dimension})")
 
         if sort_aggregation or limit is not None:
@@ -872,7 +892,7 @@ def data_tile_from_classic(
     # print('DEBUG:', 'data_tile_from_classic')
 
     metric_selector = metric_selector_for_tile()
-    print('DEBUG: metric_selector:', metric_selector)
+    # print('DEBUG: metric_selector:', metric_selector)
 
     if metric_selector:
         grail_metric, dql, selector_is_top_list = make_dql_from_metric_selector(
@@ -896,7 +916,8 @@ def data_tile_from_classic(
         }
 
         if top_list:
-            out["visualizationSettings"] = categorical_bar_chart_settings()
+            pass
+            # out["visualizationSettings"] = categorical_bar_chart_settings()
         elif not omit_line_chart_settings:
             out["visualizationSettings"] = line_chart_settings()
 
@@ -931,7 +952,8 @@ def data_tile_from_classic(
     }
 
     if top_list:
-        out["visualizationSettings"] = categorical_bar_chart_settings()
+        pass
+        # out["visualizationSettings"] = categorical_bar_chart_settings()
     elif not omit_line_chart_settings:
         out["visualizationSettings"] = line_chart_settings()
 
@@ -1136,15 +1158,19 @@ def convert_dashboard(
             continue
 
         tile_type = classic_tile.get('tileType')
-        print('DEBUG: tile_type:', tile_type)
+        # print('DEBUG: tile_type:', tile_type)
         if tile_type not in ['DATA_EXPLORER', 'HEADER', 'MARKDOWN']:
-            print('DEBUG: Skipping unsupported tile type:', tile_type)
+            # print('DEBUG: Skipping unsupported tile type:', tile_type)
+            if tile_type not in unsupported_tile_types_encountered:
+                unsupported_tile_types_encountered.append(tile_type)
             continue
 
         if tile_type == 'DATA_EXPLORER':
             visual_config_type = classic_tile.get('visualConfig', {}).get('type')
             if visual_config_type not in ['GRAPH_CHART', 'TOP_LIST']:
-                print('DEBUG: Skipping unsupported tile visual config type:', visual_config_type)
+                # print('DEBUG: Skipping unsupported tile visual config type:', visual_config_type)
+                if visual_config_type not in unsupported_visual_config_types_encountered:
+                    unsupported_visual_config_types_encountered.append(visual_config_type)
                 continue
 
         if is_markdown_like(classic_tile):
@@ -1194,6 +1220,11 @@ def output_file_name(classic_dashboard: Mapping[str, Any], source_path: Path) ->
     name = dashboard_name(classic_dashboard, source_path.stem)
     name = name.replace(':', ' -')
     name = re.sub(r"[\\/:*?\"<>|]+", "_", name).strip() or source_path.stem
+
+    if name not in dashboard_names_encountered:
+        dashboard_names_encountered.append(name)
+    else:
+        print(f'Duplicate dashboard file name: {name}')
     return f"{name}.json"
 
 
@@ -1249,9 +1280,9 @@ def finalize_generated_dashboard(generated):
     # print('DEBUG: generated:', generated)
     finalized_generated_dashboard = copy.deepcopy(generated)
 
-    field_name = None
     tiles = generated.get('tiles')
     for tile_key in tiles.keys():
+        field_name = None
         # print(tiles[tile_key])
         visualization = tiles[tile_key].get('visualization', {})
         # print('DEBUG: visualization:', visualization)
@@ -1261,7 +1292,9 @@ def finalize_generated_dashboard(generated):
             match = re.search(r"fieldsAdd\s+(\w+)\s+=", query)
             if match:
                 field_name = match.group(1)
-                # print('DEBUG: field_name:', field_name)
+                print('DEBUG: field_name:', field_name, query)
+            else:
+                print('DEBUG: no match for', query, field_name)
 
         visualization_settings = tiles[tile_key].get('visualizationSettings', {})
         # print('DEBUG: visualization_settings:', visualization_settings)
@@ -1275,6 +1308,12 @@ def finalize_generated_dashboard(generated):
             chart_settings["categoricalBarChartSettings"]["categoryAxis"] = [field_name]
             visualization_settings["chartSettings"] = chart_settings
             # print('DEBUG: visualization_settings2:', visualization_settings)
+
+            # TESTING
+            chart_settings["categoricalBarChartSettings"]["isCategoryLabelVisible"] = False
+            chart_settings["categoricalBarChartSettings"]["isValueLabelVisible"] = False
+            chart_settings["legend"] = {"hidden": True}
+
             finalized_generated_dashboard["tiles"][tile_key]["visualizationSettings"] = visualization_settings
         else:
             if field_name and visualization == 'lineChart' and not data_mapping:
@@ -1288,6 +1327,9 @@ def finalize_generated_dashboard(generated):
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
+    global unsupported_tile_types_encountered
+    global unsupported_visual_config_types_encountered
+
     args = parse_args(argv)
     metric_map = build_metric_map(load_yaml(args.metric_map))
     args.output_dir.mkdir(parents=True, exist_ok=True)
@@ -1295,12 +1337,23 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     count = 0
     wrote_count = 0
     for source_path in iter_json_files(args.input):
+        if 'markdown' in source_path.stem:
+            continue
+        if '-v' in source_path.stem:
+            continue
+
+        # TESTING
+        if source_path.stem != '00000000-dddd-bbbb-ffff-000000001008':
+            continue
+        else:
+            print('Processing test file!')
+
         classic_dashboard = load_json(source_path)
 
         classic_dashboard_id = classic_dashboard['id']
         classic_dashboard_name = classic_dashboard['dashboardMetadata']['name']
 
-        print('DEBUG: main: dashboard id:', classic_dashboard_id)
+        # print('DEBUG: main: dashboard id:', classic_dashboard_id)
 
         if args.fail_on_unmapped:
             missing = find_unmapped_metrics(classic_dashboard, metric_map)
@@ -1315,19 +1368,29 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         )
 
         tiles = generated.get("tiles")
-        print('DEBUG: tiles', tiles)
+        # print('DEBUG: tiles', tiles)
         if count_non_markdown_tiles(tiles) == 0:
-            print(f'Skipping dashboard "{classic_dashboard_name}" ({classic_dashboard_id}) with no non-markdown tiles')
+            pass
+            # print(f'Skipping dashboard "{classic_dashboard_name}" ({classic_dashboard_id}) with no non-markdown tiles')
         else:
             finalized_generated = finalize_generated_dashboard(generated)
             output_path = args.output_dir / output_file_name(classic_dashboard, source_path)
             # write_json(output_path, generated)
             write_json(output_path, finalized_generated)
             # print(f"Wrote {output_path} ({len(generated['tiles'])} tiles)")
-            print(f"Wrote {output_path} ({len(finalized_generated['tiles'])} tiles)")
+            # print(f"Wrote {output_path} ({len(finalized_generated['tiles'])} tiles)")
             wrote_count += 1
 
         count += 1
+
+    print('Unsupported Tile Types Encountered:')
+    for unsupported_tile_type in sorted(unsupported_tile_types_encountered):
+        print(unsupported_tile_type)
+
+    print('')
+    print('Unsupported Vusual Config Types Encountered:')
+    for unsupported_visual_config_type in sorted(unsupported_visual_config_types_encountered):
+        print(unsupported_visual_config_type)
 
     print(f"Processed {count} dashboard file(s)")
     print(f"Wrote {wrote_count} dashboard file(s)")
