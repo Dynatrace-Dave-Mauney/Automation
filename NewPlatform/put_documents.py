@@ -37,7 +37,7 @@ def run():
     # put_documents('Prod', '../$Private/Customers/$Current/NewPlatform/Dashboards/Prod *.json')
     # put_documents('Prod', '../$Private/Customers/$Current/NewPlatform/Launchpads/Dynatrace User Launchpad.json')
 
-    # put_documents(env, f'../AI/Copilot/Dashboards/Generation/generated_gen3/TEMPLATE - *.json')
+    put_documents(env, f'../AI/Copilot/Dashboards/Generation/generated_gen3/TEMPLATE - *.json')
     # put_documents(env, f'../AI/Copilot/Dashboards/Generation/generated_gen3/TEMPLATE - AWS API Gateway.json')
 
     # REFERENCE

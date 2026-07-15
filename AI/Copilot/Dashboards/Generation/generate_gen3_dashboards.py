@@ -105,6 +105,7 @@ def load_json(path: Path) -> Dict[str, Any]:
 
 
 def write_json(path: Path, payload: Mapping[str, Any]) -> None:
+    print('Writing', path)
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8") as handle:
         json.dump(payload, handle, indent=2, ensure_ascii=False)
@@ -1343,10 +1344,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             continue
 
         # TESTING
-        if source_path.stem != '00000000-dddd-bbbb-ffff-000000001008':
-            continue
-        else:
-            print('Processing test file!')
+        # if source_path.stem != '00000000-dddd-bbbb-ffff-000000001008':
+        #     continue
+        # else:
+        #     print('Processing test file!')
 
         classic_dashboard = load_json(source_path)
 
