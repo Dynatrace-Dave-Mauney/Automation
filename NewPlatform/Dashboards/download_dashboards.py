@@ -15,7 +15,7 @@ def process(env, env_name, client_id, client_secret):
     my_owner_ids = environment.get_configuration('my_owner_ids', configuration_file=configuration_file)
 
     # To get all...
-    # my_owner_ids = None
+    my_owner_ids = None
 
     if my_owner_ids:
         print('Downloading documents owned by:', my_owner_ids)
@@ -32,6 +32,32 @@ def process(env, env_name, client_id, client_secret):
     results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents', params=params)
     documents_json = json.loads(results.text)
     document_list = documents_json.get('documents')
+
+    next_page_key = documents_json.get('nextPageKey')
+    while next_page_key:
+        oauth_bearer_token = new_platform_api.get_oauth_bearer_token(client_id, client_secret, scope)
+        params = {'page-size': 1000, 'page-key': next_page_key}
+        results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents', params=params)
+        documents_json = json.loads(results.text)
+        document_list.extend(documents_json.get('documents'))
+        next_page_key = documents_json.get('nextPageKey')
+
+    # print('Documents:', len(document_list))
+    #
+    # alpha_list = []
+    # for document in document_list:
+    #     document_name = document.get('name')
+    #     if '[splunk]' in document_name.lower():
+    #         if document_name not in alpha_list:
+    #             alpha_list.append(document_name)
+    #
+    # print('Splunk Documents:', len(alpha_list))
+    # for document_name in sorted(alpha_list):
+    #     print(document_name)
+    #
+    # if len(alpha_list) > 0:
+    #     exit(9999)
+
     for document in document_list:
         document_type = document.get('type')
         if document_type == 'dashboard':
@@ -46,12 +72,14 @@ def process(env, env_name, client_id, client_secret):
             document_id = document.get('id')
             document_name = document.get('name')
 
-            if not document_name.startswith('TEMPLATE - '):
+            # if not document_name.startswith('TEMPLATE - '):
+            if '[Splunk]' not in document_name:
                 print(f'Skipping {document_name}')
                 continue
 
             # print(document_type, document_id, document_name)
             # dashboard_results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents/{document_id}/content', None)
+            oauth_bearer_token = new_platform_api.get_oauth_bearer_token(client_id, client_secret, scope)
             dashboard_results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents/{document_id}/content', None)
             dashboard_json = json.loads(dashboard_results.text)
             dashboard_metadata_results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents/{document_id}/metadata', None)
@@ -76,8 +104,8 @@ def main():
     friendly_function_name = 'Dynatrace Automation'
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
-    env_name_supplied = 'Prod'
-    # env_name_supplied = 'NonProd'
+    # env_name_supplied = 'Prod'
+    env_name_supplied = 'NonProd'
     # env_name_supplied = 'Int'
     # env_name_supplied = 'Personal'
     env_name, env, client_id, client_secret = environment.get_client_environment_for_function(env_name_supplied, friendly_function_name)
