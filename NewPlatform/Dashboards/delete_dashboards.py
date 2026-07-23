@@ -6,15 +6,23 @@ from Reuse import new_platform_api
 
 def process(env, client_id, client_secret):
 	scope = 'document:documents:read document:documents:delete'
-
 	oauth_bearer_token = new_platform_api.get_oauth_bearer_token(client_id, client_secret, scope)
 	params = {'page-size': 1000}
 	results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents', params)
 	documents_json = json.loads(results.text)
 	document_list = documents_json.get('documents')
 
+	next_page_key = documents_json.get('nextPageKey')
+	while next_page_key:
+		oauth_bearer_token = new_platform_api.get_oauth_bearer_token(client_id, client_secret, scope)
+		params = {'page-size': 1000, 'page-key': next_page_key}
+		results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents', params=params)
+		documents_json = json.loads(results.text)
+		document_list.extend(documents_json.get('documents'))
+		next_page_key = documents_json.get('nextPageKey')
+
 	count = 0
-	# delete_list = ['f0c29915-7717-4afd-9ed0-a6031fa670cd']
+
 	delete_list = []
 
 	for document in document_list:
@@ -25,44 +33,7 @@ def process(env, client_id, client_secret):
 			document_version = document.get('version')
 			params = {'optimistic-locking-version': document_version}
 
-			# if not document_name.startswith('Tenant'):
-			# if not document_name.startswith('Delete'):
-			# if 'Management Zone' not in document_name:
-			# 	continue
-
-			# dashboards_names_to_delete = [
-			# 	'TEMPLATE 3rd Party XHR Detection',
-			# 	'TEMPLATE AWS Home',
-			# 	'TEMPLATE Administration',
-			# 	'TEMPLATE Application Overview - Home',
-			# 	'TEMPLATE Azure - Home',
-			# 	'TEMPLATE Custom Devices',
-			# 	'TEMPLATE DB2 - Home',
-			# 	'TEMPLATE Detailed Drilldowns Menu',
-			# 	'TEMPLATE Dynatrace Self-Monitoring Home',
-			# 	'TEMPLATE Dynatrace-owned Dashboards',
-			# 	'TEMPLATE F5 - Home',
-			# 	'TEMPLATE Google Cloud - Home',
-			# 	'TEMPLATE Host Units Overview',
-			# 	'TEMPLATE IBM MQ Home',
-			# 	'TEMPLATE IBM WebSphere Home',
-			# 	'TEMPLATE Jetty',
-			# 	'TEMPLATE Kubernetes - Home',
-			# 	'TEMPLATE Microsoft SQL Server - Home',
-			# 	'TEMPLATE Microsoft SQL Server',
-			# 	'TEMPLATE Microsoft SQL Server',
-			# 	'TEMPLATE Oracle Database - Home',
-			# 	'TEMPLATE Redis - Home',
-			# 	'TEMPLATE SOLR',
-			# 	'TEMPLATE Suspicious Activity Audit',
-			# 	'TEMPLATE Tomcat Monitoring',
-			# 	'TEMPLATE WebLogic by Name',
-			# 	'TEMPLATE WebLogic by Process',
-			# ]
-
-			# if 'Veritas' in document_name:
-			if document_name.startswith('TEMPLATE -'):
-			# if document_name in dashboards_names_to_delete:
+			if '[Splunk]' in document_name:
 				delete_list.append(f'{document_name}:{document_id}:{document_version}')
 
 	delete_list = sorted(delete_list)
@@ -81,6 +52,7 @@ def process(env, client_id, client_secret):
 				dashboard_id = line_split[1]
 				dashboard_version = line_split[2]
 				params = f'optimistic-locking-version={dashboard_version}'
+				oauth_bearer_token = new_platform_api.get_oauth_bearer_token(client_id, client_secret, scope)
 				response = new_platform_api.delete(oauth_bearer_token, f'{env}/platform/document/v1/documents/{dashboard_id}', params)
 				if 200 < response.status_code < 300:
 					print(f'DELETED: {line}', response.text, response.status_code, response.reason)

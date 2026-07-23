@@ -13,6 +13,15 @@ def process(env, client_id, client_secret):
 	documents_json = json.loads(results.text)
 	document_list = documents_json.get('documents')
 
+	next_page_key = documents_json.get('nextPageKey')
+	while next_page_key:
+		oauth_bearer_token = new_platform_api.get_oauth_bearer_token(client_id, client_secret, scope)
+		params = {'page-size': 1000, 'page-key': next_page_key}
+		results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents', params=params)
+		documents_json = json.loads(results.text)
+		document_list.extend(documents_json.get('documents'))
+		next_page_key = documents_json.get('nextPageKey')
+
 	count = 0
 	# delete_list = ['f0c29915-7717-4afd-9ed0-a6031fa670cd']
 	delete_list = []
@@ -41,6 +50,7 @@ def process(env, client_id, client_secret):
 				dashboard_id = line_split[1]
 				dashboard_version = line_split[2]
 				params = {'optimistic-locking-version': document_version}
+				oauth_bearer_token = new_platform_api.get_oauth_bearer_token(client_id, client_secret, scope)
 				response = new_platform_api.delete(oauth_bearer_token, f'{env}/platform/document/v1/documents/{dashboard_id}', params)
 				print(f'DELETED: {line}', response.text)
 				count += 1
@@ -52,14 +62,9 @@ def main():
 	friendly_function_name = 'Dynatrace Automation'
 	env_name_supplied = environment.get_env_name(friendly_function_name)
 	# For easy control from IDE
-	# env_name_supplied = 'Upper'
-	# env_name_supplied = 'Lower'
-	# env_name_supplied = 'Sandbox'
-	#
 	# env_name_supplied = 'Prod'
-	# env_name_supplied = 'PreProd'
-	# env_name_supplied = 'Sandbox'
-	# env_name_supplied = 'Dev'
+	env_name_supplied = 'NonProd'
+	# env_name_supplied = 'Int'
 	# env_name_supplied = 'Personal'
 	# env_name_supplied = 'Demo'
 	env_name, env, client_id, client_secret = environment.get_client_environment_for_function(env_name_supplied, friendly_function_name)
