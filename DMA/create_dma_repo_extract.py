@@ -6,14 +6,13 @@ import re
 from json import JSONDecodeError
 from pathlib import Path
 
-# DASHBOARD_REPO_PATH = '../$Private/Customers/$Current/DMA/Repo/Dashboards'
-# NOTEBOOK_REPO_PATH = '../$Private/Customers/$Current/DMA/Repo/Notebooks'
+# DASHBOARD_REPO_PATH = '../$Private/Customers/$Current/DMA/Repo/Dashboards-Testing'
+# NOTEBOOK_REPO_PATH = '../$Private/Customers/$Current/DMA/Repo/Notebooks-Testing'
+# OUTPUT_FILE_NAME = '$DMA_Repo_Extract-Testing.json'
 
-DASHBOARD_REPO_PATH = '../$Private/Customers/$Current/DMA/Repo/Dashboards-Testing'
-NOTEBOOK_REPO_PATH = '../$Private/Customers/$Current/DMA/Repo/Notebooks-Testing'
-
-# OUTPUT_FILE_NAME = '$DMA_Repo_Extract.json'
-OUTPUT_FILE_NAME = '$DMA_Repo_Extract-Testing.json'
+DASHBOARD_REPO_PATH = '../$Private/Customers/$Current/DMA/Repo/Dashboards'
+NOTEBOOK_REPO_PATH = '../$Private/Customers/$Current/DMA/Repo/Notebooks'
+OUTPUT_FILE_NAME = '$DMA_Repo_Extract.json'
 
 include_dashboards = True
 include_notebooks = True
@@ -38,7 +37,7 @@ def process():
 
     dma_extract = {
         'name': 'DMA Repo Extract',
-        'description': 'DMA Repo Documents extract of DQL/SPL and buckets for easier analysis and processing.',
+        'description': 'DMA Repo Documents extract of DQL/SPL and buckets/indexes for easier analysis and processing.',
         'documents': documents
     }
 
@@ -69,8 +68,13 @@ def create_dashboard_extract():
                 normalized_file_stem = file_stem.replace('[Splunk] ', '')
 
                 document_metadata = document_metadata_by_file_stem.get(file_stem)
+
+                # If there is no metadata yet:
+                if not document_metadata:
+                    document_metadata = {'id': 'None',  'name': file_stem, 'type': 'dashboard'}
+
                 document_dict = {
-                    'document_id': document_metadata.get('id'),
+                    'document_id': document_metadata.get('id', 'None'),
                     'document_name': document_metadata.get('name'),
                     'document_type': document_metadata.get('type'),
                     'document_items': [],
@@ -150,6 +154,11 @@ def create_notebook_extract():
                 normalized_file_stem = normalized_file_stem.replace('[SEARCH] - ', '')
 
                 document_metadata = document_metadata_by_file_stem.get(file_stem)
+
+                # If there is no metadata yet:
+                if not document_metadata:
+                    document_metadata = {'id': 'None',  'name': file_stem, 'type': 'notebook'}
+
                 document_dict = {
                     'document_id': document_metadata.get('id'),
                     'document_name': document_metadata.get('name'),
