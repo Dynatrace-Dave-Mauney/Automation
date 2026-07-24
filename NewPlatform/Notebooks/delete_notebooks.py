@@ -32,7 +32,9 @@ def process(env, client_id, client_secret):
 			document_id = document.get('id')
 			document_name = document.get('name')
 			document_version = document.get('version')
-			delete_list.append(f'{document_name}:{document_id}:{document_version}')
+
+			if '[' in document_name:
+				delete_list.append(f'{document_name}:{document_id}:{document_version}')
 
 	delete_list = sorted(delete_list)
 
