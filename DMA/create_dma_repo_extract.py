@@ -10,9 +10,13 @@ from pathlib import Path
 # NOTEBOOK_REPO_PATH = '../$Private/Customers/$Current/DMA/Repo/Notebooks-Testing'
 # OUTPUT_FILE_NAME = '$DMA_Repo_Extract-Testing.json'
 
-DASHBOARD_REPO_PATH = '../$Private/Customers/$Current/DMA/Repo/Dashboards'
-NOTEBOOK_REPO_PATH = '../$Private/Customers/$Current/DMA/Repo/Notebooks'
-OUTPUT_FILE_NAME = '$DMA_Repo_Extract.json'
+# DASHBOARD_REPO_PATH = '../$Private/Customers/$Current/DMA/Repo/Dashboards'
+# NOTEBOOK_REPO_PATH = '../$Private/Customers/$Current/DMA/Repo/Notebooks'
+# OUTPUT_FILE_NAME = '$DMA_Repo_Extract.json'
+
+DASHBOARD_REPO_PATH = '../$Private/Customers/$Current/DMA/Repo-Metadata/Dashboards'
+NOTEBOOK_REPO_PATH = '../$Private/Customers/$Current/DMA/Repo-Metadata/Notebooks'
+OUTPUT_FILE_NAME = '$DMA_Repo_Extract_With_IDs.json'
 
 include_dashboards = True
 include_notebooks = True

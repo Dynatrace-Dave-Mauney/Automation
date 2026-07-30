@@ -31,11 +31,15 @@ def run():
     # post_dashboards(env, f'../$Private/$Output/Dashboards/ClassicConversion/*.json')
     # post_notebooks(env, f'../$Private/Customers/$Current/Assets/NewPlatform/Notebooks/{env}/*.json')
 
-    env='Prod'
+    # env='Prod'
     # env='Int'
-    # env='NonProd'
+    env='NonProd'
 
     # CURRENT CUSTOMER (5/21/2026)
+    # post_dashboards(env, f'../$Private/Customers/$Current/DMA/Repo/Dashboards/*.json')
+    post_notebooks(env, f'../$Private/Customers/$Current/DMA/Repo/Notebooks/*.json')
+    # post_notebooks(env, f'../$Private/Customers/$Current/DMA/Repo/Notebooks/*myAccess Error*.json')
+
     # post_launchpads(env, 'Launchpads/Assets/Dynatrace Architecture and Standards.json')
     # post_dashboards(env, f'Dashboards/Assets/Templates/*.json')
     # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE .NET Monitoring.json')
@@ -50,7 +54,7 @@ def run():
     # post_dashboards(env, f'Dashboards/Assets/Templates/TEMPLATE * By Management Zone.json')
 
     # post_dashboards(env, f'../$Private/$Output/Dashboards/ClassicConversion/*.json')
-    post_dashboards(env, f'../AI/Copilot/Dashboards/Generation/generated_gen3/TEMPLATE - VMw*.json')
+    # post_dashboards(env, f'../AI/Copilot/Dashboards/Generation/generated_gen3/TEMPLATE - VMw*.json')
 
 
 
@@ -103,14 +107,21 @@ def post_notebooks(env_name, path):
 def post_documents(env_name, path, document_type):
     friendly_function_name = 'Dynatrace Automation'
     _, env, client_id, client_secret = environment.get_client_environment_for_function(env_name, friendly_function_name)
-    oauth_bearer_token = new_platform_api.get_oauth_bearer_token(client_id, client_secret, scope='document:documents:write')
     for filename in glob.glob(path):
         if filename.endswith('.json') and not filename.endswith('metadata.json'):
-            with codecs.open(filename, encoding='utf-8') as f:
+            with open(filename, encoding='utf-8') as f:
                 document = f.read()
                 document_file_name = os.path.basename(filename)
                 document_name = os.path.splitext(document_file_name)[0]
+                document_name = document_name.replace("—", "-")
+                document_name = document_name.replace("–", "-")
+                document_name = document_name.replace("→", "-")
+                document_name = document_name.replace("“", '"')
+                document_name = document_name.replace("”", '"')
+                document_name = document_name.replace("’", "'")
+                document_name = document_name.replace("…", "'")
                 formatted_document = document
+                oauth_bearer_token = new_platform_api.get_oauth_bearer_token(client_id, client_secret, scope='document:documents:write')
                 post_document(env_name, env, oauth_bearer_token, document_name, document_type, document_file_name, formatted_document)
 
 

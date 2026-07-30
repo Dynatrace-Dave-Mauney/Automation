@@ -1,0 +1,109 @@
+import json
+import os
+import re
+
+from Reuse import environment
+from Reuse import new_platform_api
+
+# Populated from configuration file
+my_owner_ids = None
+
+
+def process(env, env_name, client_id, client_secret):
+    configuration_file = 'configurations.yaml'
+
+    my_owner_ids = environment.get_configuration('my_owner_ids', configuration_file=configuration_file)
+
+    # To get all...
+    # my_owner_ids = None
+
+    if my_owner_ids:
+        print('Downloading documents owned by:', my_owner_ids)
+
+    scope = 'document:documents:read'
+
+    output_directory = 'UNSET'
+
+    output_directory_dashboards = f"Downloads-Dashboards/{env_name}"
+    if not os.path.isdir(output_directory_dashboards):
+        os.makedirs(output_directory_dashboards)
+
+    output_directory_notebooks = f"Downloads-Notebooks/{env_name}"
+    if not os.path.isdir(output_directory_notebooks):
+        os.makedirs(output_directory_notebooks)
+        
+    oauth_bearer_token = new_platform_api.get_oauth_bearer_token(client_id, client_secret, scope)
+    # params = {'page-size': 1000, 'admin-access': True}
+    params = {'page-size': 1000}
+    results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents', params=params)
+    documents_json = json.loads(results.text)
+    document_list = documents_json.get('documents')
+
+    next_page_key = documents_json.get('nextPageKey')
+    while next_page_key:
+        oauth_bearer_token = new_platform_api.get_oauth_bearer_token(client_id, client_secret, scope)
+        params = {'page-size': 1000, 'page-key': next_page_key}
+        results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents', params=params)
+        documents_json = json.loads(results.text)
+        document_list.extend(documents_json.get('documents'))
+        next_page_key = documents_json.get('nextPageKey')
+
+    for document in document_list:
+        document_type = document.get('type')
+        if document_type == 'dashboard' or document_type == 'notebook':
+            if document_type == 'dashboard':
+                output_directory = output_directory_dashboards
+            else:
+                output_directory = output_directory_notebooks
+
+            # filter by owner id, if needed
+            document_owner = document.get('owner')
+            if not my_owner_ids or (my_owner_ids and document_owner in my_owner_ids):
+                pass
+            else:
+                continue
+
+            document_id = document.get('id')
+            document_name = document.get('name')
+
+            if not document_name.startswith('['):
+                print(f'Skipping {document_name}')
+                continue
+
+            # print(document_type, document_id, document_name)
+            # document_results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents/{document_id}/content', None)
+            oauth_bearer_token = new_platform_api.get_oauth_bearer_token(client_id, client_secret, scope)
+            document_results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents/{document_id}/content', None)
+            document_json = json.loads(document_results.text)
+            document_metadata_results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents/{document_id}/metadata', None)
+            document_metadata_json = json.loads(document_metadata_results.text)
+            # print(document_metadata_json)
+            clean_filename = re.sub(r"[/\\?%*:|\"<>\x7F\x00-\x1F]", "-", f'{document_name}.json')
+            document_file_name = os.path.join(output_directory, clean_filename)
+            formatted_dashboard = json.dumps(document_json, indent=4, sort_keys=False)
+            print(f'Writing file {document_file_name}')
+            with open(document_file_name, 'w', encoding='utf8') as output_file:
+                output_file.write('%s' % formatted_dashboard)
+
+            clean_filename = re.sub(r"[/\\?%*:|\"<>\x7F\x00-\x1F]", "-", f'{document_name}.metadata.json')
+            document_metadata_file_name = os.path.join(output_directory, clean_filename)
+            formatted_document_metadata = json.dumps(document_metadata_json, indent=4, sort_keys=False)
+            print(f'Writing file {document_metadata_file_name}')
+            with open(document_metadata_file_name, 'w', encoding='utf8') as output_file:
+                output_file.write('%s' % formatted_document_metadata)
+
+
+def main():
+    friendly_function_name = 'Dynatrace Automation'
+    env_name_supplied = environment.get_env_name(friendly_function_name)
+    # For easy control from IDE
+    # env_name_supplied = 'Prod'
+    env_name_supplied = 'NonProd'
+    # env_name_supplied = 'Int'
+    # env_name_supplied = 'Personal'
+    env_name, env, client_id, client_secret = environment.get_client_environment_for_function(env_name_supplied, friendly_function_name)
+    process(env, env_name, client_id, client_secret)
+
+
+if __name__ == '__main__':
+    main()

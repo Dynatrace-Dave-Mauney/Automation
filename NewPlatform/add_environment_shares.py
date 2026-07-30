@@ -38,6 +38,17 @@ def get_environment_share_dict(env, client_id, client_secret):
     results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/environment-shares', params)
     environment_shares_json = json.loads(results.text)
     environment_share_list = environment_shares_json.get('environment-shares')
+
+    next_page_key = environment_shares_json.get('nextPageKey')
+    while next_page_key:
+        oauth_bearer_token = new_platform_api.get_oauth_bearer_token(client_id, client_secret, scope)
+        params = {'page-size': 1000, 'page-key': next_page_key}
+        results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents', params=params)
+        environment_shares_json = json.loads(results.text)
+        environment_share_list.extend(environment_shares_json.get('documents'))
+        next_page_key = environment_shares_json.get('nextPageKey')
+
+
     for environment_share in environment_share_list:
         environment_share_id = environment_share.get('id')
         environment_share_document_id = environment_share.get('documentId')
@@ -59,13 +70,15 @@ def get_document_id_list(env, client_id, client_secret):
         document_id = document.get('id')
         document_name = document.get('name')
         document_owner = document.get('owner')
+        # print(document_name, document_owner)
 
         if document_owner not in owner_id_list:
             # print(f'Skipping document with owner not in the configured owner list: {document_owner}')
             continue
 
         # Only share "official" dashboards with environment prefixes
-        if document_name.startswith('Prod ') or document_name.startswith('NonProd ') or document_name.startswith('Int '):
+        # if document_name.startswith('Prod ') or document_name.startswith('NonProd ') or document_name.startswith('Int '):
+        if document_name.startswith('['):
             print(f'{document_name} will be shared')
             document_id_list.append(document_id)
 
@@ -90,10 +103,9 @@ def main():
     env_name_supplied = environment.get_env_name(friendly_function_name)
     # For easy control from IDE
     # env_name_supplied = 'Prod'
-    # env_name_supplied = 'PreProd'
-    # env_name_supplied = 'Sandbox'
+    env_name_supplied = 'NonProd'
+    # env_name_supplied = 'Int'
     # env_name_supplied = 'Personal'
-    # env_name_supplied = 'Demo'
     env_name, env, client_id, client_secret = environment.get_client_environment_for_function(env_name_supplied, friendly_function_name)
     process(env, client_id, client_secret)
 
