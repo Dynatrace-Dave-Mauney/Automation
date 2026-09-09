@@ -51,6 +51,7 @@ def process(env, client_id, client_secret):
 				line_split = line.split(':')
 				dashboard_id = line_split[1]
 				dashboard_version = line_split[2]
+				print(dashboard_version, line_split, line)
 				params = {'optimistic-locking-version': document_version}
 				oauth_bearer_token = new_platform_api.get_oauth_bearer_token(client_id, client_secret, scope)
 				response = new_platform_api.delete(oauth_bearer_token, f'{env}/platform/document/v1/documents/{dashboard_id}', params)

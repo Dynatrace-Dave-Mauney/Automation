@@ -11,8 +11,8 @@ owner_id_list = None
 
 def process(env, env_name, client_id, client_secret):
     configuration_file = 'configurations.yaml'
-    my_owner_ids = environment.get_configuration('my_owner_ids', configuration_file=configuration_file)
-    # my_owner_ids = None
+    # my_owner_ids = environment.get_configuration('my_owner_ids', configuration_file=configuration_file)
+    my_owner_ids = None
 
     if my_owner_ids:
         print('Downloading documents owned by:', my_owner_ids)
@@ -54,9 +54,9 @@ def process(env, env_name, client_id, client_secret):
             document_name = document.get('name')
 
             # if not document_name.startswith('TEMPLATE - '):
-            if '[ALERT]' not in document_name and '[REPORT]' not in document_name and '[SEARCH]' not in document_name:
-                print(f'Skipping {document_name}')
-                continue
+            # if '[ALERT]' not in document_name and '[REPORT]' not in document_name and '[SEARCH]' not in document_name:
+            #     print(f'Skipping {document_name}')
+            #     continue
 
             oauth_bearer_token = new_platform_api.get_oauth_bearer_token(client_id, client_secret, scope)
             notebook_results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents/{document_id}/content', None)

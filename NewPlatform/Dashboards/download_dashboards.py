@@ -12,7 +12,7 @@ my_owner_ids = None
 def process(env, env_name, client_id, client_secret):
     configuration_file = 'configurations.yaml'
 
-    my_owner_ids = environment.get_configuration('my_owner_ids', configuration_file=configuration_file)
+    # my_owner_ids = environment.get_configuration('my_owner_ids', configuration_file=configuration_file)
 
     # To get all...
     my_owner_ids = None
@@ -73,9 +73,9 @@ def process(env, env_name, client_id, client_secret):
             document_name = document.get('name')
 
             # if not document_name.startswith('TEMPLATE - '):
-            if '[Splunk]' not in document_name:
-                print(f'Skipping {document_name}')
-                continue
+            # if '[Splunk]' not in document_name:
+            #     print(f'Skipping {document_name}')
+            #     continue
 
             # print(document_type, document_id, document_name)
             # dashboard_results = new_platform_api.get(oauth_bearer_token, f'{env}/platform/document/v1/documents/{document_id}/content', None)

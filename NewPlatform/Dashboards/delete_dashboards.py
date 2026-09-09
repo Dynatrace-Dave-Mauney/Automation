@@ -33,8 +33,7 @@ def process(env, client_id, client_secret):
 			document_version = document.get('version')
 			params = {'optimistic-locking-version': document_version}
 
-			# if '[Splunk]' in document_name:
-			if '[ALERT]' in document_name:
+			if '[Splunk]' in document_name:
 				delete_list.append(f'{document_name}:{document_id}:{document_version}')
 
 	delete_list = sorted(delete_list)
